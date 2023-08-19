@@ -1,0 +1,20 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    background-color: green;
+    min-width: 50%;
+    max-width: 100%;
+    padding: 24px;
+}
+
+@media only screen and (max-width: 768px) {
+    main {
+        width: 90%;
+    }
+}
