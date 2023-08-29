@@ -3,6 +3,7 @@
 use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Support\Facades\Route;
 
-Route::name('records.')->group(function () {
-    Route::match(['get', 'post'], '/records/patients', [PatientsController::class, 'index'])->name('patients');
+Route::name('records.')->prefix('/records')->group(function () {
+    Route::match(['get', 'post'], '/patients', [PatientsController::class, 'index'])->name('patients');
+    Route::match(['get', 'post'], '/new', [PatientsController::class, 'create'])->name('patients.new');
 });

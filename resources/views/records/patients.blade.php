@@ -3,9 +3,18 @@
 
 @section('content')
     <div class="container">
+        <div class="card py px mb-1">
+            <h2>Register Patient</h2>
+
+            <div class="py">
+                <a href="{{ route('records.patients.new') }}">General Patient</a>
+                <a href="{{ route('records.patients.new') }}?mode=anc" class="pl-1">Antenatal Patient</a>
+            </div>
+        </div>
+
         <div class="card py px">
             <h2 class="my">Patients</h2>
-            <table id="patients">
+            <table id="patients" class="table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -22,11 +31,5 @@
 @endsection
 
 @push('scripts')
-    <script>
-        const table = new DataTable('#patients', {
-            ajax: {
-                url: "//",
-            }
-        });
-    </script>
+    @vite(['resources/js/records/patients.js'])
 @endpush

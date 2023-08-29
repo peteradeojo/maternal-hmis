@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -16,10 +18,12 @@ class AuthController extends Controller
 
 
         if (auth()->attempt($request->only('phone', 'password'))) {
-            $user = User::where('phone', $request->phone)->first();
-            auth()->login($user);
+            // $user = User::where('phone', $request->phone)->first();
+            $request->session()->regenerate();
 
-            return redirect(route('dashboard'));
+            // $token = $user->createToken('auth_token')->plainTextToken;
+            // return redirect(route('dashboard'))->withCookie(cookie('auth_token', $token, 60 * 24, null, null, false, App::environment('prodcuction')));
+            return redirect()->intended(route('dashboard'));
         }
 
         return redirect()->back()->with('error', "Invalid login");

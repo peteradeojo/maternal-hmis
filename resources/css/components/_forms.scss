@@ -1,0 +1,28 @@
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 6px 4px;
+    border-radius: 5px;
+    border: 1px solid #888;
+    font: inherit;
+
+    &:has(:focus) {
+        outline: none;
+        border-color: #333;
+    }
+}
+
+input.form-control:read-only {
+    background-color: #eee;
+}
+select[readonly] {
+    pointer-events: none;
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+.form-group {
+    padding: 6px 0;
+}

@@ -55,7 +55,7 @@ body > aside {
 }
 
 main {
-    min-width: 85%;
+    min-width: 70%;
     margin-left: 15%;
     padding: 16px;
 }
@@ -117,33 +117,4 @@ main {
 .col {
     flex: 1;
     margin: 0 0.1em 0 0.1em;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table thead th:not(:last-of-type) {
-    border-right: 1px solid #ccc;
-}
-
-/* .table tbody tr, */
-/* .table th, */
-.table tbody td {
-    border: 1px solid #888;
-    padding: 4px 6px;
-}
-.table tbody td:first-of-type {
-    border-left: none;
-}
-.table tbody td:last-of-type {
-    border-right: none;
-}
-
-.table tbody tr:last-of-type {
-    border: none;
-}
-.table tbody tr:last-of-type > td {
-    border-bottom: none;
 }

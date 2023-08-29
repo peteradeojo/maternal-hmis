@@ -1,0 +1,37 @@
+$marginBottom: 0.75em;
+
+.mb {
+    margin-bottom: $marginBottom;
+}
+
+@for $i from 1 through 5 {
+    .mb-#{$i} {
+        margin-bottom: $marginBottom * $i;
+    }
+}
+@for $i from 1 through 5 {
+    .mt-#{$i} {
+        margin-top: $marginBottom * $i;
+    }
+}
+@for $i from 1 through 5 {
+    .ml-#{$i} {
+        margin-left: $marginBottom * $i;
+    }
+}
+@for $i from 1 through 5 {
+    .mr-#{$i} {
+        margin-right: $marginBottom * $i;
+    }
+}
+
+
+.pl {
+    padding-left: $marginBottom;
+}
+
+@for $i from 1 through 5 {
+    .pl-#{$i} {
+        padding-left: $marginBottom * $i;
+    }
+}

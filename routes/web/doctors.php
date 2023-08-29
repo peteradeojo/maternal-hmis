@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Doctor\PatientsController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('doctor.')->group(function () {
@@ -7,5 +8,5 @@ Route::name('doctor.')->group(function () {
         return view('patients');
     })->name('patients');
 
-    Route::get('/treat/{patient}', [PatientController::class, 'treat'])->name('treat');
+    Route::get('/treat/{patient}', [PatientsController::class, 'treat'])->name('treat');
 });
