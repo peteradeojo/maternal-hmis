@@ -1,6 +1,6 @@
 import "./bootstrap";
 
-async function fetchToken() {
+export async function fetchToken() {
     const res = await fetch("/sanctum/csrf-cookie", {
         headers: {
             Accept: "application/json",
@@ -149,3 +149,13 @@ class DataTable {
 }
 
 export default DataTable;
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".foldable .foldable-header").forEach((button) => {
+        button.addEventListener("click", (e) => {
+            const elem = e.target.closest(".foldable");
+            elem.querySelector(".foldable-body").classList.toggle("unfolded");
+            // console.log(elem);
+        });
+    });
+});

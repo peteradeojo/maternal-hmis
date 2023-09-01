@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Records;
 
 use App\Http\Controllers\Controller;
+use App\Models\AntenatalProfile;
 use App\Models\Patient;
 use App\Models\PatientCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
@@ -51,6 +53,7 @@ class PatientsController extends Controller
 
         if ($request->query('mode') === 'anc') {
             $rules = array_merge($rules, [
+                'card_type' => 'required|in:1,2,3,4,5',
                 'lmp' => 'required|date',
                 'edd' => 'required|date',
                 'spouse_name' => 'nullable|string',
@@ -60,13 +63,29 @@ class PatientsController extends Controller
             ]);
         }
 
-        $data = $request->validate($rules);
-        $patient = Patient::create($data);
+        DB::beginTransaction();
+        try {
+            $data = $request->validate($rules);
+            $patient = Patient::create($data);
 
-        if ($request->query('mode') == 'anc') {
-            // Create Patients antenatal profile
+            if ($request->query('mode') == 'anc') {
+                AntenatalProfile::create([
+                    'patient_id' => $patient->id,
+                    'lmp' => $data['lmp'],
+                    'edd' => Carbon::createFromFormat('Y-m-d', $data['edd'])->addMonths(9)->addDays(7),
+                    'spouse_name' => $data['spouse_name'],
+                    'spouse_phone' => $data['spouse_phone'],
+                    'spouse_occupation' => $data['spouse_occupation'],
+                    'spouse_educational_status' => $data['spouse_educational_status'],
+                    'card_type' => $data['card_type'] ?? '1',
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'An error occurred while creating patient record. Please try again later.');
         }
-
         return redirect()->route('records.patients');
     }
 
@@ -74,5 +93,16 @@ class PatientsController extends Controller
     {
         $patients = Patient::with('category')->paginate($request->query('count', 20));
         return $patients;
+    }
+
+    public function show(Request $request, Patient $patient)
+    {
+        $patient->load('antenatalProfiles');
+
+        return view('records.patient', compact('patient'));
+    }
+
+    public function checkIn(Request $request, Patient $patient)
+    {
     }
 }

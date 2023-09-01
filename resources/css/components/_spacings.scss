@@ -35,3 +35,9 @@ $marginBottom: 0.75em;
         padding-left: $marginBottom * $i;
     }
 }
+
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}

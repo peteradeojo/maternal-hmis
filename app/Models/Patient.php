@@ -48,4 +48,9 @@ class Patient extends Model
     {
         return Gender::tryFrom($this->gender)?->name;
     }
+
+    public function antenatalProfiles()
+    {
+        return $this->hasMany(AntenatalProfile::class)->latest();
+    }
 }

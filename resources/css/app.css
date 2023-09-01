@@ -70,34 +70,11 @@ main {
     } */
 }
 
-.card {
-    background-color: #fff;
-    border-radius: 6px;
-}
-.card > .header {
-    padding: 8px 6px;
-    font-size: 2em;
-    background-color: #fff;
-    border-bottom: 1px solid #ccc;
-    border-radius: 6px 6px 0 0;
-}
-.card > .body {
-    padding: 8px 6px;
-    /* font-size: 2em; */
-    background-color: #fff;
-    border-bottom: 1px solid #ccc;
-}
-.card > .footer {
-    padding: 4px 6px;
-    font-size: 1.2em;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.row {
+/* .row {
     display: flex;
     align-items: center;
     justify-items: space-between;
-}
+} */
 .py {
     padding-top: 1em;
     padding-bottom: 1em;

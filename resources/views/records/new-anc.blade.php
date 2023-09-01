@@ -18,6 +18,16 @@
                 </div>
                 <div class="mb-2">
                     <h2>Antenatal Info</h2>
+                    <div class="form-group">
+                        <label for="cardType">Card Type</label>
+                        <select name="card_type" id="cardType" class="form-control">
+                            <option value="1">Bronze</option>
+                            <option value="2">Silver</option>
+                            <option value="3">Gold</option>
+                            <option value="4">Diamond</option>
+                            <option value="5">Platinum</option>
+                        </select>
+                    </div>
                     {{-- @include('records.components.lmp-form') --}}
                     @livewire('lmp-form')
                 </div>

@@ -43,3 +43,49 @@ aside#noticeboard {
 @import "components/spacings";
 @import "components/forms";
 @import "components/buttons";
+
+.foldable {
+    .foldable-body {
+        height: 0;
+        overflow: hidden;
+        transition: height 0.5s ease-in-out;
+
+        &.unfolded {
+            height: max-content;
+        }
+    }
+    .foldable-header::before {
+        content: "(Click to view)";
+        font-size: small;
+        vertical-align: middle;
+    }
+}
+
+p {
+    max-width: 100%;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 6px;
+    & > .header {
+        padding: 8px 6px;
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        border-radius: 6px 6px 0 0;
+    }
+    & > .body {
+        /* padding: 8px 6px; */
+        /* font-size: 2em; */
+        background-color: #fff;
+        /* border-bottom: 1px solid #ccc; */
+    }
+    & > .footer {
+        padding: 4px 6px;
+        font-size: 1.2em;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    & .card-header {
+        font-size: 2em;
+    }
+}
