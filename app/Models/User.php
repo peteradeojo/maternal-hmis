@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -35,6 +37,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = ['name'];
+
     /**
      * The attributes that should be cast.
      *
@@ -45,7 +49,13 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function department() {
-        return $this->hasOne(Department::class, 'department_id');
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function name(): Attribute
+    {
+        return Attribute::make(fn () => $this->firstname . ' ' . $this->lastname);
     }
 }

@@ -8,5 +8,5 @@ Route::name('doctor.')->group(function () {
         return view('patients');
     })->name('patients');
 
-    Route::get('/treat/{patient}', [PatientsController::class, 'treat'])->name('treat');
+    Route::get('/treat/{visit}', [PatientsController::class, 'treat'])->name('treat');
 });

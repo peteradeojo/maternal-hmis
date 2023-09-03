@@ -3,22 +3,22 @@
 namespace App\Http\Livewire\Doctor;
 
 use App\Models\User;
+use App\Models\Visit;
 use Livewire\Component;
 
 class WaitingPatients extends Component
 {
     public User $user;
-    public $patients = [];
+    public $visits = [];
 
     public function mount()
     {
-        $this->patients = [
-            collect([
-                'name' => fake()->name,
-                'card_number' => fake()->creditCardNumber,
-                'category' => 'OPD',
-            ])
-        ];
+        $this->load();
+    }
+
+    public function load()
+    {
+        $this->visits = Visit::whereNotNull('vitals')->get();
     }
 
     public function render()

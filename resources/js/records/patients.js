@@ -1,4 +1,4 @@
-import DataTable, { fetchToken } from "../app";
+import DataTable, { fetchToken, triggerAlert } from "../app";
 
 const table = new DataTable("#patients", {
     columns: [
@@ -15,27 +15,67 @@ if (table.element) {
     });
 }
 
-document.querySelector("#checkIn")?.addEventListener("click", async (e) => {
-    e.preventDefault();
+$().ready(function () {
+    $("#checkIn")?.on("click", async function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const { id } = this.dataset;
 
-    try {
-        const token = await fetchToken();
-        const { id } = e.target.dataset;
-        const res = await fetch(`/api/records/patients/check-in/${id}`, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const token = document
+            .querySelector("meta[name='csrf-token']")
+            .getAttribute("content");
 
-        const data = await res.json();
-        if (data.success) {
-            alert(data.message);
-            window.location.reload();
+        try {
+            const url = `/api/records/patients/${id}/check-in`;
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token,
+                },
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                triggerAlert("success", data.message);
+            } else {
+                triggerAlert("danger", data.message);
+            }
+        } catch (err) {
+            triggerAlert("danger", err.message);
         }
-    } catch (err) {
-        console.error(err);
-        alert(err.message);
-    }
+    });
+
+    $("#createAncVisit").on("click", async function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const { id } = this.dataset;
+
+        const token = document
+            .querySelector("meta[name='csrf-token']")
+            .getAttribute("content");
+
+        try {
+            const url = `/api/records/patients/${id}/check-in?mode=anc`;
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token,
+                },
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                triggerAlert("success", data.message);
+            } else {
+                triggerAlert("danger", data.message);
+            }
+        } catch (err) {
+            // console.error(err);
+            triggerAlert("danger", err.message);
+        }
+    });
 });

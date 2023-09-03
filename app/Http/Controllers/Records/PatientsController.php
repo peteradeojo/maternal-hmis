@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers\Records;
 
+use App\Enums\Department as EnumsDepartment;
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
+use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
+use App\Models\Department;
+use App\Models\GeneralVisit;
 use App\Models\Patient;
 use App\Models\PatientCategory;
+use App\Models\Visit;
+use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -91,8 +98,26 @@ class PatientsController extends Controller
 
     public function getPatients(Request $request)
     {
-        $patients = Patient::with('category')->paginate($request->query('count', 20));
-        return $patients;
+        $length = $request->query('length', 10);
+        $start = $request->query('start', 0);
+
+        $patientData = Patient::with('category');
+
+        $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
+
+        $results = $patientData->clone();
+        if ($search) {
+            $results = $results->where('name', "like", "$search%")->orWhere("card_number", "like", "%$search%");
+        }
+
+        $data = [
+            'data' => $results->clone()->skip($start)->take($length)->get(),
+            'recordsTotal' => Patient::count(),
+            'recordsFiltered' => $results->count(),
+            'draw' => (int) $request->input('draw'),
+        ];
+
+        return response()->json($data);
     }
 
     public function show(Request $request, Patient $patient)
@@ -104,5 +129,59 @@ class PatientsController extends Controller
 
     public function checkIn(Request $request, Patient $patient)
     {
+        /**
+         * @var Department
+         */
+        $nursing = Department::where('id', EnumsDepartment::NUR->value)->first();
+
+        $nursing->notifyParticipants(new StaffNotification("A patient was just checked in"));
+
+        if (Visit::where('patient_id', $patient->id)->where('status', Status::active->value)->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Patient already checked-in today',
+            ]);
+        }
+
+        if ($request->query('mode') == 'anc') {
+            $subVisit = AncVisit::create([
+                'patient_id' => $patient->id,
+            ]);
+        } else {
+            $subVisit = GeneralVisit::create([
+                'patient_id' => $patient->id,
+            ]);
+        }
+
+        Visit::create([
+            'patient_id' => $patient->id,
+            'visit_type' => $subVisit::class,
+            'visit_id' => $subVisit->id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Patient Checked-In Successfully',
+        ]);
+    }
+
+    public function createAncProfile(Request $request, Patient $patient)
+    {
+        if ($request->method() !== 'POST') {
+            return view('records.forms.anc-profile', compact('patient'));
+        }
+
+        $data = $request->validate([
+            'card_type' => 'required|in:1,2,3,4,5',
+            'lmp' => 'required|date',
+            'edd' => 'required|date',
+            'spouse_name' => 'nullable|string',
+            'spouse_phone' => 'nullable|string',
+            'spouse_occupation' => 'nullable|string',
+            'spouse_educational_status' => 'nullable|string',
+        ]);
+
+        $profile = AntenatalProfile::create($data + ['patient_id' => $patient->id]);
+        return redirect()->route('records.patient', ['patient' => $patient->id]);
     }
 }

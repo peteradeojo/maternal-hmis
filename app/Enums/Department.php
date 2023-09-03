@@ -7,4 +7,10 @@ enum Department: int {
     case NUR = 2;
     case REC = 3;
     case PHA = 4;
+    case LAB = 5;
+    case IT = 6;
+
+    public static function getIds() {
+        return array_values(self::cases());
+    }
 }

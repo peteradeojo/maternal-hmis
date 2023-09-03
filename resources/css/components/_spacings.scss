@@ -25,7 +25,6 @@ $marginBottom: 0.75em;
     }
 }
 
-
 .pl {
     padding-left: $marginBottom;
 }
@@ -36,8 +35,13 @@ $marginBottom: 0.75em;
     }
 }
 
-
 .row {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+@for $i from 1 through 12 {
+    .col-#{$i} {
+        width: calc(100% / 12) * $i;
+    }
 }

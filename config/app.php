@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\AncCategory;
+use App\Enums\Department;
+use App\Enums\MaritalStatus;
 use App\Providers\HelperProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -185,6 +188,9 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'DepartmentsEnum' => Department::class,
+        'MarriageEnum' => MaritalStatus::class,
+        'AncCardEnum' => AncCategory::class,
     ])->toArray(),
 
 ];

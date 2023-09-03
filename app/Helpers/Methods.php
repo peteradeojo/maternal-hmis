@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AncCategory;
 use App\Enums\Department;
 
 function departmentRoutes()
@@ -24,9 +25,19 @@ function departmentRoutes()
         route('records.patients') => 'Patients',
     ], $base);
 
+    $it = array_merge([
+        route('it.staff') => 'Staff',
+    ], $base);
+
     return [
         Department::DOC->value => $doctors,
         Department::NUR->value => $nurses,
         Department::REC->value => $records,
+        Department::IT->value => $it,
     ];
+}
+
+
+function ancCardType(int $value) {
+    return (AncCategory::tryFrom($value))?->name ?? 'Unknown';
 }

@@ -14,7 +14,7 @@
 
         <div class="card py px">
             <h2 class="my">Patients</h2>
-            <table id="patients" class="table">
+            <table id="patients">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -31,5 +31,41 @@
 @endsection
 
 @push('scripts')
-    @vite(['resources/js/records/patients.js'])
+    {{-- @vite(['resources/js/records/patients.js']) --}}
+
+    <script>
+        $("#patients").DataTable({
+            serverSide: true,
+            ajax: {
+                url: "{{ route('api.records.patients') }}",
+                dataSrc: "data",
+                // type: 'POST',
+                // headers: {
+                //     "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                // }
+            },
+            columns: [{
+                    data: 'name'
+                },
+                {
+                    data: 'category.name'
+                },
+                {
+                    data: 'card_number'
+                },
+                {
+                    data: ({
+                        gender_value
+                    }, type, set) => {
+                        return gender_value[0];
+                    }
+                },
+                {
+                    data: function(row, type, set) {
+                        return `<a href="/records/patients/${row.id}">View</a>`;
+                    }
+                }
+            ],
+        });
+    </script>
 @endpush

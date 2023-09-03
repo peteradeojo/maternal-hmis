@@ -6,7 +6,7 @@ aside#noticeboard {
     height: 100vh;
 
     & h3 {
-        padding: 15px;
+        padding: 4px 15px;
         display: block;
         max-width: 100%;
         font: 1.5rem "Roboto", sans-serif;
@@ -15,7 +15,6 @@ aside#noticeboard {
             padding: 4px;
         }
         font-weight: normal;
-        margin-bottom: 1rem;
         text-decoration: underline;
     }
 }
@@ -40,10 +39,6 @@ aside#noticeboard {
     }
 }
 
-@import "components/spacings";
-@import "components/forms";
-@import "components/buttons";
-
 .foldable {
     .foldable-body {
         height: 0;
@@ -59,6 +54,9 @@ aside#noticeboard {
         font-size: small;
         vertical-align: middle;
     }
+    .foldable-header {
+        cursor: pointer;
+    }
 }
 
 p {
@@ -70,15 +68,9 @@ p {
     border-radius: 6px;
     & > .header {
         padding: 8px 6px;
-        background-color: #fff;
+        // background-color: #fff;
         border-bottom: 1px solid #ccc;
         border-radius: 6px 6px 0 0;
-    }
-    & > .body {
-        /* padding: 8px 6px; */
-        /* font-size: 2em; */
-        background-color: #fff;
-        /* border-bottom: 1px solid #ccc; */
     }
     & > .footer {
         padding: 4px 6px;
@@ -89,3 +81,52 @@ p {
         font-size: 2em;
     }
 }
+
+.table {
+    tfoot {
+        td {
+            padding: 14px 2px;
+            span,
+            a {
+                padding: 2px 6px;
+                text-decoration: none;
+                background-color: #ccc;
+                margin: 0 2px;
+                border-radius: 3px;
+                &.active {
+                    background-color: #000;
+                    color: #fff;
+                }
+            }
+            span {
+                cursor: not-allowed;
+            }
+            a:hover {
+                background-color: #aaa;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.alert {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 20px;
+    border-radius: 6px;
+    &.alert-success {
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+        color: #3c763d;
+    }
+    &.alert-danger {
+        background-color: red;
+        border-color: #ebccd1;
+        color: #fff;
+    }
+}
+
+@import "components/spacings";
+@import "components/forms";
+@import "components/buttons";

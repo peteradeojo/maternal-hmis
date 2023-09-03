@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Gender;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,6 +52,6 @@ class Patient extends Model
 
     public function antenatalProfiles()
     {
-        return $this->hasMany(AntenatalProfile::class)->latest();
+        return $this->hasMany(AntenatalProfile::class)->where('status', Status::active->value)->latest();
     }
 }

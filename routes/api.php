@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // });
 
-// Route::middleware('auth:sanctum')->group(function () {
-// });
-include_once __DIR__ . '/api/records.php';
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('records')->name('api.records.')->group(base_path('routes/api/records.php'));
+});
+// include_once __DIR__ . '/api/records.php';

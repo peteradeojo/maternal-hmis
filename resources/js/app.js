@@ -15,6 +15,18 @@ export async function fetchToken() {
     return token;
 }
 
+export function triggerAlert(status = "success", message) {
+    const div = document.createElement("div");
+    div.classList.add("alert", `alert-${status}`);
+    div.innerText = message;
+
+    document.querySelector("body").appendChild(div);
+
+    setTimeout(() => {
+        div.remove();
+    }, 5000);
+}
+
 class DataTable {
     element;
     columns;
@@ -25,16 +37,33 @@ class DataTable {
         this.columns = options.columns ?? undefined;
     }
 
-    async load({ url }) {
+    convertUrlToURLParams(url) {
+        if (url.includes("?")) {
+            url += `&count=${this.count}`;
+        } else {
+            url += `?count=${this.count}`;
+        }
+
+        return url;
+    }
+
+    async load({ url, count = 10 }) {
+        if (!this.count) {
+            this.count = count;
+        } else if (this.count !== count) {
+            this.count = count;
+        }
+
         try {
             const token = await fetchToken();
 
-            const response = await fetch(url, {
+            const urlParams = this.convertUrlToURLParams(url);
+
+            const response = await fetch(urlParams, {
                 headers: {
                     Accept: "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                // credentials: 'include'
             });
             const data = await response.json();
 
@@ -59,6 +88,7 @@ class DataTable {
     }
 
     async draw() {
+        this.element.querySelector("tbody").innerHTML = "";
         await this.render(this.data);
         await this.renderFooter(this.data);
     }
@@ -123,7 +153,7 @@ class DataTable {
             ${
                 prev_page_url
                     ? `<a href='${prev_page_url}'>Previous</a>`
-                    : "Previous"
+                    : "<span>Previous</span>"
             }`;
 
         realLinks
@@ -132,30 +162,41 @@ class DataTable {
                 currentPage + 5 > last_page ? last_page : currentPage + 5)
             )
             .forEach((link) => {
-                // console.log(link);
-                td += `<a href='${link.url}'>${link.label}</a>`;
+                if (link.url) {
+                    if (link.active === true) {
+                        td += `<a href='${link.url}' class='active'>${link.label}</a>`;
+                        return;
+                    }
+                    td += `<a href='${link.url}'>${link.label}</a>`;
+                } else {
+                    td += `<span>${link.label}</span>`;
+                }
             });
 
         tr.innerHTML =
             td +
-            `${next_page_url ? `<a href='${next_page_url}'>Next</a>` : "Next"}`;
+            `${
+                next_page_url
+                    ? `<a href='${next_page_url}'>Next</a>`
+                    : "<Next>Next</spaa>"
+            }`;
 
         if (this.element.querySelector("tfoot")) {
             this.element.querySelector("tfoot").remove();
         }
 
         this.element.appendChild(tfoot);
+
+        this.element.querySelectorAll("tfoot td a").forEach((a) => {
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                // console.log(this);
+                this.load({ url: e.target.href });
+            });
+        });
     }
 }
 
 export default DataTable;
 
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".foldable .foldable-header").forEach((button) => {
-        button.addEventListener("click", (e) => {
-            const elem = e.target.closest(".foldable");
-            elem.querySelector(".foldable-body").classList.toggle("unfolded");
-            // console.log(elem);
-        });
-    });
-});
+export function createAlert(status = "success", message) {}

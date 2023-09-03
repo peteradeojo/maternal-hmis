@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('general_visits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients')->restrictOnDelete();
-            $table->json('vitals')->default(json_encode([]));
-            $table->
+            $table->json('vitals')->nullable(); //->default(null);
+            $table->foreignId('vitals_by')->nullable()->constrained('users')->restrictOnDelete();
+            $table->foreignId('doctor_id')->nullable()->constrained('users')->restrictOnDelete();
             $table->timestamps();
         });
     }

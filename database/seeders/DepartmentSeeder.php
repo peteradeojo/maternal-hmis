@@ -29,6 +29,11 @@ class DepartmentSeeder extends Seeder
                 'id' => Department::REC,
                 'name' => 'Records',
                 'description' => 'Records, medical records, medical records officers'
+            ],
+            [
+                'id' => Department::IT->value,
+                'name' => 'Information Technology',
+                'description' => 'Information Technology, IT, ICT, ICT Department'
             ]
         ];
 

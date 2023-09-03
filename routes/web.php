@@ -34,4 +34,5 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/doctors.php';
     include __DIR__ . '/web/nurses.php';
     include __DIR__ . '/web/records.php';
+    include __DIR__ . '/web/it.php';
 });

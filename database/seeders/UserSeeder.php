@@ -36,6 +36,13 @@ class UserSeeder extends Seeder
                 'department_id' => Department::REC->value,
                 'phone' => '08087654321',
                 'password' => Hash::make('password')
+            ],
+            [
+                'firstname' => 'Boluwatife',
+                'lastname' => 'Ade-Ojo',
+                'department_id' => Department::IT->value,
+                'phone' => '08103490675',
+                'password' => Hash::make('password')
             ]
         ];
 
