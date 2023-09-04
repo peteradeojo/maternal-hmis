@@ -4,6 +4,7 @@ use App\Enums\AncCategory;
 use App\Enums\Department;
 use App\Enums\MaritalStatus;
 use App\Providers\HelperProvider;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -191,6 +192,7 @@ return [
         'DepartmentsEnum' => Department::class,
         'MarriageEnum' => MaritalStatus::class,
         'AncCardEnum' => AncCategory::class,
+        'Carbon' => Carbon::class,
     ])->toArray(),
 
 ];

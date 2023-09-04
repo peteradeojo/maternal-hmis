@@ -28,9 +28,13 @@
                         <div class="card-header">Vitals</div>
                     </div>
                     <div class="body foldable-body">
-                        <div class="py">
+                        <div class="my">
                             <p><b>Taken By: </b> {{ $visit->vital_staff?->name }}</p>
-                            <p><b>Time: </b> {{ $visit->vitals->time ?? $visit->updated_at }}</p>
+                            <p><b>Time: </b>
+                                @if (isset($visit->vitals->time))
+                                    {{ Carbon::parse($visit->vitals->time)->format('Y-m-d h:i A') }}
+                                @endif
+                            </p>
                             <p><b>Weight: </b> {{ $visit->vitals->data->weight }} kg</p>
                             <p><b>Height: </b> {{ $visit->vitals->data->height }} cm</p>
                             <p><b>B/P: </b> {{ $visit->vitals->data->blood_pressure }} mmHg</p>
@@ -84,53 +88,50 @@
                 <div class="header card-header foldable-header">
                     <p>Antenatal History</p>
                 </div>
-                <div class="foldable-body body unfolded my">
-                    <table id="anc-history-table">
+                <div class="foldable-body body my">
+                    <table id="anc-history-table" class="table">
                         <thead>
                             <tr>
-                                <th></th>
                                 <th>Date</th>
                                 <th>Maturity</th>
                                 <th>Presentation</th>
                                 <th>Lie</th>
                                 <th>Fundal Height</th>
                                 <th>Fetal Heart Rate</th>
-                                <th>Edema</th>
+                                {{-- <th>Edema</th>
                                 <th>Protein</th>
                                 <th>Glucose</th>
                                 <th>VDRL</th>
-                                <th>PCV</th>
+                                <th>PCV</th> --}}
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
                                 <td>{{ $ancProfile->created_at?->format('Y-m-d') }}</td>
                                 <td>{{ $ancProfile->created_at?->diffInWeeks($ancProfile->lmp) }} week(s)</td>
                                 <td>{{ $ancProfile->presentation }}</td>
                                 <td>{{ $ancProfile->lie }}</td>
                                 <td>{{ $ancProfile->fundal_height }}</td>
-                                <td>{{ $ancProfile->fetal_height_rate }}</td>
-                                <td>{{ $ancProfile->Edema }}</td>
+                                <td>{{ $ancProfile->fetal_heart_rate }}</td>
+                                {{-- <td>{{ $ancProfile->edema }}</td>
                                 <td>{{ $ancProfile->protein }}</td>
                                 <td>{{ $ancProfile->glucose }}</td>
                                 <td>{{ $ancProfile->vdrl }}</td>
-                                <td>{{ $ancProfile->pcv }}</td>
+                                <td>{{ $ancProfile->pcv }}</td> --}}
                             </tr>
                             @foreach ($ancProfile->history as $history)
                                 <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{ $history->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ $history->created_at->diffInWeeks($ancProfile->lmp) }} week(s)</td>
+                                    <td>{{ $history->presentation }}</td>
+                                    <td>{{ $history->lie }}</td>
+                                    <td>{{ $history->fundal_height }}</td>
+                                    <td>{{ $history->fetal_heart_rate }}</td>
+                                    {{-- <td>{{ $history->edema }}</td>
+                                    <td>{{ $history->protein }}</td>
+                                    <td>{{ $history->glucose }}</td>
+                                    <td>{{ $history->vdrl }}</td>
+                                    <td>{{ $history->pcv }}</td> --}}
                                 </tr>
                             @endforeach
                         </tbody>
@@ -145,6 +146,11 @@
                     Documentation
                 </div>
             </div>
+            <div class="body foldable-body unfolded">
+                <div class="my">
+                    @livewire('doctor.consultation-form', ['visit' => $visit])
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -152,7 +158,7 @@
 @push('scripts')
     <script>
         $("#anc-history-table")?.DataTable({
-            dom: "Brti",
+            dom: "Brtip",
             language: {
                 infoEmpty: "No previous visits found",
                 emptyTable: "No previous visits found",

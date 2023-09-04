@@ -144,8 +144,16 @@ class PatientsController extends Controller
         }
 
         if ($request->query('mode') == 'anc') {
+            $ancProfile = AntenatalProfile::where('patient_id', $patient->id)->where('status', Status::active->value)->latest()->first();
+            if (!$ancProfile) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Patient does not have an active ANC profile',
+                ]);
+            }
             $subVisit = AncVisit::create([
                 'patient_id' => $patient->id,
+                'antenatal_profile_id' => $ancProfile->id,
             ]);
         } else {
             $subVisit = GeneralVisit::create([

@@ -15,7 +15,6 @@
             @endif
 
             @if ($user->department_id == DepartmentsEnum::IT->value)
-                {{-- @livewire('pharmacy.prescription-list') --}}
                 @include('it.departments')
             @endif
         </div>

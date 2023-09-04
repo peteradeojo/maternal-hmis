@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string('lie')->nullable();
             $table->string('fundal_height')->nullable();
             $table->string('fetal_heart_rate')->nullable();
-            // $table->string('presentation_relationship')->nullable();
+            $table->string('presentation_relationship')->nullable();
             $table->string('edema')->nullable();
             $table->string('protein')->nullable();
             $table->string('glucose')->nullable();
             $table->string('vdrl')->nullable();
             $table->string('pcv')->nullable();
+            $table->string('drugs')->nullable();
             $table->string('note')->nullable();
         });
     }
@@ -38,7 +39,7 @@ return new class extends Migration
             $table->string('anc_tests_done')->default(false);
             $table->string('anc_ultrasound_done')->default(false);
 
-            $table->dropColumn(['maturity', 'presentation', 'lie', 'fundal_height', 'edema', 'protein', 'glucose', 'vdrl', 'pcv', 'note']);
+            $table->dropColumn(['presentation', 'presentation_relationship', 'lie', 'fundal_height', 'fetal_heart_rate', 'edema', 'drugs', 'protein', 'glucose', 'vdrl', 'pcv', 'note']);
         });
     }
 };

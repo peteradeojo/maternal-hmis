@@ -7,4 +7,5 @@ enum Status: int {
     case closed = 0;
     case blocked = 2;
     case pending = 3;
+    case completed = 4;
 }

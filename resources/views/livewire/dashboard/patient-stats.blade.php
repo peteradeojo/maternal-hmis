@@ -46,6 +46,7 @@
                             <th>Category</th>
                             <th>Gender</th>
                             <th>Visit Type</th>
+                            <td></td>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,6 +57,20 @@
                                 <td>{{ $v->patient->category->name }}</td>
                                 <td>{{ $v->patient->gender_value[0] }}</td>
                                 <td>{{ $v->getVisitType() }}</td>
+                                <td>
+                                    @if ($user->department_id == DepartmentsEnum::REC->value)
+                                        @switch($v->can_check_out)
+                                            @case(true)
+                                                Check out
+                                            @break
+                                            @case(false)
+                                                Force Check Out
+                                            @break
+
+                                            @default
+                                        @endswitch
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

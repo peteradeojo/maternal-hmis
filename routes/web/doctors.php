@@ -8,5 +8,7 @@ Route::name('doctor.')->group(function () {
         return view('patients');
     })->name('patients');
 
-    Route::get('/treat/{visit}', [PatientsController::class, 'treat'])->name('treat');
+    Route::match(['get', 'post'], '/treat/{visit}', [PatientsController::class, 'treat'])->name('treat');
+
+    Route::post('/treat/anc/{visit}', [PatientsController::class, 'treatAnc'])->name('treat-anc');
 });

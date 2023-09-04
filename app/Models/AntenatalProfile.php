@@ -25,6 +25,6 @@ class AntenatalProfile extends Model
 
     public function history()
     {
-        return $this->hasMany(AncVisit::class)->whereNot('doctor_id', null);
+        return $this->hasMany(AncVisit::class)->where('doctor_id', '!=' ,null);
     }
 }

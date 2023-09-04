@@ -12,7 +12,20 @@ class AncVisit extends Model implements Visitation
 
     protected $fillable = [
         'patient_id',
+        'doctor_id',
+        'fundal_height',
+        'fetal_heart_rate',
+        'presentation',
+        'lie',
+        'presentation_relationship',
+        'return_visit',
+        'complaints',
+        'drugs',
+        'note',
+        'antenatal_profile_id',
     ];
+
+    protected $with = ['patient', 'doctor'];
 
     public function lab()
     {
@@ -30,5 +43,13 @@ class AncVisit extends Model implements Visitation
     public function getType(): string
     {
         return "Antenatal";
+    }
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
+    public function doctor()
+    {
+        return $this->belongsTo(User::class, 'doctor_id');
     }
 }

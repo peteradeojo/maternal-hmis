@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('vdrl')->nullable();
             $table->string('pcv')->nullable();
             $table->string('note')->nullable();
-            // $table->smallInteger('status')->default(Status::pending->value);
+            $table->string('presentation_relationship')->nullable();
+            $table->string('drugs')->nullable();
         });
     }
 
@@ -33,7 +34,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('antenatal_profiles', function (Blueprint $table) {
-            $table->dropColumn(['maturity', 'presentation', 'lie', 'fundal_height', 'edema', 'protein', 'glucose', 'vdrl', 'pcv', 'note']);
+            $table->dropColumn(['presentation', 'fetal_heart_rate', 'presentation_relationship', 'lie', 'fundal_height', 'edema', 'protein', 'glucose', 'vdrl', 'pcv', 'drugs', 'note']);
         });
     }
 };

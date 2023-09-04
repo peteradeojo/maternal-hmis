@@ -18,7 +18,7 @@ class WaitingPatients extends Component
 
     public function load()
     {
-        $this->visits = Visit::whereNotNull('vitals')->get();
+        $this->visits = Visit::whereNotNull('vitals')->where('awaiting_doctor', true)->get();
     }
 
     public function render()
