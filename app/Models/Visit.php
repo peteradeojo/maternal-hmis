@@ -23,6 +23,7 @@ class Visit extends Model
         'vitals' => 'object',
     ];
 
+    // Relationships
     public function patient()
     {
         return $this->belongsTo(Patient::class);
@@ -33,6 +34,12 @@ class Visit extends Model
         return $this->morphTo();
     }
 
+    public function documentations()
+    {
+        return $this->hasMany(Documentation::class, 'visit_id');
+    }
+
+    // Methods
     public function getVisitType()
     {
         return $this->visit->getType();
@@ -60,6 +67,7 @@ class Visit extends Model
         return Attribute::make(fn () =>  !$this->awaiting_pharmacy && !$this->awaiting_doctor);
     }
 
+    // Scopes
     public function scopeAwaitingDoctor($query)
     {
         $query->whereNotNull('vitals')->where('awaiting_doctor', true);
