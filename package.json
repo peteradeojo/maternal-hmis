@@ -7,11 +7,17 @@
     },
     "devDependencies": {
         "axios": "^1.1.2",
+        "cz-conventional-changelog": "^3.3.0",
         "laravel-vite-plugin": "^0.8.0",
         "vite": "^4.0.0"
     },
     "dependencies": {
         "datatables.net-dt": "^1.13.6",
         "sass": "^1.66.1"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
     }
 }
