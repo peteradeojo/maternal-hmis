@@ -7,6 +7,11 @@
                 <img src="{{ asset('favicon-3.png') }}">
             </div>
             <div class="col-6">
+                @if(session('error'))
+                    <div class="bg-red py px" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 <h1>Login</h1>
                 <form action="{{ route('login') }}" id="login-form" method="post">
                     @csrf
