@@ -147,6 +147,22 @@ p {
     }
 }
 
+.table-list {
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+        text-align: left;
+    }
+    tr {
+        border: 1px solid #888;
+    }
+
+    th, td {
+        padding: 4px;
+    }
+}
+
 @import "components/spacings";
 @import "components/forms";
 @import "components/buttons";
