@@ -54,4 +54,17 @@ class Patient extends Model
     {
         return $this->hasMany(AntenatalProfile::class)->where('status', Status::active->value)->latest();
     }
+
+    public function tests()
+    {
+        return $this->hasMany(DocumentationTest::class, 'patient_id')->latest();
+    }
+    public function prescriptions()
+    {
+        return $this->hasMany(DocumentationPrescription::class)->latest();
+    }
+    public function documentations()
+    {
+        return $this->hasMany(Documentation::class)->latest();
+    }
 }

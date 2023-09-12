@@ -13,6 +13,8 @@ class DocumentationTest extends Model
         'documentation_id',
         'name',
         'status',
+        'patient_id',
+        'results'
     ];
 
     protected $casts = [
@@ -22,5 +24,9 @@ class DocumentationTest extends Model
     public function documentation()
     {
         return $this->belongsTo(Documentation::class);
+    }
+
+    public function testable() {
+        return $this->morphTo();
     }
 }

@@ -17,6 +17,10 @@
             @if ($user->department_id == DepartmentsEnum::IT->value)
                 @include('it.departments')
             @endif
+
+            @if ($user->department_id == DepartmentsEnum::LAB->value)
+                @livewire('lab.waiting-patients', ['user' => $user])
+            @endif
         </div>
     </div>
 @endsection

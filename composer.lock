@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "405591e54c45c7e1b6320d06bd6fb08a",
+    "content-hash": "6471114b03b4e526e13dc06ded0643f4",
     "packages": [
         {
             "name": "brick/math",
@@ -2378,6 +2378,51 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
+        },
+        {
+            "name": "onezero/laas",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/peteradeojo/laravel-laas-sdk.git",
+                "reference": "773df49755c40dc08771037659c59f5b543127b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/peteradeojo/laravel-laas-sdk/zipball/773df49755c40dc08771037659c59f5b543127b4",
+                "reference": "773df49755c40dc08771037659c59f5b543127b4",
+                "shasum": ""
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "pestphp/pest": "^2.18"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "OneZero\\Laas\\LaasServiceProvider"
+                    ],
+                    "aliases": {
+                        "Laas": "OneZero\\Laas\\Facade"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "OneZero\\Laas\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Laravel package for integrating the LAAS API",
+            "support": {
+                "issues": "https://github.com/peteradeojo/laravel-laas-sdk/issues",
+                "source": "https://github.com/peteradeojo/laravel-laas-sdk/tree/1.0.3"
+            },
+            "time": "2023-09-11T01:24:06+00:00"
         },
         {
             "name": "phpoption/phpoption",

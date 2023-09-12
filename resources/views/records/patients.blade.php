@@ -62,7 +62,8 @@
                 },
                 {
                     data: function(row, type, set) {
-                        return `<a href="/records/patients/${row.id}">View</a>`;
+                        return `<a href="{{ route('records.patient', ':id') }}">View</a>`.replace(':id', row
+                            .id);
                     }
                 }
             ],

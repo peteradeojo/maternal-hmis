@@ -14,11 +14,12 @@ return new class extends Migration
     {
         Schema::create('documentation_tests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('documentation_id')->constrained('documentations');
+            $table->foreignId('patient_id')->constrained('patients');
             $table->string('name');
             $table->json('results')->nullable();
             $table->foreignId('tested_by')->nullable()->constrained('users')->nullOnDelete();
             $table->smallInteger('status')->default(Status::pending->value);
+            $table->morphs('testable');
             $table->timestamps();
         });
     }

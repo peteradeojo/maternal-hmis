@@ -9,6 +9,9 @@
             </div>
 
             <div class="foldable-body unfolded">
+                @foreach ($errors->all() as $message)
+                    <p>{{ $message }}</p>
+                @endforeach
                 <form action="" method="post">
                     @csrf
                     <div class="form-group">

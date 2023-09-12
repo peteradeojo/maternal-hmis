@@ -10,4 +10,9 @@ class DocumentationPrescription extends Model
     use HasFactory;
 
     protected $guarded = null;
+
+    public function prescriptionable()
+    {
+        return $this->morphTo();
+    }
 }

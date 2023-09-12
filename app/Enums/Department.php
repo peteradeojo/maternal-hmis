@@ -11,6 +11,6 @@ enum Department: int {
     case IT = 6;
 
     public static function getIds() {
-        return array_values(self::cases());
+        return array_map(fn($department) => $department->value, self::cases());
     }
 }

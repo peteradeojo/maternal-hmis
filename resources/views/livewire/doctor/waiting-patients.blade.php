@@ -22,7 +22,11 @@
                             <td>{{ $v->patient->category->name }}</td>
                             <td>{{ $v->getVisitType() }}</td>
                             <td>
-                                <a href="{{ route('doctor.treat', $v) }}">Start Visit</a>
+                                @if ($v->documentations->count() > 0)
+                                    <a href="{{ route('doctor.follow-up', $v->documentations[0]->id) }}">Review Last Documentation</a>
+                                @else
+                                    <a href="{{ route('doctor.treat', $v) }}">Start Visit</a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

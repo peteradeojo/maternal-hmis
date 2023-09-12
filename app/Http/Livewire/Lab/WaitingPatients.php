@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Livewire\Lab;
+
+use App\Models\Documentation;
+use App\Models\DocumentationTest;
+use App\Models\Patient;
+use App\Models\User;
+use Livewire\Component;
+
+class WaitingPatients extends Component
+{
+    public User $user;
+
+    public $documentations = [];
+
+    public function mount()
+    {
+        $this->load();
+    }
+
+    public function load()
+    {
+        $this->documentations = Documentation::whereHas('tests', function ($query) {
+        })->whereHas('visit', function ($query) {
+            $query->where('awaiting_lab_results', true);
+        })->get();
+    }
+
+    public function render()
+    {
+        return view('livewire.lab.waiting-patients');
+    }
+}

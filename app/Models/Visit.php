@@ -36,7 +36,7 @@ class Visit extends Model
 
     public function documentations()
     {
-        return $this->hasMany(Documentation::class, 'visit_id');
+        return $this->hasMany(Documentation::class, 'visit_id')->latest();
     }
 
     // Methods

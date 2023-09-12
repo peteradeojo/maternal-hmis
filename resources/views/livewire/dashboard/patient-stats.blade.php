@@ -32,8 +32,8 @@
         </div>
     </div>
 
-    @if (!in_array($user->department_id, [DepartmentsEnum::DOC->value, DepartmentsEnum::NUR->value]))
-        <div class="card py px">
+    @if (in_array($user->department_id, [DepartmentsEnum::NUR->value, DepartmentsEnum::REC->value]))
+        <div class="card py px mb-1">
             <div class="card-header">
                 Waiting Patients
             </div>

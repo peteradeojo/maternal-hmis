@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('documentation_prescriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('documentation_id')->constrained('documentations');
+            $table->foreignId('patient_id')->constrained('patients');
             $table->string('name');
             $table->string('dosage')->nullable();
             $table->string('duration')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('requested_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('dispensed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->smallInteger('status')->default(Status::pending->value);
+            $table->morphs('prescriptionable', 'prescription_type_index');
             $table->timestamps();
         });
     }

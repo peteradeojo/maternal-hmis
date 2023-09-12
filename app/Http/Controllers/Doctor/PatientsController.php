@@ -6,6 +6,7 @@ use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\AncVisit;
+use App\Models\AntenatalProfile;
 use App\Models\Department;
 use App\Models\Documentation;
 use App\Models\Visit;
@@ -48,7 +49,7 @@ class PatientsController extends Controller
             ]);
 
             foreach ($data['tests'] as $test) {
-                $doc->tests()->create(['name' => $test, 'status' => Status::pending->value]);
+                $doc->tests()->create(['name' => $test, 'status' => Status::pending->value, 'patient_id' => $visit->patient_id]);
             }
 
             foreach ($data['treatments'] as $tIndex => $t) {
@@ -58,6 +59,7 @@ class PatientsController extends Controller
                     'duration' => $data['duration'][$tIndex],
                     'status' => Status::pending->value,
                     'requested_by' => $request->user()->id,
+                    'patient_id' => $visit->patient_id,
                 ]);
             }
 
@@ -109,5 +111,33 @@ class PatientsController extends Controller
         $records->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
 
         return redirect()->route('dashboard');
+    }
+
+    public function followUp(Request $request, Documentation $documentation)
+    {
+        if ($request->method() !== 'POST') return view('doctors.follow-up', compact('documentation'));
+    }
+
+    public function pendingAncBookings(Request $request)
+    {
+        return view('doctors.anc-bookings');
+    }
+
+    public function submitAncBooking(Request $request, AntenatalProfile $profile)
+    {
+        $request->validate([
+            'gravidity' => 'required|numeric',
+            'parity' => 'required|numeric',
+            'fundal_height' => 'required|numeric',
+            'fetal_heart_rate' => 'required|numeric',
+            'presentation' => 'required|string',
+            'lie' => 'required|string',
+            'presentation_relationship' => 'required|string',
+        ]);
+
+        $profile->update($request->all() + ['doctor_id' => $request->user()->id]);
+
+        $profile->awaiting_doctor = false;
+        $profile->save();
     }
 }
