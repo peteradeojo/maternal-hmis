@@ -13,6 +13,12 @@
             <li class="nav-item">
                 <a href="{{ $d }}" class="nav-link">{{ $name }}</a>
             </li>
-        @endforeach
+            @endforeach
+            <li class="nav-item">
+                <a href="{{ route('user-profile') }}" class="nav-link">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('logout') }}" class="nav-link">Logout</a>
+            </li>
     </ul>
 </nav>

@@ -6,10 +6,8 @@ use App\Enums\Department;
 function departmentRoutes()
 {
     $base = [
-        route('logout') => 'Logout',
     ];
 
-    // $all = [];
     $doctors = array_merge(
         [
             route('doctor.patients') => 'Patients',
