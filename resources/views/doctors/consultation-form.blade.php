@@ -2,8 +2,8 @@
 
 @section('content')
     <div class="container">
-        <div class="row my">
-            <div class="col-4">
+        <div class="row my start">
+            <div class="col-6">
                 <div class="card py px foldable">
                     <div class="header foldable-header">
                         <p class="card-header">Profile</p>
@@ -30,11 +30,11 @@
                     <div class="body foldable-body">
                         <div class="my">
                             <p><b>Taken By: </b> {{ $visit->vital_staff?->name }}</p>
-                            <p><b>Time: </b>
+                            {{-- <p><b>Time: </b>
                                 @if (isset($visit->vitals->time))
                                     {{ Carbon::parse($visit->vitals->time)->format('Y-m-d h:i A') }}
                                 @endif
-                            </p>
+                            </p> --}}
                             <p><b>Weight: </b> {{ $visit->vitals->data->weight }} kg</p>
                             <p><b>Height: </b> {{ $visit->vitals->data->height }} cm</p>
                             <p><b>B/P: </b> {{ $visit->vitals->data->blood_pressure }} mmHg</p>
@@ -45,42 +45,39 @@
                     </div>
                 </div>
             </div>
-            @if ($visit->patient->category->name == 'Antenatal')
-                <div class="col-4 pl">
-                    <div class="card foldable py px">
-                        <div class="header foldable-header">
-                            <div class="card-header">Antenatal Booking</div>
-                        </div>
-                        <div class="body foldable-body">
-                            <div class="py">
-                                <p><b>Date of Booking: </b>
-                                    {{ $visit->patient->antenatalProfiles[0]->created_at?->format('Y-m-d') }}</p>
-                                <p><b>Card Type: </b>
-                                    {{ AncCardEnum::tryFrom($visit->patient->antenatalProfiles[0]->card_type)?->name }}
-                                </p>
-                                <p><b>EDD: </b> {{ $visit->patient->antenatalProfiles[0]->edd?->format('Y-m-d') }}</p>
-                                <p><b>Weeks of Gestation: </b>
-                                    {{ $visit->patient->antenatalProfiles[0]->lmp->diffInWeeks() }}</p>
-                                <p><b>Gravida: </b> {{ $visit->patient->antenatalProfiles[0]->gravida }}</p>
-                                <p><b>Parity: </b> {{ $visit->patient->antenatalProfiles[0]->parity }}</p>
-                                <p><b>Height: </b> {{ $visit->patient->antenatalProfiles[0]->height }} cm</p>
-                                <p><b>Weight: </b> {{ $visit->patient->antenatalProfiles[0]->weight }} kg</p>
-                                <p><b>BP: </b> {{ $visit->patient->antenatalProfiles[0]->bp }} mmHg</p>
-                                <p><b>HB: </b> {{ $visit->patient->antenatalProfiles[0]->hb }} g/dl</p>
-                                <p><b>Urine: </b> {{ $visit->patient->antenatalProfiles[0]->urine }}</p>
-                                <p><b>VDRL: </b> {{ $visit->patient->antenatalProfiles[0]->vdrl }}</p>
-                                <p><b>HIV: </b> {{ $visit->patient->antenatalProfiles[0]->hiv }}</p>
-                                <p><b>HEP B: </b> {{ $visit->patient->antenatalProfiles[0]->hep_b }}</p>
-                                <p><b>HEP C: </b> {{ $visit->patient->antenatalProfiles[0]->hep_c }}</p>
-                                <p><b>Other: </b> {{ $visit->patient->antenatalProfiles[0]->other }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
 
         @if ($visit->patient->category->name == 'Antenatal')
+            <div class="card py px">
+                <div class="header foldable-header">
+                    <div class="card-header">Antenatal Booking</div>
+                </div>
+                <div class="body foldable-body">
+                    <div class="py">
+                        <p><b>Date of Booking: </b>
+                            {{ $visit->patient->antenatalProfiles[0]->created_at?->format('Y-m-d') }}</p>
+                        <p><b>Card Type: </b>
+                            {{ $visit->patient->antenatalProfiles[0]->card_type }}
+                        </p>
+                        <p><b>EDD: </b> {{ $visit->patient->antenatalProfiles[0]->edd }}</p>
+                        <p><b>Weeks of Gestation: </b>
+                            {{ $visit->patient->antenatalProfiles[0]->lmp }}</p>
+                        <p><b>Gravida: </b> {{ $visit->patient->antenatalProfiles[0]->gravida }}</p>
+                        <p><b>Parity: </b> {{ $visit->patient->antenatalProfiles[0]->parity }}</p>
+                        <p><b>Height: </b> {{ $visit->patient->antenatalProfiles[0]->height }} cm</p>
+                        <p><b>Weight: </b> {{ $visit->patient->antenatalProfiles[0]->weight }} kg</p>
+                        <p><b>BP: </b> {{ $visit->patient->antenatalProfiles[0]->bp }} mmHg</p>
+                        <p><b>HB: </b> {{ $visit->patient->antenatalProfiles[0]->hb }} g/dl</p>
+                        <p><b>Urine: </b> {{ $visit->patient->antenatalProfiles[0]->urine }}</p>
+                        <p><b>VDRL: </b> {{ $visit->patient->antenatalProfiles[0]->vdrl }}</p>
+                        <p><b>HIV: </b> {{ $visit->patient->antenatalProfiles[0]->hiv }}</p>
+                        <p><b>HEP B: </b> {{ $visit->patient->antenatalProfiles[0]->hep_b }}</p>
+                        <p><b>HEP C: </b> {{ $visit->patient->antenatalProfiles[0]->hep_c }}</p>
+                        <p><b>Other: </b> {{ $visit->patient->antenatalProfiles[0]->other }}</p>
+                    </div>
+                </div>
+            </div>
+
             @php
                 $ancProfile = &$visit->patient->antenatalProfiles[0];
             @endphp

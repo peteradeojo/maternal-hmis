@@ -10,6 +10,19 @@ class AncVisit extends Model implements Visitation
 {
     use HasFactory;
 
+    public const testsList = [
+        'HIV',
+        'PCV',
+        'Edema',
+        'VDRL',
+        'Hepatitis B',
+        'Blood Group',
+        'Genotype',
+        'Protein',
+        'Glucose',
+        'Pap Smear'
+    ];
+
     protected $fillable = [
         'patient_id',
         'doctor_id',

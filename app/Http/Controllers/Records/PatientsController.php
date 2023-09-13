@@ -85,7 +85,7 @@ class PatientsController extends Controller
                     'spouse_occupation' => $data['spouse_occupation'],
                     'spouse_educational_status' => $data['spouse_educational_status'],
                     'card_type' => $data['card_type'] ?? '1',
-                    'status' => Status::pending->value,
+                    // 'status' => Status::pending->value,
                 ]);
 
                 Department::where('id', EnumsDepartment::NUR->value)->first()->notifyParticipants(new StaffNotification("A new antenatal patient was just registered. Pending booking for {$patient->name}"));

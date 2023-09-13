@@ -15,6 +15,6 @@ Route::name('doctor.')->group(function () {
 
     Route::prefix('med')->group(function () {
         Route::get('/anc-bookings', [PatientsController::class, 'pendingAncBookings'])->name('anc-bookings');
-        Route::post('/anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking');
+        Route::match(['get', 'post'], '/anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking');
     });
 });

@@ -23,22 +23,19 @@ class AntenatalProfile extends Model
         'parity',
         'card_type',
         'status',
-        'blood_pressure',
-        'weight',
-        'height',
-        'pulse',
-        'respiratory_rate',
-        'temperature',
-        'doctor_id',
         'fundal_height',
         'presentation',
         'lie',
         'fetal_heart_rate',
         'presentation_relationship',
+        'status',
     ];
 
     protected $casts = [
-        'tests' => 'array'
+        'lmp' => 'datetime',
+        'edd' => 'datetime',
+        'tests' => 'array',
+        'vitals' => 'array'
     ];
 
     public function patient()

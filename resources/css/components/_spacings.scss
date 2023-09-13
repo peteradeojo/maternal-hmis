@@ -65,6 +65,9 @@ $marginBottom: 0.75em;
     &.between {
         justify-content: space-between;
     }
+    &.start {
+        align-items: flex-start;
+    }
 }
 
 @for $i from 1 through 12 {

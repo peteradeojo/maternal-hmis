@@ -1,20 +1,3 @@
-import DataTable, { fetchToken, triggerAlert } from "../app";
-
-const table = new DataTable("#patients", {
-    columns: [
-        "name",
-        "category.name",
-        "card_number",
-        "gender_value",
-        ({ id }) => `<a href='/records/patients/${id}' class='mr-2'>View</a>`,
-    ],
-});
-if (table.element) {
-    table.load({
-        url: "/api/records/patients",
-    });
-}
-
 $().ready(function () {
     $("#checkIn")?.on("click", async function (e) {
         e.preventDefault();

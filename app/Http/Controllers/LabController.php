@@ -105,16 +105,7 @@ class LabController extends Controller
     public function ancBooking(Request $request, AntenatalProfile $profile)
     {
         if ($request->method() !== 'POST') {
-            $tests = [
-                'HIV',
-                'VDRL',
-                'Hepatitis B',
-                'Blood Group',
-                'Genotype',
-                'Protein',
-                'Glucose',
-                'Pap Smear'
-            ];
+            $tests = AncVisit::testsList;
             return view('lab.anc-booking', compact('profile', 'tests'));
         }
 
@@ -131,7 +122,11 @@ class LabController extends Controller
         return redirect()->route('lab.antenatals')->with('success', 'Tests booked successfully');
     }
 
-    public function testAnc(Request $request, AncVisit $ancVisit)
+    public function testAnc(Request $request, AncVisit $visit)
     {
+        if ($request->method() !== 'POST') {
+            $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
+            return view('lab.anc-test', compact('tests', 'visit'));
+        }
     }
 }

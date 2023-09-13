@@ -48,34 +48,32 @@ class PatientsController extends Controller
                 'patient_id' => $visit->patient_id,
             ]);
 
-            foreach ($data['tests'] as $test) {
-                $doc->tests()->create(['name' => $test, 'status' => Status::pending->value, 'patient_id' => $visit->patient_id]);
-            }
-
-            foreach ($data['treatments'] as $tIndex => $t) {
-                $doc->treatments()->create([
-                    'name' => $t,
-                    'dosage' => $data['dosage'][$tIndex],
-                    'duration' => $data['duration'][$tIndex],
-                    'status' => Status::pending->value,
-                    'requested_by' => $request->user()->id,
-                    'patient_id' => $visit->patient_id,
-                ]);
-            }
-
-            DB::commit();
-
-            $visit->awaiting_doctor = false;
-
             if (count($data['tests']) > 0) {
+                foreach ($data['tests'] as $test) {
+                    $doc->tests()->create(['name' => $test, 'status' => Status::pending->value, 'patient_id' => $visit->patient_id]);
+                }
+                Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
                 $visit->awaiting_lab_results = true;
             }
 
             if (count($data['treatments']) > 0) {
+                foreach ($data['treatments'] as $tIndex => $t) {
+                    $doc->treatments()->create([
+                        'name' => $t,
+                        'dosage' => $data['dosage'][$tIndex],
+                        'duration' => $data['duration'][$tIndex],
+                        'status' => Status::pending->value,
+                        'requested_by' => $request->user()->id,
+                        'patient_id' => $visit->patient_id,
+                    ]);
+                }
+                Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
                 $visit->awaiting_pharmacy = true;
             }
 
+            $visit->awaiting_doctor = false;
             $visit->save();
+            DB::commit();
 
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
@@ -125,6 +123,9 @@ class PatientsController extends Controller
 
     public function submitAncBooking(Request $request, AntenatalProfile $profile)
     {
+        if ($request->method() == 'GET') {
+            return view('doctors.anc-booking-form', compact('profile'));
+        }
         $request->validate([
             'gravidity' => 'required|numeric',
             'parity' => 'required|numeric',
@@ -132,7 +133,8 @@ class PatientsController extends Controller
             'fetal_heart_rate' => 'required|numeric',
             'presentation' => 'required|string',
             'lie' => 'required|string',
-            'presentation_relationship' => 'required|string',
+            'presentation' => 'required|string',
+            'completed' => 'nullable|accepted'
         ]);
 
         $profile->update($request->all() + ['doctor_id' => $request->user()->id]);
