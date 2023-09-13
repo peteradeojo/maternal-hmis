@@ -1,6 +1,7 @@
-<fieldset class="px">
+<fieldset class="px py">
     <legend>Treatments</legend>
     <input type="text" id="treatments">
+    <button type="button" id="add-treatment">Add</button>
     <table id="treatments-list" class="mt-1 table">
         <thead>
             <tr>
@@ -53,6 +54,10 @@
                     e.preventDefault();
                     addTreatment($(this));
                 }
+            });
+
+            $('#add-treatment').on('click', function() {
+                addTreatment($('#treatments'));
             });
         });
     </script>

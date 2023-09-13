@@ -42,7 +42,8 @@ class Visit extends Model
     // Methods
     public function getVisitType()
     {
-        return $this->visit->getType();
+        // throw new \Exception("I dey here");
+        return $this->visit?->getType();
     }
 
     public function setVitals($data, User $user)

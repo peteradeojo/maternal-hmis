@@ -43,7 +43,7 @@ class PatientsController extends Controller
     {
         $validated = $request->safe()->all();
 
-        $profile->vitals = array_merge($profile->vitals ?? [], [$validated]);
+        $profile->vitals = array_merge($profile->vitals ?? [], $validated);
         $profile->awaiting_vitals = false;
         $profile->save();
 

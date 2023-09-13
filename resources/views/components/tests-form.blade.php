@@ -1,11 +1,10 @@
-<div class="row">
-    <div class="form-group col-4">
-        <label for="tests">Tests</label>
-        <input type="text" id="tests">
-        <button type="button" id="add-test-button">Add</button>
-    </div>
-    <div class="col-8 row pl" id="tests-list"></div>
+<div class="form-group">
+    <label for="tests">Tests</label>
+    <input type="text" id="tests">
+    <button type="button" id="add-test-button" class="btn btn-blue">Add</button>
+    <button type="button" id="clear-button" class="btn btn-red">Clear</button>
 </div>
+<div class="row pl" id="tests-list"></div>
 
 @pushOnce('scripts')
 <script>
@@ -26,6 +25,12 @@
             elem.val('');
         }
 
+        $("#clear-button").on("click", function() {
+            const inputs = document.querySelectorAll("#tests-list p.tag-input");
+            inputs.forEach(function(input) {
+                input.remove();
+            });
+        });
         $("#add-test-button").on("click", function() {
             const e = $("#tests");
             addTestToList(e);

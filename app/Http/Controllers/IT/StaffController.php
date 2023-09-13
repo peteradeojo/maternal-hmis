@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
@@ -35,5 +36,16 @@ class StaffController extends Controller
         $users = User::all();
         $departments = Department::all();
         return view('it.staff', compact('users', 'departments'));
+    }
+
+    public function show(Request $request, User $user) {
+        if ($request->method() == 'POST') {
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return redirect()->route('it.staff.view', $user)->with('success', 'Password updated successfully');
+        }
+
+        return view('it.staff-view', compact('user'));
     }
 }

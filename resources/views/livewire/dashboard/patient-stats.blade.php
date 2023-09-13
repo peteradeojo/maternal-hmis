@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    @if (in_array($user->department_id, [DepartmentsEnum::NUR->value, DepartmentsEnum::REC->value]))
+    @if (in_array($user->department_id, [DepartmentsEnum::REC->value]))
         <div class="card py px mb-1">
             <div class="card-header">
                 Waiting Patients

@@ -134,7 +134,16 @@ class PatientsController extends Controller
             'presentation' => 'required|string',
             'lie' => 'required|string',
             'presentation' => 'required|string',
-            'completed' => 'nullable|accepted'
+            'completed' => 'nullable|accepted',
+            'tests' => 'array',
+            'tests.*' => 'string',
+            'treatments' => 'array',
+            'treatments.*' => 'string',
+            'dosage' => 'array',
+            'dosage.*' => 'string',
+            'duration' => 'array',
+            'duration.*' => 'string',
+            'next_visit' => 'nullable|date',
         ]);
 
         $profile->update($request->all() + ['doctor_id' => $request->user()->id]);

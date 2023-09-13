@@ -70,7 +70,7 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->department->name }}</td>
-                                <td>View</td>
+                                <td><a href="{{ route('it.staff.view', $user->id) }}">View</a></td>
                             </tr>
                         @endforeach
                     </tbody>

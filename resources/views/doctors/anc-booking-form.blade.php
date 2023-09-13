@@ -27,7 +27,7 @@
             <div class="col-4 p-1">
                 <h3>Lab</h3>
                 <hr>
-                @forelse ($profile->tests as $t => $r)
+                @forelse ($profile->tests ?? [] as $t => $r)
                     <p class="my-1"><b>{{ $t }}: </b> {{ $r ?? 'Not provided' }}</p>
                 @empty
                     <p class="my-1">No Tests Taken Yet</p>
@@ -91,7 +91,15 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="my-2">
+                @include('components.tests-form')
+            </div>
+            @include('components.prescriptions-form')
+            <div class="form-group mt-1">
+                <label for="next_date">Next Visit Date</label>
+                <input type="date" name="next_date" id="next_date" class="form-control" required value="{{ now()->addWeeks(2)->format('Y-m-d') }}" />
+            </div>
+            <div class="form-group mt-1">
                 <label><input type="checkbox" name="complete" /> Booking Completed</label><br>
                 <button class="btn btn-blue">Submit</button>
             </div>

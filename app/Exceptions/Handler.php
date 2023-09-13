@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Enums\Queues;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -24,7 +25,13 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            $message = $e->getMessage();
+            $context = $this->context() + [
+                'stack' => $e->getTraceAsString(),
+            ];
+            dispatch(function () use (&$message, &$context) {
+                laas()->emergency($message, $context);
+            });
         });
     }
 }

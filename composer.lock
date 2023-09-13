@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6471114b03b4e526e13dc06ded0643f4",
+    "content-hash": "c3573fcf23c71b8580dbf35dccce01fe",
     "packages": [
         {
             "name": "brick/math",
@@ -2381,16 +2381,16 @@
         },
         {
             "name": "onezero/laas",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/peteradeojo/laravel-laas-sdk.git",
-                "reference": "773df49755c40dc08771037659c59f5b543127b4"
+                "reference": "a74171d921a85906f56d76a412c092f6134df938"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/peteradeojo/laravel-laas-sdk/zipball/773df49755c40dc08771037659c59f5b543127b4",
-                "reference": "773df49755c40dc08771037659c59f5b543127b4",
+                "url": "https://api.github.com/repos/peteradeojo/laravel-laas-sdk/zipball/a74171d921a85906f56d76a412c092f6134df938",
+                "reference": "a74171d921a85906f56d76a412c092f6134df938",
                 "shasum": ""
             },
             "require-dev": {
@@ -2420,9 +2420,9 @@
             "description": "Laravel package for integrating the LAAS API",
             "support": {
                 "issues": "https://github.com/peteradeojo/laravel-laas-sdk/issues",
-                "source": "https://github.com/peteradeojo/laravel-laas-sdk/tree/1.0.3"
+                "source": "https://github.com/peteradeojo/laravel-laas-sdk/tree/1.1.0"
             },
-            "time": "2023-09-11T01:24:06+00:00"
+            "time": "2023-09-13T19:44:08+00:00"
         },
         {
             "name": "phpoption/phpoption",
