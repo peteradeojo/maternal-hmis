@@ -35,9 +35,17 @@ class AncVisit extends Model implements Visitation
     {
     }
 
+    public function tests() {
+        return $this->morphMany(DocumentationTest::class, 'testable');
+    }
+
     public function visit()
     {
         return $this->morphOne(Visit::class, 'visit');
+    }
+
+    public function profile() {
+        return $this->belongsTo(AntenatalProfile::class, 'antenatal_profile_id');
     }
 
     public function getType(): string

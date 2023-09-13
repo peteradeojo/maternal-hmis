@@ -8,37 +8,63 @@ $marginBottom: 0.75em;
     .mb-#{$i} {
         margin-bottom: $marginBottom * $i;
     }
-}
-@for $i from 1 through 5 {
     .mt-#{$i} {
         margin-top: $marginBottom * $i;
     }
-}
-@for $i from 1 through 5 {
+    .mx-#{$i} {
+        margin-left: $marginBottom * $i;
+        margin-right: $marginBottom * $i;
+    }
+    .my-#{$i} {
+        margin-top: $marginBottom * $i;
+        margin-bottom: $marginBottom * $i;
+    }
     .ml-#{$i} {
         margin-left: $marginBottom * $i;
     }
-}
-@for $i from 1 through 5 {
     .mr-#{$i} {
         margin-right: $marginBottom * $i;
+    }
+
+    .pl-#{$i} {
+        padding-left: $marginBottom * $i;
+    }
+    .pr-#{$i} {
+        padding-right: $marginBottom * $i;
+    }
+    .pt-#{$i} {
+        padding-top: $marginBottom * $i;
+    }
+    .pb-#{$i} {
+        padding-bottom: $marginBottom * $i;
+    }
+    .p-#{$i} {
+        padding: $marginBottom * $i;
+    }
+    .px-#{$i} {
+        padding-left: $marginBottom * $i;
+        padding-right: $marginBottom * $i;
+    }
+    .py-#{$i} {
+        padding-top: $marginBottom * $i;
+        padding-bottom: $marginBottom * $i;
     }
 }
 
 .pl {
     padding-left: $marginBottom;
 }
-
-@for $i from 1 through 5 {
-    .pl-#{$i} {
-        padding-left: $marginBottom * $i;
-    }
+.pr {
+    padding-right: $marginBottom;
 }
 
 .row {
     display: flex;
-    // align-items: center;
     flex-wrap: wrap;
+    align-items: center;
+    &.between {
+        justify-content: space-between;
+    }
 }
 
 @for $i from 1 through 12 {

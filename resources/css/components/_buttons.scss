@@ -5,6 +5,9 @@
     border: none;
     border-radius: 4px;
 }
+a.btn {
+    text-decoration: none;
+}
 
 // @include colors;
 
@@ -16,9 +19,11 @@
             background-color: lighten($color, 10%);
         }
     }
-
-    .bg-#{"" + $color} {
+    a.btn-#{"" + $color} {
         background-color: $color;
+        &:hover {
+            background-color: darken($color, 30%);
+        }
         color: #fff;
     }
 }

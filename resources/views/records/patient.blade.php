@@ -1,12 +1,16 @@
 @extends('layouts.app')
 @section('title', $patient->name)
 
+@php
+    $btnColor = "btn btn-red";
+@endphp
+
 @section('content')
     <div class="card py px mb-1 foldable">
         <div class="header foldable-header">
-            <div class="row">
+            <div class="row between">
                 <p class="card-header">Biodata</p>
-                <a href="#" id="checkIn" data-id="{{ $patient->id }}">Check In</a>
+                <a href="#" id="checkIn" data-id="{{ $patient->id }}" class="{{ $btnColor }}">Check In</a>
             </div>
         </div>
         <div class="body foldable-body">
@@ -24,10 +28,10 @@
     @if ($patient->category->name == 'Antenatal')
         <div class="card py px mb-1 foldable">
             <div class="header foldable-header">
-                <div class="row">
+                <div class="row between">
                     <p class="card-header">Antenatal Profile</p>
                     @if (isset($patient->antenatalProfiles[0]))
-                        <a id="createAncVisit" href="#" data-id="{{ $patient->id }}">Check In</a>
+                        <a id="createAncVisit" href="#" data-id="{{ $patient->id }}" class="{{ $btnColor }}">Check In</a>
                     @endif
                 </div>
             </div>
@@ -39,8 +43,8 @@
                                 data-id="{{ $patient->id }}">Create
                                 Profile</a></p>
                     @else
-                        <p><b>LMP: </b> {{ $patient->antenatalProfiles[0]->lmp }}</p>
-                        <p><b>Category:</b> {{ ancCardType($patient->antenatalProfiles[0]->card_type) }}</p>
+                        <p><b>LMP Recorded: </b> {{ $patient->antenatalProfiles[0]->lmp }}</p>
+                        <p><b>Category:</b> {{ $patient->antenatalProfiles[0]->card_type }}</p>
                         <p><b>Registration Date:</b> {{ $patient->antenatalProfiles[0]->created_at->format('Y-m-d') }}</p>
                     @endif
 

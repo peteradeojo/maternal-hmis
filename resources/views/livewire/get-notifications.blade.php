@@ -4,7 +4,8 @@
     @forelse ($notifications as $n)
         <div class="card py mb-1 px bg-red">
             <div class="body">
-                {!! $n->data['message'] !!}
+                {!! $n->data['message'] !!}<br>
+                <small>{{ $n->created_at->diffForHumans() }}</small>
             </div>
         </div>
     @empty

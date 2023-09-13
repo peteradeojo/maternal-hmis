@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Nursing;
 
+use App\Enums\Department;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VitalsRequest;
@@ -17,7 +18,18 @@ class PatientsController extends Controller
 
     public function getAncBookings(Request $request)
     {
-        return $this->dataTable($request, AntenatalProfile::with('patient')->where('status', Status::pending->value), [
+        $user = $request->user();
+        $query = AntenatalProfile::with('patient');
+
+        if (!$request->has('admin')) {
+            if ($user->department_id == Department::LAB->value) {
+                $query->where('awaiting_lab', true)->orWhere('tests', null);
+            }
+
+            if ($user->department_id == Department::NUR->value) $query->where('awaiting_vitals', true);
+        }
+
+        return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
                     // dd($search);

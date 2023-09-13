@@ -52,7 +52,7 @@ class Patient extends Model
 
     public function antenatalProfiles()
     {
-        return $this->hasMany(AntenatalProfile::class)->where('status', Status::active->value)->latest();
+        return $this->hasMany(AntenatalProfile::class, 'patient_id')->where('status', Status::active->value)->latest();
     }
 
     public function tests()

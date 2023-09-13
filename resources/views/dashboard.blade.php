@@ -3,25 +3,31 @@
 
 @section('content')
     <div class="container">
+        @if(session('success'))
+            <div class="alert bg-green py px" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
         @livewire('dashboard.patient-stats', ['user' => $user])
 
-        <div class="card">
-            @if ($user->department_id == DepartmentsEnum::DOC->value)
-                @livewire('doctor.waiting-patients', ['user' => $user])
-            @endif
+        {{-- <div class="card"> --}}
+        @if ($user->department_id == DepartmentsEnum::DOC->value)
+            @livewire('doctor.waiting-patients', ['user' => $user])
+        @endif
 
-            @if ($user->department_id == DepartmentsEnum::NUR->value)
-                @livewire('nursing.vital-list')
-            @endif
+        @if ($user->department_id == DepartmentsEnum::NUR->value)
+            @livewire('nursing.vital-list')
+        @endif
 
-            @if ($user->department_id == DepartmentsEnum::IT->value)
-                @include('it.departments')
-            @endif
+        @if ($user->department_id == DepartmentsEnum::IT->value)
+            @include('it.departments')
+        @endif
 
-            @if ($user->department_id == DepartmentsEnum::LAB->value)
-                @livewire('lab.waiting-patients', ['user' => $user])
-            @endif
-        </div>
+        @if ($user->department_id == DepartmentsEnum::LAB->value)
+            @livewire('lab.waiting-patients', ['user' => $user])
+        @endif
+        {{-- </div> --}}
     </div>
 @endsection
 

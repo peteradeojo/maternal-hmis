@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\AncCategory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,8 +38,7 @@ class AntenatalProfile extends Model
     ];
 
     protected $casts = [
-        'lmp' => 'date',
-        'edd' => 'date',
+        'tests' => 'array'
     ];
 
     public function patient()
@@ -48,5 +49,10 @@ class AntenatalProfile extends Model
     public function history()
     {
         return $this->hasMany(AncVisit::class)->where('doctor_id', '!=', null);
+    }
+
+    public function cardType(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => AncCategory::tryFrom($value)->name);
     }
 }

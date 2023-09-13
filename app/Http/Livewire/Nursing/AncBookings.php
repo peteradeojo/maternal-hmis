@@ -6,6 +6,8 @@ use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\AntenatalProfile;
 use App\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Livewire\Component;
 
 class AncBookings extends Component
@@ -35,6 +37,9 @@ class AncBookings extends Component
     {
         if ($this->user->department_id == Department::DOC->value) {
             return view('doctors.anc-booking-form');
+        }
+        if ($this->user->department_id == Department::LAB->value) {
+            return view('lab.anc-bookings');
         }
         return view('livewire.nursing.anc-bookings');
     }

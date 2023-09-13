@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Models\AncVisit;
+use App\Models\AntenatalProfile;
 use App\Models\Documentation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -87,5 +89,49 @@ class LabController extends Controller
                 });
             }
         ]);
+    }
+
+    public function getAncVisits(Request $request)
+    {
+        return $this->dataTable($request, AncVisit::with(['profile'])->doesntHave('tests')->latest(), [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'like', "{$search}%")->orWhere('card_number', 'like', "{$search}%");
+                });
+            },
+        ]);
+    }
+
+    public function ancBooking(Request $request, AntenatalProfile $profile)
+    {
+        if ($request->method() !== 'POST') {
+            $tests = [
+                'HIV',
+                'VDRL',
+                'Hepatitis B',
+                'Blood Group',
+                'Genotype',
+                'Protein',
+                'Glucose',
+                'Pap Smear'
+            ];
+            return view('lab.anc-booking', compact('profile', 'tests'));
+        }
+
+        $request->validate([
+            'tests' => 'required|array',
+            'tests.*' => 'nullable|string',
+            'completed' => 'nullable|accepted',
+        ]);
+
+        $profile->tests = array_merge($profile->tests ?? [], $request->tests);
+        if ($request->completed) $profile->awaiting_lab = false;
+        $profile->save();
+
+        return redirect()->route('lab.antenatals')->with('success', 'Tests booked successfully');
+    }
+
+    public function testAnc(Request $request, AncVisit $ancVisit)
+    {
     }
 }

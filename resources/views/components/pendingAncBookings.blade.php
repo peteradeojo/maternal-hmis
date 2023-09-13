@@ -1,25 +1,18 @@
-@extends('layouts.app')
+<div class="card py px">
+    <table id="bookings">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Patient Name</th>
+                <th>Booking Date</th>
+                <th>Booking Time</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 
-@section('content')
-    @livewire('nursing.anc-bookings')
-
-    {{-- <div class="card py px">
-        <table id="bookings">
-            <thead>
-                <tr>
-                    <th>Booking ID</th>
-                    <th>Patient Name</th>
-                    <th>Booking Date</th>
-                    <th>Booking Time</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div> --}}
-    @include('components.pendingAncBookings')
-@endsection
-
-{{-- @push('scripts')
+@push('scripts')
     <script>
         $(function() {
             $("#bookings").DataTable({
@@ -28,7 +21,7 @@
                     url: "{{ route('api.nursing.anc-bookings') }}",
                 },
                 columns: [{
-                        data: 'id'
+                        data: @if(isset($url)) (row) => `<a href=:url>${row.id}</a>`.replace(":url", "{{ $url }}" + row.id)  @else 'id' @endif
                     },
                     {
                         data: 'patient.name'
@@ -43,4 +36,4 @@
             });
         });
     </script>
-@endpush --}}
+@endpush
