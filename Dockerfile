@@ -37,9 +37,10 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /app
 
-ADD composer.json composer.lock package.json yarn.lock /app/
-
+ADD package.json yarn.lock /app/
 RUN yarn install
+
+ADD composer.json composer.lock /app/
 RUN composer install --no-scripts --no-interaction --no-autoloader --no-dev --prefer-dist
 
 ADD . ./

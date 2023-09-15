@@ -12,7 +12,15 @@ class Visit extends Model
     use HasFactory;
 
     protected $fillable = [
-        'visit_type', 'visit_id', 'status', 'patient_id'
+        'visit_type',
+        'visit_id',
+        'status',
+        'patient_id',
+        'awaiting_vitals',
+        'awaiting_doctor',
+        'awaiting_lab_results',
+        'awaiting_tests',
+        'awaiting_pharmacy',
     ];
 
     protected $with = ['visit'];

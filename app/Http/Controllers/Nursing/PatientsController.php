@@ -32,8 +32,7 @@ class PatientsController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
-                    // dd($search);
-                    $query->where('name', 'like', "%{$search}%");
+                    $query->where('name', 'like', "{$search}%");
                 });
             }
         ]);

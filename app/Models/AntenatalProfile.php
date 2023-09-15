@@ -52,4 +52,12 @@ class AntenatalProfile extends Model
     {
         return Attribute::make(get: fn ($value) => AncCategory::tryFrom($value)->name);
     }
+
+    public function tests() {
+        return $this->morphMany(DocumentationTest::class, 'testable');
+    }
+
+    public function getVitals() {
+        return $this->vitals;
+    }
 }

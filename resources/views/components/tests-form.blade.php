@@ -4,7 +4,11 @@
     <button type="button" id="add-test-button" class="btn btn-blue">Add</button>
     <button type="button" id="clear-button" class="btn btn-red">Clear</button>
 </div>
-<div class="row pl" id="tests-list"></div>
+<div class="row pl" id="tests-list">
+    @foreach ($error['tests'] ?? [] as $test)
+    <p class='tag-input'><span>{{ $test }}</span><button type='button' onclick="this.closest('.tag-input').remove()">&times;</button><input type='hidden' name='tests[]' readonly value='{{ $test }}'></p>
+    @endforeach
+</div>
 
 @pushOnce('scripts')
 <script>

@@ -1,1 +1,10 @@
-$colors: ( blue, red, green);
+$colors: (blue, red, green, white, black);
+
+@each $color in $colors {
+    .bg-#{"" + $color} {
+        background: $color;
+    }
+    .text-#{"" + $color} {
+        color: $color;
+    }
+}

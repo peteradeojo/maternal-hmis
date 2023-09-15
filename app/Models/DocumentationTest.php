@@ -10,7 +10,6 @@ class DocumentationTest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'documentation_id',
         'name',
         'status',
         'patient_id',

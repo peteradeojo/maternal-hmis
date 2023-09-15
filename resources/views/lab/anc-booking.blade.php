@@ -10,6 +10,9 @@
             <p><b>Age: </b>{{ $profile->patient->dob->diffForHumans(syntax: 1) }}</p>
         </div>
         <div class="body py">
+            @foreach ($errors->all() as $error)
+                <div class="p-1 bg-red text-white">{{ $error }}</div>
+            @endforeach
             <form action="" method="post">
                 @csrf
                 <div class="row">
@@ -22,7 +25,7 @@
                     @endforeach
                 </div>
                 <div class="pt-1 form-group">
-                    <label><input type="checkbox" name="completed"> Is Completed?</label><br />
+                    <label><input type="checkbox" name="completed" /> Is Completed?</label><br />
                     <button class="mt-1 btn btn-blue" type="submit">Submit</button>
                 </div>
             </form>

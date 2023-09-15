@@ -21,10 +21,10 @@ class WaitingPatients extends Component
 
     public function load()
     {
-        $this->documentations = Documentation::whereHas('tests', function ($query) {
+        $this->documentations = Documentation::whereHas('tests', function ($q) {
         })->whereHas('visit', function ($query) {
-            $query->where('awaiting_lab_results', true);
-        })->get();
+            $query->where('awaiting_lab_results', true); //->orWhere('awaiting_tests', true);
+        })->limit(100)->get();
     }
 
     public function render()

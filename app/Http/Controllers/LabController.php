@@ -112,7 +112,7 @@ class LabController extends Controller
         $request->validate([
             'tests' => 'required|array',
             'tests.*' => 'nullable|string',
-            'completed' => 'nullable|accepted',
+            'completed' => 'nullable|in:1,on,true,yes',
         ]);
 
         $profile->tests = array_merge($profile->tests ?? [], $request->tests);
@@ -128,5 +128,10 @@ class LabController extends Controller
             $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
             return view('lab.anc-test', compact('tests', 'visit'));
         }
+    }
+
+    public function testReport(Request $request, Documentation $doc)
+    {
+        return view('lab.testReport', compact('doc'));
     }
 }
