@@ -19,7 +19,7 @@ class CategorySeeder extends Seeder
                 'description' => 'General/Adult patients',
             ],
             [
-                'name' => 'Paediatric',
+                'name' => 'Pediatric',
                 'description' => 'Children patients',
             ],
             [
@@ -29,7 +29,7 @@ class CategorySeeder extends Seeder
             [
                 'name' => 'Fertility',
                 'description' => 'Fertility Patients'
-            ]
+            ],
         ];
 
         foreach ($categories as $category) {

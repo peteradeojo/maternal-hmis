@@ -7,7 +7,7 @@
             <p><b>Card number: </b>{{ $profile->patient->card_number }}</p>
             <p><b>Gender: </b>{{ $profile->patient->gender_value }}</p>
             <p><b>Phone number: </b>{{ $profile->patient->phone }}</p>
-            <p><b>Age: </b>{{ $profile->patient->dob->diffForHumans(syntax: 1) }}</p>
+            <p><b>Age: </b>{{ $profile->patient->dob?->diffForHumans(syntax: 1) }}</p>
         </div>
         <div class="body py">
             @foreach ($errors->all() as $error)

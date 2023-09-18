@@ -36,6 +36,8 @@ class PatientsController extends Controller
             'next_visit' => 'nullable|date',
         ]);
 
+        $request->mergeIfMissing(['tests' => []]);
+
         $data['tests'] = array_unique($request->tests);
 
         DB::beginTransaction();
@@ -56,7 +58,7 @@ class PatientsController extends Controller
                 $visit->awaiting_lab_results = true;
             }
 
-            if (count($data['treatments']) > 0) {
+            if (count($data['treatments'] ?? []) > 0) {
                 foreach ($data['treatments'] as $tIndex => $t) {
                     $doc->treatments()->create([
                         'name' => $t,
@@ -219,6 +221,7 @@ class PatientsController extends Controller
             ]);
         }
         if (count($tests) > 0) return true;
+        return false;
     }
 
     private function processAndSaveAncTreatments(Request $request, Documentation &$doc, $id = null)
@@ -233,5 +236,6 @@ class PatientsController extends Controller
             ]);
         }
         if (count($request->treatments ?? []) > 0) return true;
+        return false;
     }
 }

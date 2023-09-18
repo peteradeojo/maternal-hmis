@@ -144,6 +144,9 @@
                 </div>
             </div>
             <div class="body foldable-body unfolded">
+                @foreach ($errors->all() as $error)
+                    {{ $error }}
+                @endforeach
                 <div class="my">
                     @livewire('doctor.consultation-form', ['visit' => $visit])
                 </div>

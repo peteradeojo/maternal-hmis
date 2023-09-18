@@ -23,7 +23,7 @@
                         <div class="col-6 px">
                             <p><u><b>{{ strtoupper($test->name) }}</b></u></p>
 
-                            @foreach ($test->results as $r)
+                            @foreach ($test->results ?? [] as $r)
                                 <p class="py-1"><b>{{ $r->description }}: </b> {{ $r->result }}</p>
                             @endforeach
                         </div>

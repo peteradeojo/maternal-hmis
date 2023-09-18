@@ -8,7 +8,7 @@
             <p><b>Class: </b>{{ $visit->patient->antenatalProfiles[0]->card_type }}</p>
             <p><b>Gender: </b>{{ $visit->patient->gender_value }}</p>
             <p><b>Phone number: </b>{{ $visit->patient->phone }}</p>
-            <p><b>Age: </b>{{ $visit->patient->dob->diffForHumans(syntax: 1) }}</p>
+            <p><b>Age: </b>{{ $visit->patient->dob?->diffForHumans(syntax: 1) }}</p>
         </div>
         <div class="body py">
             <form action="" method="post">

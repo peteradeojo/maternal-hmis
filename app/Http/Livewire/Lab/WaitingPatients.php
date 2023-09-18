@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Lab;
 
+use App\Enums\Status;
 use App\Models\Documentation;
 use App\Models\DocumentationTest;
 use App\Models\Patient;
@@ -22,8 +23,7 @@ class WaitingPatients extends Component
     public function load()
     {
         $this->documentations = Documentation::whereHas('tests', function ($q) {
-        })->whereHas('visit', function ($query) {
-            $query->where('awaiting_lab_results', true); //->orWhere('awaiting_tests', true);
+            $q->where('status', '!=', Status::completed->value);
         })->limit(100)->get();
     }
 

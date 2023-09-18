@@ -9,7 +9,7 @@
                 <div class="row start">
                     <div class="col-6">
                         <p class="my-1"><b>Name: </b> {{ $profile->patient->name }}</p>
-                        <p class="my-1"><b>Age: </b> {{ $profile->patient->dob->diffForHumans(syntax: true) }}</p>
+                        <p class="my-1"><b>Age: </b> {{ $profile->patient->dob?->diffForHumans(syntax: true) }}</p>
                         <p class="my-1"><b>Card Type: </b> {{ $profile->card_type }}</p>
                         <p class="my-1"><b>Gestational Age: </b> {{ $profile->lmp->diffInWeeks() }} week(s)</p>
                         <p class="my-1"><b>LMP: </b> {{ $profile->lmp->format('Y-m-d') }}</p>
