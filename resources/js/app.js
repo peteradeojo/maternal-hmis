@@ -26,3 +26,14 @@ export function triggerAlert(status = "success", message) {
         div.remove();
     }, 5000);
 }
+
+function initializeTagInput(elem) {
+    elem.on("keypress", function (e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            return (callback) => {
+                callback(this.value);
+            };
+        }
+    });
+}

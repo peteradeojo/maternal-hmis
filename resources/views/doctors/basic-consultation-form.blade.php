@@ -1,9 +1,7 @@
 <form action="" method="post">
     @csrf
-    <div class="form-group">
-        <label for="complaints">Complaints</label>
-        <textarea name="symptoms" id="complaints" cols="30" class="form-control"></textarea>
-    </div>
+    @include('components.complaints-form')
+    @include('components.examinations-form')
     <div class="form-group">
         <label for="diagnosis">Diagnosis</label>
         <textarea name="prognosis" id="diagnosis" cols="30" class="form-control"></textarea>
@@ -22,4 +20,3 @@
         <button class="btn btn-red" type="submit">Submit</button>
     </div>
 </form>
-

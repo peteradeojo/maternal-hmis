@@ -75,7 +75,7 @@ class PatientsController extends Controller
 
             $visit->awaiting_doctor = false;
             $visit->save();
-            DB::commit();
+            // DB::commit();
 
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
