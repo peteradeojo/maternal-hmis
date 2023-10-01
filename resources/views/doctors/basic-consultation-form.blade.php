@@ -6,7 +6,12 @@
         <label for="diagnosis">Diagnosis</label>
         <textarea name="prognosis" id="diagnosis" cols="30" class="form-control"></textarea>
     </div>
-    @include('components.tests-form')
+
+    <fieldset class="p-1">
+        <legend>Tests & Investigations</legend>
+        @include('components.tests-form')
+        @include('components.imagings-form')
+    </fieldset>
     @include('components.prescriptions-form')
     <div class="form-group">
         <label for="remarks">Remarks</label>

@@ -28,9 +28,13 @@
                 const button = document.createElement('button');
                 const tbody = document.querySelector('#treatments-list tbody');
 
+                const val = elem.val();
+
+                if (val.length < 1) return;
+
                 input.type = 'text';
                 input.name = `treatments[${rowCount}]`;
-                input.setAttribute('value', elem.val());
+                input.setAttribute('value', val);
                 input.readOnly = true;
                 button.type = 'button';
                 button.textContent = 'Remove';

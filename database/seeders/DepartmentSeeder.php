@@ -39,6 +39,11 @@ class DepartmentSeeder extends Seeder
                 'id' => Department::LAB->value,
                 'name' => 'Laboratory',
                 'description' => 'Laboratory, lab, medical laboratory, medical lab'
+            ],
+            [
+                'id' => Department::RAD->value,
+                'name' => 'Radiology',
+                'description' => 'Radiology, radiologist, radiographers, radiographer'
             ]
         ];
 

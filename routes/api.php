@@ -22,5 +22,6 @@ Route::middleware(['auth'])->group(function () {
 
     include_once __DIR__ . '/api/laboratory.php';
     include_once __DIR__ . '/api/nursing.php';
+    include_once __DIR__ . '/api/rad.php';
 });
 // include_once __DIR__ . '/api/records.php';

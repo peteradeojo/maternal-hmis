@@ -34,12 +34,17 @@ function departmentRoutes()
         route('lab.antenatals') => 'Antenatals',
     ], $base);
 
+    $rad = array_merge([
+        route('rad.scans') => 'Scans',
+    ], $base);
+
     return [
         Department::DOC->value => $doctors,
         Department::NUR->value => $nurses,
         Department::REC->value => $records,
         Department::IT->value => $it,
         Department::LAB->value => $lab,
+        Department::RAD->value => $rad,
     ];
 }
 

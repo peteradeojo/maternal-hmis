@@ -1,7 +1,8 @@
+<h3>Tests</h3>
 <div class="form-group">
-    <label for="tests">Tests</label>
+    {{-- <label for="tests">Tests</label> --}}
     <input type="text" id="tests">
-    <button type="button" id="add-test-button" class="btn btn-blue">Add</button>
+    <button type="button" id="add-test-button" class="btn btn-black">Add</button>
     <button type="button" id="clear-button" class="btn btn-red">Clear</button>
 </div>
 <div class="row pl" id="tests-list">

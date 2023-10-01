@@ -4,7 +4,7 @@
         <label for="complaints-input">Complaints</label>
         <div class="row pb-1">
             <input type="text" id="complaints-input" class="form-control">
-            <button type="button" id="add-complaint-button" class="btn btn-blue">Add</button>
+            <button type="button" id="add-complaint-button" class="btn btn-black">Add</button>
         </div>
         <div id="complaints" class="row">
         </div>

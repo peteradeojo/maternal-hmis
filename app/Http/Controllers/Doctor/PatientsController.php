@@ -9,6 +9,8 @@ use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
 use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\PatientExaminations;
+use App\Models\PatientImaging;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
@@ -20,35 +22,37 @@ class PatientsController extends Controller
     {
         if ($request->method() !== 'POST') return view('doctors.consultation-form', compact('visit'));
 
-        $data = $request->validate([
-            'symptoms' => 'nullable|string',
-            'prognosis' => 'nullable|string',
-            'treatment' => 'nullable|string',
-            'comment' => 'nullable|string',
-            'tests' => 'array',
-            'tests.*' => 'string',
-            'treatments' => 'array',
-            'treatments.*' => 'string',
-            'dosage' => 'array',
-            'dosage.*' => 'string',
-            'duration' => 'array',
-            'duration.*' => 'string',
-            'next_visit' => 'nullable|date',
-        ]);
+        $data = $request->except('_token');
+        if (count(array_filter($data)) < 1) {
+            return back()->withInput()->withErrors(['error' => 'Please fill at least one field']);
+        }
 
         $request->mergeIfMissing(['tests' => []]);
 
         $data['tests'] = array_unique($request->tests);
+        $complaints = $data['complaints'] ?? [];
+        $history = $data['history'] ?? [];
 
         DB::beginTransaction();
 
         try {
             $doc = Documentation::create([
                 ...$data,
+                'symptoms' => count($complaints) > 0 ? implode(',', $complaints) : null,
                 'visit_id' => $visit->id,
                 'user_id' => $request->user()->id,
                 'patient_id' => $visit->patient_id,
             ]);
+
+            // Save complaints
+            foreach ($complaints as $c) {
+                $doc->complaints()->create(['name' => $c]);
+            }
+
+            // Save history of complaints
+            if ($history) {
+                $doc->complaints_history = $history;
+            }
 
             if (count($data['tests']) > 0) {
                 foreach ($data['tests'] as $test) {
@@ -56,6 +60,21 @@ class PatientsController extends Controller
                 }
                 Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
                 $visit->awaiting_lab_results = true;
+            }
+
+            if (count($data['imgs'] ?? []) > 0) {
+                foreach ($data['imgs'] as $img) {
+                    PatientImaging::create([
+                        'name' => $img,
+                        'type' => null,
+                        'status' => Status::pending->value,
+                        'patient_id' => $visit->patient_id,
+                        'documentation_id' => $doc->id,
+                        'requested_by' => $request->user()->id,
+                    ]);
+                }
+                Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
+                $visit->awaiting_radiology = true;
             }
 
             if (count($data['treatments'] ?? []) > 0) {
@@ -73,9 +92,19 @@ class PatientsController extends Controller
                 $visit->awaiting_pharmacy = true;
             }
 
+            $exams = new PatientExaminations([]);
+
+            $exams->patient_id = $visit->patient_id;
+            $exams->documentation_id = $doc->id;
+            $exams->general = $data['physical_exams'];
+            $exams->specifics = collect($data)->only(['head_and_neck', 'chest', 'abdomen', 'muscle_skeletal', 'vaginal_digital_rectal']);
+            $exams->save();
+
+            $doc->save();
+
             $visit->awaiting_doctor = false;
             $visit->save();
-            // DB::commit();
+            DB::commit();
 
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {

@@ -9,6 +9,7 @@ enum Department: int {
     case PHA = 4;
     case LAB = 5;
     case IT = 6;
+    case RAD = 7;
 
     public static function getIds() {
         return array_map(fn($department) => $department->value, self::cases());

@@ -16,6 +16,7 @@ class Documentation extends Model
         'patient_id',
         'user_id',
         'symptoms',
+        'complaints_history',
         'prognosis',
         'comment',
         'status',
@@ -24,6 +25,10 @@ class Documentation extends Model
     protected $with = ['patient', 'tests'];
 
     protected $appends = ['all_tests_completed'];
+
+    protected $casts = [
+        'symptoms' => 'array'
+    ];
 
     public function tests()
     {
@@ -43,6 +48,18 @@ class Documentation extends Model
     public function treatments()
     {
         return $this->morphMany(DocumentationPrescription::class, 'prescriptionable')->latest();
+    }
+
+    public function complaints() {
+        return $this->hasMany(DocumentationComplaints::class, 'documentation_id');
+    }
+
+    public function exams() {
+        return $this->hasMany(PatientExaminations::class, 'documentation_id');
+    }
+
+    public function radios() {
+        return $this->hasMany(PatientImaging::class, 'documentation_id');
     }
 
     public function allTestsCompleted(): Attribute

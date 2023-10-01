@@ -19,6 +19,7 @@ class Visit extends Model
         'awaiting_vitals',
         'awaiting_doctor',
         'awaiting_lab_results',
+        'awaiting_radiology',
         'awaiting_tests',
         'awaiting_pharmacy',
     ];
