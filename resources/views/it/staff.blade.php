@@ -38,11 +38,11 @@
                         <input type="text" name="phone" id="name" class="form-control" placeholder="Phone Number"
                             required>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" name="password" id="password" class="form-control" placeholder="Password"
                             required>
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <button class="btn btn-red">Submit</button>
                     </div>

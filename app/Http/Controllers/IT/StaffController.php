@@ -19,7 +19,7 @@ class StaffController extends Controller
                 'lastname' => 'required|string',
                 'phone' => 'required|string',
                 'department_id' => 'required|integer|exists:departments,id',
-                'password' => 'required|string|min:8',
+                // 'password' => 'required|string|min:8',
             ]);
 
             $user = User::create([
@@ -27,7 +27,7 @@ class StaffController extends Controller
                 'lastname' => $data['lastname'],
                 'phone' => $data['phone'],
                 'department_id' => $data['department_id'],
-                'password' => bcrypt($data['password']),
+                'password' => bcrypt($data['phone']),
             ]);
 
             return redirect()->route('it.staff')->with('success', 'Staff added successfully');
