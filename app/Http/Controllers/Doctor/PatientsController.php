@@ -9,6 +9,7 @@ use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
 use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\Patient;
 use App\Models\PatientExaminations;
 use App\Models\PatientImaging;
 use App\Models\Visit;
@@ -18,6 +19,11 @@ use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
+    public function index(Request $request)
+    {
+        return view('doctors.patients');
+    }
+
     public function treat(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') return view('doctors.consultation-form', compact('visit'));
@@ -266,5 +272,19 @@ class PatientsController extends Controller
         }
         if (count($request->treatments ?? []) > 0) return true;
         return false;
+    }
+
+    public function fetchPatients(Request $request)
+    {
+        return $this->dataTable($request, Patient::with(['category']), [
+            function ($query, $search) {
+                $query->where('name', 'like', "$search%");
+            }
+        ]);
+    }
+
+    public function show(Request $request, Patient $patient)
+    {
+        return view('doctors.show-patient', ['patient' => $patient]);
     }
 }
