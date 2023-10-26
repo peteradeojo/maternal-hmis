@@ -38,7 +38,9 @@ function departmentRoutes()
         route('rad.scans') => 'Scans',
     ], $base);
 
-    $phm = array_merge([], $base);
+    $phm = array_merge([
+        route('phm.prescriptions') => 'Presciptions'
+    ], $base);
     $dis = array_merge([], $base);
 
     return [

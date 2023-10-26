@@ -15,4 +15,8 @@ class DocumentationPrescription extends Model
     {
         return $this->morphTo();
     }
+
+    public function patient() {
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
 }

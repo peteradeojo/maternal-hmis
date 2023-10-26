@@ -39,4 +39,6 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/it.php';
     include __DIR__ . '/web/laboratory.php';
     include __DIR__ . '/web/rad.php';
+    include __DIR__ . '/web/phm.php';
+    include __DIR__ . '/web/dis.php';
 });
