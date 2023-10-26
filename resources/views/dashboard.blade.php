@@ -21,11 +21,15 @@
         @endif
 
         @if ($user->department_id == DepartmentsEnum::IT->value)
-            @include('it.departments')
+            @livewire('it.departments')
         @endif
 
         @if ($user->department_id == DepartmentsEnum::LAB->value)
             @livewire('lab.waiting-patients', ['user' => $user])
+        @endif
+
+        @if (in_array($user->department_id, [DepartmentsEnum::PHA->value, DepartmentsEnum::DIS->value]))
+            @livewire('phm.waiting-patients')
         @endif
         {{-- </div> --}}
     </div>
@@ -33,12 +37,10 @@
 
 @push('scripts')
     <script>
-        $("#waitlist-table")?.DataTable();
+        $("#vitals-table").DataTable();
+        $("table#prescriptions").DataTable();
     </script>
 @endpush
 
 @push('scripts')
-    <script>
-        $("#vitals-table").DataTable();
-    </script>
 @endpush

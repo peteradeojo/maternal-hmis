@@ -30,7 +30,12 @@ class Handler extends ExceptionHandler
                 'stack' => $e->getTraceAsString(),
             ];
             dispatch(function () use (&$message, &$context) {
-                laas()->emergency($message, $context);
+                try {
+                    laas()->emergency($message, $context);
+                } catch (\Throwable $e) {
+                    logger()->emergency($message, $context);
+                    logger()->emergency($e->getMessage());
+                }
             });
         });
     }

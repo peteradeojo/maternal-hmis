@@ -197,4 +197,9 @@ class PatientsController extends Controller
         $profile = AntenatalProfile::create($data + ['patient_id' => $patient->id]);
         return redirect()->route('records.patient', ['patient' => $patient->id]);
     }
+
+    public function checkOut(Request $request, Visit $visit) {
+        $visit->checkOut($request->has('force'));
+        return redirect()->back();
+    }
 }

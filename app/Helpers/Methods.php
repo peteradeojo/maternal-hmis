@@ -27,6 +27,7 @@ function departmentRoutes()
 
     $it = array_merge([
         route('it.staff') => 'Staff',
+        route('it.wards') => 'Wards',
     ], $base);
 
     $lab = array_merge([
@@ -38,6 +39,14 @@ function departmentRoutes()
         route('rad.scans') => 'Scans',
     ], $base);
 
+    $phm = array_merge([
+        route('phm.prescriptions') => 'Presciptions'
+    ], $base);
+
+    $dis = array_merge([
+        route('dis.index') => 'Prescriptions'
+    ], $base);
+
     return [
         Department::DOC->value => $doctors,
         Department::NUR->value => $nurses,
@@ -45,6 +54,8 @@ function departmentRoutes()
         Department::IT->value => $it,
         Department::LAB->value => $lab,
         Department::RAD->value => $rad,
+        Department::PHA->value => $phm,
+        Department::DIS->value => $dis,
     ];
 }
 

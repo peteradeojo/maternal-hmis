@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
         (new CategorySeeder)->run();
         (new DepartmentSeeder)->run();
         (new RoleSeeder)->run();
+        (new WardSeeder)->run();
     }
 }

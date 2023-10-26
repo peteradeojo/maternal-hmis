@@ -19,11 +19,11 @@ a.btn {
             background-color: lighten($color, 10%);
         }
     }
-    a.btn-#{"" + $color} {
-        background-color: $color;
-        &:hover {
-            background-color: darken($color, 30%);
-        }
-        color: #fff;
-    }
+    // a.btn-#{"" + $color} {
+    //     background-color: $color;
+    //     &:hover {
+    //         background-color: darken($color, 30%);
+    //     }
+    //     color: #fff;
+    // }
 }

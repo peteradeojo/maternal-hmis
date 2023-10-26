@@ -44,7 +44,17 @@ class DepartmentSeeder extends Seeder
                 'id' => Department::RAD->value,
                 'name' => 'Radiology',
                 'description' => 'Radiology, radiologist, radiographers, radiographer'
-            ]
+            ],
+            [
+                'id' => Department::PHA->value,
+                'name' => 'Pharmacy',
+                'description' => 'Pharmacy, drugs, medicine'
+            ],
+            [
+                'id' => Department::DIS->value,
+                'name' => 'Dispensary',
+                'description' => 'Pharmacy, drugs, medicine'
+            ],
         ];
 
         foreach ($departments as $department) {

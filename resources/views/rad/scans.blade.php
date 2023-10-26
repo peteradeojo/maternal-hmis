@@ -27,10 +27,10 @@
                 serverSide: true,
                 ajax: '{!! route('api.rad.scans.data') !!}',
                 columns: [{
-                        data: 'patient.name'
+                        data: 'name'
                     },
                     {
-                        data: 'name',
+                        data: 'scans',
                     },
                     {
                         data: (row, type, name) => Date(row.created_at).slice(0, 15)

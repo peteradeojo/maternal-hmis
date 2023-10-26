@@ -23,10 +23,11 @@ class PatientsController extends Controller
 
         if (!$request->has('admin')) {
             if ($user->department_id == Department::LAB->value) {
-                $query->where('awaiting_lab', true)->orWhere('tests', null);
+                $query = $query->where('awaiting_lab', true)->orWhere('tests', null);
             }
 
-            if ($user->department_id == Department::NUR->value) $query->where('awaiting_vitals', true);
+            if ($user->department_id == Department::NUR->value) $query = $query->where('awaiting_vitals', true);
+            if ($user->department_id == Department::DOC->value) $query = $query->where('awaiting_doctor', true);
         }
 
         return $this->dataTable($request, $query, [

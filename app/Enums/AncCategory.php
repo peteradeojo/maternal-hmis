@@ -6,7 +6,7 @@ enum AncCategory: int {
     case Bronze = 1;
     case Silver = 2;
     case Gold = 3;
-    case Diamon = 4;
+    case Diamond = 4;
     case Platinum = 5;
 
     public static function getValues() {

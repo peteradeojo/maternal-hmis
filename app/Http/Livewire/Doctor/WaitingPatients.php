@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Doctor;
 
+use App\Enums\Status;
 use App\Models\User;
 use App\Models\Visit;
 use Livewire\Component;
@@ -18,7 +19,9 @@ class WaitingPatients extends Component
 
     public function load()
     {
-        $this->visits = Visit::whereNotNull('vitals')->where('awaiting_doctor', true)->get();
+        $this->visits = Visit::where(function ($query) {
+            $query->whereNotNull('vitals')->orWhere('awaiting_doctor', true);
+        })->where('status', Status::active->value)->get();
     }
 
     public function render()
