@@ -19,6 +19,8 @@
                 </div>
             </div>
 
+            @dump($user)
+
             <form action="" method="post" class="mt-2">
                 @csrf
                 <div class="form-group">
