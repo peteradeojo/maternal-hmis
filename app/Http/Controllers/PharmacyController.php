@@ -67,4 +67,10 @@ class PharmacyController extends Controller
         $doc->load(['patient', 'treatments']);
         return view('dis.show-prescription', compact('doc'));
     }
+
+    public function closePrescription(Request $request, Documentation $doc)
+    {
+        $doc->treatments()->update(['status' => Status::completed->value]);
+        return redirect()->route('phm.prescriptions');
+    }
 }

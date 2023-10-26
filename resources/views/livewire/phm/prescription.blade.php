@@ -36,7 +36,13 @@
                 <td align="right"><b>{{ number_format($total, 2) }}</b></td>
             </tr>
             <tr>
-                <td>
+                <td class="row">
+                    <button class="btn btn-red"><a href="{{ route('phm.prescriptions') }}" class="text-white">Back</a></button>
+                    <form action="{{ route('phm.close-prescription', $doc) }}" method="post">
+                        @csrf
+                        @method('PATCH')
+                        <button class="btn btn-blue">Close</button>
+                    </form>
                 </td>
             </tr>
         </tfoot>
