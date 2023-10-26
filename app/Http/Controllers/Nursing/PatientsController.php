@@ -27,6 +27,7 @@ class PatientsController extends Controller
             }
 
             if ($user->department_id == Department::NUR->value) $query->where('awaiting_vitals', true);
+            if ($user->department_id == Department::DOC->value) $query->where('awaiting_doctor', true);
         }
 
         return $this->dataTable($request, $query, [
