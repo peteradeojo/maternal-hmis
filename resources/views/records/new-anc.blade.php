@@ -29,6 +29,9 @@
                     <h2>Next of Kin</h2>
                     @include('records.components.next-of-kin-form')
                 </div>
+                <div class="py"></div>
+                <h2>Health Insurance</h2>
+                @include('records.components.hmi-form')
                 <div class="form-group">
                     <button class="btn btn-blue">Submit</button>
                 </div>

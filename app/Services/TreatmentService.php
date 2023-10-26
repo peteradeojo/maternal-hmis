@@ -108,7 +108,7 @@ class TreatmentService
         }
     }
 
-    public function saveFollowUp(Documentation $doc, $data, User $treater)
+    public function admitPatient()
     {
     }
 }

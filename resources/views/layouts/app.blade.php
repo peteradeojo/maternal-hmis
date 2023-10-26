@@ -20,6 +20,9 @@
         @include('components.sidebar')
     </aside>
     <main>
+        @if (session('error'))
+            <p>{{ session('error') }}</p>
+        @endif
         @yield('content')
     </main>
     <aside id="noticeboard">

@@ -13,12 +13,17 @@ use App\Models\Patient;
 use App\Models\PatientCategory;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
+use App\Services\PatientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
+    public function __construct(private PatientService $patientService)
+    {
+    }
+
     public function index()
     {
         return view('records.patients');
@@ -70,10 +75,15 @@ class PatientsController extends Controller
             ]);
         }
 
+        $data = $request->validate($rules);
         DB::beginTransaction();
         try {
-            $data = $request->validate($rules);
             $patient = Patient::create($data);
+
+
+            if($request->has(['hmo_name', 'hmo_company', 'hmo_id_no'])) {
+                $this->patientService->createInsuranceProfile($patient, $request->only(['hmo_name', 'hmo_company', 'hmo_id_no']));
+            }
 
             if ($request->query('mode') == 'anc') {
                 AntenatalProfile::create([
@@ -96,6 +106,7 @@ class PatientsController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+            report($e);
             return redirect()->back()->with('error', 'An error occurred while creating patient record. Please try again later.');
         }
         return redirect()->route('records.patients');
@@ -198,7 +209,8 @@ class PatientsController extends Controller
         return redirect()->route('records.patient', ['patient' => $patient->id]);
     }
 
-    public function checkOut(Request $request, Visit $visit) {
+    public function checkOut(Request $request, Visit $visit)
+    {
         $visit->checkOut($request->has('force'));
         return redirect()->back();
     }

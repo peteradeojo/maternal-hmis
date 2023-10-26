@@ -55,6 +55,11 @@ class DepartmentSeeder extends Seeder
                 'name' => 'Dispensary',
                 'description' => 'Pharmacy, drugs, medicine'
             ],
+            [
+                'id' => Department::NHI->value,
+                'name' => "Health insurance",
+                'description' => 'health insurance, insurance',
+            ],
         ];
 
         foreach ($departments as $department) {
