@@ -12,6 +12,7 @@
             <div class="py">
                 <p><b>Name: </b>{{ $doc->patient->name }}</p>
                 <p><b>Gender: </b>{{ $doc->patient->gender_value }}</p>
+                <p><b>Date: </b> {{ $doc->created_at->format('Y-m-d H:i A') }}</p>
             </div>
         </div>
     </div>
