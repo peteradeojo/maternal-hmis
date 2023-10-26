@@ -88,6 +88,7 @@ class PatientsController extends Controller
                     $doc->treatments()->create([
                         'name' => $t,
                         'dosage' => $data['dosage'][$tIndex],
+                        'frequency' => $data['frequency'][$tIndex],
                         'duration' => $data['duration'][$tIndex],
                         'status' => Status::pending->value,
                         'requested_by' => $request->user()->id,
@@ -214,6 +215,7 @@ class PatientsController extends Controller
                     $documentation->treatments()->create([
                         'name' => $t,
                         'dosage' => $data['dosage'][$tIndex],
+                        'frequency' => $data['frequency'][$tIndex],
                         'duration' => $data['duration'][$tIndex],
                         'status' => Status::pending->value,
                         'requested_by' => $request->user()->id,
@@ -357,6 +359,7 @@ class PatientsController extends Controller
             $doc->treatments()->create([
                 'name' => $t,
                 'dosage' => $request->dosage[$i],
+                'frequency' => $request->frequency[$i],
                 'duration' => $request->duration[$i],
                 'patient_id' => $doc->patient_id,
                 'dispensed_by' => $id
