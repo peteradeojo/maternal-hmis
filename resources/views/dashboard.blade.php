@@ -21,7 +21,7 @@
         @endif
 
         @if ($user->department_id == DepartmentsEnum::IT->value)
-            @include('it.departments')
+            @livewire('it.departments')
         @endif
 
         @if ($user->department_id == DepartmentsEnum::LAB->value)

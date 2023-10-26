@@ -27,6 +27,7 @@ function departmentRoutes()
 
     $it = array_merge([
         route('it.staff') => 'Staff',
+        route('it.wards') => 'Wards',
     ], $base);
 
     $lab = array_merge([

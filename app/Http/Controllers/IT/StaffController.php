@@ -48,4 +48,9 @@ class StaffController extends Controller
 
         return view('it.staff-view', compact('user'));
     }
+
+    public function department(Request $request, Department $dep) {
+        $dep->load('members');
+        return view('it.show-department', compact('dep'));
+    }
 }
