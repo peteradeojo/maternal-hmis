@@ -40,7 +40,13 @@ class PatientsController extends Controller
 
         $request->mergeIfMissing(['tests' => []]);
 
-        $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
+        try {
+            $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
+            return redirect()->route('dashboard');
+        } catch (\Throwable $th) {
+            report($th);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     public function treatAnc(Request $request, AncVisit $visit)
@@ -85,7 +91,15 @@ class PatientsController extends Controller
         $request->mergeIfMissing(['tests' => []]);
 
         $visit = $documentation->visit;
-        $this->treatmentService->saveTreatment($visit, $request->all(), $request->user(), $documentation);
+
+        try {
+            $this->treatmentService->saveTreatment($visit, $request->all(), $request->user(), $documentation);
+
+            return redirect()->route('dashboard');
+        } catch (\Throwable $th) {
+            report($th);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     public function pendingAncBookings(Request $request)

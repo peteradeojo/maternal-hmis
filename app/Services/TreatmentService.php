@@ -104,8 +104,7 @@ class TreatmentService
             return $doc;
         } catch (\Throwable $th) {
             DB::rollBack();
-            report($th);
-            return null;
+            throw $th;
         }
     }
 
