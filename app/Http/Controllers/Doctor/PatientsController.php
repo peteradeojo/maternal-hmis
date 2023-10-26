@@ -96,6 +96,7 @@ class PatientsController extends Controller
                     ]);
                 }
                 Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+                Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
                 $visit->awaiting_pharmacy = true;
             }
 
