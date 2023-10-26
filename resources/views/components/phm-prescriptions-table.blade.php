@@ -16,7 +16,7 @@
                 <td>{{ $d->patient->gender_value }}</td>
                 <td>{{ $d->created_at->format('Y/m/d H:i A') }}</td>
                 <td>
-                    @if (auth()->user()->id == DepartmentsEnum::DIS->value)
+                    @if (auth()->user()->department_id == DepartmentsEnum::DIS->value)
                         <a href="{{ route('dis.get-prescription', $d) }}">View</a>
                     @else
                         <a href="{{ route('phm.get-prescription', $d) }}">View</a>
