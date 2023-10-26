@@ -8,4 +8,5 @@ enum Status: int {
     case blocked = 2;
     case pending = 3;
     case completed = 4;
+    case ejected = 5;
 }

@@ -97,4 +97,21 @@ class Visit extends Model
     {
         $query->where('awaiting_lab_results', true);
     }
+
+    public function scopeAwaiting($query)
+    {
+        $query->where('awaiting_doctor', true)->orWhere('awaiting_vitals', true)->orWhere('awaiting_pharmacy', true);
+    }
+
+    public function checkOut($force = false)
+    {
+        if ($force) {
+            $this->update(['status' => Status::completed->value]);
+            return;
+        }
+
+        if ($this->can_check_out) {
+            $this->update(['status' => Status::completed->value]);
+        }
+    }
 }

@@ -64,7 +64,7 @@
                                                 Check out
                                             @break
                                             @case(false)
-                                                Force Check Out
+                                                <a href="{{ route('records.force-check-out', $v) }}?force">Force Check out</a>
                                             @break
 
                                             @default

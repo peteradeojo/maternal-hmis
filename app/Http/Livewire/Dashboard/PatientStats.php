@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use App\Enums\Status;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Visit;
@@ -27,8 +28,7 @@ class PatientStats extends Component
         $this->patients = Patient::count();
         $this->patientsToday = Patient::whereDate('created_at', today())->count();
 
-        $this->visits = Visit::latest()->limit(50)
-            ->get();
+        $this->visits = Visit::latest()->where('status', '!=', Status::completed->value)->awaiting()->limit(50)->get();
     }
 
     public function hydrate()
