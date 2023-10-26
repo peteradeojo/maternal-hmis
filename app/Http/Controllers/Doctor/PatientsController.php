@@ -14,11 +14,16 @@ use App\Models\PatientExaminations;
 use App\Models\PatientImaging;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
+use App\Services\TreatmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
+    public function __construct(private TreatmentService $treatmentService)
+    {
+    }
+
     public function index(Request $request)
     {
         return view('doctors.patients');
@@ -35,90 +40,7 @@ class PatientsController extends Controller
 
         $request->mergeIfMissing(['tests' => []]);
 
-        $data['tests'] = array_unique($request->tests);
-        $complaints = $data['complaints'] ?? [];
-        $history = $data['history'] ?? [];
-
-        DB::beginTransaction();
-
-        try {
-            $doc = Documentation::create([
-                ...$data,
-                'symptoms' => count($complaints) > 0 ? implode(',', $complaints) : null,
-                'visit_id' => $visit->id,
-                'user_id' => $request->user()->id,
-                'patient_id' => $visit->patient_id,
-            ]);
-
-            // Save complaints
-            foreach ($complaints as $c) {
-                $doc->complaints()->create(['name' => $c]);
-            }
-
-            // Save history of complaints
-            if ($history) {
-                $doc->complaints_history = $history;
-            }
-
-            if (count($data['tests']) > 0) {
-                foreach ($data['tests'] as $test) {
-                    $doc->tests()->create(['name' => $test, 'status' => Status::pending->value, 'patient_id' => $visit->patient_id]);
-                }
-                Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                $visit->awaiting_lab_results = true;
-            }
-
-            if (count($data['imgs'] ?? []) > 0) {
-                foreach ($data['imgs'] as $img) {
-                    PatientImaging::create([
-                        'name' => $img,
-                        'type' => null,
-                        'status' => Status::pending->value,
-                        'patient_id' => $visit->patient_id,
-                        'documentation_id' => $doc->id,
-                        'requested_by' => $request->user()->id,
-                    ]);
-                }
-                Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
-                $visit->awaiting_radiology = true;
-            }
-
-            if (count($data['treatments'] ?? []) > 0) {
-                foreach ($data['treatments'] as $tIndex => $t) {
-                    $doc->treatments()->create([
-                        'name' => $t,
-                        'dosage' => $data['dosage'][$tIndex],
-                        'frequency' => $data['frequency'][$tIndex],
-                        'duration' => $data['duration'][$tIndex],
-                        'status' => Status::pending->value,
-                        'requested_by' => $request->user()->id,
-                        'patient_id' => $visit->patient_id,
-                    ]);
-                }
-                Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
-                $visit->awaiting_pharmacy = true;
-            }
-
-            $exams = new PatientExaminations([]);
-
-            $exams->patient_id = $visit->patient_id;
-            $exams->documentation_id = $doc->id;
-            $exams->general = $data['physical_exams'];
-            $exams->specifics = collect($data)->only(['head_and_neck', 'chest', 'abdomen', 'muscle_skeletal', 'vaginal_digital_rectal']);
-            $exams->save();
-
-            $doc->save();
-
-            $visit->awaiting_doctor = false;
-            $visit->save();
-            DB::commit();
-
-            return redirect()->route('dashboard');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return back()->withInput()->withErrors(['error' => $th->getMessage()]);
-        }
+        $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
     }
 
     public function treatAnc(Request $request, AncVisit $visit)
@@ -162,90 +84,8 @@ class PatientsController extends Controller
 
         $request->mergeIfMissing(['tests' => []]);
 
-        $data['tests'] = array_unique($request->tests);
-        $complaints = $data['complaints'] ?? [];
-        $history = $data['history'] ?? [];
-
         $visit = $documentation->visit;
-        DB::beginTransaction();
-
-        try {
-            // $doc = Documentation::create([
-            //     ...$data,
-            //     'symptoms' => count($complaints) > 0 ? implode(',', $complaints) : null,
-            //     'visit_id' => $visit->id,
-            //     'user_id' => $request->user()->id,
-            //     'patient_id' => $visit->patient_id,
-            // ]);
-
-            // Save complaints
-            foreach ($complaints as $c) {
-                $documentation->complaints()->create(['name' => $c]);
-            }
-
-            // Save history of complaints
-            if ($history) {
-                $documentation->complaints_history .= ", $history";
-            }
-
-            if (count($data['tests']) > 0) {
-                foreach ($data['tests'] as $test) {
-                    $documentation->tests()->create(['name' => $test, 'status' => Status::pending->value, 'patient_id' => $visit->patient_id]);
-                }
-                Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                $visit->awaiting_lab_results = true;
-            }
-
-            if (count($data['imgs'] ?? []) > 0) {
-                foreach ($data['imgs'] as $img) {
-                    PatientImaging::create([
-                        'name' => $img,
-                        'type' => null,
-                        'status' => Status::pending->value,
-                        'patient_id' => $visit->patient_id,
-                        'documentation_id' => $documentation->id,
-                        'requested_by' => $request->user()->id,
-                    ]);
-                }
-                Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
-                $visit->awaiting_radiology = true;
-            }
-
-            if (count($data['treatments'] ?? []) > 0) {
-                foreach ($data['treatments'] as $tIndex => $t) {
-                    $documentation->treatments()->create([
-                        'name' => $t,
-                        'dosage' => $data['dosage'][$tIndex],
-                        'frequency' => $data['frequency'][$tIndex],
-                        'duration' => $data['duration'][$tIndex],
-                        'status' => Status::pending->value,
-                        'requested_by' => $request->user()->id,
-                        'patient_id' => $visit->patient_id,
-                    ]);
-                }
-                Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                $visit->awaiting_pharmacy = true;
-            }
-
-            $exams = new PatientExaminations([]);
-
-            $exams->patient_id = $visit->patient_id;
-            $exams->documentation_id = $documentation->id;
-            $exams->general = $data['physical_exams'];
-            $exams->specifics = collect($data)->only(['head_and_neck', 'chest', 'abdomen', 'muscle_skeletal', 'vaginal_digital_rectal']);
-            $exams->save();
-
-            $documentation->save();
-
-            $visit->awaiting_doctor = false;
-            $visit->save();
-            DB::commit();
-
-            return redirect()->route('dashboard');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return back()->withInput()->withErrors(['error' => $th->getMessage()]);
-        }
+        $this->treatmentService->saveTreatment($visit, $request->all(), $request->user(), $documentation);
     }
 
     public function pendingAncBookings(Request $request)

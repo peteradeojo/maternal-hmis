@@ -37,7 +37,6 @@
 
 @push('scripts')
     <script>
-        $("#waitlist-table")?.DataTable();
         $("#vitals-table").DataTable();
         $("table#prescriptions").DataTable();
     </script>

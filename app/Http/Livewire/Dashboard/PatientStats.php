@@ -34,10 +34,15 @@ class PatientStats extends Component
     public function hydrate()
     {
         $this->getData();
+        $this->dispatchBrowserEvent('reinitialize-datatable');
     }
 
     public function render()
     {
         return view('livewire.dashboard.patient-stats');
+    }
+
+    public function updated() {
+        $this->dispatchBrowserEvent('reinitialize-datatable');
     }
 }
