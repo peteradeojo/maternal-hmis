@@ -15,7 +15,7 @@
                 <td>{{ $d->patient->card_number }}</td>
                 <td>{{ $d->patient->gender_value }}</td>
                 <td>{{ $d->created_at->format('Y/m/d H:i A') }}</td>
-                <td></td>
+                <td><a href="{{ route('phm.get-prescription', $d) }}">View</a></td>
             </tr>
         @endforeach
     </tbody>

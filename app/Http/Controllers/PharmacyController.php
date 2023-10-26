@@ -18,4 +18,11 @@ class PharmacyController extends Controller
     {
         return $this->dataTable($request, DocumentationPrescription::query());
     }
+
+    public function show(Request $request, Documentation $doc)
+    {
+        $doc->load(['treatments', 'patient']);
+
+        return view('phm.show-prescription', compact('doc'));
+    }
 }

@@ -44,15 +44,16 @@
                     row.remove();
                 });
 
-                td1.innerHTML = `<input type="text" name="dosage[${rowCount}]" class="form-control">`;
-                td2.innerHTML = `<input type="text" name="frequency[${rowCount}]" class="form-control">`;
-                td3.innerHTML = `<input type="text" name="duration[${rowCount}]" class="form-control">`;
+                td1.innerHTML = `<input type="text" name="dosage[${rowCount}]" class="form-control" required>`;
+                td2.innerHTML = `<input type="text" name="frequency[${rowCount}]" class="form-control" required>`;
+                td3.innerHTML = `<input type="text" name="duration[${rowCount}]" class="form-control" required>`;
 
                 td.appendChild(input);
                 td.appendChild(button);
                 row.appendChild(td);
                 row.appendChild(td1);
                 row.appendChild(td2);
+                row.appendChild(td3);
                 tbody.appendChild(row);
                 elem.val('');
             }
