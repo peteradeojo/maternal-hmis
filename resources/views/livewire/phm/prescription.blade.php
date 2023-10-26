@@ -21,8 +21,8 @@
                     <td>{{ $t->dosage }}</td>
                     <td>{{ $t->frequency }}</td>
                     <td>{{ $t->duration }}</td>
-                    <td>{{ $t->available !== null ? ($t->available ? 'Yes' : 'No') : 'Not Responded' }}</td>
                     <td>{{ $t->amount !== null ? $t->amount : 'Not Responded' }}</td>
+                    <td>{{ $t->available !== null ? ($t->available ? 'Yes' : 'No') : 'Not Responded' }}</td>
                 </tr>
                 @php
                     $total += $t->available ? $t->amount ?? 0 : 0;
