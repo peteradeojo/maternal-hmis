@@ -66,4 +66,8 @@ class Documentation extends Model
     {
         return Attribute::make(get: fn () => $this->tests->every(fn ($test) => $test->status === Status::completed->value));
     }
+
+    public function allPrescriptionsAvailable(): Attribute {
+        return Attribute::make(get: fn () => $this->treatments->every(fn ($t) => $t->status == Status::quoted->value));
+    }
 }

@@ -28,7 +28,7 @@
             @livewire('lab.waiting-patients', ['user' => $user])
         @endif
 
-        @if ($user->department_id == DepartmentsEnum::PHA->value)
+        @if (in_array($user->department_id, [DepartmentsEnum::PHA->value, DepartmentsEnum::DIS->value]))
             @livewire('phm.waiting-patients')
         @endif
         {{-- </div> --}}

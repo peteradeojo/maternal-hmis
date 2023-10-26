@@ -41,7 +41,10 @@ function departmentRoutes()
     $phm = array_merge([
         route('phm.prescriptions') => 'Presciptions'
     ], $base);
-    $dis = array_merge([], $base);
+
+    $dis = array_merge([
+        route('dis.index') => 'Prescriptions'
+    ], $base);
 
     return [
         Department::DOC->value => $doctors,

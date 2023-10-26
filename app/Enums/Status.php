@@ -9,4 +9,5 @@ enum Status: int {
     case pending = 3;
     case completed = 4;
     case ejected = 5;
+    case quoted = 6;
 }
