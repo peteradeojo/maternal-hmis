@@ -59,16 +59,7 @@
                                 <td>{{ $v->getVisitType() }}</td>
                                 <td>
                                     @if ($user->department_id == DepartmentsEnum::REC->value)
-                                        @switch($v->can_check_out)
-                                            @case(true)
-                                                Check out
-                                            @break
-                                            @case(false)
-                                                <a href="{{ route('records.force-check-out', $v) }}?force">Force Check out</a>
-                                            @break
-
-                                            @default
-                                        @endswitch
+                                        <a href="{{ route('records.force-check-out', $v) }}?force">Check out</a>
                                     @endif
                                 </td>
                             </tr>
