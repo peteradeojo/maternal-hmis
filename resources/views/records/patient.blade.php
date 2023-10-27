@@ -16,7 +16,7 @@
         <div class="body foldable-body">
             <div class="py">
                 <h3><u>{{ $patient->name }}</u> ({{ substr($patient->gender_value, 0, 1) }})</h3>
-                <p><b>Age: </b> {{ $patient->dob?->diffInYears() }} ({{ $patient->dob->format('Y-m-d') }})</p>
+                <p><b>Age: </b> {{ $patient->dob?->diffInYears() }} ({{ $patient->dob?->format('Y-m-d') }})</p>
                 <p><b>Category:</b> {{ $patient->category->name }}</p>
                 <p><b>Card Number:</b> {{ $patient->card_number }}</p>
                 <p><b>Registration Date:</b> {{ $patient->created_at?->format('Y-m-d') }}</p>
