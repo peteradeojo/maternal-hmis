@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Interfaces\Documentable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Documentation extends Model
+class Documentation extends Model implements Documentable
 {
     use HasFactory;
 
@@ -30,7 +32,7 @@ class Documentation extends Model
         'symptoms' => 'array'
     ];
 
-    public function tests()
+    public function tests(): MorphMany
     {
         return $this->morphMany(DocumentationTest::class, 'testable')->latest();
     }
@@ -50,15 +52,18 @@ class Documentation extends Model
         return $this->morphMany(DocumentationPrescription::class, 'prescriptionable')->latest();
     }
 
-    public function complaints() {
+    public function complaints()
+    {
         return $this->hasMany(DocumentationComplaints::class, 'documentation_id');
     }
 
-    public function exams() {
+    public function exams()
+    {
         return $this->hasMany(PatientExaminations::class, 'documentation_id');
     }
 
-    public function radios() {
+    public function radios()
+    {
         return $this->hasMany(PatientImaging::class, 'documentation_id');
     }
 
@@ -67,7 +72,8 @@ class Documentation extends Model
         return Attribute::make(get: fn () => $this->tests->every(fn ($test) => $test->status === Status::completed->value));
     }
 
-    public function allPrescriptionsAvailable(): Attribute {
+    public function allPrescriptionsAvailable(): Attribute
+    {
         return Attribute::make(get: fn () => $this->treatments->every(fn ($t) => $t->status == Status::quoted->value));
     }
 }

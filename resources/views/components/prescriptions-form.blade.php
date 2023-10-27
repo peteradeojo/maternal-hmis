@@ -9,6 +9,7 @@
                 <th>Dosage</th>
                 <th>Frequency</th>
                 <th>Duration</th>
+                <th>Route</th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +27,7 @@
                 const td1 = document.createElement('td');
                 const td2 = document.createElement('td');
                 const td3 = document.createElement('td');
+                const td4 = document.createElement('td');
                 const input = document.createElement('input');
                 const button = document.createElement('button');
                 const tbody = document.querySelector('#treatments-list tbody');
@@ -47,6 +49,7 @@
                 td1.innerHTML = `<input type="text" name="dosage[${rowCount}]" class="form-control" required>`;
                 td2.innerHTML = `<input type="text" name="frequency[${rowCount}]" class="form-control" required>`;
                 td3.innerHTML = `<input type="text" name="duration[${rowCount}]" class="form-control" required>`;
+                td4.innerHTML = `<input type='text' name="route[${rowCount}]" class='form-control' />`;
 
                 td.appendChild(input);
                 td.appendChild(button);
@@ -54,6 +57,7 @@
                 row.appendChild(td1);
                 row.appendChild(td2);
                 row.appendChild(td3);
+                row.appendChild(td4);
                 tbody.appendChild(row);
                 elem.val('');
             }

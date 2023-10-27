@@ -64,7 +64,7 @@ class PatientsController extends Controller
         ]);
 
         try{
-            $this->treatmentService->treatAnc($visit, $data, $request->user()->id);
+            $this->treatmentService->treatAnc($visit, $request->all(), $request->user()->id);
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             report($th);

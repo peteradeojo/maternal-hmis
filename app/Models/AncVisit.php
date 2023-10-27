@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Interfaces\Documentable;
 use App\Interfaces\Visitation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AncVisit extends Model implements Visitation
+class AncVisit extends Model implements Documentable
 {
     use HasFactory;
 
@@ -45,12 +46,19 @@ class AncVisit extends Model implements Visitation
 
     protected $with = ['patient', 'doctor'];
 
-    public function lab()
+    public function complaints()
     {
+        return $this->morphMany(DocumentationComplaints::class, 'documentable');
     }
 
-    public function pharmacy()
+    public function treatments()
     {
+        return $this->morphMany(DocumentationPrescription::class, 'prescriptionable');
+    }
+
+    public function radios()
+    {
+        return $this->morphMany(PatientImaging::class, 'documentable');
     }
 
     public function tests() {

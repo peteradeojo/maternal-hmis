@@ -19,4 +19,8 @@ class PatientImaging extends Model
     public function requester () {
         return $this->belongsTo(User::class, 'requested_by');
     }
+
+    public function documentable() {
+        return $this->morphTo();
+    }
 }
