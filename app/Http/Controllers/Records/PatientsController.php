@@ -88,8 +88,8 @@ class PatientsController extends Controller
             if ($request->query('mode') == 'anc') {
                 AntenatalProfile::create([
                     'patient_id' => $patient->id,
-                    'lmp' => $data['lmp'],
-                    'edd' => Carbon::createFromFormat('Y-m-d', $data['edd'])->addMonths(9)->addDays(7),
+                    'lmp' => $data['lmp'] ?? null,
+                    'edd' => isset($data['edd']) ? Carbon::createFromFormat('Y-m-d', $data['edd'])->addMonths(9)->addDays(7) : null,
                     'spouse_name' => $data['spouse_name'],
                     'spouse_phone' => $data['spouse_phone'],
                     'spouse_occupation' => $data['spouse_occupation'],
