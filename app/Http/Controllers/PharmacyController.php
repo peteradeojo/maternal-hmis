@@ -29,7 +29,7 @@ class PharmacyController extends Controller
 
     public function dispensaryIndex(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::pending->value]))->get();
+        $data = Documentation::with(['patient'])->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::quoted->value, Status::closed->value, Status::completed->value]))->get();
         return view('phm.prescriptions', compact('data'));
     }
 
