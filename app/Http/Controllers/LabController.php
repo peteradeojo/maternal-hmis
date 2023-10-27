@@ -136,9 +136,9 @@ class LabController extends Controller
             'glucose' => $request->glucose,
         ]);
 
-        $visit->awaiting_doctor = true;
-        $visit->awaiting_lab_results = false;
-        $visit->save();
+        // $visit->awaiting_doctor = true;
+        // $visit->awaiting_lab_results = false;
+        // $visit->save();
 
         return redirect()->route('dashboard');
     }
