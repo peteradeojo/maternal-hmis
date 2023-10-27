@@ -16,6 +16,7 @@
     <input type="date" name="lmp" id="lmp" class="form-control" value="{{ old('lmp') }}"
         wire:change="setLMP($event.target.value)" max="{{ date('Y-m-d') }}">
     <button type="button" class="btn btn-green" wire:click="calculateEDD">Calculate EDD</button>
+    <button type="button" class="btn btn-green" wire:click="clear">Calculate EDD</button>
 </div>
 <div class="form-group">
     <label for="edd">EDD</label>

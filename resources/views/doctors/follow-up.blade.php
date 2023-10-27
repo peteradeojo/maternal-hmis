@@ -25,7 +25,7 @@
                         <div class="col-6 mt-1">
                             <h3 class="mb-1">Lab Investigations</h3>
                             <div class="px">
-                                @forelse ($documentation->tests as $test)
+                                @forelse (($documentation->tests ?? []) as $test)
                                     <div class="mb-1">
                                         <p><b>{{ $test->name }}</b></p>
                                         @foreach ($test->results as $r)

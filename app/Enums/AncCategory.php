@@ -8,6 +8,10 @@ enum AncCategory: int {
     case Gold = 3;
     case Diamond = 4;
     case Platinum = 5;
+    case Limited = 6;
+    case Gold_Plus = 7;
+    case Diamond_Plus = 8;
+
 
     public static function getValues() {
         $values = [];

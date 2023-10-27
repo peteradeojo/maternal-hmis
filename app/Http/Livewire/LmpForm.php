@@ -23,4 +23,9 @@ class LmpForm extends Component
     {
         $this->edd = date('Y-m-d', strtotime($this->lmp . ' + 9 months + 7 days'));
     }
+
+    public function clear() {
+        $this->lmp = null;
+        $this->edd = null;
+    }
 }
