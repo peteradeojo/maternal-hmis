@@ -130,11 +130,15 @@ class LabController extends Controller
         }
 
         $visit->update([
-            'edema' => $request->tests['Edema'] ?? '',
-            'pcv' => $request->tests['PCV'] ?? '',
-            'protein' => $request->tests['protein'] ?? '',
-            'glucose' => $request->tests['glucose'] ?? '',
+            'edema' => $request->edema ?? '',
+            'pcv' => $request->pcv ?? '',
+            'protein' => $request->protein ?? '',
+            'glucose' => $request->glucose,
         ]);
+
+        $visit->awaiting_doctor = true;
+        $visit->awaiting_lab_results = false;
+        $visit->save();
 
         return redirect()->route('dashboard');
     }

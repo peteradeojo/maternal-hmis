@@ -17,7 +17,7 @@
                     @foreach ($tests as $i => $test)
                         <div class="col-4 pr-1 form-group">
                             <label>{{ $test }}</label>
-                            <input type="text" name="tests[{{ $test }}]" id="" class="form-control"
+                            <input type="text" name="{{ strtolower($test) }}" id="" class="form-control"
                                 value="{{ $profile->tests[$test] ?? null }}">
                         </div>
                     @endforeach
