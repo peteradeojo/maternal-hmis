@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PatientExaminations;
 use App\Notifications\StaffNotification;
 use App\Enums\Department as EnumsDepartment;
+use App\Models\AncVisit;
+use App\Models\DocumentationPrescription;
 use App\Models\User;
 use Carbon\CarbonInterface;
 
@@ -110,5 +112,43 @@ class TreatmentService
 
     public function admitPatient()
     {
+    }
+
+    public function treatAnc(AncVisit $ancVisit, $data, $doctor_id)
+    {
+        $visit = $ancVisit->visit;
+        $ancVisit->update($data + ['doctor_id' => $doctor_id]);
+
+        $visit->awaiting_doctor = false;
+        $visit->awaiting_pharmacy = true;
+        $visit->save();
+
+        $drugs = $data['drugs'] ?? "";
+        $drugs = explode(',', $drugs);
+
+        if (count($drugs) > 0) {
+            foreach ($drugs as $drug) {
+                try {
+                    DocumentationPrescription::create([
+                        'name' => $drug,
+                        'dosage' => '',
+                        'frequency' => '',
+                        'duration' => '',
+                        'status' => Status::pending->value,
+                        'requested_by' => $doctor_id,
+                        'patient_id' => $visit->patient_id,
+                        'prescriptionable_type' => $ancVisit::class,
+                        'prescriptionable_id' => $ancVisit->id,
+                    ]);
+                } catch (\Throwable $th) {
+                    report($th);
+                }
+            }
+            $pharmacy = Department::find(EnumsDepartment::PHA->value);
+            $pharmacy?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+        }
+
+        $records = Department::find(EnumsDepartment::REC->value);
+        $records->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
     }
 }

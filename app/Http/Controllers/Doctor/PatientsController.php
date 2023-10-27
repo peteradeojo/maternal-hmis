@@ -63,19 +63,14 @@ class PatientsController extends Controller
             'note' => 'nullable|string',
         ]);
 
-        $visit->update($data + ['doctor_id' => $request->user()->id]);
+        try{
+            $this->treatmentService->treatAnc($visit, $data, $request->user()->id);
+            return redirect()->route('dashboard');
+        } catch (\Throwable $th) {
+            report($th);
+            return redirect()->route('dashboard')->with('error', $th->getMessage());
+        }
 
-        $visit->visit->awaiting_doctor = false;
-        $visit->visit->awaiting_pharmacy = true;
-        $visit->visit->save();
-
-        $pharmacy = Department::find(EnumsDepartment::PHA->value);
-        $pharmacy?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-
-        $records = Department::find(EnumsDepartment::REC->value);
-        $records->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-
-        return redirect()->route('dashboard');
     }
 
     public function followUp(Request $request, Documentation $documentation)

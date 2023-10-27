@@ -27,6 +27,9 @@ Route::get('logout', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        redirect()->route('dashboard');
+    });
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [DashboardController::class, 'profile'])->name('user-profile');
     Route::post('/profile', [DashboardController::class, 'changePassword']);
