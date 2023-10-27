@@ -43,13 +43,14 @@ class PharmacyController extends Controller
 
             DB::beginTransaction();
 
+            $available_ids = array_keys($available);
+
             try {
                 foreach ($amount as $i => $amt) {
                     if ($amt) $doc->treatments()->where('id', $i)->update(['amount' => $amt]);
                 }
-                foreach ($available as $k => $av) {
-                    if ($av) $doc->treatments()->where('id', $i)->update(['available' => true]);
-                }
+                $doc->treatments()->whereIn('id', $available_ids)->update(['available' => true]);
+                $doc->treatments()->whereNotIn('id', $available_ids)->update(['available' => false]);
 
                 if ($request->has('complete')) {
                     $doc->treatments()->update(['status' => Status::quoted->value]);
