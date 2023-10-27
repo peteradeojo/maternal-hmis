@@ -5,7 +5,7 @@
 <nav class="navbar-nav">
     <div class="navbar-brand">
         <img src="{{ asset('favicon-3.png', app()->isProduction()) }}" alt="" width="30">
-        <a href="/">Dashboard</a>
+        <a href="{{ route('dashboard') }}">Dashboard</a>
     </div>
 
     <ul class="nav">
