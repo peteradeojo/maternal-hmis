@@ -47,6 +47,10 @@ function departmentRoutes()
         route('dis.index') => 'Prescriptions'
     ], $base);
 
+    $nhi = array_merge([
+        route('nhi.index') => 'Patients',
+    ], $base);
+
     return [
         Department::DOC->value => $doctors,
         Department::NUR->value => $nurses,
@@ -56,6 +60,7 @@ function departmentRoutes()
         Department::RAD->value => $rad,
         Department::PHA->value => $phm,
         Department::DIS->value => $dis,
+        Department::NHI->value => $nhi,
     ];
 }
 

@@ -41,4 +41,5 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/rad.php';
     include __DIR__ . '/web/phm.php';
     include __DIR__ . '/web/dis.php';
+    include __DIR__ . '/web/nhi.php';
 });
