@@ -2,7 +2,7 @@
 @section('title', $patient->name)
 
 @php
-    $btnColor = "btn btn-red";
+    $btnColor = 'btn btn-red';
 @endphp
 
 @section('content')
@@ -31,7 +31,8 @@
                 <div class="row between">
                     <p class="card-header">Antenatal Profile</p>
                     @if (isset($patient->antenatalProfiles[0]))
-                        <a id="createAncVisit" href="#" data-id="{{ $patient->id }}" class="{{ $btnColor }}">Check In</a>
+                        <a id="createAncVisit" href="#" data-id="{{ $patient->id }}"
+                            class="{{ $btnColor }}">Check In</a>
                     @endif
                 </div>
             </div>
@@ -53,20 +54,20 @@
         </div>
     @endif
 
-    @if(isset($patient->insurance))
-        <div class="card py px mb-1 foldable">
-            <div class="header foldable-header">
-                <p class="card-header">Health Insurance</p>
-            </div>
-            <div class="body foldable-body">
+    <div class="card py px mb-1 foldable">
+        <div class="header foldable-header">
+            <p class="card-header">Health Insurance</p>
+        </div>
+        <div class="body foldable-body">
+            @if (isset($patient->insurance))
                 <div class="py">
                     <p><b>HMO:</b> {{ $patient->insurance?->hmo_name }}</p>
                     <p><b>Company:</b> {{ $patient->insurance?->hmo_name }}</p>
                     <p><b>ID No:</b> {{ $patient->insurance?->hmo_id_no }}</p>
                 </div>
-            </div>
+            @endif
         </div>
-    @endif
+    </div>
 @endsection
 
 @push('scripts')
