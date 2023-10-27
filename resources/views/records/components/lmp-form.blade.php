@@ -6,6 +6,9 @@
         <option value="3">Gold</option>
         <option value="4">Diamond</option>
         <option value="5">Platinum</option>
+        <option value="6">Limited</option>
+        <option value="7">Gold Plus</option>
+        <option value="8">Diamond Plus</option>
     </select>
 </div>
 <div class="form-group">
