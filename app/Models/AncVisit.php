@@ -36,6 +36,11 @@ class AncVisit extends Model implements Visitation
         'drugs',
         'note',
         'antenatal_profile_id',
+        'edema',
+        'pcv',
+        'vdrl',
+        'protein',
+        'glucose',
     ];
 
     protected $with = ['patient', 'doctor'];
