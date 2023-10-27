@@ -53,18 +53,20 @@
         </div>
     @endif
 
-    <div class="card py px mb-1 foldable">
-        <div class="header foldable-header">
-            <p class="card-header">Health Insurance</p>
-        </div>
-        <div class="body foldable-body">
-            <div class="py">
-                <p><b>HMO:</b> {{ $patient->insurance->hmo_name }}</p>
-                <p><b>Company:</b> {{ $patient->insurance->hmo_name }}</p>
-                <p><b>ID No:</b> {{ $patient->insurance->hmo_id_no }}</p>
+    @if(isset($patient->insurance))
+        <div class="card py px mb-1 foldable">
+            <div class="header foldable-header">
+                <p class="card-header">Health Insurance</p>
+            </div>
+            <div class="body foldable-body">
+                <div class="py">
+                    <p><b>HMO:</b> {{ $patient->insurance?->hmo_name }}</p>
+                    <p><b>Company:</b> {{ $patient->insurance?->hmo_name }}</p>
+                    <p><b>ID No:</b> {{ $patient->insurance?->hmo_id_no }}</p>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 @endsection
 
 @push('scripts')
