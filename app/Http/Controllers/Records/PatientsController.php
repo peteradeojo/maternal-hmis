@@ -114,26 +114,34 @@ class PatientsController extends Controller
 
     public function getPatients(Request $request)
     {
-        $length = $request->query('length', 10);
-        $start = $request->query('start', 0);
+        // $length = $request->query('length', 10);
+        // $start = $request->query('start', 0);
 
-        $patientData = Patient::with('category');
+        $patientData = Patient::with('category')->latest();
 
-        $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
+        // $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
 
-        $results = $patientData->clone();
-        if ($search) {
-            $results = $results->where('name', "like", "$search%")->orWhere("card_number", "like", "%$search%");
-        }
+        // $results = $patientData->clone();
+        // if ($search) {
+        //     $results = $results->where('name', "like", "$search%")->orWhere("card_number", "like", "%$search%");
+        // }
 
-        $data = [
-            'data' => $results->clone()->skip($start)->take($length)->get(),
-            'recordsTotal' => Patient::count(),
-            'recordsFiltered' => $results->count(),
-            'draw' => (int) $request->input('draw'),
-        ];
+        // $data = [
+        //     'data' => $results->clone()->skip($start)->take($length)->get(),
+        //     'recordsTotal' => Patient::count(),
+        //     'recordsFiltered' => $results->count(),
+        //     'draw' => (int) $request->input('draw'),
+        // ];
 
-        return response()->json($data);
+        // return response()->json($data);
+        return $this->dataTable($request, $patientData, [
+            function ($query, $search) {
+                $query->where('name', 'like', "%$search%");
+            },
+            function ($query, $search) {
+                $query->orWhere('card_number', 'like', "$search%");
+            }
+        ]);
     }
 
     public function show(Request $request, Patient $patient)
