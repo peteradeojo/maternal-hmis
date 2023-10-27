@@ -29,7 +29,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [DashboardController::class, 'profile'])->name('user-profile');
-    Route::post('/profile', [DashboardController::class, 'changePassword'])->name('user-profile');
+    Route::post('/profile', [DashboardController::class, 'changePassword']);
 
     include __DIR__ . '/web/doctors.php';
     include __DIR__ . '/web/nurses.php';
