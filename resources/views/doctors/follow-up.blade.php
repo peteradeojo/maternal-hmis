@@ -28,7 +28,7 @@
                                 @forelse (($documentation->tests ?? []) as $test)
                                     <div class="mb-1">
                                         <p><b>{{ $test->name }}</b></p>
-                                        @foreach ($test->results as $r)
+                                        @foreach (($test->results ?? []) as $r)
                                             <p>{{ $r->description }}: {{ $r->result }} {{ $r->unit }}
                                                 {{ $r->reference_range ? "[$r->reference_range]" : null }}</p>
                                         @endforeach
