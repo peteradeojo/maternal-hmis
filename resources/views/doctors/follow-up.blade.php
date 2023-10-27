@@ -12,8 +12,13 @@
                         <div class="col-6">
                             <h3 class="mb-1">Presentation</h3>
                             <div class="px">
-                                <p>{{ $documentation->symptoms }}</p>
+                                <p>Complaints: {{ $documentation->symptoms }}</p>
+                                <p>History of Complaints: {{ $documentation->complaints_history }}</p>
                             </div>
+                        </div>
+                        <div class="col-6">
+                            <h3 class="mb-1">Vitals</h3>
+
                         </div>
                         <div class="col-6">
                             <h3 class="mb-1">Initial Diagnosis</h3>

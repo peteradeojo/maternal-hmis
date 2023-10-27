@@ -128,6 +128,15 @@ class LabController extends Controller
             $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
             return view('lab.anc-test', compact('tests', 'visit'));
         }
+
+        $visit->update([
+            'edema' => $request->tests['Edema'] ?? '',
+            'pcv' => $request->tests['PCV'] ?? '',
+            'protein' => $request->tests['protein'] ?? '',
+            'glucose' => $request->tests['glucose'] ?? '',
+        ]);
+
+        return redirect()->route('dashboard');
     }
 
     public function testReport(Request $request, Documentation $doc)
