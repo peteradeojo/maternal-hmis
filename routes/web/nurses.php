@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::name('nurses.')->group(function () {
     Route::get('/vitals', [VitalsController::class, 'index'])->name('vitals');
-    Route::match(['post', 'get'], '/vitals/{visit}', [VitalsController::class, 'takeVitals'])->name('patient-vitals');
+    Route::match(['post', 'get'], '/vitals/{visit}', [VitalsController::class, 'takeVitals'])->name('patient-vitals')->middleware(['datalog']);
     Route::get('anc-bookings', [PatientsController::class, 'ancBookings'])->name('anc-bookings');
 
-    Route::post('anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking');
+    Route::post('anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking')->middleware(['datalog']);
 });

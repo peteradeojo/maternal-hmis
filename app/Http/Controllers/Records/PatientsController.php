@@ -81,7 +81,7 @@ class PatientsController extends Controller
             $patient = Patient::create($data);
 
 
-            if($request->has(['hmo_name', 'hmo_company', 'hmo_id_no'])) {
+            if($request->anyFilled(['hmo_name', 'hmo_company', 'hmo_id_no'])) {
                 $this->patientService->createInsuranceProfile($patient, $request->only(['hmo_name', 'hmo_company', 'hmo_id_no']));
             }
 
