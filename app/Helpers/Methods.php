@@ -10,7 +10,8 @@ function departmentRoutes()
 
     $doctors = array_merge(
         [
-            route('doctor.patients') => 'Patients',
+            // route('doctor.patients') => 'Patients',
+            route('doctor.history') => 'History',
             route('doctor.anc-bookings') => 'Antenatal Bookings',
         ],
         $base,

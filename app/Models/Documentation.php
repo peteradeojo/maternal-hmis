@@ -67,6 +67,10 @@ class Documentation extends Model implements Documentable
         return $this->hasMany(PatientImaging::class, 'documentation_id');
     }
 
+    public function diagnoses() {
+        return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
+    }
+
     public function allTestsCompleted(): Attribute
     {
         return Attribute::make(get: fn () => $this->tests->every(fn ($test) => $test->status === Status::completed->value));

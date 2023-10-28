@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use App\Interfaces\Documentable;
+use App\Models\Visit;
 use App\Interfaces\Visitation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Interfaces\Documentable;
+use App\Traits\Visit as VisitTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AncVisit extends Model implements Documentable
+class AncVisit extends Model implements Documentable, Visitation
 {
-    use HasFactory;
+    use HasFactory, VisitTrait;
 
     public const testsList = [
         'HIV',
@@ -46,6 +48,8 @@ class AncVisit extends Model implements Documentable
 
     protected $with = ['patient', 'doctor'];
 
+    protected $appends = ['type'];
+
     public function complaints()
     {
         return $this->morphMany(DocumentationComplaints::class, 'documentable');
@@ -61,7 +65,8 @@ class AncVisit extends Model implements Documentable
         return $this->morphMany(PatientImaging::class, 'documentable');
     }
 
-    public function tests() {
+    public function tests()
+    {
         return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
@@ -70,7 +75,8 @@ class AncVisit extends Model implements Documentable
         return $this->morphOne(Visit::class, 'visit');
     }
 
-    public function profile() {
+    public function profile()
+    {
         return $this->belongsTo(AntenatalProfile::class, 'antenatal_profile_id');
     }
 
@@ -82,6 +88,12 @@ class AncVisit extends Model implements Documentable
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function diagnoses()
+    {
+        return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
+    }
+
     public function doctor()
     {
         return $this->belongsTo(User::class, 'doctor_id');

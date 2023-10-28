@@ -10,8 +10,9 @@
         </div>
         <div class="col-4">
             <p class="card-header">Vitals</p>
-            <p><b>Blood Pressure: </b> {{ $ancVisit->visit->vitals?->data->blood_pressure ?? 'Not recorded' }}</p>
-            <p><b>Weight: </b> {{ $ancVisit->visit->vitals?->data->weight ?? 'Not recorded' }}</p>
+            {{-- <p><b>Blood Pressure: </b> {{ $ancVisit->visit->vitals?->data->blood_pressure ?? 'Not recorded' }}</p>
+            <p><b>Weight: </b> {{ $ancVisit->visit->vitals?->data->weight ?? 'Not recorded' }}</p> --}}
+            @include('doctors.components.vitals', ['visit' => $ancVisit->visit])
         </div>
     </div>
 </div>

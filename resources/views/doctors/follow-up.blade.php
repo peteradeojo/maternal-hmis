@@ -8,7 +8,7 @@
             </div>
             <div class="body foldable-body unfolded">
                 <div class="py">
-                    <div class="row">
+                    <div class="row start">
                         <div class="col-6">
                             <h3 class="mb-1">Presentation</h3>
                             <div class="px">
@@ -17,8 +17,8 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <h3 class="mb-1">Vitals</h3>
-
+                            <h3>Vitals</h3>
+                            @include('doctors.components.vitals', ['visit' => $documentation->visit])
                         </div>
                         <div class="col-6">
                             <h3 class="mb-1">Initial Diagnosis</h3>

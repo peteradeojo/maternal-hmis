@@ -60,6 +60,14 @@ main {
     padding: 16px;
 }
 
+@media only print {
+    main {
+        width: 100vw;
+        margin: 0;
+        padding: 4px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     /* #navigation {
         width: 50%;

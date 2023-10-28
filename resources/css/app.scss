@@ -10,12 +10,18 @@ aside#noticeboard {
         display: block;
         max-width: 100%;
         font: 1.5rem "Roboto", sans-serif;
+
         @media screen and (max-width: 768px) {
             font-size: 1rem;
             padding: 4px;
         }
+
         font-weight: normal;
         text-decoration: underline;
+    }
+
+    @media print {
+        display: none;
     }
 }
 
@@ -41,6 +47,43 @@ body {
     tbody tr {
         border-top: 1px solid #888;
     }
+
+    tfoot {
+        td {
+            padding: 14px 2px;
+
+            span,
+            a {
+                padding: 2px 6px;
+                text-decoration: none;
+                // background-color: #ccc;
+                margin: 0 2px;
+                border-radius: 3px;
+
+                &.active {
+                    background-color: #000;
+                    color: #fff;
+                }
+            }
+
+            span {
+                cursor: not-allowed;
+            }
+
+            a:hover {
+                // background-color: #aaa;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &.bordered {
+        tr,
+        td, th {
+            border: 1px solid #888;
+
+        }
+    }
 }
 
 .foldable {
@@ -53,11 +96,13 @@ body {
             height: max-content;
         }
     }
+
     .foldable-header::before {
         content: "(Click to view)";
         font-size: small;
         vertical-align: middle;
     }
+
     .foldable-header {
         cursor: pointer;
     }
@@ -70,46 +115,22 @@ p {
 .card {
     background-color: #fff;
     border-radius: 6px;
-    & > .header {
+
+    &>.header {
         padding: 8px 6px;
         // background-color: #fff;
         border-bottom: 1px solid #ccc;
         border-radius: 6px 6px 0 0;
     }
-    & > .footer {
+
+    &>.footer {
         padding: 4px 6px;
         font-size: 1.2em;
         font-family: Arial, Helvetica, sans-serif;
     }
+
     & .card-header {
         font-size: 2em;
-    }
-}
-
-.table {
-    tfoot {
-        td {
-            padding: 14px 2px;
-            span,
-            a {
-                padding: 2px 6px;
-                text-decoration: none;
-                // background-color: #ccc;
-                margin: 0 2px;
-                border-radius: 3px;
-                &.active {
-                    background-color: #000;
-                    color: #fff;
-                }
-            }
-            span {
-                cursor: not-allowed;
-            }
-            a:hover {
-                // background-color: #aaa;
-                text-decoration: underline;
-            }
-        }
     }
 }
 
@@ -119,22 +140,26 @@ p {
     right: 10px;
     padding: 20px;
     border-radius: 6px;
+
     &.alert-success {
         background-color: #dff0d8;
         border-color: #d6e9c6;
         color: #3c763d;
     }
+
     &.alert-danger {
         background-color: red;
         border-color: #ebccd1;
         color: #fff;
     }
 }
+
 .tag-input {
     background-color: #ccc;
     margin-right: 4px;
     padding: 2px 6px;
     border-radius: 24px;
+
     button {
         background-color: inherit;
         border: none;
@@ -142,10 +167,12 @@ p {
         margin: 0 4px;
         cursor: pointer;
         height: 0;
+
         &:hover {
             text-decoration: underline;
         }
     }
+
     span {
         margin-left: 4px;
     }
@@ -158,11 +185,13 @@ p {
     th {
         text-align: left;
     }
+
     tr {
         border: 1px solid #888;
     }
 
-    th, td {
+    th,
+    td {
         padding: 4px;
     }
 }
@@ -170,3 +199,16 @@ p {
 @import "components/forms";
 @import "components/buttons";
 @import "components/spacings";
+
+.no-print {
+    @media print {
+        display: none;
+    }
+}
+
+.only-print {
+    display: none;
+    @media print {
+        display: initial;
+    }
+}

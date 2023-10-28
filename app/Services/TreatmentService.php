@@ -21,6 +21,17 @@ class TreatmentService
     {
     }
 
+    private function saveDiagnoses(Documentable|Documentation|AncVisit &$doc, $data, $doctor_id)
+    {
+        if (isset($data['prognosis'])) {
+            $doc->diagnoses()->create([
+                'diagnoses' => $data['prognosis'],
+                'patient_id' => $doc->patient_id,
+                'user_id' => $doctor_id
+            ]);
+        }
+    }
+
     private function saveComplaints(Documentable &$doc, $complaints = [], $history = "")
     {
         // Save complaints
@@ -57,7 +68,7 @@ class TreatmentService
 
     private function savePrescriptions(Documentable &$doc, $data, $treater_id = null)
     {
-        foreach ($data as $tIndex => $t) {
+        foreach ($data['treatments'] as $tIndex => $t) {
             $doc->treatments()->create([
                 'name' => $t,
                 'dosage' => $data['dosage'][$tIndex],
@@ -103,11 +114,13 @@ class TreatmentService
             }
 
             if (count($data['treatments'] ?? []) > 0) {
-                $this->savePrescriptions($doc, $data['treatments'], $treater->id);
+                $this->savePrescriptions($doc, $data, $treater->id);
                 Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
                 Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
                 $visit->awaiting_pharmacy = true;
             }
+
+            $this->saveDiagnoses($doc, $data, $treater->id);
 
             $exams = new PatientExaminations([]);
 

@@ -63,14 +63,13 @@ class PatientsController extends Controller
             'note' => 'nullable|string',
         ]);
 
-        try{
+        try {
             $this->treatmentService->treatAnc($visit, $request->all(), $request->user()->id);
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             report($th);
             return redirect()->route('dashboard')->with('error', $th->getMessage());
         }
-
     }
 
     public function followUp(Request $request, Documentation $documentation)
@@ -231,5 +230,35 @@ class PatientsController extends Controller
     public function show(Request $request, Patient $patient)
     {
         return view('doctors.show-patient', ['patient' => $patient]);
+    }
+
+    public function history(Request $request)
+    {
+        return view('doctors.visits.history');
+    }
+
+    public function getVisitsHistory(Request $request)
+    {
+        $visits = Visit::with(['patient.category', 'visit'])->has('documentations')->latest('updated_at')->whereIn('status', [
+            Status::completed->value, Status::closed->value, Status::ejected->value
+        ])->orWhere(function ($query) {
+            $query->where('status', Status::active->value)->where('created_at', '>', now()->subDay());
+        });
+
+        return $this->dataTable($request, $visits, [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%");
+                });
+            }
+        ]);
+    }
+
+    public function visit(Request $request, Visit $visit)
+    {
+        $visit->load(['visit', 'patient', 'documentations']);
+
+        $documentations = Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
+        return view('doctors.visits.show', compact('visit', 'documentations'));
     }
 }

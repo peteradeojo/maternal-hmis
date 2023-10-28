@@ -10,6 +10,9 @@ Route::name('doctor.')->group(function () {
 
     Route::post('/treat/anc/{visit}', [PatientsController::class, 'treatAnc'])->name('treat-anc');
 
+    Route::get('/visits', [PatientsController::class, 'history'])->name('history');
+    Route::get('/visits/{visit}', [PatientsController::class, 'visit'])->name('visit');
+
     Route::prefix('med')->group(function () {
         Route::get('/patients', [PatientsController::class, 'index'])->name('patients');
         Route::get('/patients/{patient}', [PatientsController::class, 'show'])->name('patient');

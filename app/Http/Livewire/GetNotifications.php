@@ -36,4 +36,8 @@ class GetNotifications extends Component
     {
         $this->user->unreadNotifications()->latest()->limit(50)->update(['read_at' => now()]);
     }
+
+    public function clear($id) {
+        $this->user->unreadNotifications()->where('id', $id)->update(['read_at' => now()]);
+    }
 }
