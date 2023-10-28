@@ -18,5 +18,9 @@ class InsuranceController extends Controller
         return $this->dataTable($request, $query);
     }
 
-    public function showPatient(Request $request, Patient $patient) {}
+    public function showPatient(Request $request, Patient $patient) {
+        $patient->load(['insurance', 'category']);
+
+        return view('nhi.show-patient', compact('patient'));
+    }
 }

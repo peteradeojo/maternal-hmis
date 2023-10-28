@@ -11,7 +11,6 @@
 
         @livewire('dashboard.patient-stats', ['user' => $user])
 
-        {{-- <div class="card"> --}}
         @if ($user->department_id == DepartmentsEnum::DOC->value)
             @livewire('doctor.waiting-patients', ['user' => $user])
         @endif
@@ -31,7 +30,10 @@
         @if (in_array($user->department_id, [DepartmentsEnum::PHA->value, DepartmentsEnum::DIS->value]))
             @livewire('phm.waiting-patients')
         @endif
-        {{-- </div> --}}
+
+        @if($user->department_id == DepartmentsEnum::NHI->value)
+            @livewire('nhi.pending-authorizations')
+        @endif
     </div>
 @endsection
 
