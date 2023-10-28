@@ -160,18 +160,18 @@ class TreatmentService
         $drugs = explode(',', $drugs);
 
         if (count($data['treatments'] ?? []) > 0) {
-            $this->savePrescriptions($doc, $data['treatments'], $doctor_id);
+            $this->savePrescriptions($ancVisit, $data, $doctor_id);
 
             $pharmacy = Department::find(EnumsDepartment::PHA->value);
             $pharmacy?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
         }
 
         if (count($data['imgs']) > 0) {
-            $this->saveImagings($doc, $data['imgs'], $doctor_id);
+            $this->saveImagings($ancVisit, $data['imgs'], $doctor_id);
         }
 
         if (count($data['tests']) > 0) {
-            $this->saveTests($doc, $data['tests'], $doctor_id);
+            $this->saveTests($ancVisit, $data['tests'], $doctor_id);
         }
 
         $records = Department::find(EnumsDepartment::REC->value);
