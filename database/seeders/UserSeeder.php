@@ -19,14 +19,14 @@ class UserSeeder extends Seeder
             [
                 'firstname' => 'Idowu',
                 'lastname' => 'Ade-Ojo',
-                'department_id' => 1,
+                'department_id' => Department::DOC->value,
                 'phone' => '08033886173',
                 'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Moronfoluwa',
                 'lastname' => 'Ade-Ojo',
-                'department_id' => 2,
+                'department_id' => Department::NUR->value,
                 'phone' => '08012345678',
                 'password' => Hash::make('password'),
             ],

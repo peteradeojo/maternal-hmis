@@ -28,7 +28,9 @@
 @push('scripts')
     <script>
         $(() => {
-            $("#departments-table").DataTable();
+            $("#departments-table").DataTable({
+                dom: 'frtip'
+            });
         });
     </script>
 @endpush
