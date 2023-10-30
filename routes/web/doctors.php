@@ -18,5 +18,9 @@ Route::name('doctor.')->group(function () {
         Route::get('/patients/{patient}', [PatientsController::class, 'show'])->name('patient');
         Route::get('/anc-bookings', [PatientsController::class, 'pendingAncBookings'])->name('anc-bookings');
         Route::match(['get', 'post'], '/anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking');
+        Route::prefix('admissions')->group(function () {
+            Route::match(['get', 'post'], '/start/{visit}', [PatientsController::class, 'startAdmission'])->name('start-admission');
+        });
     });
-});
+
+})->middleware(['auth']);

@@ -42,6 +42,11 @@ class PatientsController extends Controller
 
         try {
             $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
+
+            if ($request->filled('admit')) {
+                return redirect();
+            }
+
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             report($th);
@@ -87,7 +92,11 @@ class PatientsController extends Controller
         $visit = $documentation->visit;
 
         try {
-            $this->treatmentService->saveTreatment($visit, $request->all(), $request->user(), $documentation);
+            $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
+
+            if ($request->filled('admit')) {
+                return redirect()->route('doctor.start-admission', $documentation->visit);
+            }
 
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
@@ -126,6 +135,8 @@ class PatientsController extends Controller
             'duration.*' => 'string',
             'next_visit' => 'nullable|date',
         ]);
+
+        dd($request->all());
 
         $user = $request->user();
         DB::beginTransaction();
@@ -260,5 +271,21 @@ class PatientsController extends Controller
 
         $documentations = Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
         return view('doctors.visits.show', compact('visit', 'documentations'));
+    }
+
+    public function startAdmission(Request $request, Visit $visit)
+    {
+        $visit->load(['patient']);
+        if (!$request->isMethod('POST')) {
+            return view('doctors.admissions.start', compact('visit'));
+        }
+
+        try {
+            $this->treatmentService->startAdmission($request->all(), $visit->patient);
+            return redirect()->route('dashboard');
+        } catch (\Throwable $th) {
+            report($th);
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

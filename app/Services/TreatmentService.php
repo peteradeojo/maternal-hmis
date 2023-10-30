@@ -13,6 +13,7 @@ use App\Notifications\StaffNotification;
 use App\Enums\Department as EnumsDepartment;
 use App\Interfaces\Documentable;
 use App\Models\AncVisit;
+use App\Models\Patient;
 use App\Models\User;
 
 class TreatmentService
@@ -176,5 +177,10 @@ class TreatmentService
 
         $records = Department::find(EnumsDepartment::REC->value);
         $records->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+    }
+
+    public function startAdmission($data, Patient $patient)
+    {
+
     }
 }

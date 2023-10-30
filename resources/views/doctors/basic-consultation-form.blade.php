@@ -22,6 +22,11 @@
         <input type="date" name="next_visit" id="next_visit" class="form-control" min="{{ date('Y-m-d') }}">
     </div>
     <div class="form-group">
+        <p class="pb-1">
+            <label>
+                <input type="checkbox" name="admit" /> Admit?
+            </label>
+        </p>
         <button class="btn btn-red" type="submit">Submit</button>
     </div>
 </form>

@@ -29,7 +29,7 @@ class Documentation extends Model implements Documentable
     protected $appends = ['all_tests_completed'];
 
     protected $casts = [
-        'symptoms' => 'array'
+        // 'symptoms' => 'array'
     ];
 
     public function tests(): MorphMany
