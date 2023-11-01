@@ -54,10 +54,10 @@
                 td.appendChild(input);
                 td.appendChild(button);
                 row.appendChild(td);
+                row.appendChild(td4);
                 row.appendChild(td1);
                 row.appendChild(td2);
                 row.appendChild(td3);
-                row.appendChild(td4);
                 tbody.appendChild(row);
                 elem.val('');
             }
