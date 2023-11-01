@@ -38,13 +38,14 @@ class PatientsController extends Controller
             return back()->withInput()->withErrors(['error' => 'Please fill at least one field']);
         }
 
-        $request->mergeIfMissing(['tests' => []]);
+        $request->mergeIfMissing(['tests' => [], 'admit' => false]);
         $data = $request->except('_token');
 
         DB::beginTransaction();
 
         try {
-            $request->filled('admit') && $data['admit'] = true;
+            // $request->filled('admit') && $data['admit'] = true;
+            $data['admit'] = $data['admit'] !== false;
 
             $documentation = $this->treatmentService->saveTreatment($visit, $data, $request->user());
 
@@ -91,12 +92,12 @@ class PatientsController extends Controller
             return back()->withInput()->withErrors(['error' => 'Please fill at least one field']);
         }
 
-        $request->mergeIfMissing(['tests' => []]);
+        $request->mergeIfMissing(['tests' => [], 'admit' => false]);
 
         $visit = $documentation->visit;
 
         try {
-            $request->filled('admit') && $data['admit'] = true;
+            $request->filled('admit') ? ($data['admit'] = true) : ($data['admit'] = false);
             $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
 
             if ($request->filled('admit')) {
