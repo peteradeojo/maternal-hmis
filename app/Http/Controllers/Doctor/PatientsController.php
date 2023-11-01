@@ -39,16 +39,20 @@ class PatientsController extends Controller
         }
 
         $request->mergeIfMissing(['tests' => []]);
+        $data = $request->except('_token');
+
+        DB::beginTransaction();
 
         try {
-            $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
+            $request->filled('admit') && $data['admit'] = true;
 
-            if ($request->filled('admit')) {
-                return redirect();
-            }
+            $documentation = $this->treatmentService->saveTreatment($visit, $data, $request->user());
 
+
+            DB::commit();
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
+            DB::rollBack();
             report($th);
             return redirect()->back()->with('error', $th->getMessage());
         }
@@ -92,6 +96,7 @@ class PatientsController extends Controller
         $visit = $documentation->visit;
 
         try {
+            $request->filled('admit') && $data['admit'] = true;
             $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
 
             if ($request->filled('admit')) {
@@ -123,7 +128,6 @@ class PatientsController extends Controller
             'fetal_heart_rate' => 'nullable|numeric',
             'presentation' => 'nullable|string',
             'lie' => 'nullable|string',
-            'presentation' => 'nullable|string',
             'presentation_relationship' => 'nullable|string',
             'tests' => 'array',
             'tests.*' => 'string',
@@ -136,7 +140,7 @@ class PatientsController extends Controller
             'next_visit' => 'nullable|date',
         ]);
 
-        dd($request->all());
+        // dd($request->all());
 
         $user = $request->user();
         DB::beginTransaction();
@@ -273,19 +277,19 @@ class PatientsController extends Controller
         return view('doctors.visits.show', compact('visit', 'documentations'));
     }
 
-    public function startAdmission(Request $request, Visit $visit)
-    {
-        $visit->load(['patient']);
-        if (!$request->isMethod('POST')) {
-            return view('doctors.admissions.start', compact('visit'));
-        }
+    // public function startAdmission(Request $request, Visit $visit)
+    // {
+    //     $visit->load(['patient']);
+    //     if (!$request->isMethod('POST')) {
+    //         return view('doctors.admissions.start', compact('visit'));
+    //     }
 
-        try {
-            $this->treatmentService->startAdmission($request->all(), $visit->patient);
-            return redirect()->route('dashboard');
-        } catch (\Throwable $th) {
-            report($th);
-            return redirect()->back()->with('error', $th->getMessage());
-        }
-    }
+    //     try {
+    //         $this->treatmentService->startAdmission($request->all(), $visit->patient);
+    //         return redirect()->route('dashboard');
+    //     } catch (\Throwable $th) {
+    //         report($th);
+    //         return redirect()->back()->with('error', $th->getMessage());
+    //     }
+    // }
 }

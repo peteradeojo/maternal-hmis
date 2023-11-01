@@ -6,7 +6,7 @@
             <div class="body">
                 {!! $n->data['message'] !!}<br>
                 <small>{{ $n->created_at->diffForHumans() }}</small>
-                <small wire:click="clear('{{ $n->id }}')"><u class="text-white">Clear</u></small>
+                <small wire:click="clear('{{ $n->id }}')"><u class="text-white" style="cursor: pointer">Clear</u></small>
             </div>
         </div>
     @empty

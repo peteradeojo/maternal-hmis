@@ -14,7 +14,7 @@ class StaffNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public string $message)
+    public function __construct(public string $message, public ?string $url = null)
     {
     }
 
@@ -48,6 +48,9 @@ class StaffNotification extends Notification implements ShouldQueue
     {
         return [
             'message' => $this->message,
+            'data' => [
+                'redirect_to' => $this->url ?? '',
+            ]
         ];
     }
 }

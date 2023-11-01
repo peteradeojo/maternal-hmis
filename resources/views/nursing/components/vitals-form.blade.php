@@ -4,11 +4,11 @@
         value="{{ old('temperature') }}" step="0.1">
 </div>
 <div class="form-group">
-    <label for="pulse">Pulse</label>
+    <label for="pulse">Pulse (b/m)</label>
     <input type="number" name="pulse" id="pulse" class="form-control" value="{{ old('pulse') }}">
 </div>
 <div class="form-group">
-    <label for="respiratory_rate">Respiratory Rate</label>
+    <label for="respiratory_rate">Respiratory Rate (c/m)</label>
     <input type="number" name="respiratory_rate" id="respiratory_rate" class="form-control"
         value="{{ old('respiratory_rate') }}">
 </div>

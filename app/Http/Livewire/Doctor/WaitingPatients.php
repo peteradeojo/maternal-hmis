@@ -20,7 +20,7 @@ class WaitingPatients extends Component
     public function load()
     {
         $this->visits = Visit::where(function ($query) {
-            $query->whereNotNull('vitals')->orWhere('awaiting_doctor', true);
+            $query->where('awaiting_doctor', true);
         })->where('status', Status::active->value)->get();
     }
 

@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Models\PatientImaging;
 use App\Interfaces\Documentable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Documentable as TraitsDocumentable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Documentation extends Model implements Documentable
 {
-    use HasFactory;
+    use HasFactory, TraitsDocumentable;
 
     protected $fillable = [
         'visit_id',
@@ -32,11 +34,6 @@ class Documentation extends Model implements Documentable
         // 'symptoms' => 'array'
     ];
 
-    public function tests(): MorphMany
-    {
-        return $this->morphMany(DocumentationTest::class, 'testable')->latest();
-    }
-
     public function patient()
     {
         return $this->belongsTo(Patient::class);
@@ -47,28 +44,9 @@ class Documentation extends Model implements Documentable
         return $this->belongsTo(Visit::class);
     }
 
-    public function treatments()
-    {
-        return $this->morphMany(DocumentationPrescription::class, 'prescriptionable')->latest();
-    }
-
-    public function complaints()
-    {
-        return $this->hasMany(DocumentationComplaints::class, 'documentation_id');
-    }
-
     public function exams()
     {
         return $this->hasMany(PatientExaminations::class, 'documentation_id');
-    }
-
-    public function radios()
-    {
-        return $this->hasMany(PatientImaging::class, 'documentation_id');
-    }
-
-    public function diagnoses() {
-        return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
     }
 
     public function allTestsCompleted(): Attribute

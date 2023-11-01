@@ -1,8 +1,7 @@
 import { triggerAlert } from "../app";
 
-
 $().ready(function () {
-    console.log(triggerAlert);
+    // console.log(triggerAlert);
     $("#checkIn")?.on("click", async function (e) {
         e.preventDefault();
         e.stopPropagation();

@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Models\Visit;
 use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
+use App\Traits\Documentable as TraitsDocumentable;
 use App\Traits\Visit as VisitTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AncVisit extends Model implements Documentable, Visitation
 {
-    use HasFactory, VisitTrait;
+    use HasFactory, VisitTrait, TraitsDocumentable;
 
     public const testsList = [
         'HIV',
