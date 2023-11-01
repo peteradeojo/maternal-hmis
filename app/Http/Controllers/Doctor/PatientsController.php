@@ -97,12 +97,8 @@ class PatientsController extends Controller
         $visit = $documentation->visit;
 
         try {
-            $request->filled('admit') ? ($data['admit'] = true) : ($data['admit'] = false);
+            // $request->filled('admit') ? ($data['admit'] = true) : ($data['admit'] = false);
             $this->treatmentService->saveTreatment($visit, $request->all(), $request->user());
-
-            if ($request->filled('admit')) {
-                return redirect()->route('doctor.start-admission', $documentation->visit);
-            }
 
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
