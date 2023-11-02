@@ -4,7 +4,11 @@
     <div class="row start">
         <div class="col-4 px py">
             <p><u>Complaints:</u></p>
-            <p>{{ $doc->symptoms ?? 'Nil' }}</p>
+            <p>{{ join(', ', $doc->complaints->map(fn($c) => $c->name)->toArray()) }}</p>
+        </div>
+        <div class="col-4 px py">
+            <p><u>Complaints Durations:</u></p>
+            <p>{{ $doc->complaints_durations ?? 'Nil' }}</p>
         </div>
         <div class="col-4 px py">
             <p><u>History of Complaint:</u></p>
@@ -42,7 +46,7 @@
                         <tr>
                             <td colspan="4" align="center" class="py">{{ strtoupper($test->name) }}</td>
                         </tr>
-                        @forelse ($test->results as $result)
+                        @forelse ($test->results ?? [] as $result)
                             <tr>
                                 <td>{{ $result->description }}</td>
                                 <td>{{ $result->result }} {{ $result->unit }}</td>

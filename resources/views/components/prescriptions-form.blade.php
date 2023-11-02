@@ -6,10 +6,10 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Route</th>
                 <th>Dosage</th>
                 <th>Frequency</th>
                 <th>Duration</th>
-                <th>Route</th>
             </tr>
         </thead>
         <tbody>

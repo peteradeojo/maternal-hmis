@@ -9,7 +9,11 @@
         <div id="complaints" class="row">
         </div>
     </div>
-    <div class="form-group col-6 pl-1">
+    <div class="form-group col-6 pr-1">
+        <label for="durations">Complaints Duration</label>
+        <textarea name="complaints_durations" id="durations" class="form-control"></textarea>
+    </div>
+    <div class="form-group col-6">
         <label for="history">History of Complaints</label>
         <textarea name="history" id="history" class="form-control"></textarea>
     </div>

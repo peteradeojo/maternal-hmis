@@ -24,6 +24,7 @@ class Documentation extends Model implements Documentable
         'prognosis',
         'comment',
         'status',
+        'complaints_durations',
     ];
 
     protected $with = ['patient', 'tests'];
