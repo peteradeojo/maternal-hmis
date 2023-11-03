@@ -25,12 +25,21 @@ class TreatmentService
 
     private function saveDiagnoses(Documentable|Documentation|AncVisit &$doc, $data, $doctor_id)
     {
-        if (isset($data['prognosis'])) {
-            $doc->diagnoses()->create([
-                'diagnoses' => $data['prognosis'],
-                'patient_id' => $doc->patient_id,
-                'user_id' => $doctor_id
-            ]);
+        // if (isset($data['prognosis'])) {
+        //     $doc->diagnoses()->create([
+        //         'diagnoses' => $data['prognosis'],
+        //         'patient_id' => $doc->patient_id,
+        //         'user_id' => $doctor_id
+        //     ]);
+        // }
+        if (isset($data['diagnosis'])) {
+            foreach($data['diagnosis'] as $d) {
+                $doc->diagnoses()->create([
+                    'diagnoses' => $d,
+                    'patient_id' => $doc->patient_id,
+                    'user_id' => $doctor_id
+                ]);
+            }
         }
     }
 
@@ -38,7 +47,7 @@ class TreatmentService
     {
         // Save complaints
         foreach ($complaints as $c) {
-            $doc->complaints()->create(['name' => $c]);
+            $doc->complaints()->create(['name' => $c['name'], 'duration' => $c['duration'] ]);
         }
 
         // Save history of complaints

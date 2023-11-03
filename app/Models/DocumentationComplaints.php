@@ -11,6 +11,7 @@ class DocumentationComplaints extends Model
 
     protected $fillable = [
         'name',
+        'duration',
         'documentable_type',
         'documentable_id',
         'documentation_id',

@@ -29,7 +29,7 @@
                     </div>
                     <div class="body foldable-body">
                         <div class="my">
-                            @include('doctors.components.vitals', ['visit' => $visit])
+                            @include('doctors.components.vitals', ['visit' => $visit, 'complaints'])
                         </div>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
                     {{ $error }}
                 @endforeach
                 <div class="my">
-                    @livewire('doctor.consultation-form', ['visit' => $visit])
+                    @livewire('doctor.consultation-form', ['visit' => $visit, 'complaints' => $complaints, 'diagnoses' => $diagnoses, 'tests' => $tests, 'prescriptions' => $prescriptions])
                 </div>
             </div>
         </div>

@@ -1,6 +1,11 @@
 <fieldset class="px py">
+    <datalist id="prescriptions-dl">
+        @foreach ($prescriptions ?? [] as $p)
+            <option value="{{ $p['name'] }}">{{ $p['name'] }}</option>
+        @endforeach
+    </datalist>
     <legend>Treatments</legend>
-    <input type="text" id="treatments">
+    <input type="text" id="treatments" list="prescriptions-dl">
     <button type="button" id="add-treatment">Add</button>
     <table id="treatments-list" class="mt-1 table">
         <thead>

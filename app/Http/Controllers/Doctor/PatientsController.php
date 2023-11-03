@@ -9,6 +9,10 @@ use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
 use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\DocumentationComplaints;
+use App\Models\DocumentationPrescription;
+use App\Models\DocumentationTest;
+use App\Models\DocumentedDiagnosis;
 use App\Models\Patient;
 use App\Models\PatientExaminations;
 use App\Models\PatientImaging;
@@ -31,7 +35,15 @@ class PatientsController extends Controller
 
     public function treat(Request $request, Visit $visit)
     {
-        if ($request->method() !== 'POST') return view('doctors.consultation-form', compact('visit'));
+        if ($request->method() !== 'POST') {
+            $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
+            $prescriptions = DocumentationPrescription::selectRaw('DISTINCT name')->get()->toArray();
+            $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->toArray();
+            $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
+            $data = compact('complaints', 'prescriptions', 'visit', 'tests', 'diagnoses');
+
+            return view('doctors.consultation-form', $data);
+        }
 
         $data = $request->except('_token');
         if (count(array_filter($data)) < 1) {
@@ -41,6 +53,8 @@ class PatientsController extends Controller
         $request->mergeIfMissing(['tests' => [], 'admit' => false]);
         $data = $request->except('_token');
 
+        // dd($data);
+
         DB::beginTransaction();
 
         try {
@@ -48,7 +62,6 @@ class PatientsController extends Controller
             $data['admit'] = $data['admit'] !== false;
 
             $documentation = $this->treatmentService->saveTreatment($visit, $data, $request->user());
-
 
             DB::commit();
             return redirect()->route('dashboard');

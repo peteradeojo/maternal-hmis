@@ -1,11 +1,8 @@
 <form action="" method="post">
     @csrf
-    @include('components.complaints-form')
+    @include('components.complaints-form', ['complaints' => $complaints])
     @include('components.examinations-form')
-    <div class="form-group">
-        <label for="diagnosis">Diagnosis</label>
-        <textarea name="prognosis" id="diagnosis" cols="30" class="form-control"></textarea>
-    </div>
+    @include('components.diagnosis-form')
 
     <fieldset class="p-1">
         <legend>Tests & Investigations</legend>

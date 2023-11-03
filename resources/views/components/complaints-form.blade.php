@@ -1,18 +1,23 @@
 <h3>Complaints</h3>
+<datalist id="complaint-list">
+    @foreach ($complaints as $c)
+        <option>{{ $c['name'] }}</option>
+    @endforeach
+</datalist>
 <div class="row start">
     <div class="form-group col-6 pr-1">
         <label for="complaints-input">Complaints</label>
         <div class="row pb-1">
-            <input type="text" id="complaints-input" class="form-control">
+            <input type="text" id="complaints-input" class="form-control" list="complaint-list">
             <button type="button" id="add-complaint-button" class="btn btn-black">Add</button>
         </div>
-        <div id="complaints" class="row">
+        <div id="complaints">
         </div>
     </div>
-    <div class="form-group col-6 pr-1">
+    {{-- <div class="form-group col-6 pr-1">
         <label for="durations">Complaints Duration</label>
         <textarea name="complaints_durations" id="durations" class="form-control"></textarea>
-    </div>
+    </div> --}}
     <div class="form-group col-6">
         <label for="history">History of Complaints</label>
         <textarea name="history" id="history" class="form-control"></textarea>
@@ -31,12 +36,15 @@
 
                 inputs.forEach(function(input) {
                     if (input === '') return;
+                    const complaints = document.querySelectorAll('#complaints .tag-input');
                     $('#complaints').append(
-                        `<p class='tag-input'>
+                        `<div class='tag-input-2 mb-1'><p class='tag-input'>
                             <span>${input.trim()}</span>
-                            <button type='button' onclick="this.closest('.tag-input').remove()">&times;</button>
-                            <input type='hidden' name='complaints[]' readonly value='${input.trim()}'>
-                        </p>`
+                            <button type='button' onclick="this.closest('.tag-input-2').remove()">&times;</button>
+                            <input type='hidden' name="complaints[${complaints.length}][name]" readonly value='${input.trim()}'>
+                            </p>
+                            <input type='text' name="complaints[${complaints.length}][duration]" placeholder='Duration' />
+                        </div>`
                     );
                 });
                 elem.val('');

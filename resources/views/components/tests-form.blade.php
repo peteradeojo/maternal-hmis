@@ -1,7 +1,12 @@
 <h3>Tests</h3>
 <div class="form-group">
     {{-- <label for="tests">Tests</label> --}}
-    <input type="text" id="tests">
+    <datalist id="tests-dl">
+        @foreach ($tests ?? [] as $t)
+            <option>{{ $t['name'] }}</option>
+        @endforeach
+    </datalist>
+    <input type="text" id="tests" list="tests-dl">
     <button type="button" id="add-test-button" class="btn btn-black">Add</button>
     <button type="button" id="clear-button" class="btn btn-red">Clear</button>
 </div>
