@@ -65,7 +65,7 @@ class PatientsController extends Controller
 
         if ($request->query('mode') === 'anc') {
             $rules = array_merge($rules, [
-                'card_type' => 'required|in:1,2,3,4,5',
+                'card_type' => 'required|in:1,2,3,4,5,6,7,8',
                 'lmp' => 'nullable|date',
                 'edd' => 'nullable|date',
                 'spouse_name' => 'nullable|string',
