@@ -43,7 +43,7 @@ class TreatmentService
         }
     }
 
-    private function saveComplaints(Documentable|Documentation|AncVisit &$doc, $complaints = [], $history = "")
+    private function saveComplaints(Documentable|Documentation|AncVisit &$doc, $complaints = [], $history = null)
     {
         // Save complaints
         foreach ($complaints as $c) {
@@ -97,7 +97,7 @@ class TreatmentService
     {
         $data['tests'] = array_unique($data['tests'] ?? []);
         $complaints = $data['complaints'] ?? [];
-        $history = $data['history'] ?? [];
+        // $history = $data['history'] ?? [];
 
         DB::beginTransaction();
 
@@ -110,7 +110,7 @@ class TreatmentService
                 'patient_id' => $visit->patient_id,
             ]);
 
-            $this->saveComplaints($doc, $complaints, $history);
+            $this->saveComplaints($doc, $complaints);
 
             if (count($data['tests']) > 0) {
                 $this->saveTests($doc, $data['tests']);
