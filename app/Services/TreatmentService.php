@@ -104,7 +104,7 @@ class TreatmentService
         try {
             $doc ??= Documentation::create([
                 ...$data,
-                'symptoms' => count($complaints) > 0 ? implode(',', $complaints) : null,
+                'symptoms' => "", count($complaints) > 0 ? implode(',', $complaints) : null,
                 'visit_id' => $visit->id,
                 'user_id' => $treater?->id,
                 'patient_id' => $visit->patient_id,
@@ -189,12 +189,12 @@ class TreatmentService
             $pharmacy?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
         }
 
-        if (count($data['imgs']) > 0) {
+        if (count($data['imgs'] ?? []) > 0) {
             $this->saveImagings($ancVisit, $data['imgs'], $doctor_id);
         }
 
         if (count($data['tests']) > 0) {
-            $this->saveTests($ancVisit, $data['tests'], $doctor_id);
+            $this->saveTests($ancVisit, $data['tests']);
         }
 
         $records = Department::find(EnumsDepartment::REC->value);
