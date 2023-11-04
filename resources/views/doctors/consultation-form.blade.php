@@ -54,7 +54,7 @@
                             </p>
                             <p><b>EDD: </b> {{ $ancProfile->edd }}</p>
                             <p><b>Weeks of Gestation: </b>
-                                {{ $ancProfile->lmp }}</p>
+                                {{ $ancProfile->lmp?->diffInWeeks() ?? "LMP Not Supplied" }}</p>
                             <p><b>Gravida: </b> {{ $ancProfile->gravida }}</p>
                             <p><b>Parity: </b> {{ $ancProfile->parity }}</p>
                             <p><b>Height: </b> {{ $ancProfile->height }} cm</p>

@@ -104,7 +104,7 @@ class TreatmentService
         try {
             $doc ??= Documentation::create([
                 ...$data,
-                'symptoms' => "", count($complaints) > 0 ? implode(',', $complaints) : null,
+                'symptoms' => "", //count($complaints) > 0 ? implode(',', $complaints) : null,
                 'visit_id' => $visit->id,
                 'user_id' => $treater?->id,
                 'patient_id' => $visit->patient_id,
