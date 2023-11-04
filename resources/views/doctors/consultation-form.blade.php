@@ -52,7 +52,7 @@
                             <p><b>Card Type: </b>
                                 {{ $ancProfile->card_type }}
                             </p>
-                            <p><b>EDD: </b> {{ $ancProfile->edd }}</p>
+                            <p><b>EDD: </b> {{ $ancProfile->edd?->format('Y-m-d') }}</p>
                             <p><b>Weeks of Gestation: </b>
                                 {{ $ancProfile->lmp ? ($ancProfile->lmp->diffInWeeks() . " week(s)") : "LMP Not Supplied" }}</p>
                             <p><b>Gravida: </b> {{ $ancProfile->gravida }}</p>

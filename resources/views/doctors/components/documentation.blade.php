@@ -4,11 +4,7 @@
     <div class="row start">
         <div class="col-4 px py">
             <p><u>Complaints:</u></p>
-            <p>{{ join(', ', $doc->complaints->map(fn($c) => $c->name)->toArray()) }}</p>
-        </div>
-        <div class="col-4 px py">
-            <p><u>Complaints Durations:</u></p>
-            <p>{{ $doc->complaints_durations ?? 'Nil' }}</p>
+            <p>{{ join(', ', $doc->complaints->map(fn($c) => "{$c->name}" . ($c->duration ? " for ({$c->duration})" : null))->toArray()) }}</p>
         </div>
         <div class="col-4 px py">
             <p><u>History of Complaint:</u></p>
