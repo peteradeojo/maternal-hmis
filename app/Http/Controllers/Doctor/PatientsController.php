@@ -264,9 +264,7 @@ class PatientsController extends Controller
 
     public function getVisitsHistory(Request $request)
     {
-        $visits = Visit::with(['patient.category', 'visit'])->has('documentations'); //->latest('updated_at')->whereIn('status', [
-            Status::completed->value, Status::closed->value, Status::ejected->value
-        ]);
+        $visits = Visit::with(['patient.category', 'visit'])->has('documentations');
         // ->orWhere(function ($query) {
         //     $query->where('status', Status::active->value)->where('created_at', '>', now()->subDay());
         // });
