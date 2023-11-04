@@ -266,9 +266,10 @@ class PatientsController extends Controller
     {
         $visits = Visit::with(['patient.category', 'visit'])->has('documentations')->latest('updated_at')->whereIn('status', [
             Status::completed->value, Status::closed->value, Status::ejected->value
-        ])->orWhere(function ($query) {
-            $query->where('status', Status::active->value)->where('created_at', '>', now()->subDay());
-        });
+        ]);
+        // ->orWhere(function ($query) {
+        //     $query->where('status', Status::active->value)->where('created_at', '>', now()->subDay());
+        // });
 
         return $this->dataTable($request, $visits, [
             function ($query, $search) {
