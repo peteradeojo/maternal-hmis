@@ -264,7 +264,7 @@ class PatientsController extends Controller
 
     public function getVisitsHistory(Request $request)
     {
-        $visits = Visit::with(['patient.category', 'visit'])->has('documentations')->latest('updated_at')->whereIn('status', [
+        $visits = Visit::with(['patient.category', 'visit'])->has('documentations'); //->latest('updated_at')->whereIn('status', [
             Status::completed->value, Status::closed->value, Status::ejected->value
         ]);
         // ->orWhere(function ($query) {
