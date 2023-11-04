@@ -6,6 +6,9 @@
 @endphp
 
 @section('content')
+    <div class="card py px">
+        <a href="{{ route('records.patient.edit', $patient) }}" class="btn btn-red"><u>Edit this patient information</u>.</a>
+    </div>
     <div class="card py px mb-1 foldable">
         <div class="header foldable-header">
             <div class="row between">

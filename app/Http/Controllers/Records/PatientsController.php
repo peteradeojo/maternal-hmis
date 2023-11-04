@@ -151,6 +151,25 @@ class PatientsController extends Controller
         return view('records.patient', compact('patient'));
     }
 
+    public function edit(Request $request, Patient $patient) {
+        if (!$request->isMethod('POST')) {
+            return view('records.edit-patient', ['patient' => $patient]);
+        }
+
+        $data = $request->except('_token');
+        // dd($data);
+        DB::beginTransaction();
+        try {
+            $patient->update($data);
+            DB::commit();
+
+            return redirect()->route('records.patient', $patient->id);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
     public function checkIn(Request $request, Patient $patient)
     {
         /**

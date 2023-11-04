@@ -193,7 +193,7 @@ class TreatmentService
             $this->saveImagings($ancVisit, $data['imgs'], $doctor_id);
         }
 
-        if (count($data['tests']) > 0) {
+        if (count($data['tests'] ?? []) > 0) {
             $this->saveTests($ancVisit, $data['tests']);
         }
 
