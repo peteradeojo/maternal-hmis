@@ -5,22 +5,25 @@
     "src": "public/css/auth.css"
   },
   "resources/css/app.css": {
-    "file": "assets/app-7bfd44a2.css",
+    "file": "assets/app-9640159b.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
   "resources/css/app.scss": {
-    "file": "assets/app-ca16c914.css",
+    "file": "assets/app-7d328a0a.css",
     "isEntry": true,
     "src": "resources/css/app.scss"
   },
   "resources/js/app.js": {
-    "file": "assets/app-dbe23e4c.js",
+    "file": "assets/app-8f57313e.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/js/records/patients.js": {
-    "file": "assets/patients-86e2e71a.js",
+    "file": "assets/patients-4211634a.js",
+    "imports": [
+      "resources/js/app.js"
+    ],
     "isEntry": true,
     "src": "resources/js/records/patients.js"
   },
