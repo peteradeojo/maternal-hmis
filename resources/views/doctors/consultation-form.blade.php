@@ -81,12 +81,12 @@
                     <div class="header card-header foldable-header">
                         <p>Antenatal History</p>
                     </div>
-                    <div class="foldable-body body my">
+                    <div class="foldable-body body my unfolded">
                         <table id="anc-history-table" class="table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Maturity</th>
+                                    <th>Maturity (weeks)</th>
                                     <th>Presentation</th>
                                     <th>Lie</th>
                                     <th>Fundal Height</th>
@@ -101,7 +101,7 @@
                             <tbody>
                                 <tr>
                                     <td>{{ $ancProfile->created_at?->format('Y-m-d') }}</td>
-                                    <td>{{ $ancProfile->created_at?->diffInWeeks($ancProfile->lmp) }} week(s)</td>
+                                    <td>{{ $ancProfile->lmp?->diffInWeeks() }}</td>
                                     <td>{{ $ancProfile->presentation }}</td>
                                     <td>{{ $ancProfile->lie }}</td>
                                     <td>{{ $ancProfile->fundal_height }}</td>
