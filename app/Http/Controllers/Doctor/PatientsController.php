@@ -39,14 +39,14 @@ class PatientsController extends Controller
         $prescriptions = DocumentationPrescription::selectRaw('DISTINCT name')->get()->toArray();
         $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->toArray();
         $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
-        return compact('complaints', 'prescriptions', 'visit', 'tests', 'diagnoses');
+        return compact('complaints', 'prescriptions', 'tests', 'diagnoses');
     }
 
     public function treat(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') {
             $data = $this->loadAutoCompleteData();
-            return view('doctors.consultation-form', $data);
+            return view('doctors.consultation-form', [...$data, 'visit' => $visit]);
         }
 
         $data = $request->except('_token');
