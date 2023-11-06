@@ -1,7 +1,7 @@
 <h3>Complaints</h3>
 <datalist id="complaint-list">
-    @foreach ($complaints as $c)
-        <option>{{ $c['name'] }}</option>
+    @foreach (($complaints ?? []) as $c)
+        <option value="{{ $c['name'] }}">{{ $c['name'] }}</option>
     @endforeach
 </datalist>
 <div class="row start">

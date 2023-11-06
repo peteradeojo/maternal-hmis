@@ -33,15 +33,19 @@ class PatientsController extends Controller
         return view('doctors.patients');
     }
 
+    private function loadAutoCompleteData()
+    {
+        $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
+        $prescriptions = DocumentationPrescription::selectRaw('DISTINCT name')->get()->toArray();
+        $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->toArray();
+        $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
+        return compact('complaints', 'prescriptions', 'visit', 'tests', 'diagnoses');
+    }
+
     public function treat(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') {
-            $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
-            $prescriptions = DocumentationPrescription::selectRaw('DISTINCT name')->get()->toArray();
-            $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->toArray();
-            $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
-            $data = compact('complaints', 'prescriptions', 'visit', 'tests', 'diagnoses');
-
+            $data = $this->loadAutoCompleteData();
             return view('doctors.consultation-form', $data);
         }
 
@@ -81,8 +85,8 @@ class PatientsController extends Controller
             'lie' => 'nullable|string',
             'presentation_relationship' => 'nullable|string',
             'return_visit' => 'nullable|date',
-            'complaints' => 'nullable|string',
-            'drugs' => 'nullable|string',
+            // 'complaints' => 'nullable|string',
+            // 'drugs' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
 
