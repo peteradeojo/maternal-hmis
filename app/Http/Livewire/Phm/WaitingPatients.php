@@ -15,7 +15,7 @@ class WaitingPatients extends Component
     {
         $query = Documentation::with(['patient']);
         $this->data = match (auth()->user()->department_id) {
-            Department::DIS->value => $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value]))->get(),
+            Department::DIS->value => $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::pending->value]))->get(),
             Department::PHA->value => $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value]))->get(),
             default => [],
         };

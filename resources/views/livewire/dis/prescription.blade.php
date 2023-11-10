@@ -1,4 +1,7 @@
 <div>
+    @php
+        $editable = $doc->treatments->every(fn($t) => $t->status !== Status::quoted->value);
+    @endphp
     <form action="" method="post">
         @csrf
         <table class="table table-list" id="p-table">
@@ -6,7 +9,7 @@
                 <tr>
                     <th>Prescription</th>
                     <th>Available</th>
-                    <th>Amount</th>
+                    <th>Amount (₦)</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,11 +23,13 @@
                     <tr>
                         <td>{{ $t->name }} {{ $t->dosage }} {{ $t->frequency }} {{ $t->duration }}</td>
                         <td><input type="checkbox" name="available[{{ $t->id }}]" data-id="{{ $t->id }}"
-                                class="availability" @if ($t->available) checked @endif>
+                                class="availability" @if ($t->available) checked @endif
+                                @unless ($editable) disabled @endunless>
                         </td>
                         <td>
                             <input type="number" name="amount[{{ $t->id }}]" step="0.01" min="0"
-                                data-id="{{ $t->id }}" class="amount form-control" value="{{ $t->amount }}" />
+                                data-id="{{ $t->id }}" class="amount form-control" value="{{ $t->amount }}"
+                                @unless ($editable) readonly @endunless />
                         </td>
                     </tr>
                 @endforeach
@@ -35,15 +40,17 @@
                     <td id="total">{{ $total }}</td>
                 </tr>
                 <tr>
-                    <td>Are you done with this quote? <input type="checkbox" name="complete" @if ($doc->all_prescriptions_available)
-                        checked
-                    @endif></td>
+                    <td>Are you done with this quote? <input type="checkbox" name="complete"
+                            @if ($doc->all_prescriptions_available) checked @endif
+                            @if (!$editable) disabled @endif></td>
                 </tr>
             </tfoot>
         </table>
 
         <div class="pt-1"></div>
-        <button class="form-control btn btn-blue">Submit</button>
+        @if ($editable)
+            <button class="form-control btn btn-blue">Submit</button>
+        @endif
     </form>
 
     @push('scripts')
@@ -63,7 +70,7 @@
                         const id = b.getAttribute('data-id');
 
                         if (checkAvailable(id))
-                            return parseFloat(a) + b.value;
+                            return parseFloat(a) + parseFloat(b.value || 0);
 
                         return a;
                     }, 0);

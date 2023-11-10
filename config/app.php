@@ -197,4 +197,5 @@ return [
         'Status' => Status::class,
     ])->toArray(),
 
+    'currency' => '₦'
 ];

@@ -97,7 +97,7 @@ class TreatmentService
     {
         $data['tests'] = array_unique($data['tests'] ?? []);
         $complaints = $data['complaints'] ?? [];
-        // $history = $data['history'] ?? [];
+        $history = $data['history'] ?? [];
 
         DB::beginTransaction();
 
@@ -110,24 +110,24 @@ class TreatmentService
                 'patient_id' => $visit->patient_id,
             ]);
 
-            $this->saveComplaints($doc, $complaints);
+            $this->saveComplaints($doc, $complaints, $history);
 
             if (count($data['tests']) > 0) {
                 $this->saveTests($doc, $data['tests']);
-                // Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+                Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
                 $visit->awaiting_lab_results = true;
             }
 
             if (count($data['imgs'] ?? []) > 0) {
                 $this->saveImagings($doc, $data['imgs'], $treater->id);
-                // Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
+                Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
                 $visit->awaiting_radiology = true;
             }
 
             if (count($data['treatments'] ?? []) > 0) {
                 $this->savePrescriptions($doc, $data, $treater->id);
-                // Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                // Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
+                Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+                Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
                 $visit->awaiting_pharmacy = true;
             }
 
