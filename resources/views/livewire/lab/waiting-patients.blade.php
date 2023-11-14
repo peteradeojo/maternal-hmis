@@ -1,4 +1,4 @@
-<div wire:poll.5s>
+<div>
     <div class="card py px foldable">
         <div class="header foldable-header">
             <p class="card-header">Pending Tests</p>

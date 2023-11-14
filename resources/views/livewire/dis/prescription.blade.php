@@ -9,7 +9,7 @@
                 <tr>
                     <th>Prescription</th>
                     <th>Available</th>
-                    <th>Amount (₦)</th>
+                    <th>Amount ({{ config('app.currency') }})</th>
                 </tr>
             </thead>
             <tbody>
