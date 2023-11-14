@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Records;
 
+use App\Enums\AncCategory;
 use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
@@ -65,7 +66,7 @@ class PatientsController extends Controller
 
         if ($request->query('mode') === 'anc') {
             $rules = array_merge($rules, [
-                'card_type' => 'required|in:1,2,3,4,5,6,7,8',
+                'card_type' => 'required|in:' . join(',', AncCategory::getValues()),
                 'lmp' => 'nullable|date',
                 'edd' => 'nullable|date',
                 'spouse_name' => 'nullable|string',
@@ -81,7 +82,7 @@ class PatientsController extends Controller
             $patient = Patient::create($data);
 
 
-            if($request->anyFilled(['hmo_name', 'hmo_company', 'hmo_id_no'])) {
+            if ($request->anyFilled(['hmo_name', 'hmo_company', 'hmo_id_no'])) {
                 $this->patientService->createInsuranceProfile($patient, $request->only(['hmo_name', 'hmo_company', 'hmo_id_no']));
             }
 
@@ -151,7 +152,8 @@ class PatientsController extends Controller
         return view('records.patient', compact('patient'));
     }
 
-    public function edit(Request $request, Patient $patient) {
+    public function edit(Request $request, Patient $patient)
+    {
         if (!$request->isMethod('POST')) {
             return view('records.edit-patient', ['patient' => $patient]);
         }
@@ -223,7 +225,7 @@ class PatientsController extends Controller
         }
 
         $data = $request->validate([
-            'card_type' => 'required|in:1,2,3,4,5',
+            'card_type' => 'required|in:' . join(',', AncCategory::getValues()),
             'lmp' => 'nullable|date',
             'edd' => 'nullable|date',
             'spouse_name' => 'nullable|string',

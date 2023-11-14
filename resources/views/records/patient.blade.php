@@ -9,6 +9,7 @@
     <div class="card py px">
         <a href="{{ route('records.patient.edit', $patient) }}" class="btn btn-red"><u>Edit this patient information</u>.</a>
     </div>
+    <div class="pt-1"></div>
     <div class="card py px mb-1 foldable">
         <div class="header foldable-header">
             <div class="row between">
@@ -48,10 +49,9 @@
                                 Profile</a></p>
                     @else
                         <p><b>LMP Recorded: </b> {{ $patient->antenatalProfiles[0]?->lmp }}</p>
-                        <p><b>Category:</b> {{ $patient->antenatalProfiles[0]?->card_type }}</p>
+                        <p><b>Category:</b> {{ preg_replace("/_/", " ", $patient->antenatalProfiles[0]?->card_type ?? "") }}</p>
                         <p><b>Registration Date:</b> {{ $patient->antenatalProfiles[0]?->created_at->format('Y-m-d') }}</p>
                     @endif
-
                 </div>
             </div>
         </div>
