@@ -71,4 +71,8 @@ class Patient extends Model
     public function insurance() {
         return $this->hasOne(InsuranceProfiles::class, 'patient_id');
     }
+
+    public function visits() {
+        return $this->hasMany(Visit::class, 'patient_id')->latest();
+    }
 }

@@ -46,6 +46,7 @@ class PatientsController extends Controller
     {
         if ($request->method() !== 'POST') {
             $data = $this->loadAutoCompleteData();
+            $visit->patient->load(['visits']);
             return view('doctors.consultation-form', [...$data, 'visit' => $visit]);
         }
 
@@ -269,9 +270,6 @@ class PatientsController extends Controller
     public function getVisitsHistory(Request $request)
     {
         $visits = Visit::with(['patient.category', 'visit'])->has('documentations')->latest();
-        // ->orWhere(function ($query) {
-        //     $query->where('status', Status::active->value)->where('created_at', '>', now()->subDay());
-        // });
 
         return $this->dataTable($request, $visits, [
             function ($query, $search) {
@@ -286,8 +284,8 @@ class PatientsController extends Controller
     {
         $visit->load(['visit', 'patient', 'documentations']);
 
-        $documentations = Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
-        return view('doctors.visits.show', compact('visit', 'documentations'));
+        // $documentations = $visit->documentations; //Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
+        return view('doctors.visits.show', compact('visit'));
     }
 
     // public function startAdmission(Request $request, Visit $visit)

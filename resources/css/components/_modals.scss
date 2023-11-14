@@ -1,0 +1,21 @@
+.modal {
+    width: 100vmax;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    .content {
+        width: 70%;
+        margin: 100px auto 0;
+        @media print {
+            width: 100%;
+            margin: 0;
+        }
+    }
+
+    &.hide {
+        display: none;
+    }
+}
