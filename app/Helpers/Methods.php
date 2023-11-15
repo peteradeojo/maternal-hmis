@@ -19,7 +19,7 @@ function departmentRoutes()
     );
 
     $nurses = array_merge([
-        route('nurses.vitals') => 'Vitals',
+        // route('nurses.vitals') => 'Vitals',
         route('nurses.admissions.get') => 'Admissions',
         route('nurses.anc-bookings') => 'Antenatal Bookings',
     ], $base);

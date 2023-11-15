@@ -1,7 +1,7 @@
 <div class="form-group">
     <label for="temperature">Temperature (&deg;C)</label>
-    <input type="number" name="temperature" id="temperature" class="form-control"
-        value="{{ old('temperature') }}" step="0.1">
+    <input type="number" name="temperature" id="temperature" class="form-control" value="{{ old('temperature') }}"
+        step="0.1">
 </div>
 <div class="form-group">
     <label for="pulse">Pulse (b/m)</label>
@@ -17,13 +17,13 @@
     <input type="text" name="blood_pressure" id="blood_pressure" class="form-control"
         value="{{ old('blood_pressure') }}">
 </div>
-<div class="form-group">
-    <label for="weight">Weight (kg)</label>
-    <input type="number" name="weight" id="weight" class="form-control" value="{{ old('weight') }}"
-        step="0.1">
-</div>
-<div class="form-group">
-    <label for="height">Height (cm)</label>
-    <input type="number" name="height" id="height" class="form-control" value="{{ old('height') }}"
-        step="0.1">
-</div>
+@unless (isset($admission))
+    <div class="form-group">
+        <label for="weight">Weight (kg)</label>
+        <input type="number" name="weight" id="weight" class="form-control" value="{{ old('weight') }}" step="0.1">
+    </div>
+    <div class="form-group">
+        <label for="height">Height (cm)</label>
+        <input type="number" name="height" id="height" class="form-control" value="{{ old('height') }}" step="0.1">
+    </div>
+@endunless

@@ -1,1 +1,0 @@
-document.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll(".foldable .foldable-header").forEach(e=>{e.addEventListener("click",l=>{l.target.closest(".foldable").querySelector(".foldable-body").classList.toggle("unfolded")})})});
