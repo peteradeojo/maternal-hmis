@@ -20,6 +20,7 @@
         @endif
 
         @if ($user->department_id == DepartmentsEnum::IT->value)
+            @livewire('it.statistics')
             @livewire('it.departments')
         @endif
 
@@ -31,7 +32,7 @@
             @livewire('phm.waiting-patients')
         @endif
 
-        @if($user->department_id == DepartmentsEnum::NHI->value)
+        @if ($user->department_id == DepartmentsEnum::NHI->value)
             @livewire('nhi.pending-authorizations')
         @endif
     </div>

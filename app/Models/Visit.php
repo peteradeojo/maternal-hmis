@@ -114,4 +114,8 @@ class Visit extends Model
             $this->update(['status' => Status::completed->value]);
         }
     }
+
+    public function svitals() {
+        return $this->morphOne(Vitals::class, 'recordable');
+    }
 }

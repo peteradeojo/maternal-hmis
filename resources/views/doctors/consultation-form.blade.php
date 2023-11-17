@@ -167,7 +167,7 @@
         </div>
     </div>
 
-    @for ($i = 1, $n = $visit->patient->visits->count(); $i < $n; $i++) {
+    @for ($i = 1, $n = $visit->patient->visits->count(); $i < $n; $i++)
         <div class="modal hide" id="history-modal-{{ $visit->patient->visits[$i]->id }}">
             <div class="content">
                 @include('doctors.components.history-report', ['visit' => $visit->patient->visits[$i]])
@@ -176,7 +176,6 @@
         @if ($i >= 6)
             @break
         @endif
-    }
     @endfor
 </div>
 @endsection

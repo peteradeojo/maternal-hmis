@@ -15,7 +15,8 @@ Route::name('nurses.')->group(function () {
 
     Route::prefix('/admissions')->name('admissions.')->group(function () {
         Route::get('/', [AdmissionsController::class, 'index'])->name('get');
-        Route::get('/{admission}/view', [AdmissionsController::class, 'show'])->name('show');
+        Route::match(['get', 'post'], '/{admission}/view', [AdmissionsController::class, 'show'])->name('show');
         Route::match(['get', 'post'], '/{admission}/assign-ward', [AdmissionsController::class, 'assignWard'])->name('assign-ward');
+        Route::match(['get', 'post'], '/{admission}/preview-treatment', [AdmissionsController::class, 'previewTreatment'])->name('treatment-preview');
     });
 });

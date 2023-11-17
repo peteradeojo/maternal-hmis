@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Department as EnumsDepartment;
 use App\Models\Department;
 use App\Models\Visit;
+use App\Models\Vitals;
 use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
 
@@ -29,7 +30,10 @@ class VitalsController extends Controller
             'height' => 'nullable|numeric',
         ]);
 
-        $visit->setVitals($data, $request->user());
+        $visit->svitals()->create($request->except('_token', 'respiratory_rate') + [
+            'respiration' => $request->respiratory_rate,
+            'recording_user_id' => auth()->user()->id,
+        ]);
 
         /**
          * @var Department

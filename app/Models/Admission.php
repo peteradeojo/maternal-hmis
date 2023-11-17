@@ -33,4 +33,8 @@ class Admission extends Model implements InterfacesDocumentable
     public function admittable() {
         return $this->morphTo();
     }
+
+    public function vitals() {
+        return $this->morphMany(Vitals::class, 'recordable');
+    }
 }

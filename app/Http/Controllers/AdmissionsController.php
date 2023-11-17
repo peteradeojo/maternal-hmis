@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Admission;
+use App\Models\DocumentationPrescription;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,45 @@ class AdmissionsController extends Controller
 
     public function show(Request  $request, Admission $admission)
     {
-        $admission->load(['patient', 'ward', 'admittable']);
+        if ($request->isMethod('POST')) {
 
+            // Log vitals
+            if ($request->has('vitals')) {
+                $request->validate([
+                    'blood_pressure' => [function ($field, $value, $fail) {
+                        if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                            return $fail("Invalid format for blood pressure.");
+                        }
+                    }],
+                    'temperature' => 'numeric',
+                    'pulse' => 'numeric',
+                    'respiratory_rate' => 'numeric',
+                ]);
+
+                $data = $request->except(['_token', 'vitals']);
+                $data['respiration'] = $data['respiratory_rate'];
+                unset($data['respiratory_rate']);
+
+                try {
+                    $admission->vitals()->create($data + ['recording_user_id' => $request->user()->id]);
+                    return redirect()->back();
+                } catch (\Throwable $th) {
+                    report($th);
+                    return back()->with('error', "An error occurred");
+                }
+            }
+
+            // Log drug administrations
+            if ($request->has('log-treatments')) {
+                $request->validate([
+                    'ministered' => 'required|array|min:1'
+                ]);
+
+                return redirect()->route('nurses.admissions.treatment-preview', $admission)->with('ministered', array_keys($request->ministered));
+            }
+        }
+
+        $admission->load(['patient', 'ward', 'admittable']);
         return view('nursing.show-admission', ['admission' => $admission]);
     }
 
@@ -75,5 +113,15 @@ class AdmissionsController extends Controller
         $admission->save();
 
         return redirect()->route('nurses.admissions.get');
+    }
+
+    public function previewTreatment(Request $request) {
+        $ministered = session('ministered');
+        if (!$ministered) {
+            return redirect()->back()->with('error', "Invalid request");
+        }
+
+        $treatments = DocumentationPrescription::whereIn('id', $ministered)->get();
+        dd($treatments);
     }
 }

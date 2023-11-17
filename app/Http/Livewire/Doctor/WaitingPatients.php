@@ -21,7 +21,9 @@ class WaitingPatients extends Component
     {
         $this->visits = Visit::where(function ($query) {
             $query->where('awaiting_doctor', true);
-        })->where('status', Status::active->value)->whereNotNull('vitals')->get();
+        })->where('status', Status::active->value)->where(function ($query) {
+            $query->whereNotNull('vitals')->orHas('svitals');
+        })->get();
     }
 
     public function render()

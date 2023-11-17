@@ -45,6 +45,7 @@ body {
             border-right: 1px solid #888;
         }
     }
+
     tbody tr {
         border-top: 1px solid #888;
     }
@@ -79,8 +80,10 @@ body {
     }
 
     &.bordered {
+
         tr,
-        td, th {
+        td,
+        th {
             border: 1px solid #888;
 
         }
@@ -185,9 +188,11 @@ p {
     background-color: #aaa;
     display: flex;
     width: fit-content;
+
     .tag-input {
         background-color: #fff;
     }
+
     input {
         border-radius: 24px;
         border: none;
@@ -226,7 +231,31 @@ p {
 
 .only-print {
     display: none;
+
     @media print {
         display: initial;
+    }
+}
+
+.notice {
+    padding: 12px;
+    background-color: #ff9900;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: underline;
+    animation-name: fadeaway;
+    animation-duration: 5s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes fadeaway {
+    50% {
+        opacity: 50%;
+    }
+    100% {
+        opacity: 0;
+        display: none;
     }
 }

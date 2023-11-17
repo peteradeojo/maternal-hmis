@@ -11,6 +11,7 @@
                         <th>Card Number</th>
                         <th>Category</th>
                         <th>Visit Type</th>
+                        <th>Date & Time</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -21,6 +22,7 @@
                             <td>{{ $v->patient->card_number }}</td>
                             <td>{{ $v->patient->category->name }}</td>
                             <td>{{ $v->getVisitType() }}</td>
+                            <td>{{ $v->created_at->format('Y-m-d h:i A') }}</td>
                             <td>
                                 @if ($v->documentations->count() > 0)
                                     <a href="{{ route('doctor.follow-up', $v->documentations[0]->id) }}">Review Last Documentation</a>

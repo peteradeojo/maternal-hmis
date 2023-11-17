@@ -17,7 +17,9 @@ class VitalList extends Component
 
     public function fetchData()
     {
-        $this->visits = Visit::where('status', Status::active->value)->where('vitals', null)->get();
+        $this->visits = Visit::where('status', Status::active->value)->where(function ($query) {
+            $query->doesntHave('svitals')->whereNull('vitals');
+        })->get();
     }
 
     public function render()

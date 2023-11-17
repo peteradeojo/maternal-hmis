@@ -23,6 +23,11 @@
         @if (session('error'))
             <p>{{ session('error') }}</p>
         @endif
+        @if (isset($errors))
+            @foreach ($errors->all() as $error)
+                <p class="notice">{{ $error }}</p>
+            @endforeach
+        @endif
         @yield('content')
     </main>
     <aside id="noticeboard">
