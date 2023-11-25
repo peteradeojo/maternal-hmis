@@ -12,7 +12,7 @@ class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        return view('nursing.admissions');
+        return view('nursing.admissions.index');
     }
 
     public function show(Request  $request, Admission $admission)
@@ -51,7 +51,7 @@ class AdmissionsController extends Controller
                     'ministered' => 'required|array|min:1'
                 ]);
 
-                return redirect()->route('nurses.admissions.treatment-preview', $admission)->with('ministered', array_keys($request->ministered));
+                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered)));//->with('ministered', array_keys($request->ministered));
             }
         }
 
@@ -115,13 +115,12 @@ class AdmissionsController extends Controller
         return redirect()->route('nurses.admissions.get');
     }
 
-    public function previewTreatment(Request $request) {
-        $ministered = session('ministered');
-        if (!$ministered) {
-            return redirect()->back()->with('error', "Invalid request");
-        }
+    public function previewTreatment(Request $request, Admission $admission) {
+        if (!$request->isMethod('POST')) {
+            $ministered = explode(',', $request->query('treatments'));
+            $treatments = DocumentationPrescription::whereIn('id', $ministered)->get();
 
-        $treatments = DocumentationPrescription::whereIn('id', $ministered)->get();
-        dd($treatments);
+            return view('nursing.admissions.log-treatment', ['treatments' => $treatments, 'admission' => $admission]);
+        }
     }
 }

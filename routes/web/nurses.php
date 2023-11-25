@@ -13,7 +13,7 @@ Route::name('nurses.')->group(function () {
 
     Route::post('anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking')->middleware(['datalog']);
 
-    Route::prefix('/admissions')->name('admissions.')->group(function () {
+    Route::prefix('/nurses/admissions')->name('admissions.')->group(function () {
         Route::get('/', [AdmissionsController::class, 'index'])->name('get');
         Route::match(['get', 'post'], '/{admission}/view', [AdmissionsController::class, 'show'])->name('show');
         Route::match(['get', 'post'], '/{admission}/assign-ward', [AdmissionsController::class, 'assignWard'])->name('assign-ward');
