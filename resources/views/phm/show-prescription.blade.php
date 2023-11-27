@@ -15,7 +15,13 @@
                 <p><b>Card Number: </b>{{ $doc->patient->card_number }}</p>
                 <p><b>Age: </b>{{ $doc->patient->dob->diffInYears() }}</p>
                 <p><b>Gender: </b>{{ $doc->patient->gender_value }}</p>
-                <p><b>Category: </b>{{ $doc->patient->category->name }}</p>
+                <p><b>Category: </b>{{ $doc->patient->category->name }}
+
+                    @if ($doc->patient->category->name == "Antenatal")
+                        ({{$doc->patient->antenatalProfiles[0]?->card_type}})
+                    @endif
+
+                </p>
             </div>
         </div>
     </div>
