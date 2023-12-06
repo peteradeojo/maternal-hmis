@@ -13,7 +13,7 @@
                 <h3>Biodata</h3>
                 <p><b>Name: </b>{{ $doc->patient->name }}</p>
                 <p><b>Card Number: </b>{{ $doc->patient->card_number }}</p>
-                <p><b>Age: </b>{{ $doc->patient->dob->diffInYears() }}</p>
+                <p><b>Age: </b>{{ $doc->patient->dob?->diffInYears() }}</p>
                 <p><b>Gender: </b>{{ $doc->patient->gender_value }}</p>
                 <p><b>Category: </b>{{ $doc->patient->category->name }}
 
