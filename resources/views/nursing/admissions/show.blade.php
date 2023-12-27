@@ -78,7 +78,7 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            @if ($admission->admittable->treatments->count() > 0)
+                            @if ($admission->admittable->treatments->count() > 0 && $admission->in_ward)
                                 <div class="pt-1"></div>
                                 <button type="submit" class="btn btn-red">Submit</button>
                             @endif
