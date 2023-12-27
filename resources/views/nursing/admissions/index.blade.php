@@ -19,8 +19,8 @@
                 <tbody>
                     @foreach ($admissions as $a)
                         <tr>
-                            <td><a href="{{route('nurses.admissions.show', $a)}}">{{$a->patient->name}}</a></td>
-                            <td>{{$a->ward->name}}</td>
+                            <td><a href="{{route('nurses.admissions.show', $a)}}">{{$a->patient?->name}}</a></td>
+                            <td>{{$a->ward?->name}}</td>
                             <td>{{$a->created_at->format('D, dS, M, Y')}}</td>
                             <td></td>
                         </tr>
