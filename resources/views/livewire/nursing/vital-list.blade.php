@@ -11,6 +11,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Category</th>
+                    <th>Date</th>
                     <th></th>
                 </tr>
             </thead>
@@ -19,6 +20,7 @@
                     <tr>
                         <td>{{ $v->patient->name }}</td>
                         <td>{{ $v->patient->category->name }}</td>
+                        <td>{{$v->created_at->format('l, dS, M, Y')}}</td>
                         <td>
                             <a href="{{ route('nurses.patient-vitals', $v) }}">Take Vitals</a>
                         </td>
