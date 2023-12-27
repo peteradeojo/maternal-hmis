@@ -12,7 +12,7 @@
                     <p><b>Age:</b> {{ $admission->patient->dob?->diffInYears() }}</p>
                     <p><b>Category:</b> {{$admission->patient->category->name}}</p>
                     <p><b>Gender:</b> {{ $admission->patient->gender_value }}</p>
-                    <p><b>Ward:</b> {{ $admission->ward->name }}</p>
+                    <p><b>Ward:</b> {{ $admission->ward?->name }}</p>
                     <p><b>Insurance: </b> {{$admission->patient->insurance?->hmo_name ?? "None"}}</p>
                 </div>
                 <div class="col-6">
