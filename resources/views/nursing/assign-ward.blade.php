@@ -6,11 +6,10 @@
         <div class="body">
             <div class="pt-1"></div>
             <div class="row start">
-                <p class="col-4">
-                    <b>Complaints:</b> {{ $admission->admittable->symptoms }}
-                </p>
-                <p class="col-4"><b>Diagnoses:</b> {{ join(',', $admission->admittable->diagnoses->toArray()) | 'Nil' }}</p>
-                <p class="col-4"><b>Date & Time:</b> {{ $admission->created_at->format('Y-m-d, h:i A') }}</p>
+                <p class="col-6"><b>Diagnoses:</b> {{ join(',', $admission->admittable->diagnoses->map(function ($d) {
+                    return $d->diagnoses;
+                })->toArray()) }}</p>
+                <p class="col-6"><b>Date & Time:</b> {{ $admission->created_at->format('Y-m-d, h:i A') }}</p>
                 <div class="col-6">
                     <div class="pt-2"></div>
                     <table class="table-list">
