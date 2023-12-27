@@ -22,7 +22,9 @@
                             <td><a href="{{route('nurses.admissions.show', $a)}}">{{$a->patient?->name}}</a></td>
                             <td>{{$a->ward?->name}}</td>
                             <td>{{$a->created_at->format('D, dS, M, Y')}}</td>
-                            <td></td>
+                            <td>@unless ($a->ward)
+                                <a href="{{route('nurses.admissions.assign-ward', $a)}}">Assign To Ward</a>
+                            @endunless</td>
                         </tr>
                     @endforeach
                 </tbody>
