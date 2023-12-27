@@ -19,4 +19,9 @@ class DocumentationPrescription extends Model
     public function patient() {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
+
+    public function __toString()
+    {
+        return "{$this->name} {$this->route} {$this->dosage} {$this->route}";
+    }
 }

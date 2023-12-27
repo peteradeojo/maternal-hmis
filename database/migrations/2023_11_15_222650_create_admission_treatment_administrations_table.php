@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('treatment_id')->constrained('documentation_prescriptions', 'id');
             $table->foreignId('minister_id')->constrained('users', 'id');
+            $table->foreignId('admission_id')->constrained('admissions')->restrictOnDelete();
             $table->timestamps();
         });
     }

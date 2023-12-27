@@ -10,8 +10,12 @@
                 <div class="col-6">
                     <p><b>Patient:</b> {{ $admission->patient->name }}</p>
                     <p><b>Age:</b> {{ $admission->patient->dob?->diffInYears() }}</p>
+                    <p><b>Category:</b> {{$admission->patient->category->name}}</p>
                     <p><b>Gender:</b> {{ $admission->patient->gender_value }}</p>
                     <p><b>Ward:</b> {{ $admission->ward->name }}</p>
+                    <p><b>Insurance: </b> {{$admission->patient->insurance?->hmo_name ?? "None"}}</p>
+                </div>
+                <div class="col-6">
                     <p><b>Complaints:</b></p>
                     <ul>
                         @foreach ($admission->admittable->complaints as $complaint)
@@ -19,6 +23,7 @@
                         @endforeach
                     </ul>
                 </div>
+                <div class="col-12 py"></div>
                 <div class="col-6">
                     <p><b>Diagnosis:</b> {{ $admission->admittable->diagnoses->join(',') }}</p>
                 </div>
@@ -34,7 +39,7 @@
             <div class="tab-list" id="list">
                 <div id="admission-plan" class="tab p-1">
                     <h2>Admission Plan</h2>
-                    <div class="py"></div>
+                    <div class="pb-1"></div>
                     <div>
                         <h3>Drugs</h3>
                         <div class="pt-1"></div>
@@ -75,6 +80,28 @@
                             @endif
                         </form>
                     </div>
+                    <div class="pb-1"></div>
+                    <h3>History</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Treatments</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Administered By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($admission->administrations as $adm)
+                                <tr>
+                                    <td>{{$adm->treatments}}</td>
+                                    <td>{{$adm->created_at?->format('Y-m-d')}}</td>
+                                    <td>{{$adm->created_at?->format('h:i A')}}</td>
+                                    <td>{{$adm->minister->name}}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
                 <div class="tab p-1 hide" id="vitals-tab">
                     <h2>Vitals Chart</h2>

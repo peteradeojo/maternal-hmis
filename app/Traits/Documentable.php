@@ -34,4 +34,8 @@ trait Documentable
     {
         return $this->morphMany(DocumentationTest::class, 'testable')->latest();
     }
+
+    public function prescriptions() {
+        return $this->treatments();
+    }
 }

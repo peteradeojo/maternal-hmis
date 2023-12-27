@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Admission;
+use App\Models\AdmissionTreatments;
 use App\Models\DocumentationPrescription;
 use App\Models\Ward;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        return view('nursing.admissions.index');
+        $admissions = Admission::whereNull('discharged_on')->get();
+        return view('nursing.admissions.index', ['admissions' => $admissions]);
     }
 
     public function show(Request  $request, Admission $admission)
@@ -51,12 +54,12 @@ class AdmissionsController extends Controller
                     'ministered' => 'required|array|min:1'
                 ]);
 
-                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered)));//->with('ministered', array_keys($request->ministered));
+                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered))); //->with('ministered', array_keys($request->ministered));
             }
         }
 
         $admission->load(['patient', 'ward', 'admittable']);
-        return view('nursing.show-admission', ['admission' => $admission]);
+        return view('nursing.admissions.show', ['admission' => $admission]);
     }
 
     public function getAdmissions(Request $request)
@@ -115,12 +118,33 @@ class AdmissionsController extends Controller
         return redirect()->route('nurses.admissions.get');
     }
 
-    public function previewTreatment(Request $request, Admission $admission) {
+    public function previewTreatment(Request $request, Admission $admission)
+    {
         if (!$request->isMethod('POST')) {
             $ministered = explode(',', $request->query('treatments'));
-            $treatments = DocumentationPrescription::whereIn('id', $ministered)->get();
+            $treatments = $admission->admittable->prescriptions()->whereIn('id', $ministered)->get();
+
+            if ($treatments->count() < 1) {
+                return redirect()->back()->withErrors("Malformed request.");
+            }
 
             return view('nursing.admissions.log-treatment', ['treatments' => $treatments, 'admission' => $admission]);
+        }
+
+        if ($request->has('confirm')) {
+            $user = $request->user();
+            $records = array_map(function ($t) use (&$user, &$admission) {
+                return ['treatment_id' => $t, 'minister_id' => $user->id, 'admission_id' => $admission->id];
+            }, $request->treatments);
+            try {
+                foreach ($records as $r) {
+                    AdmissionTreatments::create($r);
+                }
+                return redirect()->to(route('nurses.admissions.show', $admission));
+            } catch (\Throwable $th) {
+                report($th);
+                return redirect()->back()->withErrors($th->getMessage());
+            }
         }
     }
 }

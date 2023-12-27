@@ -20,7 +20,6 @@
                     @if ($doc->patient->category->name == "Antenatal")
                         ({{$doc->patient->antenatalProfiles[0]?->card_type}})
                     @endif
-
                 </p>
             </div>
         </div>
