@@ -4,6 +4,7 @@
             <th>Booking ID</th>
             <th>Patient Name</th>
             <th>Booking Date</th>
+            <th></th>
             {{-- <th>Booking Time</th> --}}
         </tr>
     </thead>
@@ -19,12 +20,7 @@
                     url: "{{ route('api.nursing.anc-bookings') }}",
                 },
                 columns: [{
-                        data: @if (isset($url))
-                            (row) => `<a href=:url>${row.id}</a>`.replace(":url",
-                                "{{ $url }}" + row.id)
-                        @else
-                            'id'
-                        @endif
+                        data: (row) => row.id
                     },
                     {
                         data: 'patient.name'
@@ -32,9 +28,10 @@
                     {
                         data: (row, type, set) => new Date(row.patient.created_at).toLocaleDateString()
                     },
-                    // {
-                    //     data: (row, type, set) => new Date(row.patient.created_at).toLocaleTimeString("en-GB")
-                    // }
+                    {
+                        data: (row, type, set) =>
+                            `<a href='/med/anc-bookings/${row.id}'  class='btn bg-red-500 text-white px-2'>View</a>`
+                    }
                 ],
             });
         });

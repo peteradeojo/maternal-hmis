@@ -28,4 +28,8 @@ class DocumentationTest extends Model
     public function testable() {
         return $this->morphTo();
     }
+
+    public function staff() {
+        return $this->belongsTo(User::class, 'tested_by');
+    }
 }

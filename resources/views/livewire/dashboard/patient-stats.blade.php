@@ -1,5 +1,5 @@
 <div>
-    <div class="row py">
+    <div class="flex py">
         <div class="col">
             <div class="card">
                 <div class="header card-header">
@@ -58,7 +58,7 @@
                                 <td>{{ $v->patient->category->name }}</td>
                                 <td>{{ $v->patient->gender_value[0] }}</td>
                                 <td>{{ $v->created_at->diffForHumans(syntax: 1) }}</td>
-                                <td>{{ $v->getVisitType() }}</td>
+                                <td>{{ $v->readable_visit_type }}</td>
                                 <td>
                                     @if ($user->department_id == DepartmentsEnum::REC->value)
                                         <a href="{{ route('records.force-check-out', $v) }}?force">Check out</a>
@@ -77,10 +77,7 @@
     <script>
         let table = new DataTable(document.querySelector("#waitlist-table"));
         document.addEventListener('livewire:load', function() {
-            console.log("Livewire loaded");
-            console.log(Livewire);
             Livewire.on('reinitialize-datatable', function() {
-                console.log("Livewire loaded");
                 // Reinitialize DataTables here
                 // $('#waitlist-table').DataTable().destroy();
                 // $('#waitlist-table').DataTable();

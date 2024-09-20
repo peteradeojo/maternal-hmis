@@ -21,7 +21,7 @@
                 <div class="row mt-1">
                     @foreach ($doc->tests as $test)
                         <div class="col-6 px">
-                            <p><u><b>{{ strtoupper($test->name) }}</b></u></p>
+                            <p><u><b>{{ strtoupper($test->name) }}</b></u> <br/><small>Adminstered: {{$test->staff->name}}</small></p>
 
                             @foreach ($test->results ?? [] as $r)
                                 <p class="py-1"><b>{{ $r->description }}: </b> {{ $r->result }}</p>

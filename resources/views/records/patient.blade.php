@@ -43,13 +43,15 @@
             <div class="body foldable-body">
                 <div class="py">
                     @if (!isset($patient->antenatalProfiles[0]))
-                        <p class="text-danger">No antenatal profile found for this patient. <a
-                                href="{{ route('records.patient.anc-profile', $patient) }}" id="createAncProfile"
-                                data-id="{{ $patient->id }}">Create
-                                Profile</a></p>
+                        <p class="text-danger">No antenatal profile found for this patient.
+                            <a href="{{ route('records.patient.anc-profile', $patient) }}" id="createAncProfile"
+                                class="btn bg-red-500 text-white" data-id="{{ $patient->id }}">Create
+                                Profile</a>
+                        </p>
                     @else
                         <p><b>LMP Recorded: </b> {{ $patient->antenatalProfiles[0]?->lmp }}</p>
-                        <p><b>Category:</b> {{ preg_replace("/_/", " ", $patient->antenatalProfiles[0]?->card_type ?? "") }}</p>
+                        <p><b>Category:</b>
+                            {{ preg_replace('/_/', ' ', $patient->antenatalProfiles[0]?->card_type ?? '') }}</p>
                         <p><b>Registration Date:</b> {{ $patient->antenatalProfiles[0]?->created_at->format('Y-m-d') }}</p>
                     @endif
                 </div>

@@ -10,7 +10,7 @@
     "src": "resources/css/app.css"
   },
   "resources/css/app.scss": {
-    "file": "assets/app-094e7b66.css",
+    "file": "assets/app-5fd41183.css",
     "isEntry": true,
     "src": "resources/css/app.scss"
   },
@@ -28,7 +28,7 @@
     "src": "resources/js/records/patients.js"
   },
   "resources/js/util.js": {
-    "file": "assets/util-401e3e26.js",
+    "file": "assets/util-736f5e99.js",
     "isEntry": true,
     "src": "resources/js/util.js"
   }

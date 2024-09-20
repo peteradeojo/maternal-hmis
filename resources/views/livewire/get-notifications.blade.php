@@ -1,4 +1,4 @@
-<div wire:poll.10s>
+<div wire:poll.5s>
     <p class="mb-1"><a href="#" wire:click='clearAll'>Clear</a></p>
 
     @forelse ($notifications as $n)

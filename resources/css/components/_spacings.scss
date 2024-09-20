@@ -57,21 +57,3 @@ $marginBottom: 0.75em;
 .pr {
     padding-right: $marginBottom;
 }
-
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    &.between {
-        justify-content: space-between;
-    }
-    &.start {
-        align-items: flex-start;
-    }
-}
-
-@for $i from 1 through 12 {
-    .col-#{$i} {
-        width: calc(100% / 12) * $i;
-    }
-}

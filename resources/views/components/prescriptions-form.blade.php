@@ -1,12 +1,12 @@
-<fieldset class="px py">
+<fieldset class="">
     <datalist id="prescriptions-dl">
         @foreach ($prescriptions ?? [] as $p)
             <option value="{{ $p['name'] }}">{{ $p['name'] }}</option>
         @endforeach
     </datalist>
     <legend>Treatments</legend>
-    <input type="text" id="treatments" list="prescriptions-dl">
-    <button type="button" id="add-treatment">Add</button>
+    <input type="text" id="treatments" class="input" list="prescriptions-dl">
+    <button type="button" id="add-treatment" class="btn btn-black">Add</button>
     <table id="treatments-list" class="mt-1 table">
         <thead>
             <tr>
@@ -46,7 +46,8 @@
                 input.setAttribute('value', val);
                 input.readOnly = true;
                 button.type = 'button';
-                button.textContent = 'Remove';
+                button.innerHTML = '&times;';
+                button.classList.add('btn',  'w-12', 'h-12');
                 button.addEventListener('click', function() {
                     row.remove();
                 });

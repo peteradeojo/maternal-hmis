@@ -49,9 +49,8 @@ class Visit extends Model
     }
 
     // Methods
-    public function getVisitType()
+    public function getReadableVisitTypeAttribute()
     {
-        // throw new \Exception("I dey here");
         return $this->visit?->getType();
     }
 
@@ -115,7 +114,33 @@ class Visit extends Model
         }
     }
 
-    public function svitals() {
+    public function svitals()
+    {
         return $this->morphOne(Vitals::class, 'recordable');
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(ConsultationNote::class, 'visit_id');
+    }
+
+    public function diagnoses()
+    {
+        return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
+    }
+
+    public function tests()
+    {
+        return $this->morphMany(DocumentationTest::class, 'testable');
+    }
+
+    public function prescriptions()
+    {
+        return $this->morphMany(DocumentationPrescription::class, 'prescriptionable');
+    }
+
+    public function imagings()
+    {
+        return $this->morphMany(PatientImaging::class, 'documentable');
     }
 }

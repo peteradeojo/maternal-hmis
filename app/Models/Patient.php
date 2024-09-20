@@ -65,7 +65,7 @@ class Patient extends Model
     }
     public function documentations()
     {
-        return $this->hasMany(Documentation::class)->latest();
+        return $this->hasMany(Documentation::class)->limit(10)->latest();
     }
 
     public function insurance() {
@@ -74,5 +74,9 @@ class Patient extends Model
 
     public function visits() {
         return $this->hasMany(Visit::class, 'patient_id')->latest();
+    }
+
+    public function notes () {
+        return $this->hasMany(ConsultationNote::class, 'patient_id');
     }
 }

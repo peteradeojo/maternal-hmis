@@ -7,6 +7,7 @@ use App\Models\Documentation;
 use App\Models\DocumentationTest;
 use App\Models\Patient;
 use App\Models\User;
+use App\Models\Visit;
 use Livewire\Component;
 
 class WaitingPatients extends Component
@@ -22,7 +23,10 @@ class WaitingPatients extends Component
 
     public function load()
     {
-        $this->documentations = Documentation::whereHas('tests', function ($q) {
+        // $this->documentations = Documentation::whereHas('tests', function ($q) {
+        //     $q->where('status', '!=', Status::completed->value);
+        // })->limit(100)->get();
+        $this->documentations = Visit::whereHas('tests', function ($q) {
             $q->where('status', '!=', Status::completed->value);
         })->limit(100)->get();
     }

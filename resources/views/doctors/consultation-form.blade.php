@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('title', $visit->patient->name . "| Doctor's Visit")
 @section('content')
     <div class="container">
         <div class="row my start">
@@ -40,9 +41,9 @@
                         <div class="card-header">History</div>
                     </div>
                     <div class="foldable-body">
-                        {{-- Load last 5 visits --}}
                         @for ($i = 1, $n = $visit->patient->visits->count(); $i < $n; $i++)
-                            <a href="#" data-target="#history-modal-{{ $visit->patient->visits[$i]->id }}" class="modal-trigger">{{ $visit->patient->visits[$i]->created_at->format('Y-m-d') }}</a>
+                            <a href="#" data-target="#history-modal-{{ $visit->patient->visits[$i]->id }}"
+                                class="modal-trigger">{{ $visit->patient->visits[$i]->created_at->format('Y-m-d') }}</a>
                             @if ($i >= 6)
                             @break
                         @endif
@@ -52,39 +53,18 @@
         </div>
     </div>
 
+    {{-- Anc Booking details --}}
     @if ($visit->patient->category->name == 'Antenatal')
-        <div class="card py px">
+        @php
+            $ancProfile = $visit->patient->antenatalProfiles[0] ?? null;
+        @endphp
+        <div class="card py px foldable">
             <div class="header foldable-header">
                 <div class="card-header">Antenatal Booking</div>
             </div>
-            @php
-                $ancProfile = $visit->patient->antenatalProfiles[0] ?? null;
-            @endphp
-            <div class="body foldable-body">
+            <div class="body foldable-body unfolded">
                 @if ($ancProfile)
-                    <div class="py">
-                        <p><b>Date of Booking: </b>
-                            {{ $ancProfile->created_at?->format('Y-m-d') }}</p>
-                        <p><b>Card Type: </b>
-                            {{ $ancProfile->card_type }}
-                        </p>
-                        <p><b>EDD: </b> {{ $ancProfile->edd?->format('Y-m-d') }}</p>
-                        <p><b>Weeks of Gestation: </b>
-                            {{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}
-                        </p>
-                        <p><b>Gravida: </b> {{ $ancProfile->gravida }}</p>
-                        <p><b>Parity: </b> {{ $ancProfile->parity }}</p>
-                        <p><b>Height: </b> {{ $ancProfile->height }} cm</p>
-                        <p><b>Weight: </b> {{ $ancProfile->weight }} kg</p>
-                        <p><b>BP: </b> {{ $ancProfile->bp }} mmHg</p>
-                        <p><b>HB: </b> {{ $ancProfile->hb }} g/dl</p>
-                        <p><b>Urine: </b> {{ $ancProfile->urine }}</p>
-                        <p><b>VDRL: </b> {{ $ancProfile->vdrl }}</p>
-                        <p><b>HIV: </b> {{ $ancProfile->hiv }}</p>
-                        <p><b>HEP B: </b> {{ $ancProfile->hep_b }}</p>
-                        <p><b>HEP C: </b> {{ $ancProfile->hep_c }}</p>
-                        <p><b>Other: </b> {{ $ancProfile->other }}</p>
-                    </div>
+
                 @else
                     <div class="py">
                         <b>This Patient has no active antenatal profile.</b>
@@ -93,6 +73,7 @@
             </div>
         </div>
 
+        {{-- Anc history --}}
         @if ($ancProfile)
             <div class="card my py px foldable">
                 <div class="header card-header foldable-header">

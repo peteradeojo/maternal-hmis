@@ -20,28 +20,28 @@ class UserSeeder extends Seeder
                 'firstname' => 'Idowu',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::DOC->value,
-                'phone' => '08033886173',
+                'phone' => 'doctor',
                 'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Moronfoluwa',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::NUR->value,
-                'phone' => '08012345678',
+                'phone' => 'nursing',
                 'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Oluwaseun',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::REC->value,
-                'phone' => '08087654321',
+                'phone' => 'record',
                 'password' => Hash::make('password')
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::IT->value,
-                'phone' => '08103490675',
+                'phone' => 'ict',
                 'password' => Hash::make('password')
             ]
         ];

@@ -21,7 +21,7 @@
                             <td>{{ $v->patient->name }}</td>
                             <td>{{ $v->patient->card_number }}</td>
                             <td>{{ $v->patient->category->name }}</td>
-                            <td>{{ $v->getVisitType() }}</td>
+                            <td>{{ $v->readable_visit_type }}</td>
                             <td>{{ $v->created_at->format('Y-m-d h:i A') }}</td>
                             <td>
                                 @if ($v->documentations->count() > 0)

@@ -9,7 +9,7 @@ Route::prefix('/lab')->name('lab.')->group(function () {
         $user = auth()->user();
         return view('lab.ancs', compact('user'));
     })->name('antenatals');
-    Route::match(['get', 'post'], 'test/{documentation}', [LabController::class, 'test'])->name('take-test');
+    Route::match(['get', 'post'], 'test/{visit}', [LabController::class, 'test'])->name('take-test');
     Route::match(['get'], 'report/{doc}', [LabController::class, 'testReport'])->name('report-test');
     Route::match(['get', 'post'], 'anc-test/{visit}', [LabController::class, 'testAnc'])->name('test-anc');
     // Route::get('/anc-booking/{profile}', [LabController::class, 'anc'])->name('anc-booking');

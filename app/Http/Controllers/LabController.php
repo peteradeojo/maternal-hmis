@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
+use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\Visit;
+use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class LabController extends Controller
 {
-    public function test(Request $request, Documentation $documentation)
+    public function test(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') {
-            return view('lab.take-test', compact('documentation'));
+            return view('lab.take-test', ['documentation' => $visit]);
         }
 
         $data = $request->validate([
@@ -30,7 +34,7 @@ class LabController extends Controller
             'comment' => 'nullable|string',
         ]);
 
-        foreach ($documentation->tests as $i => $test) {
+        foreach ($visit->tests as $i => $test) {
             if (isset($data['result'][$i])) {
                 $results = [];
                 $resultData = $data['result'][$i] ?? [];
@@ -65,11 +69,12 @@ class LabController extends Controller
             }
         }
 
-        if ($documentation->tests()->where('status', Status::completed->value)->count() > 0) {
-            $documentation->visit->awaiting_lab_results = false;
-            $documentation->visit->awaiting_doctor = true;
-            $documentation->visit->save();
+        if ($visit->tests()->where('status', Status::completed->value)->count() > 0) {
+            $visit->visit->awaiting_lab_results = false;
         }
+
+        $visit->awaiting_doctor = true;
+        $visit->save();
 
         return redirect()->route('dashboard')->with('success', 'Test results saved successfully');
     }
@@ -81,8 +86,7 @@ class LabController extends Controller
 
     public function getHistory(Request $request)
     {
-        return $this->dataTable($request, Documentation::whereHas('tests', function ($query) {
-        }), [
+        return $this->dataTable($request, Visit::with(['patient'])->has('tests'), [
             function (&$query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "{$search}%");
@@ -143,8 +147,28 @@ class LabController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function testReport(Request $request, Documentation $doc)
+    public function testReport(Request $request, Visit $doc)
     {
         return view('lab.testReport', compact('doc'));
+    }
+
+    public function store(Request  $request, Visit $visit)
+    {
+        $request->validate([
+            'test' => 'required|string'
+        ]);
+
+        $visit->tests()->create([
+            'name' => $request->test,
+            'patient_id' => $visit->patient_id,
+            'user_id' =>  $request->user()->id,
+        ]);
+
+        $lab = Department::where('id', EnumsDepartment::LAB->value)->first();
+        $lab->notifyParticipants(new StaffNotification("New test requested for {$visit->patient->name}"));
+
+        return response()->json([
+            'ok' => true,
+        ]);
     }
 }

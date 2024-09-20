@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Department as EnumsDepartment;
+use App\Models\Department;
 use App\Models\Documentation;
 use App\Models\PatientImaging;
+use App\Models\Visit;
+use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,5 +32,25 @@ class RadiologyController extends Controller
             ->leftJoin(DB::raw("patients p"), "p.id", "=", "d.patient_id")
             ->groupBy('d.created_at', 'd.id');
         return $this->dataTable($request, $query, []);
+    }
+
+    public function store(Request $request, Visit $visit)
+    {
+        $request->validate([
+            'scan' => 'required|string',
+        ]);
+
+        $visit->imagings()->create([
+            'patient_id' => $visit->patient_id,
+            'requested_by' => $request->user()->id,
+            'name' => $request->scan,
+        ]);
+
+        $dept = Department::where('id', EnumsDepartment::RAD->value)->first();
+        $dept->notifyParticipants(new StaffNotification("Imaging request for {$visit->patient->name}"));
+
+        return response()->json([
+            'ok' => true,
+        ]);
     }
 }

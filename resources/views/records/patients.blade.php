@@ -6,9 +6,9 @@
         <div class="card py px mb-1">
             <h2>Register Patient</h2>
 
-            <div class="py">
-                <a href="{{ route('records.patients.new') }}">General Patient</a>
-                <a href="{{ route('records.patients.new') }}?mode=anc" class="pl-1">Antenatal Patient</a>
+            <div class="py flex gap-x-3">
+                <a href="{{ route('records.patients.new') }}" class="btn bg-green-500">General Patient</a>
+                <a href="{{ route('records.patients.new') }}?mode=anc" class="btn bg-red-500  text-white">Antenatal Patient</a>
             </div>
         </div>
 

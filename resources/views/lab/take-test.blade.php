@@ -50,7 +50,7 @@
                                     <th>Reference Range</th>
                                     <td>
                                         @unless ($test->status == Status::completed->value)
-                                            <button class="add-result" type="button">Add Result</button>
+                                            <button class="add-result btn bg-blue-700 text-white" type="button">Add Result</button>
                                         @endunless
                                     </td>
                                 </tr>
@@ -114,7 +114,7 @@
                     <td><input type="text" name="result[${key}][${rowCount}]" class="form-control"></td>
                     <td><input type="text" name="unit[${key}][${rowCount}]" class="form-control"></td>
                     <td><input type="text" name="reference_range[${key}][${rowCount}]" class="form-control"></td>
-                    <td><button class="remove-result" type="button">Remove</button></td>
+                    <td><button class="remove-result btn bg-red-500 text-white" type="button">Remove</button></td>
                 `;
 
                 tbody.appendChild(tr);

@@ -13,7 +13,9 @@ Route::name('doctor.')->group(function () {
     Route::get('/visits', [PatientsController::class, 'history'])->name('history');
     Route::get('/visits/{visit}', [PatientsController::class, 'visit'])->name('visit');
 
+
     Route::prefix('med')->group(function () {
+        Route::post('/notes/{visit}', [PatientsController::class, 'note'])->whereNumber('visit')->name('visit-note');
         Route::get('/patients', [PatientsController::class, 'index'])->name('patients');
         Route::get('/patients/{patient}', [PatientsController::class, 'show'])->name('patient');
         Route::get('/anc-bookings', [PatientsController::class, 'pendingAncBookings'])->name('anc-bookings');
@@ -22,5 +24,4 @@ Route::name('doctor.')->group(function () {
             Route::match(['get', 'post'], '/start/{visit}', [PatientsController::class, 'startAdmission'])->name('start-admission');
         });
     });
-
 })->middleware(['auth']);

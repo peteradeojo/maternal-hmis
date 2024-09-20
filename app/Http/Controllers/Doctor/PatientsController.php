@@ -37,7 +37,7 @@ class PatientsController extends Controller
     {
         $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
         $prescriptions = DocumentationPrescription::selectRaw('DISTINCT name')->get()->toArray();
-        $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->toArray();
+        $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->pluck('name')->toArray();
         $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
         return compact('complaints', 'prescriptions', 'tests', 'diagnoses');
     }
@@ -46,8 +46,9 @@ class PatientsController extends Controller
     {
         if ($request->method() !== 'POST') {
             $data = $this->loadAutoCompleteData();
-            $visit->patient->load(['visits']);
-            return view('doctors.consultation-form', [...$data, 'visit' => $visit]);
+            $visit->patient->load(['visits', 'notes.consultant', 'antenatalProfiles']);
+            return view('doctors.visit-form-2', [...$data, 'visit' => $visit]);
+            // return view('doctors.consultation-form', [...$data, 'visit' => $visit]);
         }
 
         $data = $request->except('_token');
@@ -57,8 +58,6 @@ class PatientsController extends Controller
 
         $request->mergeIfMissing(['tests' => [], 'admit' => false]);
         $data = $request->except('_token');
-
-        // dd($data);
 
         DB::beginTransaction();
 
@@ -213,6 +212,7 @@ class PatientsController extends Controller
             $profile->save();
 
             DB::commit();
+            if ($request->has('go_back')) return redirect()->back();
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -303,4 +303,36 @@ class PatientsController extends Controller
     //         return redirect()->back()->with('error', $th->getMessage());
     //     }
     // }
+
+    public function note(Request $request, Visit $visit)
+    {
+        $request->validate([
+            'note' => 'required|string'
+        ]);
+
+        $visit->notes()->create([
+            'note' => $request->note,
+            'patient_id' => $visit->patient_id,
+            'consultant_id' => $request->user()->id,
+        ]);
+
+        return response()->json([
+            'ok' => true,
+        ]);
+    }
+
+    public function saveDiagnosis(Request $request, Visit $visit)
+    {
+        $request->validate(['diagnosis' => 'required|string']);
+
+        $visit->diagnoses()->create([
+            'user_id' => $request->user()->id,
+            'patient_id' => $visit->patient_id,
+            'diagnoses' =>  $request->diagnosis,
+        ]);
+
+        return response()->json([
+            'ok' => true
+        ]);
+    }
 }
