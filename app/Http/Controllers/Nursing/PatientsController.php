@@ -41,9 +41,11 @@ class PatientsController extends Controller
 
     public function submitAncBooking(VitalsRequest $request, AntenatalProfile $profile)
     {
-        $validated = $request->safe()->all();
+        $validated = $request->safe();
 
-        $profile->vitals = array_merge($profile->vitals ?? [], $validated);
+        $profile->vitals = array_merge($profile->vitals ?? [], $validated->except(['lmp', 'edd']));
+        $profile->lmp = $validated->lmp;
+        $profile->edd = $validated->edd;
         $profile->awaiting_vitals = false;
         $profile->save();
 

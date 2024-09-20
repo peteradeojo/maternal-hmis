@@ -25,12 +25,11 @@ class AncBookings extends Component
 
     public function load()
     {
+        unset($this->profile);
         if (strlen($this->patientId) > 0) {
             $this->profile = AntenatalProfile::where('id', $this->patientId)->first();
             return;
         }
-
-        unset($this->profile);
     }
 
     public function render()

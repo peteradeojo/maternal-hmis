@@ -25,7 +25,7 @@
                         <p class="text-3xl border-b border-gray-300 pb-2 mb-2">Antenatal Booking Details</p>
                         @isset($visit->visit->profile)
                             @include('components.anc-profile', [
-                                'ancProfile' => $visit->visit->profile,
+                                'ancProfile' => $visit->patient->ancProfile,
                             ])
                         @else
                             <p>No data here yet.</p>

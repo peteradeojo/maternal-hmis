@@ -7,6 +7,12 @@
 @tailwind utilities;
 @tailwind components;
 
+@layer utilities {
+    .bold {
+        @apply font-semibold;
+    }
+}
+
 @layer components {
     .input {
         @apply border border-gray-500 p-[5px] rounded-md;
@@ -87,11 +93,8 @@
     .btn-sm {
         @apply text-xs;
     }
-}
-
-@layer utilities {
-    .bold {
-        @apply font-semibold;
+    h2 {
+        @apply text-2xl bold;
     }
 }
 

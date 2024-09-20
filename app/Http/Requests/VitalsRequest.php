@@ -33,6 +33,10 @@ class VitalsRequest extends FormRequest
             'respiratory_rate' => 'nullable|numeric',
             'weight' => 'nullable|numeric',
             'height' => 'nullable|numeric',
+            'lmp' => 'nullable|date',
+            'edd' => 'required_with:lmp|date',
+            'gravida'  => 'required|integer',
+            'parity'  => 'required|integer',
         ];
     }
 }

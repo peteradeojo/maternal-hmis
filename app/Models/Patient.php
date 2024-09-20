@@ -33,6 +33,10 @@ class Patient extends Model
         });
     }
 
+    public function getAncProfileAttribute() {
+        return $this->antenatalProfiles[0];
+    }
+
     public static function generateCardNumber($category)
     {
         $prefix = Patient::where('category_id', $category)->count();

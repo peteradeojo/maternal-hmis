@@ -17,13 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::updateOrCreate(['phone' => '08103490675'], [
-        //     'firstname' => 'Boluwatife',
-        //     'lastname' => 'Ade-Ojo',
-        //     'phone' => '08103490675',
-        //     'password' => Hash::make(env('DEFAULT_PASSWORD', 'password')),
-        //     'department_id' => Department::IT->value,
-        // ]);
         if (!App::environment('production')) {
             (new UserSeeder)->run();
         }

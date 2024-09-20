@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 
 class LmpForm extends Component
@@ -17,11 +18,12 @@ class LmpForm extends Component
     public function setLMP($value)
     {
         $this->lmp = $value;
+        $this->calculateEDD();
     }
 
     public function calculateEDD()
     {
-        $this->edd = date('Y-m-d', strtotime($this->lmp . ' + 9 months + 7 days'));
+        $this->edd = Carbon::parse($this->lmp)?->addMonths(9)->addDays(7)->format('Y-m-d');
     }
 
     public function clear() {
