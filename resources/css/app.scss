@@ -3,10 +3,6 @@
 @import "components/modals";
 @import "components/spacings";
 
-@tailwind base;
-@tailwind utilities;
-@tailwind components;
-
 @layer utilities {
     .bold {
         @apply font-semibold;
@@ -167,7 +163,8 @@ p {
 }
 
 .card {
-    background-color: #fff;
+    // background-color: #fff;
+    @apply  bg-white;
     border-radius: 6px;
 
     &>.header {
@@ -306,3 +303,7 @@ p {
         display: none;
     }
 }
+
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
