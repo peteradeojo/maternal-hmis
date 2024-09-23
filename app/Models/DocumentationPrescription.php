@@ -20,8 +20,12 @@ class DocumentationPrescription extends Model
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
+    public function event() {
+        return $this->morphTo();
+    }
+
     public function __toString()
     {
-        return "{$this->name} {$this->route} {$this->dosage} {$this->route}";
+        return "{$this->name} {$this->route} {$this->dosage} {$this->frequency} - for {$this->duration}";
     }
 }

@@ -269,7 +269,7 @@ class PatientsController extends Controller
 
     public function getVisitsHistory(Request $request)
     {
-        $visits = Visit::with(['patient.category', 'visit'])->has('documentations')->latest();
+        $visits = Visit::with(['patient.category', 'visit'])->where('status', Status::completed->value)->latest();
 
         return $this->dataTable($request, $visits, [
             function ($query, $search) {

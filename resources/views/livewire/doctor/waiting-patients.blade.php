@@ -3,7 +3,7 @@
         <div class="header card-header">
             <p>Patients</p>
         </div>
-        <div class="body py" wire:poll.visible.15s>
+        <div class="body py">
             <table class="table" id="patients">
                 <thead>
                     <tr>
@@ -27,7 +27,7 @@
                                 @if ($v->documentations->count() > 0)
                                     <a href="{{ route('doctor.follow-up', $v->documentations[0]->id) }}">Review Last Documentation</a>
                                 @else
-                                    <a href="{{ route('doctor.treat', $v) }}">Start Visit</a>
+                                    <a class="text-blue-600 underline" href="{{ route('doctor.treat', $v) }}">Start Visit</a>
                                 @endif
                             </td>
                         </tr>

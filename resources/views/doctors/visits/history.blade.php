@@ -11,6 +11,7 @@
                     <th></th>
                     <th>Date</th>
                     <th>Category</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -42,6 +43,10 @@
                     },
                     {
                         data: 'patient.category.name'
+                    },
+                    {
+                        data: (row) =>
+                            `<a class='underline text-blue-600' href="/visits/${row.id}">View</a>`,
                     }
                 ]
             });

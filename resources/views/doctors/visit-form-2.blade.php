@@ -62,11 +62,11 @@
 
             <div id="actions" class="py-1">
                 <div class="tab">
-                    <button class="btn btn-red btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
-                    <button class="btn btn-red btn-sm modal-trigger" data-target="#diagnosis-modal">Add Diagnosis</button>
-                    <button class="btn btn-red btn-sm modal-trigger" data-target="#tests-modal">Add
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#diagnosis-modal">Add Diagnosis</button>
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#tests-modal">Add
                         Investigation</button>
-                    <button class="btn btn-red btn-sm modal-trigger" data-target="#prescriptions-modal">Add
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
                         Prescription</button>
 
                     @livewire('doctor.medical-records', ['visit' => $visit])
@@ -79,6 +79,7 @@
                     @php
                         $profile = $visit->patient->antenatalProfiles[0];
                     @endphp
+
                     <div class="tab">
                         {{-- @dump($profile) --}}
                         <form action="{{ route('doctor.submit-anc-booking', ['profile' => $profile]) }}" method="post">
@@ -213,7 +214,9 @@
     </div>
 
     <div class="modal hide" id="prescriptions-modal">
-        <div class="content p-3 bg-white"></div>
+        <div class="content p-3 bg-white">
+            @livewire('doctor.add-presciption', ['visit' => $visit])
+        </div>
     </div>
     <div class="modal hide" id="tests-modal">
         <div class="content p-3 bg-white">
@@ -311,5 +314,9 @@
             asyncForm("#rad-form", "{{ route('api.doctor.add-scan', ['visit' => $visit]) }}", (e, data) => e
                 .closest('.modal').classList.add("hide"));
         });
+
+        function addPrescription(data) {
+            console.log(data);
+        }
     </script>
 @endpushOnce

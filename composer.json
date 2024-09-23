@@ -10,9 +10,10 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
-        "livewire/livewire": "^2.12",
+        "livewire/livewire": "^3.5",
         "onezero/laas": "^1.1",
-        "predis/predis": "^2.2"
+        "predis/predis": "^2.2",
+        "spatie/simple-excel": "^3.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

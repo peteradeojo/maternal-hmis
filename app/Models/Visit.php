@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Dto\PrescriptionDto;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -136,7 +137,22 @@ class Visit extends Model
 
     public function prescriptions()
     {
-        return $this->morphMany(DocumentationPrescription::class, 'prescriptionable');
+        return $this->morphMany(DocumentationPrescription::class, 'event');
+    }
+
+    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data)
+    {
+        return $this->prescriptions()->create([
+            'patient_id' => $patient->id,
+            'prescriptionable_type' => $product::class,
+            'prescriptionable_id' => $product->id,
+            'name' => $product->name,
+            'dosage' => $data->dosage,
+            'duration' => $data->duration,
+            'route' => $data->route,
+            'frequency' => $data->frequency,
+            'requested_by' => auth()->user()?->id,
+        ]);
     }
 
     public function imagings()

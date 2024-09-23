@@ -1,12 +1,20 @@
 <div wire:poll.5000ms>
     {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
-    <div class="py-2">
-        @for ($i = 0; $i < $visit->patient->visits->count(); $i++)
+    @for ($i = 0; $i < $visit->patient->visits->count(); $i++)
+        <div class="py-2">
             @php
                 $v = $visit->patient->visits[$i];
             @endphp
             <div class="border-2 border-red-300 p-1">
-                Date: {{ $v->created_at->format('Y-m-d h:i A') }}
+                <div class="flex justify-between">
+                    <p>Date: {{ $v->created_at->format('Y-m-d h:i A') }}</p>
+                    <div class="flex gap-x-3">
+                        @if ($i == 0)
+                            <button class="btn btn-sm bg-green-500 text-white">Admit</button>
+                            <button wire:click="close" wire:confirm="Are you done with this patient?" class="btn btn-sm bg-blue-500 text-white">Close</button>
+                        @endif
+                    </div>
+                </div>
 
                 <div class="pt-1"></div>
                 <p><b>Notes</b></p>
@@ -89,9 +97,18 @@
                         </div>
                     @endforeach
                 @endif
-            </div>
-        @endfor
-    </div>
 
-    <div class="modal hide"></div>
+                <div class="py-2"></div>
+                <p><b>Prescriptions & Treatments</b></p>
+
+                <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
+                    <ul class="list-disc px-3 text-sm">
+                        @foreach ($visit->prescriptions as $pres)
+                            <li>{{ $pres }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endfor
 </div>
