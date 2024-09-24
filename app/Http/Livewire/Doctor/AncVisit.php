@@ -69,6 +69,21 @@ class AncVisit extends Component
         $this->anc_visit->refresh();
     }
 
+    function  addPrescription($id) {
+        $pdt = Product::find($id);
+        if (!$pdt) return;
+
+        $this->anc_visit->treatments()->create([
+            'patient_id' => $this->visit->patient_id,
+            'prescriptionable_type' => $pdt::class,
+            'prescriptionable_id'  => $pdt->id,
+            'name' => $pdt->name,
+            'requested_by' => auth()->user()->id,
+            'event_type' => $this->anc_visit::class,
+            'event_id' => $this->anc_visit->id,
+        ]);
+    }
+
     public function addNote()
     {
         $this->anc_visit->notes()->create([

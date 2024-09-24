@@ -2,17 +2,21 @@
 
 namespace App\Http\Livewire\Doctor;
 
-use App\Dto\PrescriptionDto;
-use App\Livewire\Forms\Doctor\PrescriptionRequest;
-use App\Models\DocumentationPrescription;
-use App\Models\Product;
 use App\Models\Visit;
-use Illuminate\Support\Collection;
+use App\Models\Product;
 use Livewire\Component;
+use App\Models\AncVisit;
+use App\Dto\PrescriptionDto;
+use Illuminate\Support\Collection;
+use App\Models\DocumentationPrescription;
+use App\Livewire\Forms\Doctor\PrescriptionRequest;
 
 class AddPresciption extends Component
 {
-    public Visit $visit;
+    /**
+     * @var Visit|AncVisit
+     */
+    public $visit;
     public $search;
 
     public PrescriptionRequest $requestForm;
@@ -45,7 +49,7 @@ class AddPresciption extends Component
         $dto->setDuration($this->requestForm->duration);
         $dto->setFrequency($this->requestForm->frequency);
 
-        $this->visit->addPrescription($this->visit->patient, $this->selections, $dto);
+        $this->visit->addPrescription($this->visit->patient, $this->selections, $dto, $this->visit);
         $this->visit->refresh();
 
         $this->selections = null;

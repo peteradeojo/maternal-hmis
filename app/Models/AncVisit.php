@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Dto\PrescriptionDto;
 use App\Models\Visit;
 use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
@@ -120,5 +121,22 @@ class AncVisit extends Model implements Documentable, Visitation
     public function notes()
     {
         return $this->morphMany(ConsultationNote::class, 'visit');
+    }
+
+    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
+    {
+        return $this->prescriptions()->create([
+            'patient_id' => $patient->id,
+            'prescriptionable_type' => $product::class,
+            'prescriptionable_id' => $product->id,
+            'name' => $product->name,
+            'dosage' => $data->dosage,
+            'duration' => $data->duration,
+            'route' => $data->route,
+            'frequency' => $data->frequency,
+            'requested_by' => auth()->user()?->id,
+            'event_type' => $event::class,
+            'event_id' => $event->id,
+        ]);
     }
 }

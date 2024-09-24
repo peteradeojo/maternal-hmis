@@ -140,7 +140,7 @@ class Visit extends Model
         return $this->morphMany(DocumentationPrescription::class, 'event');
     }
 
-    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data)
+    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
     {
         return $this->prescriptions()->create([
             'patient_id' => $patient->id,
@@ -152,6 +152,8 @@ class Visit extends Model
             'route' => $data->route,
             'frequency' => $data->frequency,
             'requested_by' => auth()->user()?->id,
+            'event_type' => $event::class,
+            'event_id' => $event->id,
         ]);
     }
 

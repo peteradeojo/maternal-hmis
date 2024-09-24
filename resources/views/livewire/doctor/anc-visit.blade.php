@@ -30,6 +30,9 @@
     @endforeach
 
     <div class="py-2"></div>
+    <livewire:doctor.add-presciption :visit="$anc_visit" />
+
+    <div class="py-2"></div>
 
     <p class="text-xl bold">Tests</p>
     <table class="table">
@@ -92,7 +95,7 @@
 
 
     <div class="py-3"></div>
-    <form action="{{route('doctor.treat-anc', ['visit' => $anc_visit])}}" method="post">
+    <form action="{{ route('doctor.treat-anc', ['visit' => $anc_visit]) }}" method="post">
         @csrf
         <div class="form-group">
             <label>Height of Fundus</label>
