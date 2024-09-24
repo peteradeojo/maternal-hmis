@@ -17,6 +17,22 @@ class VisitForm extends Component
     public $tests = [];
     public $diagnoses = [];
 
+    public $editingLmp = false;
+    public $lmpEdit;
+
+    public  function editLmp()
+    {
+        $this->editingLmp = true;
+        $this->lmpEdit = $this->profile->lmp;
+    }
+
+    public function updateLmp()
+    {
+        $this->profile->lmp = $this->lmpEdit;
+        $this->profile->save();
+        $this->editingLmp = false;
+    }
+
     public function render()
     {
         return view('livewire.doctor.visit-form');
