@@ -167,11 +167,11 @@ class LabController extends Controller
         // $visit->awaiting_lab_results = false;
         $visit->visit->save();
 
-        dd($request->all());
+        // dd($request->all());
 
         $this->processTests($request, $request->all(), $visit);
 
-        // return redirect()->route('dashboard');
+        return redirect()->route('dashboard');
     }
 
     public function testReport(Request $request, Visit $doc)
