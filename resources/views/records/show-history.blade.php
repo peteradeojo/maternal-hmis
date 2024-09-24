@@ -13,6 +13,11 @@
                 <p>Date: {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
             </div>
 
+            @if ($visit->visit->type == 'Antenatal')
+                <p class="text-xl mt-3 bold">Note</p>
+                <p>Next visit: {{ $visit->visit->return_visit }}</p>
+            @endif
+
             <livewire:records.bill-report :visit="$visit" />
         </div>
     </div>
