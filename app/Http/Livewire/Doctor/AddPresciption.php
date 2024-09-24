@@ -28,23 +28,10 @@ class AddPresciption extends Component
         $this->visit = $visit->load(['prescriptions.prescriptionable']);
     }
 
-    public function searchProducts()
-    {
-        if (empty($this->search)  || $this->search == "") {
-            $this->results = null;
-        } else {
-            $this->results = Product::whereHas('category', function ($q) {
-                $q->where('name', 'PHARMACY');
-            })->where('name', 'like', "%{$this->search}%")->orWhere('description', 'like', "%{$this->search}%")->limit(100)->get();
-        }
-    }
-
     public function addPrescription($id)
     {
         $product = Product::find($id);
         $this->selections = $product;
-        $this->search = "";
-        $this->results = null;
     }
 
     public function saveRequest()

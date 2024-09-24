@@ -23,7 +23,7 @@ class WaitingPatients extends Component
             $query->where('awaiting_doctor', true);
         })->where('status', Status::active->value)->where(function ($query) {
             // $query->whereNotNull('vitals')->orHas('svitals');
-        })->get();
+        })->latest()->get();
     }
 
     public function render()

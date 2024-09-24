@@ -6,20 +6,7 @@
             <p class="p-3">No diagnosis has been made during this visit. Please add a diagnosis.</p>
         @else
             <div class="p-1">
-                <div class="relative w-1/3 border">
-                    <input type="search" wire:model="search" wire:keyup.debounce.250ms="searchProducts"
-                        class="w-full relative" name="search" placeholder="Enter Item" id="">
-                    @if (count($results ?? []) > 0)
-                        <ul class="relative top-0 border border-black sp-list">
-                            @forelse ($results  ?? [] as $result)
-                                <li class="hover:bg-gray-200 cursor-pointer"
-                                    wire:click="addPrescription('{{ $result->id }}')">{{ $result->name }}</li>
-                            @empty
-                                <li>No Result found</li>
-                            @endforelse
-                    @endif
-                    </ul>
-                </div>
+                <livewire:product-search departmentId='4' @selected="addPrescription($event.detail.id)" />
                 <div class="py-2"></div>
                 <table id="drugs-table" class="table">
                     <thead>
