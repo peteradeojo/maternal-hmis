@@ -19,6 +19,9 @@
             @endif
 
             <livewire:records.bill-report :visit="$visit" />
+
+
+            <a class="btn btn-red" href="{{ route('records.force-check-out', ['visit' => $visit]) }}?force">Check Out</a>
         </div>
     </div>
 @endsection

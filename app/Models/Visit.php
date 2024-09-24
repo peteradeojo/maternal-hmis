@@ -106,7 +106,11 @@ class Visit extends Model
     public function checkOut($force = false)
     {
         if ($force) {
-            $this->update(['status' => Status::completed->value]);
+            $this->update([
+                'status' => Status::completed->value,
+                'awaiting_doctor' => false,
+                'awaiting_vitals' => false,
+            ]);
             return;
         }
 

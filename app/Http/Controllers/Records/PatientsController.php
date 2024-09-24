@@ -200,8 +200,6 @@ class PatientsController extends Controller
                 'patient_id' => $patient->id,
                 'antenatal_profile_id' => $ancProfile->id,
             ]);
-
-
         } else {
             $subVisit = GeneralVisit::create([
                 'patient_id' => $patient->id,
@@ -245,6 +243,6 @@ class PatientsController extends Controller
     public function checkOut(Request $request, Visit $visit)
     {
         $visit->checkOut($request->has('force'));
-        return redirect()->back();
+        return redirect()->route('dashboard');
     }
 }
