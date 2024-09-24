@@ -34,21 +34,22 @@ class ProductsController extends Controller
         $request->validate([
             'department_id' => 'nullable|exists:departments,id',
             'category' => 'required|string',
-            'products' => 'required|file|mimes:xlsx,csv'
+            'products' => 'file|mimes:xlsx,csv'
         ]);
 
+        $category = strtoupper($request->category);
+        $c = ProductCategory::where('name', $category)->where('department_id', $request->department_id)->first();
+        if (!$c) {
+            ProductCategory::create([
+                'name' => $category,
+                'department_id' => $request->department_id,
+            ]);
+        }
+
         $file = $request->file('products');
-        $path = $file->store('products');
+        $path = $file?->store('products');
 
         if ($path) {
-            $category = strtoupper($request->category);
-            $c = ProductCategory::where('name', $category)->where('department_id', $request->department_id)->first();
-            if (!$c) {
-                ProductCategory::create([
-                    'name' => $category,
-                    'department_id' => $request->department_id,
-                ]);
-            }
 
             Artisan::queue('app:load-products', [
                 'category' => $category,
@@ -56,10 +57,16 @@ class ProductsController extends Controller
                 'type' => $file->getClientOriginalExtension(),
                 '--delete' => true,
             ]);
-
-            return back()->with('success', true);
+            // return back()->with('success', true);
+            session()->flash('success', true);
         }
 
-        return back()->withErrors("Unable to upload file");
+        Product::create([
+            'name' => $request->name,
+            'amount'  => $request->amount,
+            'product_category_id' => $c->id,
+        ]);
+
+        return back();
     }
 }

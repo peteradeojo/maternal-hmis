@@ -34,7 +34,17 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <input type="file" name="products" required class="border border-gray-400 p-1">
+                    <input type="file" name="products" class="border border-gray-400 p-1">
+                </div>
+                <div class="flex">
+                    <div class="form-group">
+                        <label for="">name</label>
+                        <input type="text" name="name" id="">
+                    </div>
+                    <div class="form-group">
+                        <label for="">amount</label>
+                        <input type="text" name="amount" id="">
+                    </div>
                 </div>
                 <div class="form-group">
                     <button class="btn bg-blue-600 text-white">Submit</button>

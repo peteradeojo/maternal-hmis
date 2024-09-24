@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Interfaces\Documentable;
 use App\Interfaces\Visitation;
+use App\Traits\Documentable as TraitsDocumentable;
 use App\Traits\Visit;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GeneralVisit extends Model implements Visitation //, Documentable
 {
-    use HasFactory, Visit;
+    use HasFactory, Visit, TraitsDocumentable;
 
     protected $fillable = [
         'patient_id',
@@ -26,7 +27,8 @@ class GeneralVisit extends Model implements Visitation //, Documentable
         return $this->morphOne(Visit::class, 'visit');
     }
 
-    public function getType(): string {
+    public function getType(): string
+    {
         return "General";
     }
 }

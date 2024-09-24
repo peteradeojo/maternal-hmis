@@ -69,7 +69,8 @@ class AncVisit extends Component
         $this->anc_visit->refresh();
     }
 
-    function  addPrescription($id) {
+    function  addPrescription($id)
+    {
         $pdt = Product::find($id);
         if (!$pdt) return;
 

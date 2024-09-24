@@ -25,6 +25,7 @@ function departmentRoutes()
 
     $records = array_merge([
         route('records.patients') => 'Patients',
+        route('records.history') => 'Visit History'
     ], $base);
 
     $it = array_merge([
