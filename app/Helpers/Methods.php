@@ -5,8 +5,7 @@ use App\Enums\Department;
 
 function departmentRoutes()
 {
-    $base = [
-    ];
+    $base = [];
 
     $doctors = array_merge(
         [
@@ -31,6 +30,7 @@ function departmentRoutes()
     $it = array_merge([
         route('it.staff') => 'Staff',
         route('it.wards') => 'Wards',
+        route('it.products') => 'Products',
     ], $base);
 
     $lab = array_merge([

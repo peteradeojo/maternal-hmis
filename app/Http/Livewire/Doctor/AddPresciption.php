@@ -26,7 +26,6 @@ class AddPresciption extends Component
     public function mount($visit)
     {
         $this->visit = $visit->load(['prescriptions.prescriptionable']);
-        $this->prescriptions = $visit->prescriptions;
     }
 
     public function searchProducts()
@@ -36,7 +35,7 @@ class AddPresciption extends Component
         } else {
             $this->results = Product::whereHas('category', function ($q) {
                 $q->where('name', 'PHARMACY');
-            })->where('name', 'like', "%{$this->search}%")->orWhere('description', 'like', "%{$this->search}%")->limit(10)->get();
+            })->where('name', 'like', "%{$this->search}%")->orWhere('description', 'like', "%{$this->search}%")->limit(100)->get();
         }
     }
 

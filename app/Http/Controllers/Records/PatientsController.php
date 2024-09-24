@@ -200,6 +200,8 @@ class PatientsController extends Controller
                 'patient_id' => $patient->id,
                 'antenatal_profile_id' => $ancProfile->id,
             ]);
+
+
         } else {
             $subVisit = GeneralVisit::create([
                 'patient_id' => $patient->id,
@@ -223,6 +225,8 @@ class PatientsController extends Controller
         if ($request->method() !== 'POST') {
             return view('records.forms.anc-profile', compact('patient'));
         }
+
+        // AncCategory::cases()
 
         $data = $request->validate([
             'card_type' => 'required|in:' . join(',', AncCategory::getValues()),

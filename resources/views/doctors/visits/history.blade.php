@@ -8,9 +8,9 @@
                 <tr>
                     <th>Name</th>
                     <th>Card Number</th>
-                    <th></th>
-                    <th>Date</th>
                     <th>Category</th>
+                    <th>Date</th>
+                    <th>Last Updated</th>
                     <th></th>
                 </tr>
             </thead>
@@ -42,7 +42,7 @@
                         data: (row) => new Date(row.created_at).toLocaleString()
                     },
                     {
-                        data: 'patient.category.name'
+                        data: (row) => new Date(row.updated_at).toLocaleString()
                     },
                     {
                         data: (row) =>

@@ -32,7 +32,7 @@ trait Documentable
 
     public function tests(): MorphMany
     {
-        return $this->morphMany(DocumentationTest::class, 'testable')->latest();
+        return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
     public function prescriptions() {

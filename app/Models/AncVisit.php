@@ -61,15 +61,15 @@ class AncVisit extends Model implements Documentable, Visitation
         return $this->morphMany(DocumentationPrescription::class, 'prescriptionable');
     }
 
-    public function radios()
+    final public function radios()
     {
         return $this->morphMany(PatientImaging::class, 'documentable');
     }
 
-    public function tests()
-    {
-        return $this->morphMany(DocumentationTest::class, 'testable');
-    }
+    // final public function tests()
+    // {
+    //     return $this->morphMany(DocumentationTest::class, 'testable');
+    // }
 
     public function visit()
     {
@@ -98,5 +98,27 @@ class AncVisit extends Model implements Documentable, Visitation
     public function doctor()
     {
         return $this->belongsTo(User::class, 'doctor_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function (AncVisit $visit) {
+            $test = Product::where('name', 'like',  '%ROUTINE ANTENATAL %')->first();
+            if (!$test) {
+                return;
+            }
+
+            $visit->tests()->create([
+                'name' => $test->name,
+                'describable_type' => $test::class,
+                'describable_id' => $test->id,
+                'patient_id' => $visit->patient->id,
+            ]);
+        });
+    }
+
+    public function notes()
+    {
+        return $this->morphMany(ConsultationNote::class, 'visit');
     }
 }

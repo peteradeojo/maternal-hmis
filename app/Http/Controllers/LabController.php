@@ -15,6 +15,35 @@ use Illuminate\Support\Facades\DB;
 
 class LabController extends Controller
 {
+    private function processTests(Request $request, $data, Visit|AncVisit  $visit)
+    {
+        foreach ($visit->tests as $i => $test) {
+            if (isset($data['result'][$i])) {
+                $results = [];
+                $resultData = $data['result'][$i] ?? [];
+                $descriptionData = $data['description'][$i] ?? [];
+                $unitData = $data['unit'][$i] ?? [];
+                $referenceRangeData = $data['reference_range'][$i] ?? [];
+
+                foreach ($resultData as $j => $result) {
+                    $results[] = [
+                        'result' => $result,
+                        'description' => $descriptionData[$j],
+                        'unit' => $unitData[$j],
+                        'reference_range' => $referenceRangeData[$j],
+                    ];
+                }
+
+                if (isset($data['completed'][$i])) {
+                    $test->status = Status::completed->value;
+                }
+
+                $test->results = $results;
+                $test->tested_by = $request->user()->id;
+                $test->save();
+            }
+        }
+    }
     public function test(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') {
@@ -97,7 +126,7 @@ class LabController extends Controller
 
     public function getAncVisits(Request $request)
     {
-        return $this->dataTable($request, AncVisit::with(['profile'])->doesntHave('tests')->latest(), [
+        return $this->dataTable($request, AncVisit::with(['profile'])->has('tests')->latest(), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "{$search}%")->orWhere('card_number', 'like', "{$search}%");
@@ -129,22 +158,20 @@ class LabController extends Controller
     public function testAnc(Request $request, AncVisit $visit)
     {
         if ($request->method() !== 'POST') {
+            $visit->load(['tests', 'treatments']);
             $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
-            return view('lab.anc-test', compact('tests', 'visit'));
+            return view('lab.take-test', compact('tests', 'visit') + ['documentation' => $visit]);
         }
 
-        $visit->update([
-            'edema' => $request->edema ?? '',
-            'pcv' => $request->pcv ?? '',
-            'protein' => $request->protein ?? '',
-            'glucose' => $request->glucose,
-        ]);
-
-        // $visit->awaiting_doctor = true;
+        $visit->visit->awaiting_doctor = true;
         // $visit->awaiting_lab_results = false;
-        // $visit->save();
+        $visit->visit->save();
 
-        return redirect()->route('dashboard');
+        dd($request->all());
+
+        $this->processTests($request, $request->all(), $visit);
+
+        // return redirect()->route('dashboard');
     }
 
     public function testReport(Request $request, Visit $doc)

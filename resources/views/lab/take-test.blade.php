@@ -24,6 +24,7 @@
                 @foreach ($errors->all() as $message)
                     <p class="py px bg-red">{{ $message }}</p>
                 @endforeach
+
                 <form action="" method="POST">
                     @csrf
                     @foreach ($documentation->tests as $i => $test)
@@ -35,10 +36,7 @@
                                         <label for="test-done-{{ $i }}">
                                             <input type="checkbox" name="completed[{{ $i }}]"
                                                 id="test-done-{{ $i }}"
-                                                @if ($test->status == Status::completed->value)
-                                                    checked disabled
-                                                @endif
-                                                >
+                                                @if ($test->status == Status::completed->value) checked disabled @endif>
                                             Mark Test Completed
                                         </label>
                                     </td>
@@ -50,7 +48,8 @@
                                     <th>Reference Range</th>
                                     <td>
                                         @unless ($test->status == Status::completed->value)
-                                            <button class="add-result btn bg-blue-700 text-white" type="button">Add Result</button>
+                                            <button class="add-result btn bg-blue-700 text-white" type="button">Add
+                                                Result</button>
                                         @endunless
                                     </td>
                                 </tr>

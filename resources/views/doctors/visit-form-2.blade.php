@@ -1,6 +1,17 @@
 @extends('layouts.app')
+@section('title', $visit->patient->name . " | Doctor's Visit")
 
 @section('content')
+    @php
+        $profile = null;
+    @endphp
+
+    @if ($visit->readable_visit_type == 'Antenatal')
+        @php
+            $profile = $visit->patient->antenatalProfiles[0];
+        @endphp
+    @endif
+
     <div class="container card">
         <div class="card-header header">Profile</div>
         <div id="nav-tab" data-tablist="#tablist">
@@ -31,21 +42,22 @@
                             <p>No data here yet.</p>
                         @endisset
                     </div>
+                @else
+                    <div class="tab">
+                        <p class="bold mt-4 mb-1 text-xl header">Vitals</p>
+                        @isset($visit->svitals)
+                            <div class="grid grid-cols-2">
+                                <p><b>Weight</b>: {{ $visit->svitals->weight }} kg</p>
+                                <p><b>Blood Pressure</b>: {{ $visit->svitals->blood_pressure }} mmHg</p>
+                                <p><b>Temperature</b>: {{ $visit->svitals->temperature }} &deg;C</p>
+                                <p><b>Pulse</b>: {{ $visit->svitals->pulse }} bpm</p>
+                                <p><b>Respiration</b>: {{ $visit->svitals->respiration }} bpm</p>
+                            </div>
+                        @else
+                            <p>No vitals have been recorded for this visit.</p>
+                        @endisset
+                    </div>
                 @endif
-                <div class="tab">
-                    <p class="bold mb-1 text-xl">Vitals</p>
-                    @isset($visit->svitals)
-                        <div class="grid grid-cols-2">
-                            <p><b>Weight</b>: {{ $visit->svitals->weight }} kg</p>
-                            <p><b>Blood Pressure</b>: {{ $visit->svitals->blood_pressure }} mmHg</p>
-                            <p><b>Temperature</b>: {{ $visit->svitals->temperature }} &deg;C</p>
-                            <p><b>Pulse</b>: {{ $visit->svitals->pulse }} bpm</p>
-                            <p><b>Respiration</b>: {{ $visit->svitals->respiration }} bpm</p>
-                        </div>
-                    @else
-                        <p>No vitals have been recorded for this visit.</p>
-                    @endisset
-                </div>
             </div>
         </div>
     </div>
@@ -55,31 +67,18 @@
     <div class="container card">
         <div id="actions-tab" data-tablist="#actions">
             @include('components.tabs', [
-                'options' => array_merge(
-                    ['Medical Records', 'Diagnoses'],
-                    $visit->readable_visit_type == 'Antenatal' ? ['First Visit', 'Follow Up'] : []),
+                'options' =>
+                    $visit->readable_visit_type == 'Antenatal'
+                        ? ['Follow Up', 'First Visit', 'Medical Records']
+                        : ['Medical Records'],
             ])
 
             <div id="actions" class="py-1">
-                <div class="tab">
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#diagnosis-modal">Add Diagnosis</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#tests-modal">Add
-                        Investigation</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
-                        Prescription</button>
-
-                    @livewire('doctor.medical-records', ['visit' => $visit])
-                </div>
-                <div class="tab">
-                    <button class="btn btn-red btn-sm modal-trigger" data-target="#diagnosis-modal">Add Diagnosis</button>
-
-                </div>
+                {{-- Antenatal Doings --}}
                 @if ($visit->readable_visit_type == 'Antenatal')
-                    @php
-                        $profile = $visit->patient->antenatalProfiles[0];
-                    @endphp
-
+                    <div class="tab">
+                        @livewire('doctor.anc-visit', ['visit' => $visit])
+                    </div>
                     <div class="tab">
                         {{-- @dump($profile) --}}
                         <form action="{{ route('doctor.submit-anc-booking', ['profile' => $profile]) }}" method="post">
@@ -153,10 +152,18 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tab">
-                        <p class="text-xl bold">Follow Up</p>
-                    </div>
                 @endif
+
+                <div class="tab">
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#diagnosis-modal">Add Diagnosis</button>
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#tests-modal">Add
+                        Investigation</button>
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
+                        Prescription</button>
+
+                    @livewire('doctor.medical-records', ['visit' => $visit])
+                </div>
             </div>
         </div>
     </div>
@@ -209,7 +216,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 

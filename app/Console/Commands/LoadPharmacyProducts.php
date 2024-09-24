@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class LoadPharmacyProducts extends Command
@@ -14,7 +15,7 @@ class LoadPharmacyProducts extends Command
      *
      * @var string
      */
-    protected $signature = 'app:load-pharmacy-products';
+    protected $signature = 'app:load-products {category} {path} {type} {--delete=false}';
 
     /**
      * The console command description.
@@ -28,16 +29,16 @@ class LoadPharmacyProducts extends Command
      */
     public function handle()
     {
-        $phm = ProductCategory::where('name', 'PHARMACY')->firstOrFail();
+        $category = $this->argument("category");
+        $phm = ProductCategory::where('name', $category)->firstOrFail();
 
-        $rows = SimpleExcelReader::create(storage_path('products.xlsx'))->getRows();
-
-        // $this->info("Loading {$rows->count()} rows");
+        $rows = SimpleExcelReader::create($this->argument('path'), $this->argument('type'))->getRows();
 
         $rows->each(function ($row) use (&$phm) {
             $this->info($row['Product Name']);
             $product = Product::updateOrCreate([
                 'name' => $row['Product Name'],
+                'product_category_id' => $phm->id,
             ], [
                 'product_category_id' => $phm->id,
                 'name' => $row['Product Name'],
@@ -47,5 +48,9 @@ class LoadPharmacyProducts extends Command
             ]);
             $this->info("loaded at " . $product->id);
         });
+
+        if ($this->option('delete')  === true) {
+            Storage::delete($this->argument('path'));
+        }
     }
 }

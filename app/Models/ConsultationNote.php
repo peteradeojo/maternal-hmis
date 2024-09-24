@@ -11,9 +11,11 @@ class ConsultationNote extends Model
 
     protected $fillable =  ['patient_id',  'visit_id', 'consultant_id', 'note'];
 
+    protected $with = ['consultant'];
+
     public function visit()
     {
-        return $this->belongsTo(Visit::class);
+        return $this->morphTo();
     }
 
     public function consultant()

@@ -23,4 +23,8 @@ class PatientImaging extends Model
     public function documentable() {
         return $this->morphTo();
     }
+
+    public function describable() {
+        return $this->morphTo();
+    }
 }

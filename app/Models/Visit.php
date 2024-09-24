@@ -122,7 +122,7 @@ class Visit extends Model
 
     public function notes()
     {
-        return $this->hasMany(ConsultationNote::class, 'visit_id');
+        return $this->morphMany(ConsultationNote::class, 'visit');
     }
 
     public function diagnoses()

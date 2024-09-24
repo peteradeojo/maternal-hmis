@@ -87,11 +87,14 @@ class PatientsController extends Controller
             'return_visit' => 'nullable|date',
             // 'complaints' => 'nullable|string',
             // 'drugs' => 'nullable|string',
-            'note' => 'nullable|string',
         ]);
 
         try {
-            $this->treatmentService->treatAnc($visit, $request->all(), $request->user()->id);
+            $visit->update($request->all());
+            $visit->visit->awaiting_doctor = false;
+            $visit->visit->status = Status::completed->value;
+
+            $visit->visit->save();
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             report($th);

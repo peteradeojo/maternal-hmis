@@ -1,10 +1,12 @@
 <?php
 
+use App\Enums\Department;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IT\StaffController;
 use App\Http\Controllers\AdmissionsController;
+use App\Http\Controllers\IT\ProductsController;
 
-Route::name('it.')->group(function () {
+Route::name('it.')->middleware(['department:' . Department::IT->value])->group(function () {
     Route::get('/department/{dep}', [StaffController::class, 'department'])->name('department');
 
     Route::match(['get', 'post'], '/wards', [AdmissionsController::class, 'wards'])->name('wards');
@@ -14,5 +16,11 @@ Route::name('it.')->group(function () {
     Route::get('/info', function () {
         return response(phpinfo(), 200)
             ->header('Content-Type', 'text/html');
+    });
+
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductsController::class, 'index'])->name('products');
+        Route::post('/', [ProductsController::class, 'addProducts']);
+        Route::get('/get-products', [ProductsController::class, 'fetchProducts'])->middleware(['api', 'auth'])->name('get-products');
     });
 });

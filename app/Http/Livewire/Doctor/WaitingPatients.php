@@ -22,7 +22,7 @@ class WaitingPatients extends Component
         $this->visits = Visit::where(function ($query) {
             $query->where('awaiting_doctor', true);
         })->where('status', Status::active->value)->where(function ($query) {
-            $query->whereNotNull('vitals')->orHas('svitals');
+            // $query->whereNotNull('vitals')->orHas('svitals');
         })->get();
     }
 
