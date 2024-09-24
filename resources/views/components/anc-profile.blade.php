@@ -3,7 +3,13 @@
         <b>Maturity/Weeks of Gestation: </b>
         {{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}
     </p>
-    <p><b>EDD: </b> {{ $ancProfile->edd?->format('Y-m-d') }}</p>
+    <p><b>EDD: </b> @unless ($ancProfile->edd)
+            <input type="date" wire:model.live="editEdd" id="">
+            <a href="#" wire:click.prevent="updateEdd">Update<a />
+            @else
+                {{ $ancProfile->edd->format('Y-m-d') }}
+            @endunless
+    </p>
     <p>
         @if ($editingLmp)
             <b>LMP: </b>

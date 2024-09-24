@@ -19,6 +19,13 @@ class VisitForm extends Component
 
     public $editingLmp = false;
     public $lmpEdit;
+    public $editEdd;
+
+    public function updateEdd()
+    {
+        $this->profile->edd = $this->editEdd;
+        $this->redirect('');
+    }
 
     public  function editLmp()
     {
