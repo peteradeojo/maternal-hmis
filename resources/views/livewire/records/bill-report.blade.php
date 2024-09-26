@@ -24,7 +24,7 @@
                     </tr>
                 @endforeach
 
-                @foreach ($visit->visit->tests as $test)
+                {{-- @foreach ($visit->visit->tests as $test)
                     <tr>
                         @php
                             $thisTotal += $test->describable?->amount;
@@ -32,7 +32,7 @@
                         <td>{{ $test->name }}</td>
                         <td>{{ $test->describable?->amount ?? '0.00' }}</td>
                     </tr>
-                @endforeach
+                @endforeach --}}
                 <tr>
                     <td class="bold">Subtotal</td>
                     <td class="text-right bold">{{ number_format($thisTotal, 2) }}</td>
@@ -68,7 +68,7 @@
                     </tr>
                 @endforeach
 
-                @foreach ($visit->visit->radios as $test)
+                {{-- @foreach ($visit->visit->radios as $test)
                     <tr>
                         @php
                             $thisTotal += $test->describable?->amount;
@@ -76,7 +76,7 @@
                         <td>{{ $test->name }}</td>
                         <td>{{ $test->describable?->amount ?? '0.00' }}</td>
                     </tr>
-                @endforeach
+                @endforeach --}}
 
                 <tr>
                     <td class="bold">Subtotal</td>
@@ -113,7 +113,7 @@
                     </tr>
                 @endforeach
 
-                @foreach ($visit->visit->prescriptions as $test)
+                {{-- @foreach ($visit->visit->prescriptions as $test)
                     <tr>
                         @php
                             $thisTotal += $test->describable?->amount;
@@ -121,7 +121,7 @@
                         <td>{{ $test->name }}</td>
                         <td>{{ $test->describable?->amount ?? '0.00' }}</td>
                     </tr>
-                @endforeach
+                @endforeach --}}
 
                 <tr>
                     <td class="bold">Subtotal</td>
