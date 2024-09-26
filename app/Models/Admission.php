@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Interfaces\Documentable as InterfacesDocumentable;
 use App\Traits\Documentable;
+use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class Admission extends Model implements InterfacesDocumentable
 {
-    use HasFactory, Documentable;
+    use HasFactory, Documentable, HasVisitData;
 
     protected $guarded = [];
 
