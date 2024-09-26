@@ -73,3 +73,11 @@ function ancCardType(int $value)
 {
     return (AncCategory::tryFrom($value))?->name ?? 'Unknown';
 }
+
+function unslug($str, $process = null)
+{
+    if ($process) {
+        return $process(str_replace(["_"], " ", $str));
+    }
+    return $process(str_replace(["_"], " ", $str));
+}

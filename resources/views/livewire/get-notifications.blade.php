@@ -5,7 +5,7 @@
         <div class="p-2 mb-2 rounded bg-red-500">
             <div class="body text-sm">
                 {!! $n->data['message'] !!}<br>
-                <small>{{ $n->created_at->diffForHumans() }}</small>
+                <small>{{ $n->created_at->format('Y-m-d h:i A') }}</small>
                 <small wire:click="clear('{{ $n->id }}')"><u class="text-white"
                         style="cursor: pointer">&times;</u></small>
             </div>

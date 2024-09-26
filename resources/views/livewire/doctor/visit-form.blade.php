@@ -1,10 +1,5 @@
 <div>
     {{-- In work, do what you enjoy. --}}
-    {{-- @if ($visit->readable_visit_type == 'Antenatal')
-        @php
-            $profile = $visit->patient->antenatalProfiles[0];
-        @endphp
-    @endif --}}
     <div class="container card">
         <div class="card-header header">Profile</div>
         <div id="nav-tab" data-tablist="#tablist">
@@ -68,7 +63,6 @@
 
             <div id="actions" class="py-1">
                 {{-- Antenatal Doings --}}
-                {{-- @dump($visit) --}}
                 @if ($visit->readable_visit_type == 'Antenatal')
                     <div class="tab">
                         @livewire('doctor.anc-visit', ['visit' => $visit])
@@ -151,7 +145,18 @@
                 @endif
 
                 <div class="tab">
+                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#history-modal">Add History</button>
+
+                    @if ($visit->examination)
+                        <button class="btn btn-green btn-sm modal-trigger" data-target="#exams-modal">Edit
+                            Examination</button>
+                    @else
+                        <button class="btn btn-blue btn-sm modal-trigger" data-target="#exams-modal">Add
+                            Examination</button>
+                    @endif
+
                     <button class="btn btn-blue btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
+
                     <button class="btn btn-blue btn-sm modal-trigger" data-target="#diagnosis-modal">Add
                         Diagnosis</button>
                     <button class="btn btn-blue btn-sm modal-trigger" data-target="#tests-modal">Add
@@ -159,7 +164,8 @@
                     <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
                         Prescription</button>
 
-                    @livewire('doctor.medical-records', ['visit' => $visit])
+                    {{-- @livewire('doctor.medical-records', ['visit' => $visit->visit]) --}}
+                    <livewire:doctor.medical-records :visit="$visit" />
                 </div>
             </div>
         </div>
@@ -207,4 +213,59 @@
             </div>
         </div>
     </div>
+
+    <div class="modal hide" id="history-modal">
+        <div class="content p-3 bg-white">
+            <p class="text-xl bold">Add History</p>
+            <div class="py-3"></div>
+            <div class="flex gap-x-3">
+                <div>
+                    <input type="text"
+                        class="form-control @error('historyForm.presentation') border-red-500 @enderror"
+                        list="histories" placeholder="Presentation" wire:model.live="historyForm.presentation" />
+                    @error('historyForm.presentation')
+                        <span class="error text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <input type="text" class="form-control @error('historyForm.duration') border-red-500 @enderror"
+                        placeholder="Duration" wire:model.live="historyForm.duration" />
+                    @error('historyForm.duration')
+                        <span class="error text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+            <div class="py-1"></div>
+            <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
+        </div>
+    </div>
+
+    <div class="modal hide" id="exams-modal">
+        <div class="content bg-white p-3">
+            <p class="text-xl bold">Examination</p>
+            <div class="py-2"></div>
+            <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
+                @csrf
+                @include('components.examinations-form', ['exam' => $visit->examination])
+
+                <button type="submit" class="btn btn-blue">Submit &triangleright;</button>
+            </form>
+        </div>
+    </div>
+
+    <datalist id="histories">
+        @foreach ($histories as $history)
+            <option value="{{ $history->presentation }}">{{ $history->presentation }}</option>
+        @endforeach
+    </datalist>
 </div>
+
+@script
+    <script>
+        asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit->visit]) }}", async (e, res) => {
+            const data = await res.json()
+            console.log(data);
+        })
+    </script>
+@endscript

@@ -4,16 +4,18 @@ namespace App\Http\Livewire\Doctor;
 
 use App\Enums\Department;
 use App\Enums\Status;
+use App\Models\AncVisit;
 use App\Models\Department as ModelsDepartment;
+use App\Models\GeneralVisit;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
 use Livewire\Component;
 
 class MedicalRecords extends Component
 {
-    public Visit $visit;
+    public GeneralVisit|AncVisit $visit;
 
-    public function mount(Visit $visit)
+    public function mount($visit)
     {
         $this->visit = $visit->load(['prescriptions', 'tests', 'diagnoses']);
     }

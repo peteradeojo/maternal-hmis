@@ -40,7 +40,7 @@ class RadiologyController extends Controller
             'scan' => 'required|string',
         ]);
 
-        $visit->imagings()->create([
+        $visit->visit->radios()->create([
             'patient_id' => $visit->patient_id,
             'requested_by' => $request->user()->id,
             'name' => $request->scan,

@@ -25,6 +25,7 @@ trait Documentable
     {
         return $this->morphMany(DocumentationComplaints::class, 'documentable');
     }
+
     public function diagnoses()
     {
         return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');

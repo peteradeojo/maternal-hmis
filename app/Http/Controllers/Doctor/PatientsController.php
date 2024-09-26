@@ -313,7 +313,7 @@ class PatientsController extends Controller
             'note' => 'required|string'
         ]);
 
-        $visit->notes()->create([
+        $visit->visit->notes()->create([
             'note' => $request->note,
             'patient_id' => $visit->patient_id,
             'consultant_id' => $request->user()->id,
@@ -328,7 +328,7 @@ class PatientsController extends Controller
     {
         $request->validate(['diagnosis' => 'required|string']);
 
-        $visit->diagnoses()->create([
+        $visit->visit->diagnoses()->create([
             'user_id' => $request->user()->id,
             'patient_id' => $visit->patient_id,
             'diagnoses' =>  $request->diagnosis,
@@ -337,5 +337,36 @@ class PatientsController extends Controller
         return response()->json([
             'ok' => true
         ]);
+    }
+
+    public function addExamination(Request $request, Visit $visit)
+    {
+        $request->validate([
+            'physical_exams' => 'nullable|string',
+            'abdomen' => 'nullable|string',
+            'chest' => 'nullable|string',
+            'head_and_neck' => 'nullable|string',
+            'muscle_skeletal' => 'nullable|string',
+            'vaginal_digital_rectal' => 'nullable|string',
+        ]);
+
+        $physical = $request->physical_exams;
+        $other = $request->except('_token', 'physical_exams');
+
+        if ($visit->visit->examination()->exists()) {
+            $visit->visit->examination()->update([
+                'general' => $physical,
+                'specifics' => $other,
+            ]);
+        } else {
+            $exam = $visit->visit->examination()->create([
+                'patient_id' => $visit->patient_id,
+                'general' => $physical,
+                'specifics' => $other,
+            ]);
+        }
+
+
+        return json_encode(compact('physical',  'other'));
     }
 }

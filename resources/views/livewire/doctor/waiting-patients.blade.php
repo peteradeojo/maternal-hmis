@@ -24,8 +24,8 @@
                             <td>{{ $v->readable_visit_type }}</td>
                             <td>{{ $v->created_at }}</td>
                             <td>
-                                @if ($v->documentations->count() > 0)
-                                    <a href="{{ route('doctor.follow-up', $v->documentations[0]->id) }}">Review Last
+                                @if ($v->waiting_for_doctor)
+                                    <a href="{{ route('doctor.follow-up', $v->visit) }}">Review Last
                                         Documentation</a>
                                 @else
                                     <a class="text-blue-600 underline" href="{{ route('doctor.treat', $v) }}">Start

@@ -46,12 +46,13 @@ class ProductSearch extends Component
         $this->display = true;
     }
 
-    public function select($id)
+    public function select($id, $name)
     {
-        $this->dispatch("selected", id: $id);
+        $this->dispatch("selected", id: $id, details: ['name' => $name, 'category' => $this->category, 'departmentId' => $this->department]);
     }
 
-    public function resetResults() {
+    public function resetResults()
+    {
         $this->results = null;
     }
 }

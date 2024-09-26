@@ -48,6 +48,37 @@ document.addEventListener("DOMContentLoaded", () => {
     // });
 });
 
+function initTab(el) {
+    const tabSelect = el.querySelector('select');
+    const tabNav = el.querySelector("nav")
+    const tabList = tabNav.querySelectorAll("a");
+
+    const tabContentList = el.querySelectorAll(el.getAttribute("data-tablist") + " > .tab");
+
+    tabContentList.forEach((e, i) => {
+        i > 0 && e.classList.add("hidden")
+    });
+
+    tabList?.forEach((element, i) => {
+        element.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabContentList.forEach((elj) => elj.classList
+                .add(
+                    "hidden"));
+
+            tabList?.forEach((eli, j) => {
+                eli.classList.add("default-tab");
+                eli.classList.remove("active-tab");
+                eli.setAttribute("aria-current", "page");
+            });
+
+            tabList[i]?.classList.remove("default-tab");
+            tabList[i]?.classList.add("active-tab");
+
+            tabContentList[i]?.classList.remove("hidden");
+        });
+    });
+}
 
 function asyncForm(form, route, callback = (e, data) => {}) {
     $(form).on("submit", (e) => {

@@ -8,6 +8,7 @@
             <div class="row">
                 <div class="col-6">
                     <p><b>Name: </b> {{ $doc->patient->name }}</p>
+                    <p><b>Category: </b> {{ $doc->patient->category->name }}</p>
                     <p><b>Card Number: </b> {{ $doc->patient->card_number }}</p>
                     <p><b>Date: </b> {{ $doc->created_at->format('Y-m-d h:i A') }}</p>
                     <p><b>Date Completed: </b> {{ $doc->tests->last()->updated_at->format('Y-m-d h:i A') }}</p>
@@ -20,20 +21,26 @@
                 <hr>
                 <div class="row mt-1">
                     @foreach ($doc->tests as $test)
+                        {{-- @dump($test) --}}
                         <div class="col-6 px">
-                            <p><u><b>{{ strtoupper($test->name) }}</b></u> <br/><small>Adminstered: {{$test->staff->name}}</small></p>
+                            <p><u><b>{{ strtoupper($test->name) }}</b></u>
+                                @if ($test->staff)
+                                    <small>Adminstered: {{ $test->staff?->name }}</small>
+                            </p>
+                        @else
+                    @endif
 
-                            @foreach ($test->results ?? [] as $r)
-                                <p class="py-1"><b>{{ $r->description }}: </b> {{ $r->result }}</p>
-                            @endforeach
-                        </div>
+                    @foreach ($test->results ?? [] as $r)
+                        <p class="py-1"><b>{{ $r->description }}: </b> {{ $r->result }}</p>
                     @endforeach
                 </div>
-                <div class="my">
-                    <p><b>Comments</b></p>
-                    <p>No Comment</p>
-                </div>
+                @endforeach
+            </div>
+            <div class="my">
+                <p><b>Comments</b></p>
+                <p>No Comment</p>
             </div>
         </div>
+    </div>
     </div>
 @endsection

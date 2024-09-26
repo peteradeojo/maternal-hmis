@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property AncVisit|GeneralVisit $visit
+ */
 class Visit extends Model
 {
     use HasFactory;
@@ -42,11 +45,6 @@ class Visit extends Model
     public function visit()
     {
         return $this->morphTo();
-    }
-
-    public function documentations()
-    {
-        return $this->hasMany(Documentation::class, 'visit_id')->latest();
     }
 
     // Methods
@@ -107,7 +105,7 @@ class Visit extends Model
     {
         if ($force) {
             $this->update([
-                'status' => Status::completed->value,
+                'status' => Status::closed->value,
                 'awaiting_doctor' => false,
                 'awaiting_vitals' => false,
             ]);
@@ -115,7 +113,7 @@ class Visit extends Model
         }
 
         if ($this->can_check_out) {
-            $this->update(['status' => Status::completed->value]);
+            $this->update(['status' => Status::closed->value]);
         }
     }
 
@@ -124,29 +122,29 @@ class Visit extends Model
         return $this->morphOne(Vitals::class, 'recordable');
     }
 
-    public function notes()
-    {
-        return $this->morphMany(ConsultationNote::class, 'visit');
-    }
+    // public function notes()
+    // {
+    //     return $this->morphMany(ConsultationNote::class, 'visit');
+    // }
 
-    public function diagnoses()
-    {
-        return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
-    }
+    // public function diagnoses()
+    // {
+    //     return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
+    // }
 
-    public function tests()
-    {
-        return $this->morphMany(DocumentationTest::class, 'testable');
-    }
+    // public function tests()
+    // {
+    //     return $this->morphMany(DocumentationTest::class, 'testable');
+    // }
 
-    public function prescriptions()
-    {
-        return $this->morphMany(DocumentationPrescription::class, 'event');
-    }
+    // public function prescriptions()
+    // {
+    //     return $this->morphMany(DocumentationPrescription::class, 'event');
+    // }
 
     public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
     {
-        return $this->prescriptions()->create([
+        return $this->visit->prescriptions()->create([
             'patient_id' => $patient->id,
             'prescriptionable_type' => $product::class,
             'prescriptionable_id' => $product->id,
@@ -161,8 +159,12 @@ class Visit extends Model
         ]);
     }
 
-    public function imagings()
-    {
-        return $this->morphMany(PatientImaging::class, 'documentable');
+    // public function imagings()
+    // {
+    //     return $this->morphMany(PatientImaging::class, 'documentable');
+    // }
+
+    public function getWaitingForDoctorAttribute() {
+        return ($this->visit->tests()->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
     }
 }

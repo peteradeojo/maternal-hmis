@@ -20,7 +20,13 @@ class PatientExaminations extends Model
         'specifics' => 'array',
     ];
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function visit()
+    {
+        return $this->morphTo();
     }
 }

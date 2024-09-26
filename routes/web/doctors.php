@@ -10,6 +10,7 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value])->gr
     Route::match(['get', 'post'], '/review/{documentation}', [PatientsController::class, 'followUp'])->name('follow-up');
 
     Route::post('/treat/anc/{visit}', [PatientsController::class, 'treatAnc'])->name('treat-anc');
+    Route::middleware(['auth', 'api'])->post('/examination/{visit}', [PatientsController::class, 'addExamination'])->name('examine');
 
     Route::get('/visits', [PatientsController::class, 'history'])->name('history');
     Route::get('/visits/{visit}', [PatientsController::class, 'visit'])->name('visit');

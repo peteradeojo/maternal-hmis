@@ -7,13 +7,14 @@ use App\Models\Visit;
 use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
 use App\Traits\Documentable as TraitsDocumentable;
+use App\Traits\HasVisitData;
 use App\Traits\Visit as VisitTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AncVisit extends Model implements Documentable, Visitation
 {
-    use HasFactory, VisitTrait, TraitsDocumentable;
+    use HasFactory, VisitTrait, TraitsDocumentable, HasVisitData;
 
     public const testsList = [
         'HIV',
@@ -52,31 +53,6 @@ class AncVisit extends Model implements Documentable, Visitation
 
     protected $appends = ['type'];
 
-    public function complaints()
-    {
-        return $this->morphMany(DocumentationComplaints::class, 'documentable');
-    }
-
-    public function treatments()
-    {
-        return $this->morphMany(DocumentationPrescription::class, 'prescriptionable');
-    }
-
-    final public function radios()
-    {
-        return $this->morphMany(PatientImaging::class, 'documentable');
-    }
-
-    // final public function tests()
-    // {
-    //     return $this->morphMany(DocumentationTest::class, 'testable');
-    // }
-
-    public function visit()
-    {
-        return $this->morphOne(Visit::class, 'visit');
-    }
-
     public function profile()
     {
         return $this->belongsTo(AntenatalProfile::class, 'antenatal_profile_id');
@@ -85,15 +61,6 @@ class AncVisit extends Model implements Documentable, Visitation
     public function getType(): string
     {
         return "Antenatal";
-    }
-    public function patient()
-    {
-        return $this->belongsTo(Patient::class);
-    }
-
-    public function diagnoses()
-    {
-        return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
     }
 
     public function doctor()
@@ -116,27 +83,5 @@ class AncVisit extends Model implements Documentable, Visitation
                 'patient_id' => $visit->patient->id,
             ]);
         });
-    }
-
-    public function notes()
-    {
-        return $this->morphMany(ConsultationNote::class, 'visit');
-    }
-
-    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
-    {
-        return $this->prescriptions()->create([
-            'patient_id' => $patient->id,
-            'prescriptionable_type' => $product::class,
-            'prescriptionable_id' => $product->id,
-            'name' => $product->name,
-            'dosage' => $data->dosage,
-            'duration' => $data->duration,
-            'route' => $data->route,
-            'frequency' => $data->frequency,
-            'requested_by' => auth()->user()?->id,
-            'event_type' => $event::class,
-            'event_id' => $event->id,
-        ]);
     }
 }

@@ -2,14 +2,20 @@
 
 namespace App\Http\Livewire\Doctor;
 
-use App\Models\Product;
+use App\Livewire\Forms\Doctor\ExaminationForm;
 use App\Models\Visit;
+use App\Models\Patient;
+use App\Models\Product;
 use Livewire\Component;
+use App\Models\AncVisit;
+use App\Models\GeneralVisit;
+use App\Models\PatientHistory;
+use App\Livewire\Forms\Doctor\HistoryForm;
 
 class VisitForm extends Component
 {
     /**
-     * @var Visit
+     * @var AncVisit|GeneralVisit
      */
     public $visit;
     public $profile;
@@ -20,6 +26,11 @@ class VisitForm extends Component
     public $editingLmp = false;
     public $lmpEdit;
     public $editEdd;
+
+    public $histories;
+
+    public HistoryForm $historyForm;
+    public ExaminationForm $examForm;
 
     public function updateEdd()
     {
@@ -47,16 +58,18 @@ class VisitForm extends Component
 
     public function mount($visit)
     {
-        $this->visit = $visit->load(['visit']);
+        $this->visit = $visit;
         if ($visit->readable_visit_type == 'Antenatal') {
             $this->profile = $visit->patient->antenatalProfiles[0];
         }
+
+        $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
     }
 
     public function addTest($id)
     {
         $pdt = Product::find($id);
-        $this->visit->tests()->create([
+        $this->visit->visit->tests()->create([
             'patient_id' => $this->visit->patient_id,
             'describable_type' => $pdt::class,
             'describable_id' => $pdt->id,
@@ -67,12 +80,27 @@ class VisitForm extends Component
     public function addScan($id)
     {
         $pdt = Product::find($id);
-        $this->visit->imagings()->create([
+        $this->visit->visit->imagings()->create([
             'patient_id' => $this->visit->patient_id,
             'describable_type' => $pdt::class,
             'describable_id' => $pdt->id,
             'requested_by' => auth()->user()->id,
             'name' => $pdt->name,
         ]);
+    }
+
+    public function addHistory()
+    {
+        $this->historyForm->validate();
+
+        $this->visit->histories()->create([
+            'patient_id' => $this->visit->patient_id,
+            ...($this->historyForm->all()),
+        ]);
+
+        $this->historyForm->reset();
+
+        $this->visit->refresh();
+        $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
     }
 }

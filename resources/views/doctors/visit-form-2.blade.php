@@ -2,11 +2,7 @@
 @section('title', $visit->patient->name . " | Doctor's Visit")
 
 @section('content')
-    @php
-        $profile = null;
-    @endphp
-
-    <livewire:doctor.visit-form :visit="$visit" />
+    <livewire:doctor.visit-form :visit="$visit->visit" />
 
     <div class="modal hide" id="diagnosis-modal">
         <div class="content bg-white p-2">
@@ -61,28 +57,11 @@
 @endsection
 
 @pushOnce('scripts')
-    <script defer>
+    <script>
         // initTab(document.querySelector('#nav-tab'));
         initTab(document.querySelector('#actions-tab'));
         initTab(document.querySelector('#notes-tabs'));
         initTab(document.querySelector('#tests-tabs'));
-
-        function asyncForm(form, route, callback = (e, data) => {}) {
-            $(form).on("submit", (e) => {
-                e.preventDefault();
-                fetch(route, {
-                    method: 'POST',
-                    body: new FormData(e.currentTarget),
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                }).then((res) => {
-                    callback(e.currentTarget, res);
-                }).catch((err) => {
-                    console.error(err);
-                });
-            });
-        }
 
         $(() => {
             $("#note-form").on('submit', (e) => {
@@ -108,9 +87,5 @@
                 });
             });
         });
-
-        function addPrescription(data) {
-            console.log(data);
-        }
     </script>
 @endpushOnce

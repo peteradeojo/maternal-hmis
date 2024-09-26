@@ -3,7 +3,7 @@
     @for ($i = 0; $i < $visit->patient->visits->count(); $i++)
         <div class="py-2">
             @php
-                $v = $visit->patient->visits[$i];
+                $v = $visit->patient->visits[$i]->visit;
             @endphp
             <div class="border-2 border-red-300 p-1">
                 <div class="flex justify-between">
@@ -11,9 +11,52 @@
                     <div class="flex gap-x-3">
                         @if ($i == 0)
                             <button class="btn btn-sm bg-green-500 text-white">Admit</button>
-                            <button wire:click="close" wire:confirm="Are you done with this patient?" class="btn btn-sm bg-blue-500 text-white">Close</button>
+                            <button wire:click="close" wire:confirm="Are you done with this patient?"
+                                class="btn btn-sm bg-blue-500 text-white">Close</button>
                         @endif
                     </div>
+                </div>
+
+                <div class="pt-1"></div>
+                <p><b>History</b></p>
+                <table class="table bg-gray-100 p-2">
+                    <tr>
+                        <th>Presentation</th>
+                        <th>Duration</th>
+                    </tr>
+                    @forelse ($v->histories as $h)
+                        <tr>
+                            <td>{{ $h->presentation }}</td>
+                            <td>{{ $h->duration }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2">No history</td>
+                        </tr>
+                    @endforelse
+
+                </table>
+
+                {{-- Examinations --}}
+                <div class="pt-1"></div>
+                <p><b>Examinations</b></p>
+
+                <div class="p-1 bg-gray-100">
+                    @unless ($visit->examination)
+                        <p>No examination was conducted.</p>
+                    @else
+                        <div>
+                            <p><b>General</b></p>
+                            <p>{{ $visit->examination->general }}</p>
+                        </div>
+
+                        @foreach ($visit->examination->specifics as $k => $sp)
+                            <div>
+                                <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
+                                <p>{{ $sp }}</p>
+                            </div>
+                        @endforeach
+                    @endunless
                 </div>
 
                 <div class="pt-1"></div>

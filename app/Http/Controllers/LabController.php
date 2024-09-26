@@ -8,6 +8,7 @@ use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
 use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\GeneralVisit;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class LabController extends Controller
 {
-    private function processTests(Request $request, $data, Visit|AncVisit  $visit)
+    private function processTests(Request $request, $data, GeneralVisit|AncVisit  $visit)
     {
         foreach ($visit->tests as $i => $test) {
             if (isset($data['result'][$i])) {
@@ -44,6 +45,7 @@ class LabController extends Controller
             }
         }
     }
+
     public function test(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') {
@@ -63,7 +65,7 @@ class LabController extends Controller
             'comment' => 'nullable|string',
         ]);
 
-        foreach ($visit->tests as $i => $test) {
+        foreach ($visit->visit->tests as $i => $test) {
             if (isset($data['result'][$i])) {
                 $results = [];
                 $resultData = $data['result'][$i] ?? [];
@@ -99,7 +101,7 @@ class LabController extends Controller
         }
 
         if ($visit->tests()->where('status', Status::completed->value)->count() > 0) {
-            $visit->visit->awaiting_lab_results = false;
+            $visit->awaiting_lab_results = false;
         }
 
         $visit->awaiting_doctor = true;
@@ -115,7 +117,26 @@ class LabController extends Controller
 
     public function getHistory(Request $request)
     {
-        return $this->dataTable($request, Visit::with(['patient'])->has('tests'), [
+        // dd(Visit::with(['patient'])->where(function ($query) {
+        //     $query->has('tests')->whereDoesntHave('tests', function ($q) {
+        //         $q->where('status', '!=', Status::completed->value);
+        //     });
+        // })->orWhere(function ($q) {
+        //     $q->whereHas('visit', function ($query) {
+        //         $query->has('tests')->whereDoesntHave('tests', function ($q) {
+        //             $q->where('status', '!=', Status::completed->value);
+        //         });
+        //     });
+        // })->getQuery()->toRawSql());
+
+
+        return $this->dataTable($request, Visit::with(['patient'])->whereHas('visit', function ($query) {
+            $query->where(function ($query) {
+                $query->has('tests')->whereDoesntHave('tests', function ($q) {
+                    $q->where('status', '!=', Status::completed->value);
+                });
+            });
+        }), [
             function (&$query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "{$search}%");
@@ -126,7 +147,9 @@ class LabController extends Controller
 
     public function getAncVisits(Request $request)
     {
-        return $this->dataTable($request, AncVisit::with(['profile'])->has('tests')->latest(), [
+        return $this->dataTable($request, AncVisit::with(['profile'])->whereHas('tests', function ($q) {
+            $q->where('status', '!=', Status::completed->value);
+        })->latest(), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "{$search}%")->orWhere('card_number', 'like', "{$search}%");
@@ -167,8 +190,6 @@ class LabController extends Controller
         // $visit->awaiting_lab_results = false;
         $visit->visit->save();
 
-        // dd($request->all());
-
         $this->processTests($request, $request->all(), $visit);
 
         return redirect()->route('dashboard');
@@ -176,7 +197,7 @@ class LabController extends Controller
 
     public function testReport(Request $request, Visit $doc)
     {
-        return view('lab.testReport', compact('doc'));
+        return view('lab.testReport', ['doc' => $doc->visit]);
     }
 
     public function store(Request  $request, Visit $visit)
@@ -185,7 +206,7 @@ class LabController extends Controller
             'test' => 'required|string'
         ]);
 
-        $visit->tests()->create([
+        $visit->visit->tests()->create([
             'name' => $request->test,
             'patient_id' => $visit->patient_id,
             'user_id' =>  $request->user()->id,

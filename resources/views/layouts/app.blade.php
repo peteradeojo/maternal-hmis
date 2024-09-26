@@ -43,6 +43,8 @@
         integrity="sha512-uKQ39gEGiyUJl4AI6L+ekBdGKpGw4xJ55+xyJG7YFlJokPNYegn9KwQ3P8A7aFQAUtUsAQHep+d/lrGqrbPIDQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @livewireScripts
+
+    <script src="{{ asset('js/util.js', app()->isProduction()) }}"></script>
     @stack('scripts')
 </body>
 

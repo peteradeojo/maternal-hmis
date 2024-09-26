@@ -1,19 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="card py px mb-2 foldable">
-        <div class="header foldable-header">
-            <p class="card-header">
-                Pending Antenatal Bookings
-            </p>
-        </div>
-        <div class="body foldable-body">
-            <div class="my">
-                @include('components.pendingAncBookings', ['url' => "/lab/anc-booking/"])
-            </div>
-        </div>
-    </div>
-
     <div class="card py px mt-2 foldable">
         <div class="header foldable-header">
             <div class="card-header">Antenatal Tests</div>
