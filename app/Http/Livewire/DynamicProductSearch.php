@@ -30,8 +30,9 @@ class DynamicProductSearch extends Component
     public function searchProducts()
     {
         if ($this->queryString != "") {
+            return;
         }
-        $query = Product::query()->limit(100)->where('name', 'like',  '%' . $this->queryString  . '%');
+        $query = Product::query()->limit(100)->where('name', 'like', '%' . $this->queryString  . '%');
         if ($this->category) {
             $query->where('product_category_id', $this->category->id);
         }
