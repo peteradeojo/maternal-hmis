@@ -69,7 +69,7 @@ class VisitForm extends Component
     public function addTest($id)
     {
         $pdt = Product::find($id);
-        $this->visit->visit->tests()->create([
+        $this->visit->tests()->create([
             'patient_id' => $this->visit->patient_id,
             'describable_type' => $pdt::class,
             'describable_id' => $pdt->id,
@@ -80,7 +80,7 @@ class VisitForm extends Component
     public function addScan($id)
     {
         $pdt = Product::find($id);
-        $this->visit->visit->imagings()->create([
+        $this->visit->imagings()->create([
             'patient_id' => $this->visit->patient_id,
             'describable_type' => $pdt::class,
             'describable_id' => $pdt->id,

@@ -11,11 +11,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Documentable
 {
-    public function radios()
-    {
-        return $this->morphMany(PatientImaging::class, 'documentable');
-    }
-
     public function treatments()
     {
         return $this->morphMany(DocumentationPrescription::class, 'prescriptionable')->latest();

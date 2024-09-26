@@ -8,6 +8,7 @@ use App\Dto\PrescriptionDto;
 use App\Models\ConsultationNote;
 use App\Models\PatientExaminations;
 use App\Models\PatientHistory;
+use App\Models\PatientImaging;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
@@ -50,7 +51,18 @@ trait HasVisitData
         return $this->morphMany(PatientHistory::class, 'visit');
     }
 
-    public  function examination(): MorphOne {
+    public  function examination(): MorphOne
+    {
         return $this->morphOne(PatientExaminations::class, 'visit');
+    }
+
+    public function imagings()
+    {
+        return $this->morphMany(PatientImaging::class, 'documentable');
+    }
+
+    public function radios()
+    {
+        return $this->imagings();
     }
 }

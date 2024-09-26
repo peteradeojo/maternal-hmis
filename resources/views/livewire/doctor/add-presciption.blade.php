@@ -6,7 +6,7 @@
             <p class="p-3">No diagnosis has been made during this visit. Please add a diagnosis.</p>
         @else --}}
         <div class="p-1">
-            <livewire:product-search departmentId='4' @selected="addPrescription($event.detail.id)" />
+            <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)" />
             <div class="py-2"></div>
             <table id="drugs-table" class="table">
                 <thead>

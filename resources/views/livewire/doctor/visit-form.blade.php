@@ -186,28 +186,16 @@
 
                 <div id="investigations" class="py-1">
                     <div class="tab">
-                        <form id="test-form">
-                            @csrf
-                            <div class="form-group">
-                                <label>Select Test</label>
-                                <livewire:product-search departmentId='5' @selected="addTest($event.detail.id)" />
-                            </div>
-                            <div class="form-group">
-                                <button class="btn bg-blue-500 text-white">Submit</button>
-                            </div>
-                        </form>
+                        <div class="form-group">
+                            <label>Select Test</label>
+                            <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail.id)" />
+                        </div>
                     </div>
                     <div class="tab">
-                        <form id="rad-form">
-                            @csrf
-                            <div class="form-group">
-                                <label>Request Scan</label>
-                                {{-- <input type="text" name="scan" id="" required="required"
-                                class="form-control w-1/3" list="scans-list"> --}}
-                                <livewire:product-search departmentId='7' @selected="addScan($event.detail.id)" />
-                            </div>
-                            <button class="btn bg-blue-500 text-white">Submit</button>
-                        </form>
+                        <div class="form-group">
+                            <label>Request Scan</label>
+                            <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
+                        </div>
                     </div>
                 </div>
             </div>
