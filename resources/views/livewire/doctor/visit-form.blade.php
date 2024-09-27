@@ -208,17 +208,16 @@
             <div class="py-3"></div>
             <div class="flex gap-x-3">
                 <div>
-                    <input type="text"
-                        class="form-control @error('historyForm.presentation') border-red-500 @enderror"
-                        list="histories" placeholder="Presentation" wire:model.live="historyForm.presentation" />
+                    <input type="text" class="form-control" list="histories" placeholder="Presentation"
+                        wire:model="historyForm.presentation" />
                     @error('historyForm.presentation')
                         <span class="error text-xs text-red-600">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div>
-                    <input type="text" class="form-control @error('historyForm.duration') border-red-500 @enderror"
-                        placeholder="Duration" wire:model.live="historyForm.duration" />
+                    <input type="text" class="form-control" placeholder="Duration"
+                        wire:model="historyForm.duration" />
                     @error('historyForm.duration')
                         <span class="error text-xs text-red-600">{{ $message }}</span>
                     @enderror
@@ -252,8 +251,8 @@
 @script
     <script>
         asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit->visit]) }}", async (e, res) => {
-            const data = await res.json()
+            const data = await res.json();
             console.log(data);
-        })
+        });
     </script>
 @endscript

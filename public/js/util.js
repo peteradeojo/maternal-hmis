@@ -11,9 +11,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     document.querySelectorAll(".modal").forEach((modal) => {
-        modal.addEventListener("click", (e) => {
-            if (e.target.classList.contains("modal")) {
-                e.target.classList.add("hide");
+        // modal.addEventListener("click", (e) => {
+        //     if (e.target.classList.contains("modal")) {
+        //         e.target.classList.add("hide");
+        //     }
+        // });
+
+        modal.addEventListener("mousedown", (e) => {
+            // Check if the click is directly on the modal backdrop
+            if (e.target === modal) {
+                modal.classList.add("hide");
             }
         });
     });
