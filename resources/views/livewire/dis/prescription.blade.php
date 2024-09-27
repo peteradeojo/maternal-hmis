@@ -40,9 +40,9 @@
                     <td id="total">{{ $total }}</td>
                 </tr>
                 <tr>
-                    <td>Are you done with this quote? <input type="checkbox" name="complete"
-                            @if ($doc->all_prescriptions_available) checked @endif
-                            @if (!$editable) disabled @endif></td>
+                    @unless ($doc->all_prescriptions_available)
+                        <td colspan="2">Are you done with this quote? <input type="checkbox" name="complete" /></td>
+                    @endunless
                 </tr>
             </tfoot>
         </table>

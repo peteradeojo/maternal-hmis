@@ -14,23 +14,23 @@
                 <div class="foldable-body unfolded">
                     <div class="form-group">
                         <label for="spec-head">Head & Neck</label>
-                        <textarea type="text" name="head_and_neck" class="form-control">{{ $exam?->specifics['head_and_neck'] }}</textarea>
+                        <textarea type="text" name="head_and_neck" class="form-control" id="spec-head">{{ $exam?->specifics['head_and_neck'] }}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="chest">Chest</label>
-                        <textarea name="chest" class="form-control">{{ $exam?->specifics['chest'] }}</textarea>
+                        <textarea name="chest" id="chest" class="form-control">{{ $exam?->specifics['chest'] }}</textarea>
                     </div>
                     <div class="form-group">
-                        <label for="spec-head">Abdomen</label>
-                        <textarea name="abdomen" class="form-control">{{ $exam?->specifics['abdomen'] }}</textarea>
+                        <label for="abdo">Abdomen</label>
+                        <textarea name="abdomen" id="abdo" class="form-control">{{ $exam?->specifics['abdomen'] }}</textarea>
                     </div>
                     <div class="form-group">
-                        <label for="spec-head">Muscloskeletal</label>
-                        <textarea name="muscle_skeletal" class="form-control">{{ $exam?->specifics['muscle_skeletal'] }}</textarea>
+                        <label for="muscles">Muscloskeletal</label>
+                        <textarea name="muscle_skeletal" id="muscles" class="form-control">{{ $exam?->specifics['muscle_skeletal'] }}</textarea>
                     </div>
                     <div class="form-group">
-                        <label for="spec-head">Vaginal/Rectal</label>
-                        <textarea name="vaginal_digital_rectal" class="form-control">{{ $exam?->specifics['vaginal_digital_rectal'] }}</textarea>
+                        <label for="vag">Vaginal/Rectal</label>
+                        <textarea id="vag" name="vaginal_digital_rectal" class="form-control">{{ $exam?->specifics['vaginal_digital_rectal'] }}</textarea>
                     </div>
                 </div>
             </div>

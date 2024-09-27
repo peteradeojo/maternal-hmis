@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Models\Documentation;
 use App\Models\DocumentationPrescription;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -29,12 +30,18 @@ class PharmacyController extends Controller
 
     public function dispensaryIndex(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::quoted->value, Status::closed->value, Status::completed->value]))->get();
+        // $data = Visit::with(['patient'])->whereHas('visit', function ($query) {
+        //     $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::quoted->value, Status::closed->value, Status::completed->value]));
+        // })->get();
+        $data  = Visit::with(['patient', 'visit'])->whereHas('visit', function ($q) {
+            $q->has('treatments');
+        })->get();
         return view('phm.prescriptions', compact('data'));
     }
 
-    public function dispensaryShow(Request $request, Documentation $doc)
+    public function dispensaryShow(Request $request, Visit $visit)
     {
+        $doc = $visit->visit;
         if ($request->method() == 'POST') {
             $request->mergeIfMissing(['available' => []]);
 

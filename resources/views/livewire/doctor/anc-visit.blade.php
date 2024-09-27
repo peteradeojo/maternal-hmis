@@ -2,11 +2,11 @@
     {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
 
     <p class="text-xl bold">Vitals</p>
-    <p>Blood pressure: {{ $visit->svitals?->blood_pressure }} mmHg</p>
-    <p>Weight: {{ $visit->svitals?->weight }} kg</p>
-    <p>Temperature: {{ $visit->svitals?->temperature }} &deg;C</p>
-    <p>Pulse: {{ $visit->svitals?->pulse }} bpm</p>
-    <p>Respiration: {{ $visit->svitals?->respiration }} c/m</p>
+    <p>Blood pressure: {{ $visit->vitals[0]?->blood_pressure }} mmHg</p>
+    <p>Weight: {{ $visit->vitals[0]?->weight }} kg</p>
+    <p>Temperature: {{ $visit->vitals[0]?->temperature }} &deg;C</p>
+    <p>Pulse: {{ $visit->vitals[0]?->pulse }} bpm</p>
+    <p>Respiration: {{ $visit->vitals[0]?->respiration }} c/m</p>
 
     <div class="py-2"></div>
     <p class="text-xl bold">Notes</p>
@@ -21,7 +21,7 @@
     </form>
 
     <div class="py1"></div>
-    @foreach ($anc_visit->notes as $note)
+    @foreach ($visit->notes as $note)
         <div class="bg-gray-100 p-2">
             <p>{{ $note->note }}</p>
             <p class="text-xs">Consultant: {{ $note->consultant->name }}</p>
@@ -30,7 +30,7 @@
     @endforeach
 
     <div class="py-2"></div>
-    <livewire:doctor.add-presciption :visit="$anc_visit" />
+    <livewire:doctor.add-presciption :visit="$visit" />
 
     <div class="py-2"></div>
 
@@ -45,7 +45,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($anc_visit->tests as $test)
+            @foreach ($visit->tests as $test)
                 <tr wire:key="test:{{ $test->name }}">
                     <td colspan="3"><b>{{ $test->name }}</b></td>
                     <td class="text-xs">
@@ -85,7 +85,7 @@
         <livewire:product-search @selected='addScan($event.detail.id)' departmentId='7' />
     </div>
 
-    @foreach ($anc_visit->radios as $scan)
+    @foreach ($visit->radios as $scan)
         <div class="p-2 bg-gray-200">
             <p><b>{{ $scan->name }}</b></p>
             <p>{{ $scan->comment ?? 'No comment' }}</p>
@@ -95,7 +95,7 @@
 
 
     <div class="py-3"></div>
-    <form action="{{ route('doctor.treat-anc', ['visit' => $anc_visit]) }}" method="post">
+    <form action="{{ route('doctor.treat-anc', ['visit' => $visit]) }}" method="post">
         @csrf
         <div class="form-group">
             <label>Height of Fundus</label>

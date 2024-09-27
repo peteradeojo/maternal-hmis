@@ -1,4 +1,4 @@
-<div wire:poll.5000ms>
+<div wire:poll.3000ms>
     {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
     @for ($i = 0; $i < $visit->patient->visits->count(); $i++)
         <div class="py-2">

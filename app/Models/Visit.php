@@ -165,6 +165,7 @@ class Visit extends Model
     // }
 
     public function getWaitingForDoctorAttribute() {
-        return ($this->visit->tests()->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
+        $b = ($this->visit->tests()->where('results', '!=', null)->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
+        return $b;
     }
 }

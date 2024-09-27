@@ -59,8 +59,8 @@ class VisitForm extends Component
     public function mount($visit)
     {
         $this->visit = $visit;
-        if ($visit->readable_visit_type == 'Antenatal') {
-            $this->profile = $visit->patient->antenatalProfiles[0];
+        if ($visit->type == 'Antenatal') {
+            $this->profile = $visit->patient->anc_profile;
         }
 
         $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
@@ -75,6 +75,7 @@ class VisitForm extends Component
             'describable_id' => $pdt->id,
             'name' => $pdt->name,
         ]);
+        $this->visit->refresh();
     }
 
     public function addScan($id)
@@ -87,6 +88,13 @@ class VisitForm extends Component
             'requested_by' => auth()->user()->id,
             'name' => $pdt->name,
         ]);
+
+        $this->visit->refresh();
+    }
+
+    public function refresh() {
+        $this->visit->refresh();
+        $this->hydrate();
     }
 
     public function addHistory()

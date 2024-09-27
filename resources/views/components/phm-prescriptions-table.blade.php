@@ -5,6 +5,7 @@
             <th>Card Number</th>
             <th>Gender</th>
             <th>Date</th>
+            <th>Type</th>
             <th></th>
         </tr>
     </thead>
@@ -15,6 +16,7 @@
                 <td>{{ $d->patient->card_number }}</td>
                 <td>{{ $d->patient->gender_value }}</td>
                 <td>{{ $d->created_at->format('Y/m/d H:i A') }}</td>
+                <td>{{ $d->visit->type }}</td>
                 <td>
                     @if (auth()->user()->department_id == DepartmentsEnum::DIS->value)
                         <a href="{{ route('dis.get-prescription', $d) }}">View</a>

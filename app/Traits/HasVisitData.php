@@ -6,10 +6,12 @@ use App\Models\Patient;
 use App\Models\Product;
 use App\Dto\PrescriptionDto;
 use App\Models\ConsultationNote;
+use App\Models\DocumentationPrescription;
 use App\Models\PatientExaminations;
 use App\Models\PatientHistory;
 use App\Models\PatientImaging;
 use App\Models\Visit;
+use App\Models\Vitals;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait HasVisitData
@@ -21,7 +23,7 @@ trait HasVisitData
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(Patient::class, 'patient_id');
     }
 
     public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
@@ -36,8 +38,6 @@ trait HasVisitData
             'route' => $data->route,
             'frequency' => $data->frequency,
             'requested_by' => auth()->user()?->id,
-            'event_type' => $event::class,
-            'event_id' => $event->id,
         ]);
     }
 
@@ -64,5 +64,18 @@ trait HasVisitData
     public function radios()
     {
         return $this->imagings();
+    }
+
+    public function prescriptions() {
+        return $this->treatments();
+    }
+
+    public function treatments()
+    {
+        return $this->morphMany(DocumentationPrescription::class, 'event');
+    }
+
+    public function vitals() {
+        return $this->morphMany(Vitals::class, 'recordable')->latest();
     }
 }

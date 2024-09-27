@@ -12,8 +12,8 @@ trait Visit
         return Attribute::make(get: fn () => $this->getType());
     }
 
-    public function vitals()
-    {
-        return $this->morphMany(Vitals::class, 'recordable');
-    }
+    // public function vitals()
+    // {
+    //     return $this->morphMany(Vitals::class, 'recordable');
+    // }
 }

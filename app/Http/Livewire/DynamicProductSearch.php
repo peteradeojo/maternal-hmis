@@ -19,7 +19,7 @@ class DynamicProductSearch extends Component
     public function mount($departmentId = null, $category = null)
     {
         $this->departmentId =  $departmentId;
-        $this->category = ProductCategory::where('department_id', $departmentId)->orWhere('name',  $category)->first();
+        $this->category = ProductCategory::where('name', 'category')->orWhere('department_id',  $departmentId)->first();
     }
 
     public function resetResults()
@@ -29,13 +29,9 @@ class DynamicProductSearch extends Component
 
     public function searchProducts()
     {
-        if ($this->queryString != "") {
-            return;
-        }
-        $query = Product::query()->limit(100)->where('name', 'like', '%' . $this->queryString  . '%');
-        if ($this->category) {
-            $query->where('product_category_id', $this->category->id);
-        }
+        $query = Product::query()->limit(100)->where(function ($q) {
+            $q->where('name', 'like', '%' . $this->queryString  . '%')->orWhere('description', 'like', "%$this->queryString%");
+        });
 
         if ($this->departmentId) {
             $query->whereHas('category', function ($q) {
@@ -54,6 +50,7 @@ class DynamicProductSearch extends Component
     public function select($id = null)
     {
         if ($id == null) {
+            if (empty($this->queryString)) return;
             $id = Product::create([
                 'name' => $this->queryString,
                 'description' => '',

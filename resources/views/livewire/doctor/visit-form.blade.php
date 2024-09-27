@@ -12,17 +12,17 @@
                         <p><b>Date of Birth</b>: {{ $visit->patient->dob?->format('Y-m-d') }}</p>
                         <p><b>Card Number</b>: {{ $visit->patient->card_number }}</p>
                         <p><b>Card Type</b>: {{ $visit->patient->category->name }}</p>
-                        <p><b>Visit Type</b>: {{ $visit->readable_visit_type }}</p>
+                        <p><b>Visit Type</b>: {{ $visit->type }}</p>
                         <p><b></b></p>
                         <p><b></b></p>
                         <p><b></b></p>
                         <p><b></b></p>
                     </div>
                 </div>
-                @if ($visit->readable_visit_type == 'Antenatal')
+                @if ($visit->type == 'Antenatal')
                     <div class="tab my-5">
                         <p class="text-3xl border-b border-gray-300 pb-2 mb-2">Antenatal Booking Details</p>
-                        @isset($visit->visit->profile)
+                        @isset($visit->patient->ancProfile)
                             @include('components.anc-profile', [
                                 'ancProfile' => $visit->patient->ancProfile,
                             ])
@@ -56,14 +56,14 @@
         <div id="actions-tab" data-tablist="#actions">
             @include('components.tabs', [
                 'options' =>
-                    $visit->readable_visit_type == 'Antenatal'
+                    $visit->type == 'Antenatal'
                         ? ['Follow Up', 'First Visit', 'Medical Records']
                         : ['Medical Records'],
             ])
 
             <div id="actions" class="py-1">
                 {{-- Antenatal Doings --}}
-                @if ($visit->readable_visit_type == 'Antenatal')
+                @if ($visit->type == 'Antenatal')
                     <div class="tab">
                         @livewire('doctor.anc-visit', ['visit' => $visit])
                     </div>

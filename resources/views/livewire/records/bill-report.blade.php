@@ -106,9 +106,9 @@
                 @foreach ($visit->prescriptions as $img)
                     <tr>
                         <td>{{ $img->name }}</td>
-                        <td>{{ $img->describable?->amount ?? '0.00' }}</td>
+                        <td>{{ $img->amount ?? '0.00' }}</td>
                         @php
-                            $thisTotal += $img->describable?->amount;
+                            $thisTotal += $img->amount;
                         @endphp
                     </tr>
                 @endforeach
@@ -138,7 +138,7 @@
     <div class="py-3">
         <p class="bold text-xl">Others</p>
         <div class="py-3"></div>
-        <livewire:product-search @selected="addItem($event.detail.id)" />
+        <livewire:dynamic-product-search @selected="addItem($event.detail.id)" />
         <div class="py-3"></div>
         <table class="table">
             <thead>

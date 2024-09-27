@@ -6,9 +6,9 @@
 -->
 <div>
     <div class="sm:hidden">
-        <label for="Tab" class="sr-only">Tab</label>
+        <label class="sr-only">Tab</label>
 
-        <select id="Tab" class="w-full rounded-md border-gray-200">
+        <select class="w-full rounded-md border-gray-200">
             @foreach ($options ?? [] as $option)
                 <option>{{ $option }}</option>
             @endforeach
