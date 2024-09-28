@@ -124,7 +124,7 @@
             <form wire:submit.prevent="addNote">
                 <div class="form-group">
                     <label for="">Add Note</label>
-                    <textarea wire:model.live.debounce.500ms="note" id="" class="form-control" rows="5" required="required"></textarea>
+                    <textarea wire:model.debounce.500ms="note" id="" class="form-control" rows="5" required="required" @click.stop></textarea>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-blue">Add Note</button>

@@ -30,6 +30,12 @@ class MedicalRecords extends Component
         return view('livewire.doctor.medical-records');
     }
 
+    public function deleteHistory($id)
+    {
+        $this->visit->histories()->where('id', $id)->delete();
+        $this->visit->refresh();
+    }
+
     public function close()
     {
         $this->visit->refresh();

@@ -18,23 +18,7 @@
 
             <div class="mt-2">
                 <div class="card-header">Report</div>
-                <hr>
-                <div class="row mt-1">
-                    @foreach ($doc->tests as $test)
-                        {{-- @dump($test) --}}
-                        <div class="col-6 px">
-                            <p><u><b>{{ strtoupper($test->name) }}</b></u>
-                                @if ($test->staff)
-                                    <small>Adminstered: {{ $test->staff?->name }}</small>
-                            </p>
-                        @else
-                    @endif
-
-                    @foreach ($test->results ?? [] as $r)
-                        <p class="py-1"><b>{{ $r->description }}: </b> {{ $r->result }}</p>
-                    @endforeach
-                </div>
-                @endforeach
+                @include('lab.components.test-results', ['tests' => $doc->tests])
             </div>
             <div class="my">
                 <p><b>Comments</b></p>

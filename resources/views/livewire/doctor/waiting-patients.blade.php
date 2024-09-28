@@ -25,7 +25,7 @@
                             <td>{{ $v->created_at }}</td>
                             <td>
                                 @if ($v->waiting_for_doctor)
-                                    <a href="{{ route('doctor.follow-up', $v->visit) }}">Review Last
+                                    <a href="{{ route('doctor.treat', $v) }}">Review Last
                                         Documentation</a>
                                 @else
                                     <a class="text-blue-600 underline" href="{{ route('doctor.treat', $v) }}">Start

@@ -23,11 +23,14 @@
                     <tr>
                         <th>Presentation</th>
                         <th>Duration</th>
+                        <th></th>
                     </tr>
                     @forelse ($v->histories as $h)
                         <tr>
                             <td>{{ $h->presentation }}</td>
                             <td>{{ $h->duration }}</td>
+                            <td class="w-1/12 text-center"><button wire:click="deleteHistory({{ $h->id }})"
+                                    class="btn btn-sm btn-red">&times;</button></td>
                         </tr>
                     @empty
                         <tr>

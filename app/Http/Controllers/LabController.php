@@ -49,7 +49,7 @@ class LabController extends Controller
     public function test(Request $request, Visit $visit)
     {
         if ($request->method() !== 'POST') {
-            return view('lab.take-test', ['documentation' => $visit]);
+            return view('lab.take-test', ['documentation' => $visit->visit]);
         }
 
         $data = $request->validate([
@@ -100,7 +100,7 @@ class LabController extends Controller
             }
         }
 
-        if ($visit->tests()->where('status', Status::completed->value)->count() > 0) {
+        if ($visit->visit->tests()->where('status', Status::completed->value)->count() > 0) {
             $visit->awaiting_lab_results = false;
         }
 

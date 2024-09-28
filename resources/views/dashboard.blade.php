@@ -2,13 +2,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="container">
-        @if (session('success'))
-            <div class="alert bg-green py px" role="alert">
-                {{ session('success') }}
-            </div>
-        @endif
-
+    <div class="container relative">
         @livewire('dashboard.patient-stats', ['user' => $user])
 
         @if ($user->department_id == DepartmentsEnum::DOC->value)
