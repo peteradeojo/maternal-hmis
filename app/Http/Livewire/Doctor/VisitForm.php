@@ -68,11 +68,6 @@ class VisitForm extends Component
         $this->profile->refresh();
     }
 
-    public function render()
-    {
-        return view('livewire.doctor.visit-form');
-    }
-
     public function mount($visit)
     {
         $this->visit = $visit;
@@ -138,5 +133,10 @@ class VisitForm extends Component
     {
         $this->visit->radios()->where('id', $id)->delete();
         $this->refresh();
+    }
+
+    public function render()
+    {
+        return view('livewire.doctor.visit-form');
     }
 }

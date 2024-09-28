@@ -108,6 +108,7 @@
                                 <br>
                                 <small>Comment: {{ $img->comment ?? 'No comment' }}</small>
                             </p>
+                            
                         </div>
                     @endforeach
                 @endif
