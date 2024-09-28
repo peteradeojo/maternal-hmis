@@ -17,6 +17,7 @@ class AncVisit extends Component
     public $return_visit;
 
     public $note;
+    public $cancellable = true;
 
     public function mount($visit)
     {
@@ -89,6 +90,12 @@ class AncVisit extends Component
             'consultant_id' => auth()->user()->id,
         ]);
         $this->note = "";
+        $this->visit->refresh();
+    }
+
+    public function removeScan($id)
+    {
+        $this->visit->radios()->where('id', $id)->delete();
         $this->visit->refresh();
     }
 }

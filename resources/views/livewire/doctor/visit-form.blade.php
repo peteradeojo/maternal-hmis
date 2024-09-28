@@ -22,9 +22,9 @@
                 @if ($visit->type == 'Antenatal')
                     <div class="tab my-5">
                         <p class="text-3xl border-b border-gray-300 pb-2 mb-2">Antenatal Booking Details</p>
-                        @isset($visit->patient->ancProfile)
+                        @isset($profile)
                             @include('components.anc-profile', [
-                                'ancProfile' => $visit->patient->ancProfile,
+                                'ancProfile' => $profile,
                             ])
                         @else
                             <p>No data here yet.</p>
@@ -68,79 +68,7 @@
                         @livewire('doctor.anc-visit', ['visit' => $visit])
                     </div>
                     <div class="tab">
-                        {{-- @dump($profile) --}}
-                        <form action="{{ route('doctor.submit-anc-booking', ['profile' => $profile]) }}"
-                            method="post">
-                            @csrf
-                            <input type="hidden" name="go_back">
-                            <div class="grid grid-cols-3 gap-x-3">
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="gravida">Gravidity</label>
-                                        <input type="number" name="gravida" id="gravida" class="form-control"
-                                            required value="{{ old('gravida') ?? $profile->gravida }}" />
-                                    </div>
-                                </div>
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="parity">Parity</label>
-                                        <input type="number" name="parity" id="parity" class="form-control"
-                                            value="{{ old('parity') ?? $profile->parity }}" />
-                                    </div>
-                                </div>
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="fundal_height">Height of Fundus</label>
-                                        <input type="text" name="fundal_height" id="fundal_height"
-                                            class="form-control"
-                                            value="{{ old('fundal_height') ?? $profile->fundal_height }}">
-                                    </div>
-                                </div>
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="fetal_heart_rate">Fetal Heart Rate</label>
-                                        <input type="text" name="fetal_heart_rate" id="fetal_heart_rate"
-                                            class="form-control"
-                                            value="{{ old('fetal_heart_rate') ?? $profile->fetal_heart_rate }}">
-                                    </div>
-                                </div>
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="presentation">Presentation</label>
-                                        <input type="text" name="presentation" id="presentation" class="form-control"
-                                            value="{{ old('presentation') ?? $profile->presentation }}">
-                                    </div>
-                                </div>
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="lie">Lie</label>
-                                        <input type="text" name="lie" id="lie" class="form-control"
-                                            value="{{ old('lie') ?? $profile->lie }}">
-                                    </div>
-                                </div>
-                                <div class="w-full">
-                                    <div class="form-group">
-                                        <label for="relationship">Relationship of Presenting Part to Pelvis</label>
-                                        <input type="text" name="presenting_relationship" id="relationship"
-                                            class="form-control"
-                                            value="{{ old('presenting_relationship') ?? $profile->presentation_relationship }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="my-2">
-                                @include('components.tests-form', ['tests' => $tests])
-                            </div>
-                            @include('components.prescriptions-form')
-                            <div class="form-group mt-1">
-                                <label for="next_date">Next Visit Date</label>
-                                <input type="date" name="next_date" id="next_date" class="form-control" required
-                                    value="{{ now()->addWeeks(2)->format('Y-m-d') }}" />
-                            </div>
-                            <div class="form-group mt-1">
-                                <label><input type="checkbox" name="complete" /> Booking Completed</label><br>
-                                <button class="btn btn-blue">Submit</button>
-                            </div>
-                        </form>
+                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit"/>
                     </div>
                 @endif
 

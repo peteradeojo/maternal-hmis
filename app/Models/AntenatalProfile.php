@@ -6,6 +6,7 @@ use App\Enums\AncCategory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class AntenatalProfile extends Model
 {
@@ -34,9 +35,10 @@ class AntenatalProfile extends Model
     protected $casts = [
         'lmp' => 'datetime',
         'edd' => 'datetime',
-        'tests' => 'array',
         'vitals' => 'array'
     ];
+
+    protected $with = ['tests'];
 
     public function patient()
     {
@@ -53,11 +55,41 @@ class AntenatalProfile extends Model
         return Attribute::make(get: fn ($value) => AncCategory::tryFrom($value)->name);
     }
 
-    public function tests() {
+    public function tests()
+    {
         return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
-    public function getVitals() {
+    public function getVitals()
+    {
         return $this->vitals;
+    }
+
+    protected static function booted()
+    {
+        // static::retrieved(function (Self $profile) {
+        //     $profile->calculateEddLmp();
+        //     if ($profile->isDirty()) $profile->save();
+        // });
+
+        // static::saving(function (Self $profile) {
+        //     $profile->calculateEddLmp();
+        // });
+    }
+
+    public function calculateEddLmp($resave = false)
+    {
+        if ($this->lmp && empty($this->edd)) {
+            $this->edd = Carbon::parse($this->lmp)->addMonths(9)->addDays(7)->format('Y-m-d');
+        }
+
+        if ($this->edd && empty($this->lmp)) {
+            $this->lmp = Carbon::parse($this->edd)->subMonths(9)->subDays(7)->format('Y-m-d');
+        }
+
+        if ($resave && $this->isDirty()) {
+            $this->save();
+            $this->refresh();
+        }
     }
 }

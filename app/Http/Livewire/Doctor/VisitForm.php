@@ -26,6 +26,7 @@ class VisitForm extends Component
     public $editingLmp = false;
     public $lmpEdit;
     public $editEdd;
+    public $editingEdd = false;
 
     public $histories;
 
@@ -35,7 +36,15 @@ class VisitForm extends Component
     public function updateEdd()
     {
         $this->profile->edd = $this->editEdd;
-        $this->redirect('');
+        $this->profile->lmp = null;
+
+        $this->profile->calculateEddLmp(true);
+        $this->editingEdd = false;
+    }
+
+    public function setEditingEdd()
+    {
+        $this->editingEdd = true;
     }
 
     public  function editLmp()
@@ -47,8 +56,16 @@ class VisitForm extends Component
     public function updateLmp()
     {
         $this->profile->lmp = $this->lmpEdit;
+        $this->profile->edd = null;
         $this->profile->save();
+
+        $this->profile->calculateEddLmp(true);
         $this->editingLmp = false;
+    }
+
+    public function refreshProfile()
+    {
+        $this->profile->refresh();
     }
 
     public function render()
@@ -60,7 +77,10 @@ class VisitForm extends Component
     {
         $this->visit = $visit;
         if ($visit->type == 'Antenatal') {
-            $this->profile = $visit->patient->anc_profile;
+            $this->profile = $visit->patient->antenatalProfiles[0];
+
+            $this->editEdd = $this->profile->edd;
+            $this->lmpEdit = $this->profile->lmp;
         }
 
         $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
@@ -92,8 +112,10 @@ class VisitForm extends Component
         $this->visit->refresh();
     }
 
-    public function refresh() {
+    public function refresh()
+    {
         $this->visit->refresh();
+        $this->profile->calculateEddLmp(true);
         $this->hydrate();
     }
 
@@ -110,5 +132,11 @@ class VisitForm extends Component
 
         $this->visit->refresh();
         $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
+    }
+
+    public function removeScan($id)
+    {
+        $this->visit->radios()->where('id', $id)->delete();
+        $this->refresh();
     }
 }

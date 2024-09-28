@@ -31,7 +31,7 @@ class PatientStats extends Component
 
         $this->currentAdmissions = Admission::where('status', Status::active->value)->count();
 
-        $this->visits = Visit::latest()->limit(50)->get();
+        $this->visits = Visit::where("status", "!=", Status::closed->value)->latest()->limit(50)->get();
     }
 
     public function hydrate()
@@ -45,7 +45,8 @@ class PatientStats extends Component
         return view('livewire.dashboard.patient-stats');
     }
 
-    public function updated() {
+    public function updated()
+    {
         $this->dispatchBrowserEvent('reinitialize-datatable');
     }
 }

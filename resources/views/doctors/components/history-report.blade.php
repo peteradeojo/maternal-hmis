@@ -1,23 +1,95 @@
 <div class="card py px">
     <div class="card-header">Encounter Report</div>
-    <button onclick="window.print()" class="no-print">Print</button>
+    <button onclick="window.print()" class="btn btn-green btn-sm no-print">Print</button>
     <div class="body">
-        <div class="row start">
-            <div class="col-6">
-                <p><b><u>Patient:</u></b> {{ $visit->patient->name }}</p>
-                <p><b><u>Date:</u></b> {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
-                <p><b><u>Type:</u></b> {{ $visit->visit->type }}</p>
-            </div>
-            <div class="col-6">
-                <p><u>Vitals:</u></p>
-                @include('doctors.components.vitals', ['visit' => $visit])
-            </div>
+        <div class="col-6">
+            <p class="underline"><b>Patient:</b> {{ $visit->patient->name }}</p>
+            <p class="underline"><b>Date:</b> {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
+            <p><b>Type:</b> {{ $visit->type }}</p>
         </div>
-        <div class="pb-2"></div>
-        @forelse ($visit->documentations as $doc)
-            @include('doctors.components.documentation', ['doc' => $doc])
-        @empty
-            <p>No documentation was found for this encounter</p>
-        @endforelse
+
+        <div class="py-2"></div>
+    </div>
+
+
+    <p class="text-2xl bold">Medical Report</p>
+    <div class="col-6">
+        <p>Vitals</p>
+        @include('doctors.components.vitals', ['visit' => $visit])
+    </div>
+
+    <div class="pt-4">
+        <p class="text-lg bold">Patient History</p>
+        @empty($visit->histories->toArray())
+            <p>No records</p>
+        @else
+            @foreach ($visit->histories as $history)
+                @dump($history)
+            @endforeach
+        @endempty
+    </div>
+
+    <div class="pt-4">
+        <p class="text-lg bold">Diagnoses</p>
+        @empty($visit->diagnoses->toArray())
+            <p>No records</p>
+        @else
+            @foreach ($visit->diagnoses as $history)
+                @dump($history)
+            @endforeach
+        @endempty
+    </div>
+
+    <div class="pt-4">
+        <p class="text-lg bold">Tests</p>
+        @empty($visit->tests->toArray())
+            <p>No records</p>
+        @else
+            @include('doctors.components.test-results', ['tests' => $visit->tests, 'cancellable' => false])
+        @endempty
+    </div>
+
+    <div class="pt-4">
+        <p class="text-lg bold">Scans</p>
+        @empty($visit->radios->toArray())
+            <p>No records</p>
+        @else
+            <div class="p-2 bg-gray-100">
+                @foreach ($visit->radios as $radio)
+                    <div>
+                        <p class="text-md bold">{{ $radio->name }}</p>
+                        @unless ($radio->comment || $radio->path)
+                            <p class="text-sm">No result</p>
+                        @else
+                            <p class="text-sm">{{ $radio->comment }}</p>
+                        @endunless
+                    </div>
+                @endforeach
+            </div>
+        @endempty
+    </div>
+
+    <div class="pt-4">
+        <p class="text-lg bold">Treatments & Prescriptions</p>
+        @empty($visit->treatments->toArray())
+            <p>No records</p>
+        @else
+            <table class="table">
+                <thead>
+                    <tr>Item</tr>
+                    <tr>Dosage</tr>
+                    <tr>Duration</tr>
+                </thead>
+                <tbody>
+                    @foreach ($visit->treatments as $treatment)
+                        <tr>
+                            <td>{{ $treatment->name }}</td>
+                            <td>{{ $treatment->dosage }}</td>
+                            <td>{{ $treatment->duration }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endempty
     </div>
 </div>

@@ -91,40 +91,8 @@
                 <div class="py-2"></div>
 
                 <p><b>Tests</b></p>
-                @forelse ($v->tests as $rtest)
-                    <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
-                        <p class="text-sm"><b>{{ $rtest->name }}</b></p>
-                        <div class="text-xs">
-                            {{-- <p class=" text-red">Result: {{ $rtest->results ?? "Not provided" }}</p> --}}
-                            {{-- <p>{{ $rtest->created_at->format('Y-m-d h:i A') }}</p> --}}
-                            @if (count($rtest->results ?? []) > 0)
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Description</th>
-                                            <th>Result</th>
-                                            <th>Unit</th>
-                                            <th>Ref. Range</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($rtest->results ?? [] as $r)
-                                            {{-- <p class="py-1"><b>{{ $r->description }}: </b> {{ $r->result }}</p> --}}
-                                            <td>{{ $r->description }}</td>
-                                            <td>{{ $r->result }}</td>
-                                            <td>{{ $r->unit }}</td>
-                                            <td>{{ $r->reference_range }}</td>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @else
-                                <p>No result yet</p>
-                            @endif
-                        </div>
-                    </div>
-                @empty
-                    <p>No tests requested for this visit</p>
-                @endforelse
+
+                @include('doctors.components.test-results', ['tests' => $v->tests])
 
                 @if ($visit->imagings?->count() > 0)
                     <div class="py-2"></div>

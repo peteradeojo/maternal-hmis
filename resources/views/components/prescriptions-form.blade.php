@@ -1,12 +1,14 @@
 <fieldset class="">
-    <datalist id="prescriptions-dl">
+    {{-- <datalist id="prescriptions-dl">
         @foreach ($prescriptions ?? [] as $p)
             <option value="{{ $p['name'] }}">{{ $p['name'] }}</option>
         @endforeach
     </datalist>
     <legend>Treatments</legend>
     <input type="text" id="treatments" class="input" list="prescriptions-dl">
-    <button type="button" id="add-treatment" class="btn btn-black">Add</button>
+    <button type="button" id="add-treatment" class="btn btn-black">Add</button> --}}
+    <legend>Treatments</legend>
+    <livewire:dynamic-product-search :departmentId=4 />
     <table id="treatments-list" class="mt-1 table">
         <thead>
             <tr>

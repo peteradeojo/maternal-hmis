@@ -149,6 +149,10 @@ class LabController extends Controller
     {
         return $this->dataTable($request, AncVisit::with(['profile'])->whereHas('tests', function ($q) {
             $q->where('status', '!=', Status::completed->value);
+        })->orWhereHas('profile', function ($q) {
+            $q->whereHas('tests', function ($q) {
+                $q->where('status', '!=', Status::completed->value);
+            });
         })->latest(), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {

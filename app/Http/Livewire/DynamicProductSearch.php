@@ -47,8 +47,10 @@ class DynamicProductSearch extends Component
         $this->display = true;
     }
 
-    public function select($id = null)
+    public function select($product)
     {
+        $this->resetResults();
+        $id = @$product['id'];
         if ($id == null) {
             if (empty($this->queryString)) return;
             $id = Product::create([
@@ -57,11 +59,11 @@ class DynamicProductSearch extends Component
                 'product_category_id' => $this->category?->id,
                 'amount'  => 0,
             ]);
-            $this->dispatch('selected', id: $id->id);
+            $this->dispatch('selected', id: $id->id, name: $id->name);
             return;
         }
 
-        $this->dispatch('selected', id: $id);
+        $this->dispatch('selected', id: $id, name: $product['name']);
     }
 
     public function render()

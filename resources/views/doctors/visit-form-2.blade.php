@@ -2,7 +2,7 @@
 @section('title', $visit->patient->name . " | Doctor's Visit")
 
 @section('content')
-    <livewire:doctor.visit-form :visit="$visit->visit" />
+    <livewire:doctor.visit-form :visit="$visit->visit" @anc-profile-refresh="refreshProfile" />
 
     <div class="modal hide" id="diagnosis-modal">
         <div class="content bg-white p-2">
@@ -62,6 +62,7 @@
         initTab(document.querySelector('#actions-tab'));
         initTab(document.querySelector('#notes-tabs'));
         initTab(document.querySelector('#tests-tabs'));
+        initTab(document.querySelector('#anc-visit-tests-2'));
 
         $(() => {
             $("#note-form").on('submit', (e) => {

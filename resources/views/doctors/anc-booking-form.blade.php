@@ -4,7 +4,7 @@
     <div class="card py px mb-1">
         <div class="row start">
             <div class="col-8 p-1">
-                <h3>Profile</h3>
+                <h3 class="bold text-xl">Profile</h3>
                 <hr>
                 <div class="row start">
                     <div class="col-6">
@@ -25,13 +25,8 @@
                 </div>
             </div>
             <div class="col-4 p-1">
-                <h3>Lab</h3>
-                <hr>
-                @forelse ($profile->tests ?? [] as $t => $r)
-                    <p class="my-1"><b>{{ $t }}: </b> {{ $r ?? 'Not provided' }}</p>
-                @empty
-                    <p class="my-1">No Tests Taken Yet</p>
-                @endforelse
+                <h3 class="bold text-xl">Lab</h3>
+                @include('doctors.components.test-results', ['tests' => $profile->tests])
             </div>
         </div>
     </div>
@@ -46,13 +41,15 @@
                 <div class="col-4">
                     <div class="form-group">
                         <label for="gravida">Gravidity</label>
-                        <input type="number" name="gravida" id="gravida" class="form-control" required value="{{ old('gravida') ?? $profile->gravida }}" />
+                        <input type="number" name="gravida" id="gravida" class="form-control" required
+                            value="{{ old('gravida') ?? $profile->gravida }}" />
                     </div>
                 </div>
                 <div class="col-4 pl">
                     <div class="form-group">
                         <label for="parity">Parity</label>
-                        <input type="number" name="parity" id="parity" class="form-control" value="{{ old('parity') ?? $profile->parity }}"/>
+                        <input type="number" name="parity" id="parity" class="form-control"
+                            value="{{ old('parity') ?? $profile->parity }}" />
                     </div>
                 </div>
                 <div class="col-4 pl">
@@ -97,7 +94,8 @@
             @include('components.prescriptions-form')
             <div class="form-group mt-1">
                 <label for="next_date">Next Visit Date</label>
-                <input type="date" name="next_date" id="next_date" class="form-control" required value="{{ now()->addWeeks(2)->format('Y-m-d') }}" />
+                <input type="date" name="next_date" id="next_date" class="form-control" required
+                    value="{{ now()->addWeeks(2)->format('Y-m-d') }}" />
             </div>
             <div class="form-group mt-1">
                 <label><input type="checkbox" name="complete" /> Booking Completed</label><br>

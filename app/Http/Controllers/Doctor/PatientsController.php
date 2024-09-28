@@ -16,6 +16,7 @@ use App\Models\DocumentedDiagnosis;
 use App\Models\Patient;
 use App\Models\PatientExaminations;
 use App\Models\PatientImaging;
+use App\Models\Product;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
 use App\Services\TreatmentService;
@@ -35,11 +36,18 @@ class PatientsController extends Controller
 
     private function loadAutoCompleteData()
     {
-        $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
-        $prescriptions = DocumentationPrescription::selectRaw('DISTINCT name')->get()->toArray();
-        $tests = DocumentationTest::selectRaw('DISTINCT name')->get()->pluck('name')->toArray();
+        // $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
+        // $prescriptions = Product::whereHas('category', function ($q) {
+        //     $q->where('department_id', 4);
+        // })->get()->pluck('name', 'id')->toArray();
+
+        // $tests = Product::whereHas('category', function ($q) {
+        //     $q->where('department_id', 5);
+        // })->get()->pluck('name', 'id')->toArray();
+
         $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
-        return compact('complaints', 'prescriptions', 'tests', 'diagnoses');
+        $data = compact('diagnoses');
+        return $data;
     }
 
     public function treat(Request $request, Visit $visit)
@@ -197,14 +205,14 @@ class PatientsController extends Controller
                 $visit->visit_id = $ancVisit->id;
                 $visit->save();
 
-                $documentation = $visit->documentations()->create([
-                    'visit_id' => $visit->id,
-                    'patient_id' => $profile->patient_id,
-                    'user_id' => $user->id,
-                ]);
+                // $documentation = $visit->documentations()->create([
+                //     'visit_id' => $visit->id,
+                //     'patient_id' => $profile->patient_id,
+                //     'user_id' => $user->id,
+                // ]);
 
-                $visit->awaiting_tests = $this->processAndSaveAncTests($request->tests ?? [], $documentation);
-                $visit->awaiting_pharmacy = $this->processAndSaveAncTreatments($request, $documentation, $user->id);
+                $visit->awaiting_tests = $this->processAndSaveAncTests($request->tests ?? [], $ancVisit);
+                $visit->awaiting_pharmacy = $this->processAndSaveAncTreatments($request, $ancVisit, $user->id);
                 $visit->save();
             }
 
@@ -223,7 +231,7 @@ class PatientsController extends Controller
         }
     }
 
-    private function processAndSaveAncTests($tests, Documentation &$doc)
+    private function processAndSaveAncTests($tests, AncVisit &$doc)
     {
         foreach ($tests as $test) {
             $doc->tests()->create([
@@ -235,7 +243,7 @@ class PatientsController extends Controller
         return false;
     }
 
-    private function processAndSaveAncTreatments(Request $request, Documentation &$doc, $id = null)
+    private function processAndSaveAncTreatments(Request $request, Documentation|AncVisit &$doc, $id = null)
     {
         foreach ($request->treatments ?? [] as $i => $t) {
             $doc->treatments()->create([
@@ -285,7 +293,7 @@ class PatientsController extends Controller
 
     public function visit(Request $request, Visit $visit)
     {
-        $visit->load(['visit', 'patient', 'documentations']);
+        $visit->load(['visit', 'patient']);
 
         // $documentations = $visit->documentations; //Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
         return view('doctors.visits.show', compact('visit'));

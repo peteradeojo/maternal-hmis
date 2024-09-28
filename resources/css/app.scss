@@ -25,12 +25,12 @@
             padding: 4px 6px;
 
             &:not(:last-of-type) {
-                border-right: 1px solid #888;
+                border-right: 1px solid #ccc;
             }
         }
 
         tbody tr {
-            border-top: 1px solid #888;
+            border-top: 1px solid #ccc;
         }
 
         tfoot {
@@ -164,7 +164,7 @@ p {
 
 .card {
     // background-color: #fff;
-    @apply  bg-white;
+    @apply bg-white;
     border-radius: 6px;
 
     &>.header {

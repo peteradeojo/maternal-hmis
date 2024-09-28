@@ -1,34 +1,36 @@
 <div class="grid grid-cols-3 gap-y-2">
     <p>
-        <b>Maturity/Weeks of Gestation: </b>
-        {{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}
-    </p>
-    <p><b>EDD: </b> @unless ($ancProfile->edd)
-            <input type="date" wire:model.live="editEdd" id="">
-            <a href="#" wire:click.prevent="updateEdd">Update<a />
-            @else
-                {{ $ancProfile->edd->format('Y-m-d') }}
-            @endunless
+        <b>Maturity Weeks: </b>
+        <span>{{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}</span>
     </p>
     <p>
+        <b>EDD: </b>
+        @if ($editingEdd || empty($ancProfile->edd))
+            <input type="date" wire:model="editEdd" value="{{ $ancProfile?->edd ?? $editEdd }}" />
+            <a href="#" wire:click.prevent="updateEdd">Update</a>
+        @else
+            <span>{{ $ancProfile->edd?->format('Y-m-d') }}</span>
+            <a href="#" wire:click.prevent="setEditingEdd" class="text-blue-600 underline">Edit</a>
+        @endif
+    </p>
+
+    <p>
+        <b>LMP: </b>
         @if ($editingLmp)
-            <b>LMP: </b>
-            <input type="date" wire:model.live="lmpEdit">
+            <input type="date" wire:model="lmpEdit" />
             <a href="#" wire:click.prevent="updateLmp">Update</a>
         @else
-            <b>LMP: </b> {{ $ancProfile->lmp?->format('Y-m-d') }}
+            <span>{{ $ancProfile->lmp?->format('Y-m-d') }}</span>
             <a href="#" class="text-blue-600 underline" wire:click.prevent="editLmp">Edit</a>
         @endif
     </p>
-    <p><b>Date of Booking: </b>
-        {{ $ancProfile->created_at?->format('Y-m-d') }}</p>
-    <p><b>Card Type: </b>
-        {{ $ancProfile->card_type }}
-    </p>
+
+    <p><b>Date of Booking: </b> {{ $ancProfile->created_at?->format('Y-m-d') }}</p>
+    <p><b>Card Type: </b>{{ $ancProfile->card_type }}</p>
+    <p class=""></p>
+    <p class=""></p>
+    <p class=""></p>
     <p class="p-4"></p>
-    <p class=""></p>
-    <p class=""></p>
-    <p class=""></p>
     <p><b>Gravida: </b> {{ $ancProfile->gravida }}</p>
     <p><b>Parity: </b> {{ $ancProfile->parity }}</p>
     <p><b>Height: </b> {{ $ancProfile->vitals['height'] ?? '' }} cm</p>

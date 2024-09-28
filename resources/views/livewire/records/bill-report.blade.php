@@ -137,9 +137,12 @@
 
     <div class="py-3">
         <p class="bold text-xl">Others</p>
-        <div class="py-3"></div>
-        <livewire:dynamic-product-search @selected="addItem($event.detail.id)" />
-        <div class="py-3"></div>
+
+        @unless ($visit->visit->status == Status::closed->value)
+            <div class="py-2">
+                <livewire:dynamic-product-search @selected="addItem($event.detail.id)" />
+            </div>
+        @endunless
         <table class="table">
             <thead>
                 <tr>

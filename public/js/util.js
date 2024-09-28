@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initTab(el) {
-    const tabSelect = el.querySelector('select');
     const tabNav = el.querySelector("nav")
+
     const tabList = tabNav.querySelectorAll("a");
 
     const tabContentList = el.querySelectorAll(el.getAttribute("data-tablist") + " > .tab");
@@ -69,6 +69,7 @@ function initTab(el) {
     tabList?.forEach((element, i) => {
         element.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             tabContentList.forEach((elj) => elj.classList
                 .add(
                     "hidden"));

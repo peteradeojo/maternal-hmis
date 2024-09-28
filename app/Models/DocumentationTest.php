@@ -14,7 +14,9 @@ class DocumentationTest extends Model
         'name',
         'status',
         'patient_id',
-        'results'
+        'results',
+        'describable_type',
+        'describable_id',
     ];
 
     protected $casts = [
@@ -26,19 +28,28 @@ class DocumentationTest extends Model
         return $this->belongsTo(Documentation::class);
     }
 
-    public function testable() {
+    public function testable()
+    {
         return $this->morphTo();
     }
 
-    public function staff() {
+    public function staff()
+    {
         return $this->belongsTo(User::class, 'tested_by');
     }
 
-    public function scopePending() {
+    public function scopePending()
+    {
         $this->where('status', Status::pending->value);
     }
 
-    public function scopeStatus($query, Status $status) {
+    public function scopeStatus($query, Status $status)
+    {
         $query->where('status', $status->value);
+    }
+
+    public function describable()
+    {
+        return $this->morphTo();
     }
 }
