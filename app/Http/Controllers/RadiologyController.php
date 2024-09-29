@@ -94,4 +94,13 @@ class RadiologyController extends Controller
 
         return back();
     }
+
+    public function scanResult(Request $request, PatientImaging $scan)
+    {
+        return response()->json([
+            'path' => $scan->secure_path,
+            'name' => $scan->name,
+            'updated_at' => $scan->updated_at,
+        ]);
+    }
 }

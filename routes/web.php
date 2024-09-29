@@ -30,6 +30,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('dashboard');
     });
+
+    Route::get('/radiology/{path}',function (Request $request, $path) {
+        return response()->file(storage_path('app/radiology/' . $path));
+    });
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [DashboardController::class, 'profile'])->name('user-profile');
     Route::post('/profile', [DashboardController::class, 'changePassword']);

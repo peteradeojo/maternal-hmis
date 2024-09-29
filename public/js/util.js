@@ -55,6 +55,7 @@
 // });
 
 function initTab(el) {
+    if (!el) return;
     const tabNav = el.querySelector("nav");
 
     const tabList = tabNav.querySelectorAll("a");

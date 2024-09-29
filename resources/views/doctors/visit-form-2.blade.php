@@ -54,6 +54,14 @@
             </div>
         </div>
     </div>
+
+    <div class="modal hide" id="scan-result-modal">
+        <div class="content p-3 bg-white">
+            <p class="text-3xl font-semibold">Scan Result</p>
+
+            <div id="display"></div>
+        </div>
+    </div>
 @endsection
 
 @pushOnce('scripts')
@@ -88,6 +96,5 @@
                 });
             });
         });
-
     </script>
 @endpushOnce

@@ -14,12 +14,12 @@
             <form action="" method="post" enctype="multipart/form-data">
                 @csrf
 
-                @if ($doc->path)
-                    @if (str_ends_with($doc->path, 'pdf'))
-                        <iframe src="{{ $doc->path }}" frameborder="0" width="100%" height="400"
+                @if ($doc->secure_path)
+                    @if (str_ends_with($doc->secure_path, 'pdf'))
+                        <iframe src="{{ $doc->secure_path }}" frameborder="0" width="100%" height="400"
                             allowfullscreen="true"></iframe>
-                    @elseif (str_ends_with($doc->path, 'jpg'))
-                        <img src="{{ $doc->path }}" class="w-3/5 m-auto p-1" alt="">
+                    @elseif (str_ends_with($doc->secure_path, 'jpg'))
+                        <img src="{{ $doc->secure_path }}" class="w-3/5 m-auto p-1" alt="">
                     @endif
                 @else
                 @endif

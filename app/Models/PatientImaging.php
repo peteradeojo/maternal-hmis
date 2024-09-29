@@ -32,4 +32,12 @@ class PatientImaging extends Model
     public function scopeStatus($query, Status $status) {
         $query->where('status', $status->value);
     }
+
+    public function getSecurePathAttribute() {
+        if (str_contains($this->path, 'cloudinary')) {
+            return $this->path;
+        }
+
+        return asset($this->path);
+    }
 }
