@@ -6,6 +6,7 @@ use App\Enums\Department as EnumsDepartment;
 use App\Jobs\UploadPatientScans;
 use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\Patient;
 use App\Models\PatientImaging;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
@@ -102,5 +103,16 @@ class RadiologyController extends Controller
             'name' => $scan->name,
             'updated_at' => $scan->updated_at,
         ]);
+    }
+
+    public function history()
+    {
+        // $history = PatientImaging::where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest()->get();
+        return view('rad.history');
+    }
+
+    public function getScansHistory(Request $request)
+    {
+        return $this->dataTable($request, PatientImaging::with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
     }
 }

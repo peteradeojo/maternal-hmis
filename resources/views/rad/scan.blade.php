@@ -18,11 +18,13 @@
                     @if (str_ends_with($doc->secure_path, 'pdf'))
                         <iframe src="{{ $doc->secure_path }}" frameborder="0" width="100%" height="400"
                             allowfullscreen="true"></iframe>
-                    @elseif (str_ends_with($doc->secure_path, 'jpg'))
+                    @else
                         <img src="{{ $doc->secure_path }}" class="w-3/5 m-auto p-1" alt="">
                     @endif
                 @else
+                    <p>No result</p>
                 @endif
+
                 <div class="form-group">
                     <label for="result_file" data-action="drag_drop" class="drag_drop" id="result_label">
                         <p>&plus; Add a file</p>

@@ -106,6 +106,10 @@
             @apply border-b;
         }
     }
+
+    a.link {
+        @apply text-blue-600 hover:underline;
+    }
 }
 
 aside#noticeboard {
