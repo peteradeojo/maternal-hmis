@@ -20,16 +20,14 @@ class Controller extends BaseController
         $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
 
         $results = $builder->clone();
-        if ($search) {
-            $results = $results->where(function ($query) use ($search, $searchableColumns) {
-                foreach ($searchableColumns as $column) {
-                    $column($query, $search);
-                }
-            });
-        }
+        $results = $results->where(function ($query) use ($search, $searchableColumns) {
+            foreach ($searchableColumns as $column) {
+                $column($query, $search);
+            }
+        });
 
         $data = [
-            'data' => $results->clone()->skip($start)->take($length)->get(),
+            'data' => $results->clone()->skip($start)->limit($length)->get(),
             'recordsTotal' => $builder->count(),
             'recordsFiltered' => $results->count(),
             'draw' => (int) $request->input('draw'),

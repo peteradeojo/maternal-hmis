@@ -7,7 +7,7 @@
         </div>
         <div class="foldable-body unfolded">
             <div class="pt-1"></div>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -59,21 +59,7 @@
 @push('scripts')
     <script>
         $(() => {
-            $("table").DataTable({
-                columns: [{
-                        orderable: false
-                    },
-                    {
-                        orderable: false
-                    },
-                    {
-                        orderable: false
-                    },
-                    {
-                        orderable: false
-                    },
-                ]
-            });
+            $("table").DataTable({});
         })
     </script>
 @endpush

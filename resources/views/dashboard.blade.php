@@ -29,6 +29,10 @@
         @if ($user->department_id == DepartmentsEnum::NHI->value)
             @livewire('nhi.pending-authorizations')
         @endif
+
+        @if ($user->department_id == DepartmentsEnum::RAD->value)
+            @livewire('rad.waiting-patients')
+        @endif
     </div>
 @endsection
 

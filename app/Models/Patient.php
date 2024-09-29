@@ -83,4 +83,8 @@ class Patient extends Model
     public function notes () {
         return $this->hasMany(ConsultationNote::class, 'patient_id');
     }
+
+    public function scans() {
+        return $this->hasMany(PatientImaging::class, 'patient_id');
+    }
 }

@@ -25,21 +25,24 @@
         $(function() {
             $('#scans').DataTable({
                 serverSide: true,
-                ajax: '{!! route('api.rad.scans.data') !!}',
+                responsive: true,
+                ajax: '{!! route('api.rad.scans.data', ['patient_id' => @$patientId]) !!}',
                 columns: [{
-                        data: 'name'
+                        data: 'patient.name'
                     },
                     {
-                        data: 'scans',
+                        data: 'name',
                     },
                     {
-                        data: (row, type, name) => Date(row.created_at).slice(0, 15)
+                        data: (row, type, name) => new Date(row.created_at).toLocaleString('en-GB')
                     },
                     {
                         data: 'requester.name'
                     },
                     {
-                        data: (row) => `<a href="{{ route('rad.scan', ':id') }}" class="btn btn-sm btn-primary">View</a>`.replace(':id', row.id),
+                        data: (row) =>
+                            `<a href="{{ route('rad.scan', ':id') }}" class="btn btn-sm bg-green-400">View</a>`
+                            .replace(':id', row.id),
                     }
                 ]
             });
