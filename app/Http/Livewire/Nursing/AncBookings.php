@@ -16,6 +16,8 @@ class AncBookings extends Component
 
     public User $user;
 
+    public $resetChildComponent = 0;
+
     public AntenatalProfile | null $profile;
 
     public function mount(User $user)
@@ -25,9 +27,11 @@ class AncBookings extends Component
 
     public function load()
     {
-        unset($this->profile);
+        // unset($this->profile);
+        // $this->profile = null;
         if (strlen($this->patientId) > 0) {
             $this->profile = AntenatalProfile::where('id', $this->patientId)->first();
+            $this->resetChildComponent++;
             return;
         }
     }
