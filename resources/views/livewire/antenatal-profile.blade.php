@@ -33,22 +33,29 @@
         @unless ($obsEdit)
             <p><b>Gravida: </b> {{ $profile->gravida }}</p>
             <p><b>Parity: </b> {{ $profile->parity }}</p>
-            <p><b>Height: </b> {{ $profile->vitals['height'] ?? '' }} cm</p>
-            <p><b>Weight: </b> {{ $profile->vitals['weight'] ?? '' }} kg</p>
-            <p><b>BP: </b> {{ $profile->vitals['blood_pressure'] ?? '' }} mmHg</p>
-            <p><b>HB: </b> {{ $profile->hb }} g/dl</p>
-            <p><b>Urine: </b> {{ $profile->urine }}</p>
-            <p><b>VDRL: </b> {{ $profile->vdrl }}</p>
-            <p><b>HIV: </b> {{ $profile->hiv }}</p>
-            <p><b>HEP B: </b> {{ $profile->hep_b }}</p>
-            <p><b>HEP C: </b> {{ $profile->hep_c }}</p>
-            <p><b>Other: </b> {{ $profile->other }}</p>
+
             <div class="col-span-3">
-                <a href="#" wire:click.prevent="toggleEditObsData" class="link underline">Edt Obstetric Data</a>
+                <a href="#" wire:click.prevent="toggleEditObsData" class="link underline">Edit Obstetric Data</a>
             </div>
         @else
+            <p><b>Gravida: </b> <input type="text" wire:model="obsData.gravida" id=""></p>
+            <p><b>Parity: </b> <input type="text" wire:model="obsData.parity" id=""></p>
+
+            <div class="col-span-3">
+                <a href="#" wire:click.prevent="updateObsData" class="link underline">Update</a>
+            </div>
         @endunless
 
+        <p><b>Height: </b> {{ $profile->vitals['height'] ?? '' }} cm</p>
+        <p><b>Weight: </b> {{ $profile->vitals['weight'] ?? '' }} kg</p>
+        <p><b>BP: </b> {{ $profile->vitals['blood_pressure'] ?? '' }} mmHg</p>
+        <p><b>HB: </b> {{ $profile->hb }} g/dl</p>
+        <p><b>Urine: </b> {{ $profile->urine }}</p>
+        <p><b>VDRL: </b> {{ $profile->vdrl }}</p>
+        <p><b>HIV: </b> {{ $profile->hiv }}</p>
+        <p><b>HEP B: </b> {{ $profile->hep_b }}</p>
+        <p><b>HEP C: </b> {{ $profile->hep_c }}</p>
+        <p><b>Other: </b> {{ $profile->other }}</p>
     </div>
 
     <div class="py-2"></div>
@@ -56,9 +63,9 @@
     <div class="py-2">
         <p class="text-xl bold">Special consideration / Risk Assessment</p>
 
-        <textarea wire:model name="" id="" class="form-control" rows="5" wire:model="risk_assessment">{{ $profile->risk_assessment }}</textarea>
+        <textarea name="" id="" class="form-control" rows="5" wire:model="obsData.risk_assessment">{{ $profile->risk_assessment }}</textarea>
         <div class="pt-2"></div>
-        <button class="btn bg-blue-500 text-white">Update Special Consideration</button>
+        <button class="btn bg-blue-500 text-white" wire:click="updateObsData">Update Special Consideration</button>
     </div>
 
 </div>

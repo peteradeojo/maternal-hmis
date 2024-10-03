@@ -20,8 +20,6 @@ class AncVisit extends Component
     public $note;
     public $cancellable = true;
 
-    public $loadedVisit = null;
-
     public function mount($visit)
     {
         $this->visit = $visit;
@@ -100,10 +98,5 @@ class AncVisit extends Component
     {
         $this->visit->radios()->where('id', $id)->delete();
         $this->visit->refresh();
-    }
-
-    public function loadVisitReport($id)
-    {
-        $this->loadedVisit = Visit::find($id)?->visit->load(['notes', 'tests', 'prescriptions', 'radios']);
     }
 }

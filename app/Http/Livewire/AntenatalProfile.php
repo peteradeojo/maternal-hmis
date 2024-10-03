@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Livewire\Forms\Doctor\ObsData;
 use App\Models\AntenatalProfile as ModelsAntenatalProfile;
 use Livewire\Component;
 
@@ -13,6 +14,8 @@ class AntenatalProfile extends Component
     public $lmpEdit;
     public $editEdd;
     public $editingEdd = false;
+
+    public ObsData $obsData;
 
     public $obsEdit = false;
 
@@ -27,6 +30,7 @@ class AntenatalProfile extends Component
 
         $this->editEdd = $this->profile->edd;
         $this->lmpEdit = $this->profile->lmp;
+        $this->obsData->fill($this->profile);
     }
 
     public function updateEdd()
@@ -65,5 +69,14 @@ class AntenatalProfile extends Component
     public function toggleEditObsData()
     {
         $this->obsEdit = !$this->obsEdit;
+    }
+
+    public function updateObsData()
+    {
+        $this->obsData->validate();
+
+        $this->profile->update($this->obsData->all());
+        $this->profile->refresh();
+        $this->obsEdit = false;
     }
 }

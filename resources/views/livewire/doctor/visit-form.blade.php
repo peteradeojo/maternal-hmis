@@ -3,7 +3,6 @@
     <div class="container card">
         <div class="card-header header">Profile</div>
         <div id="nav-tab" data-tablist="#tablist">
-            {{-- @include('components.tabs', ['options' => ['Profile', 'Vitals']]) --}}
             <div id="tablist" class="py-1">
                 <div class="tab">
                     <div class="grid grid-cols-3">
@@ -23,9 +22,6 @@
                     <div class="tab my-5">
                         <p class="text-3xl border-b border-gray-300 pb-2 mb-2">Antenatal Booking Details</p>
                         @isset($profile)
-                            {{-- @include('components.anc-profile', [
-                                'ancProfile' => $profile,
-                            ]) --}}
                             <livewire:antenatal-profile :profile="$profile" />
                         @else
                             <p>No data here yet.</p>
@@ -55,12 +51,17 @@
 
     <div class="container card">
         <div id="actions-tab" data-tablist="#actions">
-            @include('components.tabs', [
-                'options' =>
-                    $visit->type == 'Antenatal'
-                        ? ['Follow Up', 'First Visit', 'Medical Records']
-                        : ['Medical Records'],
-            ])
+            <div class="flex justify-between items-center">
+                @include('components.tabs', [
+                    'options' =>
+                        $visit->type == 'Antenatal'
+                            ? ['Follow Up', 'First Visit', 'Medical Records']
+                            : ['Medical Records'],
+                ])
+
+                <button class="btn btn-blue btn-sm modal-trigger" data-target="#previous-history-modal">View
+                    History</button>
+            </div>
 
             <div id="actions" class="py-1">
                 {{-- Antenatal Doings --}}
@@ -69,7 +70,7 @@
                         @livewire('doctor.anc-visit', ['visit' => $visit])
                     </div>
                     <div class="tab">
-                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit"/>
+                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit" />
                     </div>
                 @endif
 
@@ -93,7 +94,6 @@
                     <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
                         Prescription</button>
 
-                    {{-- @livewire('doctor.medical-records', ['visit' => $visit->visit]) --}}
                     <livewire:doctor.medical-records :visit="$visit" />
                 </div>
             </div>
@@ -175,6 +175,30 @@
             <option value="{{ $history->presentation }}">{{ $history->presentation }}</option>
         @endforeach
     </datalist>
+
+    <div class="modal hide" id="previous-history-modal">
+        <div class="content max-w-full p-3 bg-white">
+            <p class="text-xl bold">Previous Visits</p>
+
+            <div class="py-4 grid grid-cols-2">
+                <div>
+                    @foreach ($visit->patient->visits as $previous_visit)
+                        <a href="#" wire:click.prevent="loadVisitReport({{ $previous_visit->id }})"
+                            class="flex justify-between py-2 px-3 bg-gray-200 hover:bg-gray-300">
+                            <p class="text-xl bold">{{ $previous_visit->created_at->format('Y-m-d') }}</p>
+                        </a>
+                    @endforeach
+                </div>
+                <div class="border-2 border-l-0 overflow-y-auto p-3">
+                    <p wire:loading.class.remove="hidden" class="hidden p-3" wire:target="loadVisitReport">Loading...
+                    </p>
+                    @if ($loadedVisit)
+                        @include('doctors.components.history-report', ['visit' => $loadedVisit])
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @script

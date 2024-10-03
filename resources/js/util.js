@@ -14,8 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.addEventListener("click", (e) => {
             e.preventDefault();
             if (e.target.classList.contains("modal")) {
+                // console.log("got click");
                 e.target.classList.add("hide");
             }
+        });
+
+        // Prevent propagation for clicks inside the modal
+        modal.querySelectorAll('.content').forEach((content) => {
+            content.addEventListener('click', (e) => e.stopPropagation());
         });
     });
 

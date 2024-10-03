@@ -101,4 +101,10 @@ class VisitForm extends Component
     {
         return view('livewire.doctor.visit-form');
     }
+
+    public $loadedVisit = null;
+    public function loadVisitReport($id)
+    {
+        $this->loadedVisit = Visit::find($id)?->visit->load(['notes', 'tests', 'prescriptions', 'radios']);
+    }
 }

@@ -30,6 +30,7 @@ class AntenatalProfile extends Model
         'fetal_heart_rate',
         'presentation_relationship',
         'status',
+        'risk_assessment',
     ];
 
     protected $casts = [
