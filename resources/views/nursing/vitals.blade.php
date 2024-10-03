@@ -69,7 +69,7 @@
             });
         }
 
-        function startPolling(interval = 5000) {
+        function startPolling(interval = 30000) {
             setInterval(getUpdate, interval);
         }
 
