@@ -38,7 +38,6 @@
 
 @push('scripts')
     <script>
-        $("#vitals-table").DataTable();
         $("table#prescriptions").DataTable();
     </script>
 @endpush

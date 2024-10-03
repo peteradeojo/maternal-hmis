@@ -8,7 +8,7 @@ use Livewire\Component;
 
 class VitalList extends Component
 {
-    public $visits = [];
+    public $visits = 0;
 
     public function mount()
     {
@@ -17,11 +17,11 @@ class VitalList extends Component
 
     public function fetchData()
     {
-        $this->visits = Visit::where('status', Status::active->value)->where(function ($query) {
+        $this->visits = Visit::whereNotIn('status', [Status::closed->value, Status::blocked->value])->where(function ($query) {
             $query->whereHas('visit', function ($query) {
                 $query->doesntHave('vitals');
             });
-        })->get();
+        })->latest()->count();
     }
 
     public function render()
@@ -32,6 +32,7 @@ class VitalList extends Component
     public function refreshData()
     {
         $this->fetchData();
-        $this->emit('dataUpdated');
+        // $this->emit('dataUpdated');
+        // $thi
     }
 }

@@ -1,6 +1,5 @@
 .modal {
-    width: 100dvw;
-    height: 100dvh;
+    @apply min-w-full min-h-full;
     position: fixed;
     top: 0;
     left: 0;
@@ -8,8 +7,10 @@
     background-color: rgba(0, 0, 0, 0.5);
 
     .content {
-        width: 70%;
-        margin: 100px auto 0;
+        // @apply border-4 border-fuchsia-500;
+        min-width: 70%;
+        margin: 100px 0;
+        @apply overflow-y-auto;
 
         @media print {
             width: 100%;
@@ -19,6 +20,8 @@
         overflow-y: auto;
         overflow-x: auto;
     }
+
+    overflow-y: auto;
 
 }
 

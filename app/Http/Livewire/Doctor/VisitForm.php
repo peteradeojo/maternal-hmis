@@ -23,45 +23,10 @@ class VisitForm extends Component
     public $tests = [];
     public $diagnoses = [];
 
-    public $editingLmp = false;
-    public $lmpEdit;
-    public $editEdd;
-    public $editingEdd = false;
-
     public $histories;
 
     public HistoryForm $historyForm;
     public ExaminationForm $examForm;
-
-    public function updateEdd()
-    {
-        $this->profile->edd = $this->editEdd;
-        $this->profile->lmp = null;
-
-        $this->profile->calculateEddLmp(true);
-        $this->editingEdd = false;
-    }
-
-    public function setEditingEdd()
-    {
-        $this->editingEdd = true;
-    }
-
-    public  function editLmp()
-    {
-        $this->editingLmp = true;
-        $this->lmpEdit = $this->profile->lmp;
-    }
-
-    public function updateLmp()
-    {
-        $this->profile->lmp = $this->lmpEdit;
-        $this->profile->edd = null;
-        $this->profile->save();
-
-        $this->profile->calculateEddLmp(true);
-        $this->editingLmp = false;
-    }
 
     public function refreshProfile()
     {
@@ -73,9 +38,6 @@ class VisitForm extends Component
         $this->visit = $visit;
         if ($visit->type == 'Antenatal') {
             $this->profile = $visit->patient->antenatalProfiles[0];
-
-            $this->editEdd = $this->profile->edd;
-            $this->lmpEdit = $this->profile->lmp;
         }
 
         $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();

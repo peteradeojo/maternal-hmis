@@ -1,32 +1,16 @@
 <div class="card py px my">
     <div class="header">
         <div class="row between">
-            <h2 class="card-header">Vitals</h2>
-            <button class="btn btn-blue" wire:click='refreshData'>Reload</button>
+            <h2 class="card-header">Actions</h2>
         </div>
     </div>
     <div class="body py">
-        <table id="vitals-table" class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Date</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody wire:model='visits'>
-                @foreach ($visits as $v)
-                    <tr>
-                        <td>{{ $v->patient->name }}</td>
-                        <td>{{ $v->patient->category->name }}</td>
-                        <td>{{$v->created_at->format('l, dS, M, Y')}}</td>
-                        <td>
-                            <a href="{{ route('nurses.patient-vitals', $v) }}">Take Vitals</a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <div class="grid grid-cols-4 gap-x-2">
+            <a href="{{route('nurses.vitals')}}" class="flex justify-between border-4 hover:bg-gray-50 hover:font-bold transition-all duration-[.2s] border-green-500 p-3 rounded min-h-32 items-center">
+                Take Vitals
+
+                <span class="text-red-600 text-2xl">{{$visits}}</span>
+            </a>
+        </div>
     </div>
 </div>

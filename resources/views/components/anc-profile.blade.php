@@ -1,8 +1,15 @@
 <div class="grid grid-cols-3 gap-y-2">
     <p>
-        <b>Maturity Weeks: </b>
-        <span>{{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}</span>
+        <b>LMP: </b>
+        @if ($editingLmp)
+            <input type="date" wire:model="lmpEdit" />
+            <a href="#" wire:click.prevent="updateLmp">Update</a>
+        @else
+            <span>{{ $ancProfile->lmp?->format('Y-m-d') }}</span>
+            <a href="#" class="text-blue-600 underline" wire:click.prevent="editLmp">Edit</a>
+        @endif
     </p>
+
     <p>
         <b>EDD: </b>
         @if ($editingEdd || empty($ancProfile->edd))
@@ -15,14 +22,8 @@
     </p>
 
     <p>
-        <b>LMP: </b>
-        @if ($editingLmp)
-            <input type="date" wire:model="lmpEdit" />
-            <a href="#" wire:click.prevent="updateLmp">Update</a>
-        @else
-            <span>{{ $ancProfile->lmp?->format('Y-m-d') }}</span>
-            <a href="#" class="text-blue-600 underline" wire:click.prevent="editLmp">Edit</a>
-        @endif
+        <b>Maturity Weeks: </b>
+        <span>{{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}</span>
     </p>
 
     <p><b>Date of Booking: </b> {{ $ancProfile->created_at?->format('Y-m-d') }}</p>
@@ -43,4 +44,10 @@
     <p><b>HEP B: </b> {{ $ancProfile->hep_b }}</p>
     <p><b>HEP C: </b> {{ $ancProfile->hep_c }}</p>
     <p><b>Other: </b> {{ $ancProfile->other }}</p>
+</div>
+
+<div class="pt-2">
+    <p class="text-xl bold">Special consideration / Risk Assessment</p>
+
+    <textarea wire:model name="" id="" cols="30" rows="10"></textarea>
 </div>

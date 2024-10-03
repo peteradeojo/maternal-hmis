@@ -23,9 +23,10 @@
                     <div class="tab my-5">
                         <p class="text-3xl border-b border-gray-300 pb-2 mb-2">Antenatal Booking Details</p>
                         @isset($profile)
-                            @include('components.anc-profile', [
+                            {{-- @include('components.anc-profile', [
                                 'ancProfile' => $profile,
-                            ])
+                            ]) --}}
+                            <livewire:antenatal-profile :profile="$profile" />
                         @else
                             <p>No data here yet.</p>
                         @endisset

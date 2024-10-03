@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Doctor;
 
 use App\Livewire\Forms\Doctor\AncFollowup;
 use App\Models\Product;
+use App\Models\Visit;
 use Exception;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
@@ -18,6 +19,8 @@ class AncVisit extends Component
 
     public $note;
     public $cancellable = true;
+
+    public $loadedVisit = null;
 
     public function mount($visit)
     {
@@ -97,5 +100,10 @@ class AncVisit extends Component
     {
         $this->visit->radios()->where('id', $id)->delete();
         $this->visit->refresh();
+    }
+
+    public function loadVisitReport($id)
+    {
+        $this->loadedVisit = Visit::find($id)?->visit->load(['notes', 'tests', 'prescriptions', 'radios']);
     }
 }

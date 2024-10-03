@@ -7,6 +7,7 @@ use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VitalsRequest;
 use App\Models\AntenatalProfile;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 
 class PatientsController extends Controller
@@ -14,6 +15,13 @@ class PatientsController extends Controller
     public function ancBookings(Request $request)
     {
         return view('nursing.anc-bookings');
+    }
+
+    public function getPendingVitals(Request $request)
+    {
+        return $this->dataTable($request, Visit::with(['patient.category'])->whereHas('visit', function ($query) {
+            $query->doesntHave('vitals');
+        })->latest(), []);
     }
 
     public function getAncBookings(Request $request)

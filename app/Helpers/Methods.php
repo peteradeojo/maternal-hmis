@@ -80,5 +80,30 @@ function unslug($str, $process = null)
     if ($process) {
         return $process(str_replace(["_"], " ", $str));
     }
-    return $process(str_replace(["_"], " ", $str));
+    return str_replace(["_"], " ", $str);
+}
+
+function unslug_separator($str, $separator = '', $process = null)
+{
+    if ($separator) {
+        $f = explode($separator, $str);
+        $str = $f[count($f) - 1];
+    }
+
+    if ($process) {
+        return $process(str_replace(["_"], " ", $str));
+    }
+    return str_replace(["_"], " ", $str);
+}
+
+function resolve_render($value, $mode = null)
+{
+    if (!$mode) {
+        return $value;
+    }
+
+    switch ($mode) {
+        case 'datetime':
+            return $value->format('Y-m-d h:i A');
+    }
 }

@@ -124,12 +124,65 @@
             <form wire:submit.prevent="addNote">
                 <div class="form-group">
                     <label for="">Add Note</label>
-                    <textarea wire:model.debounce.500ms="note" id="" class="form-control" rows="5" required="required" @click.stop></textarea>
+                    <textarea wire:model.debounce.500ms="note" id="" class="form-control" rows="5" required="required"
+                        @click.stop></textarea>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-blue">Add Note</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="modal">
+        <div class="content max-w-full p-3 bg-white">
+            <p class="text-xl bold">Previous Visits</p>
+
+            <div class="py-4 grid grid-cols-2">
+                <div>
+                    @foreach ($visit->patient->visits as $previous_visit)
+                        <a href="#" wire:click="loadVisitReport({{ $previous_visit->id }})"
+                            class="flex justify-between py-2 px-3 bg-gray-200 hover:bg-gray-300">
+                            <p class="text-xl bold">{{ $previous_visit->created_at->format('Y-m-d') }}</p>
+                        </a>
+                    @endforeach
+                </div>
+                <div class="border-2 border-l-0 overflow-y-auto p-3">
+                    <p wire:loading.class.remove="hidden" class="hidden p-3" wire:target="loadVisitReport">Loading...</p>
+                    @if ($loadedVisit)
+                        {{-- <p class="bold">History</p>
+                        @forelse ($loadedVisit->histories as $history)
+                            <p>{{ $history->presentation }} - {{ $history->duration }}</p>
+                        @empty
+                            <p>No history.</p>
+                        @endforelse
+
+                        <p class="bold">Notes</p>
+
+                        @foreach ($loadedVisit->notes as $note)
+                            <p class="p-1 border">{{ $note->note }}</p>
+                        @endforeach
+
+                        <div class="py-2"></div>
+                        <p class="bold">Tests</p>
+
+                        @include('doctors.components.test-results', [
+                            'tests' => $loadedVisit->tests,
+                            'cancellable' => false,
+                        ])
+
+                        <p class="bold">Diagnoses</p>
+
+                        @forelse ($loadedVisit->diagnoses as $diagnosis)
+
+                        @empty
+
+                        @endforelse --}}
+                        @include('doctors.components.history-report', ['visit' => $loadedVisit])
+                    @endif
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
