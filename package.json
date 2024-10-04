@@ -4,7 +4,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "deploy": "yarn build && git commit -am build && git push"
+        "deploy": "yarn build && git add . && git commit -m update && git push"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.9",

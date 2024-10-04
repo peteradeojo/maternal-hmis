@@ -96,5 +96,15 @@
                 });
             });
         });
+
+        function loadVisitReport(id) {
+            const display = document.querySelector("#previous-visit-report");
+
+            fetch("{{ route('doctor.visit', ['visit' => ':id']) }}?brief".replace(":id", id)).then((res) => {
+                res.text().then((text) => {
+                    display.innerHTML = text;
+                }).catch(err => console.error(err));
+            });
+        }
     </script>
 @endpushOnce

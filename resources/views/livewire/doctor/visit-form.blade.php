@@ -183,18 +183,13 @@
             <div class="py-4 grid grid-cols-2">
                 <div>
                     @foreach ($visit->patient->visits as $previous_visit)
-                        <a href="#" wire:click.prevent="loadVisitReport({{ $previous_visit->id }})"
-                            class="flex justify-between py-2 px-3 bg-gray-200 hover:bg-gray-300">
+                        <button onClick="loadVisitReport({{ $previous_visit->id }})"
+                            class="flex w-full justify-between py-2 px-3 bg-gray-200 hover:bg-gray-300">
                             <p class="text-xl bold">{{ $previous_visit->created_at->format('Y-m-d') }}</p>
-                        </a>
+                        </button>
                     @endforeach
                 </div>
-                <div class="border-2 border-l-0 overflow-y-auto p-3">
-                    <p wire:loading.class.remove="hidden" class="hidden p-3" wire:target="loadVisitReport">Loading...
-                    </p>
-                    @if ($loadedVisit)
-                        @include('doctors.components.history-report', ['visit' => $loadedVisit])
-                    @endif
+                <div class="border-2 border-l-0 overflow-y-auto p-3" id="previous-visit-report">
                 </div>
             </div>
         </div>

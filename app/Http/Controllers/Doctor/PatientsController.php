@@ -296,6 +296,10 @@ class PatientsController extends Controller
         $visit->load(['visit', 'patient']);
 
         // $documentations = $visit->documentations; //Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
+
+        if ($request->has('brief')) {
+            return view('doctors.components.history-report', ['visit' => $visit->visit]);
+        }
         return view('doctors.visits.show', compact('visit'));
     }
 
