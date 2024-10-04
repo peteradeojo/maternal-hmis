@@ -12,6 +12,7 @@ Route::name('nurses.')->middleware(['department:' . Department::NUR->value])->gr
     Route::match(['post', 'get'], '/vitals/{visit}', [VitalsController::class, 'takeVitals'])->name('patient-vitals')->middleware(['datalog']);
     Route::get('anc-bookings', [PatientsController::class, 'ancBookings'])->name('anc-bookings');
 
+    Route::get('anc-bookings/{profile}', [PatientsController::class, 'viewAncBooking'])->name('view-anc-booking');
     Route::post('anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking')->middleware(['datalog']);
 
     Route::prefix('/nurses/admissions')->name('admissions.')->group(function () {

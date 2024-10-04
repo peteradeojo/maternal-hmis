@@ -1,7 +1,7 @@
 <div class="grid grid-cols-3 gap-y-2">
     <p>
         <b>LMP: </b>
-        @if ($editingLmp)
+        @if (@$editingLmp)
             <input type="date" wire:model="lmpEdit" />
             <a href="#" wire:click.prevent="updateLmp">Update</a>
         @else
@@ -12,7 +12,7 @@
 
     <p>
         <b>EDD: </b>
-        @if ($editingEdd || empty($ancProfile->edd))
+        @if (@$editingEdd || empty($ancProfile->edd))
             <input type="date" wire:model="editEdd" value="{{ $ancProfile?->edd ?? $editEdd }}" />
             <a href="#" wire:click.prevent="updateEdd">Update</a>
         @else
@@ -49,5 +49,5 @@
 <div class="pt-2">
     <p class="text-xl bold">Special consideration / Risk Assessment</p>
 
-    <textarea wire:model name="" id="" cols="30" rows="10"></textarea>
+    <textarea wire:model name="" class="form-control" id="" cols="30" rows="10"></textarea>
 </div>

@@ -19,7 +19,7 @@ class PatientsController extends Controller
 
     public function getPendingVitals(Request $request)
     {
-        return $this->dataTable($request, Visit::with(['patient.category'])->whereHas('visit', function ($query) {
+        return $this->dataTable($request, Visit::with(['patient.category'])->where('status', '!=', Status::completed->value)->whereHas('visit', function ($query) {
             $query->doesntHave('vitals');
         })->latest(), []);
     }
@@ -45,6 +45,11 @@ class PatientsController extends Controller
                 });
             }
         ]);
+    }
+
+    public function  viewAncBooking(Request  $request, AntenatalProfile $profile)
+    {
+        return view('nursing.anc-booking', ['profile' => $profile]);
     }
 
     public function submitAncBooking(VitalsRequest $request, AntenatalProfile $profile)
