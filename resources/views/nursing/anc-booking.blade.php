@@ -116,6 +116,10 @@
                         <p class="text-xl bold">History of Present Pregnancy</p>
                         <small>Check all that apply</small>
                     </div>
+
+                    <div class="col-span-2"></div>
+                    <div class="col-span-2"></div>
+                    <span></span>
                 </div>
             </form>
         </div>
