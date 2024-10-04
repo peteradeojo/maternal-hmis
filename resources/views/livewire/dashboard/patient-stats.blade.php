@@ -57,7 +57,7 @@
                                 <td>{{ $v->patient->card_number }}</td>
                                 <td>{{ $v->patient->category->name }}</td>
                                 <td>{{ $v->patient->gender_value[0] }}</td>
-                                <td>{{ $v->created_at->diffForHumans(syntax: 1) }}</td>
+                                <td>{{ $v->created_at->format('Y-m-d h:i A') }}</td>
                                 <td>{{ $v->readable_visit_type }}</td>
                                 <td>
                                     @if ($user->department_id == DepartmentsEnum::REC->value)
