@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Nursing;
 
 use App\Enums\Status;
 use App\Models\Visit;
+use App\Models\Vitals;
 use Livewire\Component;
 
 class VitalList extends Component
@@ -17,11 +18,7 @@ class VitalList extends Component
 
     public function fetchData()
     {
-        $this->visits = Visit::whereNotIn('status', [Status::closed->value, Status::blocked->value])->where(function ($query) {
-            $query->whereHas('visit', function ($query) {
-                $query->doesntHave('vitals');
-            });
-        })->latest()->count();
+        $this->visits = Vitals::getPendingVitalVisits()->count();
     }
 
     public function render()

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,11 +21,22 @@ class Vitals extends Model
         'recording_user_id',
     ];
 
-    public function recordable() {
+    public function recordable()
+    {
         return $this->morphTo();
     }
 
-    public function recorder() {
+    public function recorder()
+    {
         return $this->belongsTo(User::class, 'recording_user_id');
+    }
+
+    public static function getPendingVitalVisits()
+    {
+        return Visit::whereNotIn('status', [Status::closed->value, Status::completed->value, Status::blocked->value])->where(function ($query) {
+            $query->whereHas('visit', function ($query) {
+                $query->doesntHave('vitals');
+            });
+        })->latest();
     }
 }
