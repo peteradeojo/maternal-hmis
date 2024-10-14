@@ -1,6 +1,6 @@
 <div>
-    <div class="flex py">
-        <div class="col">
+    <div class="flex justify-between gap-x-3 pb-3">
+        <div class="w-1/3">
             <div class="card">
                 <div class="header card-header">
                     {{ $patients }}
@@ -10,7 +10,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="w-1/3">
             <div class="card">
                 <div class="header card-header">
                     {{ $patientsToday }}
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="w-1/3">
             <div class="card">
                 <div class="header card-header">
                     {{ $currentAdmissions }}

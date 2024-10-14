@@ -112,34 +112,34 @@
     }
 }
 
-aside#noticeboard {
-    background-color: #fff;
-    border-left: 4px inset #ccc;
-    width: 15vw;
-    right: 0;
-    height: 100vh;
+// aside#noticeboard {
+//     background-color: #fff;
+//     border-left: 4px inset #ccc;
+//     width: 15vw;
+//     right: 0;
+//     height: 100vh;
 
-    & h3 {
-        padding: 4px 15px;
-        display: block;
-        max-width: 100%;
-        font: 1.5rem "Roboto", sans-serif;
+//     & h3 {
+//         padding: 4px 15px;
+//         display: block;
+//         max-width: 100%;
+//         font: 1.5rem "Roboto", sans-serif;
 
-        @media screen and (max-width: 768px) {
-            font-size: 1rem;
-            padding: 4px;
-        }
+//         @media screen and (max-width: 768px) {
+//             font-size: 1rem;
+//             padding: 4px;
+//         }
 
-        font-weight: normal;
-        text-decoration: underline;
-    }
+//         font-weight: normal;
+//         text-decoration: underline;
+//     }
 
-    @media print {
-        display: none;
-    }
-}
+//     @media print {
+//         display: none;
+//     }
+// }
 
-body {
+::root {
     font-size: 16px;
     scroll-behavior: smooth;
 }

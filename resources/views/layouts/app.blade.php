@@ -15,11 +15,11 @@
     @vite(['resources/css/app.css', 'resources/css/app.scss', 'resources/js/app.js', 'resources/js/util.js'])
 </head>
 
-<body>
-    <aside id="navigation">
+<body class="md:flex grid-cols-12">
+    <aside id="navigation" class="col-span-3 md:fixed md:w-[300px]">
         @include('components.sidebar')
     </aside>
-    <main>
+    <main class="col-span-6 bg-gray-400 md:ml-[300px] md:w-2/3 p-4 min-h-[100dvh]">
         @if (session('error'))
             <p>{{ session('error') }}</p>
         @endif
@@ -30,7 +30,8 @@
         @endif
         @yield('content')
     </main>
-    <aside id="noticeboard">
+
+    <aside id="noticeboard" class="col-span-3 md:max-w-[20%]">
         <h3>Notifications</h3>
         <div class="px">
             @livewire('get-notifications', ['user' => auth()->user()])

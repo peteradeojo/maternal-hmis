@@ -14,7 +14,7 @@ class PrescriptionDto
     public $route;
     public $frequency;
 
-    public function __construct($data)
+    public function __construct($data = null)
     {
         $this->name = $data['name'] ?? '';
         $this->productId = $data['productId'] ?? '';

@@ -19,6 +19,8 @@ class AddPresciption extends Component
     public $visit;
     public $search;
 
+    public $dispatchEvent;
+
     public PrescriptionRequest $requestForm;
 
     public $selections = null;
@@ -27,9 +29,10 @@ class AddPresciption extends Component
 
     public $results = null;
 
-    public function mount($visit)
+    public function mount($visit, $dispatch = false)
     {
         $this->visit = $visit->load(['prescriptions.prescriptionable']);
+        $this->dispatchEvent = $dispatch;
     }
 
     public function addPrescription($id)
@@ -48,6 +51,11 @@ class AddPresciption extends Component
         $dto->setDosage($this->requestForm->dosage);
         $dto->setDuration($this->requestForm->duration);
         $dto->setFrequency($this->requestForm->frequency);
+
+        if ($this->dispatchEvent) {
+            $this->dispatch("prescription_selected", product: $dto);
+            return;
+        }
 
         $this->visit->addPrescription($this->visit->patient, $this->selections, $dto, $this->visit);
         $this->visit->refresh();

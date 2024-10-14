@@ -5,6 +5,9 @@
         <div id="nav-tab" data-tablist="#tablist">
             <div id="tablist" class="py-1">
                 <div class="tab">
+                    <div>
+                        {{ $visit->created_at?->format('Y-m-d h:i A') }}
+                    </div>
                     <div class="grid grid-cols-3">
                         <p><b>Name</b>: {{ $visit->patient->name }}</p>
                         <p><b>Gender</b>: {{ $visit->patient->gender_value }}</p>
