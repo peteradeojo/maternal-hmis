@@ -5,12 +5,12 @@
     "src": "public/css/auth.css"
   },
   "resources/css/app.css": {
-    "file": "assets/app-9640159b.css",
+    "file": "assets/app-528b025e.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
   "resources/css/app.scss": {
-    "file": "assets/app-bdc608d7.css",
+    "file": "assets/app-57254d59.css",
     "isEntry": true,
     "src": "resources/css/app.scss"
   },

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Department;
+use App\Http\Controllers\AdmissionsController;
 use App\Http\Controllers\Doctor\PatientsController;
 use App\Http\Middleware\RestrictDepartment;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +26,9 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value])->gr
         Route::prefix('admissions')->group(function () {
             Route::match(['get', 'post'], '/start/{visit}', [PatientsController::class, 'startAdmission'])->name('start-admission');
         });
+    });
+
+    Route::prefix('admissions')->group(function() {
+        Route::get('/create/{visit}', [AdmissionsController::class, 'createAdmission'])->name('admit');
     });
 })->middleware(['auth']);

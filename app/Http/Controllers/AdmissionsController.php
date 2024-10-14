@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionTreatments;
 use App\Models\DocumentationPrescription;
+use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -146,5 +147,9 @@ class AdmissionsController extends Controller
                 return redirect()->back()->withErrors($th->getMessage());
             }
         }
+    }
+
+    public function createAdmission(Request $request, Visit $visit) {
+        return view('doctors.admissions.start', ['visit' => $visit]);
     }
 }
