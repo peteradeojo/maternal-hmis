@@ -21,11 +21,11 @@ class RadiologyController extends Controller
         return view('rad.scans', ['patientId' => $request->query('patient_id')]);
     }
 
-    public function show(Request $request, PatientImaging $doc)
+    public function show(Request $request, PatientImaging $scan)
     {
-        $doc->load(['patient']);
+        $scan->load(['patient']);
 
-        return view('rad.scan', compact('doc'));
+        return view('rad.scan', ['doc' => $scan]);
     }
 
     public function getScans(Request $request)
