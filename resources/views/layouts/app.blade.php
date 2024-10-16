@@ -45,7 +45,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @livewireScripts
 
-    <script src="{{ asset('js/util.js', app()->isProduction()) }}"></script>
+    <script src="{{ asset('js/util.js') }}"></script>
     @stack('scripts')
 </body>
 
