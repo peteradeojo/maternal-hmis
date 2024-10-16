@@ -31,7 +31,7 @@
         @yield('content')
     </main>
 
-    <aside id="noticeboard" class="col-span-3 md:max-w-[20%]">
+    <aside id="noticeboard" class="col-span-3 md:max-w-[20%] p-1">
         <h3>Notifications</h3>
         <div class="px">
             @livewire('get-notifications', ['user' => auth()->user()])

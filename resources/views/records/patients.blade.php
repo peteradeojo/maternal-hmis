@@ -14,59 +14,8 @@
 
         <div class="card py px">
             <h2 class="my">Patients</h2>
-            <table id="patients">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Card Number</th>
-                        <th>Gender</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+
+            <livewire:records.patient-search />
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    {{-- @vite(['resources/js/records/patients.js']) --}}
-
-    <script>
-        $("#patients").DataTable({
-            serverSide: true,
-            ajax: {
-                url: "{{ route('api.records.patients') }}",
-                dataSrc: "data",
-                // type: 'POST',
-                // headers: {
-                //     "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                // }
-            },
-            columns: [{
-                    data: 'name'
-                },
-                {
-                    data: 'category.name'
-                },
-                {
-                    data: 'card_number'
-                },
-                {
-                    data: ({
-                        gender_value
-                    }, type, set) => {
-                        return gender_value[0];
-                    }
-                },
-                {
-                    data: function(row, type, set) {
-                        return `<a href="{{ route('records.patient', ':id') }}">View</a>`.replace(':id', row
-                            .id);
-                    }
-                }
-            ],
-        });
-    </script>
-@endpush
