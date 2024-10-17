@@ -9,4 +9,6 @@ fi
 
 echo $PULL;
 
-source ./post-pull.sh
+if [ "$PULL" != "Already up to date." ]; then
+    source ./post-pull.sh
+fi
