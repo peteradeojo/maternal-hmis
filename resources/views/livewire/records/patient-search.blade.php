@@ -51,7 +51,6 @@
                         @endforelse
                     </tbody>
                 </table>
-
             </div>
         @else
             <p>Search to fetch records.</p>
