@@ -34,6 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    $("#nav-burger").on('click', (e) => {
+        $("#mobile-nav-list").toggleClass("hidden");
+    });
+
     // document.querySelectorAll(".tabs").forEach((tabspace) => {
     //     const tabList = document.querySelector(tabspace.dataset.list);
     //     // tabList.querySelectorAll('.tab').forEach(t => t.classList.add('hide'));

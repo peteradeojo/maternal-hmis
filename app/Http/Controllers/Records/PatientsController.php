@@ -15,6 +15,7 @@ use App\Models\PatientCategory;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
 use App\Services\PatientService;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -115,6 +116,8 @@ class PatientsController extends Controller
 
     public function getPatients(Request $request)
     {
+        Carbon::now()->diffForHumans();
+        // CarbonInterface::DIFF
         // $length = $request->query('length', 10);
         // $start = $request->query('start', 0);
 

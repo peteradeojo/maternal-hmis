@@ -1,3 +1,7 @@
+@php
+    $routes = departmentRoutes()[auth()->user()->department_id];
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,14 +15,51 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link href="//cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.8/b-3.1.2/fc-5.0.3/r-3.0.3/sp-2.3.3/datatables.min.css"
+        rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/css/app.scss', 'resources/js/app.js', 'resources/js/util.js'])
 </head>
 
 <body class="md:flex grid-cols-12">
-    <aside id="navigation" class="col-span-3 md:fixed md:w-[300px]">
+    {{-- Navigations --}}
+
+    {{-- Mobile nav --}}
+    <div class="fixed w-full z-[1000] sm:hidden">
+        <div class="px-2 py-4 bg-green-400 flex w-full items-center justify-between">
+            <div>
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-x-3 link">
+                    <img src="{{ asset('favicon-3.png') }}">
+                    Home
+                </a>
+            </div>
+            <button id="nav-burger" class="border border-black w-[30px] h-[30px] rounded">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="p-2 hidden bg-green-800 text-white" id="mobile-nav-list">
+            <ul>
+                @foreach ($routes as $d => $name)
+                    <li class="p-2">
+                        <a href="{{ $d }}" class="nav-link">{{ $name }}</a>
+                    </li>
+                @endforeach
+                <li class="p-2">
+                    <a href="{{ route('user-profile') }}" class="nav-link">Profile</a>
+                </li>
+                <li class="p-2">
+                    <a href="{{ route('logout') }}" class="nav-link">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    {{-- Large Nav --}}
+    <aside id="navigation" class="col-span-3 hidden md:block md:fixed md:w-[300px]">
         @include('components.sidebar')
     </aside>
+
+    <div class="h-20 sm:hidden"></div>
     <main class="col-span-6 bg-gray-400 md:ml-[300px] md:w-2/3 p-4 min-h-[100dvh]">
         @if (session('error'))
             <p>{{ session('error') }}</p>
@@ -39,7 +80,7 @@
     </aside>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.8/b-3.1.2/fc-5.0.3/r-3.0.3/sp-2.3.3/datatables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
         integrity="sha512-uKQ39gEGiyUJl4AI6L+ekBdGKpGw4xJ55+xyJG7YFlJokPNYegn9KwQ3P8A7aFQAUtUsAQHep+d/lrGqrbPIDQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>

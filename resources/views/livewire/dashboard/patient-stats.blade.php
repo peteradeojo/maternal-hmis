@@ -1,6 +1,6 @@
 <div>
-    <div class="flex justify-between gap-x-3 pb-3">
-        <div class="w-1/3">
+    <div class="flex-col md:flex-row flex gap-y-2 justify-between gap-x-3 pb-3">
+        <div class="w-full md:w-1/3">
             <div class="card">
                 <div class="header card-header">
                     {{ $patients }}
@@ -10,7 +10,7 @@
                 </div>
             </div>
         </div>
-        <div class="w-1/3">
+        <div class="w-full md:w-1/3">
             <div class="card">
                 <div class="header card-header">
                     {{ $patientsToday }}
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="w-1/3">
+        <div class="w-full md:w-1/3">
             <div class="card">
                 <div class="header card-header">
                     {{ $currentAdmissions }}
@@ -45,7 +45,7 @@
                             <th>Card Number</th>
                             <th>Category</th>
                             <th>Gender</th>
-                            <th>Wait time</th>
+                            <th>Checked In</th>
                             <th>Visit Type</th>
                             <td></td>
                         </tr>
@@ -57,7 +57,7 @@
                                 <td>{{ $v->patient->card_number }}</td>
                                 <td>{{ $v->patient->category->name }}</td>
                                 <td>{{ $v->patient->gender_value[0] }}</td>
-                                <td>{{ $v->created_at->format('Y-m-d h:i A') }}</td>
+                                <td>{{ $v->created_at->format('Y-m-d h:iA') }}</td>
                                 <td>{{ $v->readable_visit_type }}</td>
                                 <td>
                                     @if ($user->department_id == DepartmentsEnum::REC->value)
@@ -75,7 +75,9 @@
 
 @push('scripts')
     <script>
-        let table = new DataTable(document.querySelector("#waitlist-table"));
+        let table = $("#waitlist-table").DataTable({
+            responsive:  true,
+        });
         document.addEventListener('livewire:load', function() {
             Livewire.on('reinitialize-datatable', function() {
                 // Reinitialize DataTables here
