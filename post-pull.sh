@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 
-COUNT=$(pa migrate:status | grep Pending | wc -l) | tr -d ' ';
+COUNT=$(pa migrate:status | grep Pending | wc -l);
 COUNT=$(echo $COUNT | tr -d ' ');
 
 echo "$COUNT pending migrations";

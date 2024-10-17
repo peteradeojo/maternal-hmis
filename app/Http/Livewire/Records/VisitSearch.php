@@ -20,7 +20,7 @@ class VisitSearch extends Component
 
         $this->visits = Visit::with(['patient'])->whereHas('patient', function ($q) {
             if (!empty($this->name_query)) {
-                $q->where('name', 'like', "{$this->name_query}%");
+                $q->where('name', 'like', "%{$this->name_query}%");
             }
 
             if (!empty($this->number_query)) {

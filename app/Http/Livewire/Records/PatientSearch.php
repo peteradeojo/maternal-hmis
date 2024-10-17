@@ -36,7 +36,7 @@ class PatientSearch extends Component
         $query = Patient::with(['category']);
 
         if (!empty($this->searchName)) {
-            $query->where('name', 'like', "{$this->searchName}%");
+            $query->where('name', 'like', "%{$this->searchName}%");
         }
 
         if (!empty($this->searchNumber)) {
