@@ -14,7 +14,7 @@ if [ "$RESULT" != "0" ]; then
 fi
 
 RESULT=$(echo $?);
-npm run build;
+/bin/zsh -c "npm run build";
 if [ "$RESULT" != "0" ]; then
     php artisan send:error "Unable to complete database migration: $MIGRATE";
 fi
@@ -22,3 +22,5 @@ fi
 php artisan view:cache;
 php artisan config:cache;
 php artisan route:cache;
+
+chown -R www-data:www-data /var/www/hmis/storage/logs
