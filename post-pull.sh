@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 
-COUNT=$(pa migrate:status | grep Pending | wc -l);
+COUNT=$(php artisan migrate:status | grep Pending | wc -l);
 COUNT=$(echo $COUNT | tr -d ' ');
 
 echo "$COUNT pending migrations";
@@ -15,6 +15,6 @@ fi
 
 yarn build;
 
-pa view:cache;
-pa config:cache;
-pa route:cache;
+php artisan view:cache;
+php artisan config:cache;
+php route:cache;
