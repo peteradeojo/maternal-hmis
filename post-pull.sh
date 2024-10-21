@@ -13,7 +13,7 @@ if [ "$RESULT" != "0" ]; then
     php artisan send:error "Unable to complete database migration: $MIGRATE";
 fi
 
-yarn build;
+npm run build;
 
 php artisan view:cache;
 php artisan config:cache;
