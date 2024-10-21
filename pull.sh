@@ -1,5 +1,3 @@
-#!/usr/bin/zsh
-
 echo "Starting pull"
 
 PULL=$(git pull);

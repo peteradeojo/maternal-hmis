@@ -1,5 +1,3 @@
-#!/usr/bin/zsh
-
 COUNT=$(php artisan migrate:status | grep Pending | wc -l);
 COUNT=$(echo $COUNT | tr -d ' ');
 
