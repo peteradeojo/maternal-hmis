@@ -16,11 +16,10 @@ fi
 
 RESULT=$(echo $?);
 
-yarn build;
-/bin/zsh -c "where nvm";
-# if [ "$RESULT" != "0" ]; then
-#     php artisan send:error "Unable to complete database migration: $MIGRATE";
-# fi
+BUILD=$(yarn build);
+if [ "$RESULT" != "0" ]; then
+    php artisan send:error "Unable to complete build step: $BUILD";
+fi
 
 php artisan view:cache;
 php artisan config:cache;
