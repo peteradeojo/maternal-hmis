@@ -17,4 +17,4 @@ yarn build;
 
 php artisan view:cache;
 php artisan config:cache;
-php route:cache;
+php artisan route:cache;
