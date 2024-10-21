@@ -29,6 +29,8 @@ class AddPresciption extends Component
 
     public $results = null;
 
+    public $title;
+
     public function mount($visit, $dispatch = false)
     {
         $this->visit = $visit->load(['prescriptions.prescriptionable']);
@@ -54,6 +56,8 @@ class AddPresciption extends Component
 
         if ($this->dispatchEvent) {
             $this->dispatch("prescription_selected", product: $dto);
+            $this->requestForm->reset();
+            $this->selections = null;
             return;
         }
 

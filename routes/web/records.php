@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Records\AdmissionsController;
 use App\Http\Controllers\Records\HistoryController;
 use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Support\Facades\Route;
@@ -15,5 +16,10 @@ Route::name('records.')->prefix('/records')->group(function () {
     Route::prefix('/visit-history')->group(function () {
         Route::get("/", [HistoryController::class, 'index'])->name('history');
         Route::get("/{visit}", [HistoryController::class, 'show'])->name('show-history');
+    });
+
+    // Admissions
+    Route::prefix('admissions')->name('admissions')->group(function () {
+        Route::get('/', [AdmissionsController::class, 'index']);
     });
 });

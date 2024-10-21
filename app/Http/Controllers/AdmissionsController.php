@@ -22,7 +22,6 @@ class AdmissionsController extends Controller
     public function show(Request  $request, Admission $admission)
     {
         if ($request->isMethod('POST')) {
-
             // Log vitals
             if ($request->has('vitals')) {
                 $request->validate([
