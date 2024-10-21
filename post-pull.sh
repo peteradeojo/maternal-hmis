@@ -5,12 +5,12 @@ COUNT=$(echo $COUNT | tr -d ' ');
 
 echo "$COUNT pending migrations";
 
-MIGRATE=$(pa migrate --force);
+MIGRATE=$(php artisan migrate --force);
 
 RESULT=$(echo $?);
 
 if [ "$RESULT" != "0" ]; then
-    pa send:error "Unable to complete database migration: $MIGRATE";
+    php artisan send:error "Unable to complete database migration: $MIGRATE";
 fi
 
 yarn build;
