@@ -17,6 +17,8 @@ fi
 RESULT=$(echo $?);
 
 BUILD=$(yarn build);
+
+echo $BUILD;
 if [ "$RESULT" != "0" ]; then
     php artisan send:error "Unable to complete build step: $BUILD";
 fi
