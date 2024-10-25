@@ -4,7 +4,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 COUNT=$(php artisan migrate:status | grep Pending | wc -l);
 COUNT=$(echo $COUNT | tr -d ' ');
 
-echo "$COUNT pending migrations";
+echo "[$(date +'%Y-%m-%d %H:%M:%S')] $COUNT pending migrations";
 
 MIGRATE=$(php artisan migrate --force);
 
@@ -18,7 +18,7 @@ RESULT=$(echo $?);
 
 BUILD=$(yarn build);
 
-echo $BUILD;
+echo "[$(date +'%Y-%m-%d %H:%M:%S')] $BUILD";
 if [ "$RESULT" != "0" ]; then
     php artisan send:error "Unable to complete build step: $BUILD";
 fi

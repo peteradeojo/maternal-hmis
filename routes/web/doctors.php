@@ -28,8 +28,10 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value])->gr
         });
     });
 
-    Route::prefix('admissions')->group(function() {
+    Route::prefix('admissions')->group(function () {
+        Route::get('/', [AdmissionsController::class, 'index'])->name('admissions');
         Route::get('/create/{visit}', [AdmissionsController::class, 'createAdmission'])->name('admit');
-        Route::get('/plan/{admission}', [AdmissionsController::class, 'show']);
+        Route::get('/{admission}', [AdmissionsController::class, 'show'])->name('show-admission');
+        Route::get('/plan/{admission}', [AdmissionsController::class, 'showPlan'])->name('show-admission-plan');
     });
 })->middleware(['auth']);

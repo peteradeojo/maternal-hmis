@@ -2,7 +2,11 @@
     {{-- Stop trying to control. --}}
 
 
-    <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
+    <div class="py-2 px-2 bg-gray-200 grid gap-y-4">
+        <p class="bold">Indication for Admission</p>
+        <input type="text" name="indication" id="" placeholder="Indication for Admission"
+            wire:model="indication">
+
         <p><b>Treatment Plan</b></p>
         <ul class="list-disc px-3 text-sm">
             @forelse ($visit->prescriptions as $pres)
@@ -12,14 +16,10 @@
             @endforelse
         </ul>
 
-        <div class="py-4"></div>
-
         <livewire:doctor.add-presciption :visit="$visit" :dispatch="true"
             @prescription_selected="addPrescription($event.detail.product)" :title="'Add Treatment Plan'" />
 
-
-        <div class="pt-5"></div>
-        <p>Added Plans</p>
+        <p class="text-lg bold mt-3">Added Plans</p>
         <table class="table">
             <thead>
                 <tr>
@@ -48,10 +48,48 @@
             @endforelse
         </table>
 
-        <div class="py-1"></div>
-        <p>Admission Note / Special cosideration / More </p>
-        <textarea rows="5" class="form-control"></textarea>
+        <div class="grid grid-cols-2 gap-x-4">
+            <div>
+                <p class="bold">Tests</p>
+                <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)" />
 
-        <button class="btn bg-blue-600 text-white" wire:click="savePlan">Submit</button>
+                <ul class="list-disc list-inside">
+                    @foreach ($tests as $selectedTest)
+                        <li class="flex justify-between items-center">
+                            <span>{{ $selectedTest['name'] }}</span>
+                            <a href="#" wire.prevent wire:click="removeTest({{$selectedTest['id']}})" class="link p-3">&times;</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+            <div>
+                <p class="bold">Investigations</p>
+                <livewire:dynamic-product-search :departmentId="7" @selected="addInvestigation($event.detail)" />
+
+                <ul class="list-disc list-inside">
+                    @foreach ($investigations as $i)
+                        {{-- <li>{{ $i['name'] }}</li> --}}
+                        <li class="flex justify-between items-center">
+                            <span>{{ $i['name'] }}</span>
+                            <a href="#" wire.prevent wire:click="removeInvestigation({{$i['id']}})" class="link p-3">&times;</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+
+        {{-- <p class="text-xl bold">Surgery</p>
+        <input type="text" name="procedure" id="" placeholder="Procedure to be undergone"
+            wire:model="surgery"> --}}
+
+        {{-- <p class="bold">Operation Note</p>
+        <textarea rows="3" class="form-control" wire:model="operationNote"></textarea> --}}
+
+        <div class="py-1"></div>
+        <p>Admission Note / More </p>
+        <textarea rows="3" wire:model="admissionNote" class="form-control"></textarea>
+
+        <button class="btn btn-secondary w-1/3" wire:click="savePlan">Submit</button>
+        <div class="pb-4"></div>
     </div>
 </div>

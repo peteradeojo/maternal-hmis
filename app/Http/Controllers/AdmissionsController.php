@@ -2,64 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionTreatments;
-use App\Models\DocumentationPrescription;
 use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        $admissions = Admission::whereNull('discharged_on')->get();
+        $admissions = Admission::whereNull('discharged_on')->latest('updated_at')->get();
+        if (request()->user()->department_id == Department::DOC->value) {
+            return view('doctors.admissions.index', ['admissions' => $admissions]);
+        }
         return view('nursing.admissions.index', ['admissions' => $admissions]);
     }
 
     public function show(Request  $request, Admission $admission)
     {
-        if ($request->isMethod('POST')) {
-            // Log vitals
-            if ($request->has('vitals')) {
-                $request->validate([
-                    'blood_pressure' => [function ($field, $value, $fail) {
-                        if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
-                            return $fail("Invalid format for blood pressure.");
-                        }
-                    }],
-                    'temperature' => 'numeric',
-                    'pulse' => 'numeric',
-                    'respiratory_rate' => 'numeric',
-                ]);
+        // if ($request->isMethod('POST')) {
+        //     // Log vitals
+        //     if ($request->has('vitals')) {
+        //         $request->validate([
+        //             'blood_pressure' => [function ($field, $value, $fail) {
+        //                 if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+        //                     return $fail("Invalid format for blood pressure.");
+        //                 }
+        //             }],
+        //             'temperature' => 'numeric',
+        //             'pulse' => 'numeric',
+        //             'respiratory_rate' => 'numeric',
+        //         ]);
 
-                $data = $request->except(['_token', 'vitals']);
-                $data['respiration'] = $data['respiratory_rate'];
-                unset($data['respiratory_rate']);
+        //         $data = $request->except(['_token', 'vitals']);
+        //         $data['respiration'] = $data['respiratory_rate'];
+        //         unset($data['respiratory_rate']);
 
-                try {
-                    $admission->vitals()->create($data + ['recording_user_id' => $request->user()->id]);
-                    return redirect()->back();
-                } catch (\Throwable $th) {
-                    report($th);
-                    return back()->with('error', "An error occurred");
-                }
-            }
+        //         try {
+        //             $admission->vitals()->create($data + ['recording_user_id' => $request->user()->id]);
+        //             return redirect()->back();
+        //         } catch (\Throwable $th) {
+        //             report($th);
+        //             return back()->with('error', "An error occurred");
+        //         }
+        //     }
 
-            // Log drug administrations
-            if ($request->has('log-treatments')) {
-                $request->validate([
-                    'ministered' => 'required|array|min:1'
-                ]);
+        //     // Log drug administrations
+        //     if ($request->has('log-treatments')) {
+        //         $request->validate([
+        //             'ministered' => 'required|array|min:1'
+        //         ]);
 
-                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered))); //->with('ministered', array_keys($request->ministered));
-            }
+        //         return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered))); //->with('ministered', array_keys($request->ministered));
+        //     }
+        // }
+
+        $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'plan.tests']);
+
+        if (request()->user()->department_id == Department::DOC->value) {
+            return view('doctors.admissions.show', ['data' => $admission]);
         }
 
-        $admission->load(['patient', 'ward', 'admittable']);
-        return view('nursing.admissions.show', ['admission' => $admission]);
+        if (request()->user()->department_id  == Department::NUR->value) {
+            return view('nursing.admissions.show', ['admission' => $admission]);
+        }
+    }
+
+    public function showPlan(Request $request, Admission $admission) {
+        return view('doctors.admissions.view-plan', ['data' => $admission]);
+
     }
 
     public function getAdmissions(Request $request)
@@ -96,7 +110,8 @@ class AdmissionsController extends Controller
     public function assignWard(Request $request, Admission $admission)
     {
         if (!$request->isMethod('POST')) {
-            $wards = Ward::whereRaw('filled_beds < beds')->get();
+            // $wards = Ward::whereRaw('filled_beds < beds')->get();
+            $wards = Ward::all();
             $admission->load(['admittable', 'patient']);
 
             return view('nursing.assign-ward', ['patient' => $admission->patient, 'admission' => $admission, 'wards' => $wards]);
@@ -111,6 +126,9 @@ class AdmissionsController extends Controller
         if ($ward->available_beds <= 0) {
             return redirect()->route('nurses.admissions.assign-ward', $admission)->with('error', "Ward {$ward->name} is already filled up.");
         }
+
+        $ward->filled_beds = 1;
+        $ward->save();
 
         $admission->ward_id = $ward->id;
         $admission->save();

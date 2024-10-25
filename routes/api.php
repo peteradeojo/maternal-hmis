@@ -19,10 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('records')->name('api.records.')->group(base_path('routes/api/records.php'));
+    Route::prefix('rad')->group(base_path('routes/api/rad.php'));
 
     include_once __DIR__ . '/api/laboratory.php';
     include_once __DIR__ . '/api/nursing.php';
-    include_once __DIR__ . '/api/rad.php';
+    // include_once __DIR__ . '/api/rad.php';
     include_once __DIR__ . '/api/doctor.php';
     include_once __DIR__ . '/api/nhi.php';
 });

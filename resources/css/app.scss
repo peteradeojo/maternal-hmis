@@ -93,6 +93,13 @@
         @apply text-xs;
     }
 
+    .bg-secondary, .btn-secondary {
+        @apply bg-green-700;
+    }
+    .btn-secondary {
+        @apply text-white;
+    }
+
     h2 {
         @apply text-2xl bold;
     }
@@ -107,37 +114,10 @@
         }
     }
 
-    a.link {
-        @apply underline hover:text-blue-600;
+    .link {
+        @apply underline hover:text-blue-600 cursor-pointer;
     }
 }
-
-// aside#noticeboard {
-//     background-color: #fff;
-//     border-left: 4px inset #ccc;
-//     width: 15vw;
-//     right: 0;
-//     height: 100vh;
-
-//     & h3 {
-//         padding: 4px 15px;
-//         display: block;
-//         max-width: 100%;
-//         font: 1.5rem "Roboto", sans-serif;
-
-//         @media screen and (max-width: 768px) {
-//             font-size: 1rem;
-//             padding: 4px;
-//         }
-
-//         font-weight: normal;
-//         text-decoration: underline;
-//     }
-
-//     @media print {
-//         display: none;
-//     }
-// }
 
 ::root {
     font-size: 16px;

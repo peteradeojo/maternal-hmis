@@ -11,7 +11,7 @@ function departmentRoutes()
         [
             // route('doctor.patients') => 'Patients',
             route('doctor.history') => 'History',
-            // '' => 'Admissions',
+            route('doctor.admissions') => 'Admissions',
             route('doctor.anc-bookings') => 'Antenatal Bookings',
         ],
         $base,

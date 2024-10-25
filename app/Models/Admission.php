@@ -20,27 +20,43 @@ class Admission extends Model implements InterfacesDocumentable
 
     protected $appends = ['in_ward'];
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class);
     }
 
-    public function ward() {
+    public function ward()
+    {
         return $this->belongsTo(Ward::class, 'ward_id');
     }
 
-    public function inWard(): Attribute {
+    public function inWard(): Attribute
+    {
         return Attribute::make(get: fn () => isset($this->ward_id));
     }
 
-    public function admittable() {
+    public function admittable()
+    {
         return $this->morphTo();
     }
 
-    public function vitals() {
+    public function vitals()
+    {
         return $this->morphMany(Vitals::class, 'recordable');
     }
 
-    public function administrations()  {
+    public function administrations()
+    {
         return  $this->hasMany(AdmissionTreatments::class)->latest();
+    }
+
+    public function plans()
+    {
+        return $this->hasMany(AdmissionPlan::class)->latest();
+    }
+
+    public function plan()
+    {
+        return $this->hasOne(AdmissionPlan::class)->latest();
     }
 }

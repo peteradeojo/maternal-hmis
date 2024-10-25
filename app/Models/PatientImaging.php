@@ -21,10 +21,12 @@ class PatientImaging extends Model
         return $this->belongsTo(User::class, 'requested_by');
     }
 
+    // Event: visit or admission
     public function documentable() {
         return $this->morphTo();
     }
 
+    // The poduct details
     public function describable() {
         return $this->morphTo();
     }
@@ -39,5 +41,10 @@ class PatientImaging extends Model
         }
 
         return asset($this->path);
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

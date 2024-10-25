@@ -53,7 +53,9 @@
 
         function fetchUpdatedData() {
             return fetch("{{ route('api.nursing.vitals') }}")
-                .then(response => response.json())
+                .then((response) => {
+                    return response.json()
+                })
                 .catch(error => console.error('Error fetching data:', error));
         }
 

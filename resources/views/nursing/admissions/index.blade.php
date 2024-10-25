@@ -19,12 +19,16 @@
                 <tbody>
                     @foreach ($admissions as $a)
                         <tr>
-                            <td><a href="{{route('nurses.admissions.show', $a)}}">{{$a->patient?->name}}</a></td>
-                            <td>{{$a->ward?->name}}</td>
-                            <td>{{$a->created_at->format('D, dS, M, Y')}}</td>
-                            <td>@unless ($a->ward)
-                                <a href="{{route('nurses.admissions.assign-ward', $a)}}">Assign To Ward</a>
-                            @endunless</td>
+                            <td><a href="{{ route('nurses.admissions.show', $a) }}">{{ $a->patient?->name }}</a></td>
+                            <td>{{ $a->ward?->name }}</td>
+                            <td>{{ $a->created_at->format('Y-m-d h:i A') }}</td>
+                            <td>
+                                @unless ($a->ward)
+                                    <a href="{{ route('nurses.admissions.assign-ward', $a) }}" class="link">Assign To Ward</a>
+                                @else
+                                    <a href="{{ route('nurses.admissions.show', $a) }}" class="link">View</a>
+                                @endunless
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

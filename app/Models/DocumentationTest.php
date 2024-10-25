@@ -28,6 +28,7 @@ class DocumentationTest extends Model
         return $this->belongsTo(Documentation::class);
     }
 
+    // The event, visit or admission
     public function testable()
     {
         return $this->morphTo();
@@ -48,8 +49,14 @@ class DocumentationTest extends Model
         $query->where('status', $status->value);
     }
 
+    // Means the product
     public function describable()
     {
         return $this->morphTo();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

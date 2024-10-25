@@ -25,6 +25,10 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
+            if (!app()->environment('production')) {
+                return;
+            }
+
             $message = $e->getMessage() . "@" . $e->getFile() . ":" . $e->getLine();
             $context = $this->context() + [
                 'stack' => $e->getTraceAsString(),
