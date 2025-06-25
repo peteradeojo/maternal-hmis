@@ -77,16 +77,7 @@
     <script>
         let table = $("#waitlist-table").DataTable({
             responsive:  true,
-        });
-        document.addEventListener('livewire:load', function() {
-            Livewire.on('reinitialize-datatable', function() {
-                // Reinitialize DataTables here
-                // $('#waitlist-table').DataTable().destroy();
-                // $('#waitlist-table').DataTable();
-                table.destroy();
-                console.log(table);
-                table = new DataTable(document.querySelector("#waitlist-table"));
-            });
+            order: [[4, 'desc']]
         });
     </script>
 @endpush

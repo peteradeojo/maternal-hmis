@@ -47,50 +47,50 @@
             <label>Foetal Heart Rate</label>
             <input type="text" name="fetal_heart_rate" class="form-control" />
         </div>
+
+        <div class="py-2"></div>
+        <livewire:doctor.add-presciption :visit="$visit" />
+
+        <div class="py-2"></div>
+
+        <div class="flex justify-between pb-2 items-center">
+            <p class="text-xl bold">Tests</p>
+            <button type="button" class="modal-trigger btn btn-sm btn-blue" data-target="#anc-visit-tests-modal">Add
+                Investigation</button>
+        </div>
+        @include('doctors.components.test-results', ['tests' => $visit->tests])
+
+        <div class="py-2"></div>
+
+        <div class="flex justify-between pt-2 items-center">
+            <p class="text-xl bold">Scans</p>
+            <button type="button" class="modal-trigger btn btn-sm btn-blue" data-target="#anc-visit-tests-modal">Add
+                Investigation</button>
+        </div>
+
+        @empty($visit->radios)
+            <p>No scan requested.</p>
+        @else
+            @foreach ($visit->radios as $scan)
+                <div class="p-2 bg-gray-200">
+                    <p><b>{{ $scan->name }}</b></p>
+                    <p>{{ $scan->comment ?? 'No comment' }}</p>
+                    <p>{{ $scan->path ? '' : 'No result provided' }}</p>
+                    @unless ($scan->comment || $scan->path)
+                        <span class="text-xs cursor-pointer text-red-600 hover:underline"
+                            wire:click="removeScan({{ $scan->id }})">Cancel Request</span>
+                    @endunless
+                </div>
+            @endforeach
+        @endempty
+
+        <div class="py-3">
+        </div>
         <div class="form-group">
             <label>Next Visit Date:</label>
             <input type="date" wire:model="return_visit" class="input">
         </div>
     </form>
-
-    <div class="py-2"></div>
-    <livewire:doctor.add-presciption :visit="$visit" />
-
-    <div class="py-2"></div>
-
-    <div class="flex justify-between pb-2 items-center">
-        <p class="text-xl bold">Tests</p>
-        <button class="modal-trigger btn btn-sm btn-blue" data-target="#anc-visit-tests-modal">Add
-            Investigation</button>
-    </div>
-    @include('doctors.components.test-results', ['tests' => $visit->tests])
-
-    <div class="py-2"></div>
-
-    <div class="flex justify-between pt-2 items-center">
-        <p class="text-xl bold">Scans</p>
-        <button class="modal-trigger btn btn-sm btn-blue" data-target="#anc-visit-tests-modal">Add
-            Investigation</button>
-    </div>
-
-    @empty($visit->radios)
-        <p>No scan requested.</p>
-    @else
-        @foreach ($visit->radios as $scan)
-            <div class="p-2 bg-gray-200">
-                <p><b>{{ $scan->name }}</b></p>
-                <p>{{ $scan->comment ?? 'No comment' }}</p>
-                <p>{{ $scan->path ? '' : 'No result provided' }}</p>
-                @unless ($scan->comment || $scan->path)
-                    <span class="text-xs cursor-pointer text-red-600 hover:underline"
-                        wire:click="removeScan({{ $scan->id }})">Cancel Request</span>
-                @endunless
-            </div>
-        @endforeach
-    @endempty
-
-    <div class="py-3">
-    </div>
     <button class="btn btn-blue" form="follow-up-form">Submit</button>
 
     <div class="modal hide" id="anc-visit-tests-modal">

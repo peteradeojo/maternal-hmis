@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    {{-- @dump($admission->admittable->treatments) --}}
     <div class="card py px">
         <div class="header">
             <p>{{ $admission->patient->name }} (Admitted: {{ $admission->created_at->format('Y-m-d') }})</p>
@@ -18,18 +19,6 @@
                         {{$admission->ward->name}}
                     @endunless</p>
                     <p><b>Insurance: </b> {{$admission->patient->insurance?->hmo_name ?? "None"}}</p>
-                </div>
-                <div class="col-6">
-                    <p><b>Complaints:</b></p>
-                    <ul>
-                        @foreach ($admission->admittable->complaints as $complaint)
-                            <li>{{ $complaint->name }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="col-12 py"></div>
-                <div class="col-6">
-                    <p><b>Diagnosis:</b> {{ $admission->admittable->diagnoses->join(',') }}</p>
                 </div>
             </div>
         </div>
@@ -62,7 +51,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($admission->admittable->treatments as $p)
+                                    @forelse ($admission->admittable->treatments ?? [] as $p)
                                         <tr>
                                             <td>{{ $p->name }}</td>
                                             <td>{{ $p->route }}</td>
@@ -78,7 +67,7 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            @if ($admission->admittable->treatments->count() > 0 && $admission->in_ward)
+                            @if ($admission->admittable->treatments?->count() > 0 && $admission->in_ward)
                                 <div class="pt-1"></div>
                                 <button type="submit" class="btn btn-red">Submit</button>
                             @endif

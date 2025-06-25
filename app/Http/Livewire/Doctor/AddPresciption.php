@@ -37,6 +37,11 @@ class AddPresciption extends Component
         $this->dispatchEvent = $dispatch;
     }
 
+    public function addTempPrescription($product) {
+        dd($product);
+        $this->selections = new Product($product);
+    }
+
     public function addPrescription($id)
     {
         $product = Product::find($id);

@@ -39,27 +39,28 @@ class DynamicProductSearch extends Component
             });
         }
 
-        $this->results = [new Product([
-            'id' => null,
-            'name' => "Your item: $this->queryString",
-            'product_category_id' => $this->category?->id,
-        ]), ...($query->get())];
+        // $this->results = [new Product([
+        //     'id' => null,
+        //     'name' => "Your item: $this->queryString",
+        //     'product_category_id' => $this->category?->id,
+        // ]), ...($query->get())];
+        $this->results = $query->get();
         $this->display = true;
     }
 
-    public function select($product)
+    public function select(Product $product)
     {
         $this->resetResults();
         $id = @$product['id'];
         if ($id == null) {
             if (empty($this->queryString)) return;
-            $id = Product::create([
+            $product = new Product([
                 'name' => $this->queryString,
                 'description' => '',
                 'product_category_id' => $this->category?->id,
                 'amount'  => 0,
             ]);
-            $this->dispatch('selected', id: $id->id, name: $id->name);
+            $this->dispatch('selected_temp', id: null, name: $product->name);
             return;
         }
 

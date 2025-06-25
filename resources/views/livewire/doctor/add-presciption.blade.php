@@ -3,7 +3,7 @@
         <p class="bold">{{ $title ?? 'Add Prescription' }}</p>
 
         <div class="w-1/2">
-            <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)" />
+            <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)" @selected_temp="addTempPrescription($event.detail)" />
         </div>
         <div class="py-2"></div>
         @if ($selections || $updating || $visit->prescriptions->count() > 0)
@@ -57,7 +57,7 @@
                                     </select>
                                 </td>
                                 <td class="flex gap-x-3 items-center">
-                                    <button type="submit" wire:click="saveRequest"
+                                    <button type="button" wire:click.prevent="saveRequest"
                                         class="btn btn-sm bg-blue-200 hover:bg-blue-500">&check;</button>
                                     <button type="button" class="btn btn-sm bg-red-200 hover:bg-red-500"
                                         wire:click.prevent="cancel">&times;</button>
@@ -105,7 +105,7 @@
                                     </select>
                                 </td>
                                 <td class="flex gap-x-3 items-center">
-                                    <button type="submit" wire:click="saveUpdate({{ $updating->id }})"
+                                    <button type="button" wire:click="saveUpdate({{ $updating->id }})"
                                         class="btn btn-sm bg-blue-200 hover:bg-blue-500">&check;</button>
                                     <button type="button" class="btn btn-sm bg-red-200 hover:bg-red-500"
                                         wire:click.prevent="cancelEdit">&times;</button>
@@ -121,9 +121,9 @@
                             <td>{{ $prescription->duration }}</td>
                             <td>{{ $prescription->frequency }}</td>
                             <td>
-                                <button class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
+                                <button type="button" class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
                                     wire:click="edit({{ $prescription->id }})">Edit</button>
-                                <button class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
+                                <button type="button" class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
                                     wire:click="deleteRequestItem({{ $prescription->id }})">&times;</button>
                             </td>
                         </tr>

@@ -13,7 +13,7 @@
                 <td colspan="3"><b>{{ $test->name }}</b></td>
                 <td class="text-xs">
                     @if (@$cancellable === true && ($test->results == null && $test->name != 'ROUTINE ANTENATAL TESTS'))
-                        <button class="btn text-red-500 underline" wire:click="removeTest({{ $test->id }})">Cancel
+                        <button type="button" class="btn text-red-500 underline" wire:click="removeTest({{ $test->id }})">Cancel
                             Request</button>
                     @endif
                 </td>
