@@ -26,7 +26,7 @@
     <script>
         let dataTable = $("#table").DataTable({
             language: {
-                emptyTable: 'Loading',
+                emptyTable: 'No results',
             },
             columns: [{
                     data: 'patient.name'

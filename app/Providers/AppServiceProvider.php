@@ -21,10 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // if ($this->app->environment('production')) {
-        //     URL::forceScheme('https');
-        // }
-        // URL::forceScheme('http');
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         Blade::directive('unslug', function (string $str) {
             return "<?php echo str_replace(['_'], ' ',  $str); ?>";
