@@ -52,11 +52,26 @@
         });
 
         function fetchUpdatedData() {
-            return fetch("{{ route('api.nursing.vitals') }}")
-                .then((response) => {
-                    return response.json()
+            return fetch("/sanctum/csrf-cookie").then((response) => {
+                // CSRF cookie set
+                // response.json().then(data => console.log('CSRF cookie response data:', data));
+
+                return fetch("{{ route('api.nursing.vitals') }}", {
+                    headers: {
+                        "Accept": "application/json",
+                    }
                 })
-                .catch(error => console.error('Error fetching data:', error));
+                    .then((response) => {
+                        const r = response.clone();
+                        r.text().then(body => {
+                            console.error('Body response:', body);
+                        });
+
+                        return response.json();
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            });
+
         }
 
         function updateDataTable(newData) {
