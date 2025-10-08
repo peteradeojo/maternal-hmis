@@ -23,7 +23,7 @@
 @endsection
 
 @push('scripts')
-    <script>
+    <script defer>
         let dataTable = $("#table").DataTable({
             language: {
                 emptyTable: 'No results',
@@ -52,25 +52,12 @@
         });
 
         function fetchUpdatedData() {
-            return fetch("/sanctum/csrf-cookie").then((response) => {
-                // CSRF cookie set
-                // response.json().then(data => console.log('CSRF cookie response data:', data));
-
-                return fetch("{{ route('api.nursing.vitals') }}", {
-                    headers: {
-                        "Accept": "application/json",
-                    }
+            return window.axios.get("{{ route('api.nursing.vitals') }}")
+                .then(response => {
+                    console.log('Fetched data:', response.data);
+                    return response.data;
                 })
-                    .then((response) => {
-                        const r = response.clone();
-                        r.text().then(body => {
-                            console.error('Body response:', body);
-                        });
-
-                        return response.json();
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            });
+                .catch(error => console.error('Error fetching data:', error));
 
         }
 
