@@ -28,6 +28,8 @@ trait HasVisitData
 
     public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
     {
+        dd($product, $data, $event);
+
         return $this->prescriptions()->create([
             'patient_id' => $patient->id,
             'prescriptionable_type' => $product::class,

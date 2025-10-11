@@ -51,6 +51,7 @@ class DynamicProductSearch extends Component
     public function select(Product $product)
     {
         $this->resetResults();
+
         $id = @$product['id'];
         if ($id == null) {
             if (empty($this->queryString)) return;
@@ -60,7 +61,8 @@ class DynamicProductSearch extends Component
                 'product_category_id' => $this->category?->id,
                 'amount'  => 0,
             ]);
-            $this->dispatch('selected_temp', id: null, name: $product->name);
+
+            $this->dispatch('selected_temp', product: $product);
             return;
         }
 

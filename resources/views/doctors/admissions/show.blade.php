@@ -42,7 +42,7 @@
                     <tr>
                         <td>Tests</td>
                         <td>
-                            @include('doctors.components.test-results', ['tests' => $data->plan->tests])
+                            @include('doctors.components.test-results', ['tests' => $data->tests])
                         </td>
                     </tr>
                     <tr>

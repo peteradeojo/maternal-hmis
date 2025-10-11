@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
+use App\Models\Admission;
 use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
 use App\Models\Department;
 use App\Models\Documentation;
+use App\Models\DocumentationTest;
 use App\Models\GeneralVisit;
+use App\Models\Patient;
 use App\Models\Visit;
 use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
@@ -46,10 +49,17 @@ class LabController extends Controller
         }
     }
 
-    public function test(Request $request, Visit $visit)
+    public function viewPatientTests(Request $request, Patient $patient)
+    {
+        $tests = DocumentationTest::where('patient_id', $patient->id)->where('status', Status::pending->value)->latest()->get();
+        return view('lab.take-tests', compact('tests', 'patient'));
+    }
+
+    public function test(Request $request, $visit)
     {
         if ($request->method() !== 'POST') {
-            return view('lab.take-test', ['documentation' => $visit->visit]);
+            dd($visit);
+            return view('lab.take-test', ['documentation' => $test->testable]);
         }
 
         $data = $request->validate([
@@ -117,26 +127,13 @@ class LabController extends Controller
 
     public function getHistory(Request $request)
     {
-        // dd(Visit::with(['patient'])->where(function ($query) {
-        //     $query->has('tests')->whereDoesntHave('tests', function ($q) {
-        //         $q->where('status', '!=', Status::completed->value);
-        //     });
-        // })->orWhere(function ($q) {
-        //     $q->whereHas('visit', function ($query) {
-        //         $query->has('tests')->whereDoesntHave('tests', function ($q) {
-        //             $q->where('status', '!=', Status::completed->value);
-        //         });
-        //     });
-        // })->getQuery()->toRawSql());
-
-
-        return $this->dataTable($request, Visit::with(['patient'])->whereHas('visit', function ($query) {
-            $query->where(function ($query) {
-                $query->has('tests')->whereDoesntHave('tests', function ($q) {
-                    $q->where('status', '!=', Status::completed->value);
-                });
+        $Q = DocumentationTest::selectRaw('testable_type, testable_id, patient_id, MAX(created_at) created_at')->groupBy('testable_type', 'testable_id', 'patient_id', 'created_at')->where(function ($q) {
+            $q->where('status', Status::completed->value)->orWhere(function ($query) {
+                $query->whereNotNull('results');
             });
-        }), [
+        })->with(['patient', 'testable.visit']);
+        // return $this->dataTable($request, Visit::with(['patient'])->whereHas('visit', function ($query) {
+        return $this->dataTable($request, $Q, [
             function (&$query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "{$search}%");
@@ -191,7 +188,6 @@ class LabController extends Controller
         }
 
         $visit->visit->awaiting_doctor = true;
-        // $visit->awaiting_lab_results = false;
         $visit->visit->save();
 
         $this->processTests($request, $request->all(), $visit);
@@ -199,9 +195,10 @@ class LabController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function testReport(Request $request, Visit $doc)
+    public function testReport(Request $request, Patient $patient)
     {
-        return view('lab.testReport', ['doc' => $doc->visit]);
+        $tests = DocumentationTest::with(['patient'])->where('patient_id', $patient->id)->latest()->get();
+        return view('lab.testReport', compact('tests', 'patient'));
     }
 
     public function store(Request  $request, Visit $visit)
@@ -222,5 +219,32 @@ class LabController extends Controller
         return response()->json([
             'ok' => true,
         ]);
+    }
+
+    public function admissions()
+    {
+        $adm = Admission::latest()->get();
+        return view('lab.admissions', compact('adm'));
+    }
+
+    public function saveTest(Request $request, DocumentationTest $test)
+    {
+        $request->validate([
+            'results' => 'required|array|min:1',
+            'results.*' => 'array',
+            'results.*.description' => 'string',
+            'results.*.result' => 'string|nullable',
+            'results.*.unit' => 'string|nullable',
+            'results.*.reference_range' => 'string|nullable',
+            'completed' => 'boolean|nullable',
+        ]);
+
+        $test->results = $request->input('results');
+        $test->status = $request->completed == true ? Status::completed->value : Status::pending->value;
+        $test->tested_by = auth()->user()->id;
+
+        $test->save();
+
+        return response()->json(['test' => $test]);
     }
 }

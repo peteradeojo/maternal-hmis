@@ -14,7 +14,7 @@ class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        $admissions = Admission::whereNull('discharged_on')->latest('updated_at')->get();
+        $admissions = Admission::whereNull('discharged_on')->latest('updated_at')->limit(10)->get();
         if (request()->user()->department_id == Department::DOC->value) {
             return view('doctors.admissions.index', ['admissions' => $admissions]);
         }
@@ -23,44 +23,46 @@ class AdmissionsController extends Controller
 
     public function show(Request  $request, Admission $admission)
     {
-        // if ($request->isMethod('POST')) {
-        //     // Log vitals
-        //     if ($request->has('vitals')) {
-        //         $request->validate([
-        //             'blood_pressure' => [function ($field, $value, $fail) {
-        //                 if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
-        //                     return $fail("Invalid format for blood pressure.");
-        //                 }
-        //             }],
-        //             'temperature' => 'numeric',
-        //             'pulse' => 'numeric',
-        //             'respiratory_rate' => 'numeric',
-        //         ]);
+        if ($request->isMethod('POST')) {
 
-        //         $data = $request->except(['_token', 'vitals']);
-        //         $data['respiration'] = $data['respiratory_rate'];
-        //         unset($data['respiratory_rate']);
+            $action = $request->input('submit');
+            // Log vitals
+            if ($action === 'vitals') {
+                $request->validate([
+                    'blood_pressure' => [function ($field, $value, $fail) {
+                        if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                            return $fail("Invalid format for blood pressure.");
+                        }
+                    }],
+                    'temperature' => 'numeric',
+                    'pulse' => 'numeric',
+                    'respiratory_rate' => 'numeric',
+                ]);
 
-        //         try {
-        //             $admission->vitals()->create($data + ['recording_user_id' => $request->user()->id]);
-        //             return redirect()->back();
-        //         } catch (\Throwable $th) {
-        //             report($th);
-        //             return back()->with('error', "An error occurred");
-        //         }
-        //     }
+                $data = $request->except(['_token', 'vitals']);
+                $data['respiration'] = $data['respiratory_rate'];
+                unset($data['respiratory_rate']);
 
-        //     // Log drug administrations
-        //     if ($request->has('log-treatments')) {
-        //         $request->validate([
-        //             'ministered' => 'required|array|min:1'
-        //         ]);
+                try {
+                    $admission->vitals()->create($data + ['recording_user_id' => $request->user()->id]);
+                    return redirect()->back();
+                } catch (\Throwable $th) {
+                    report($th);
+                    return back()->with('error', "An error occurred");
+                }
+            }
 
-        //         return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered))); //->with('ministered', array_keys($request->ministered));
-        //     }
-        // }
+            // Log drug administrations
+            if ($action === 'treatment-log') {
+                $request->validate([
+                    'ministered' => 'required|array|min:1'
+                ]);
 
-        $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'plan.tests']);
+                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered))); //->with('ministered', array_keys($request->ministered));
+            }
+        }
+
+        $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'tests', 'plan.treatments']);
 
         if (request()->user()->department_id == Department::DOC->value) {
             return view('doctors.admissions.show', ['data' => $admission]);
@@ -140,7 +142,7 @@ class AdmissionsController extends Controller
     {
         if (!$request->isMethod('POST')) {
             $ministered = explode(',', $request->query('treatments'));
-            $treatments = $admission->admittable->prescriptions()->whereIn('id', $ministered)->get();
+            $treatments = $admission->plan->treatments()->whereIn('id', $ministered)->get();
 
             if ($treatments->count() < 1) {
                 return redirect()->back()->withErrors("Malformed request.");

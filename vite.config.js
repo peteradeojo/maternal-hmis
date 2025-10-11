@@ -13,7 +13,7 @@ export default defineConfig({
                 "resources/css/app.scss",
                 "public/css/auth.css",
             ],
-            refresh: true,
+            refresh: false,
         }),
     ],
 });

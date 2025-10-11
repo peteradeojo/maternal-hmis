@@ -1,14 +1,20 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Result</th>
-            <th>Unit</th>
-            <th>Ref. range</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($tests as $test)
+@foreach ($tests as $test)
+    <table class="table">
+        <thead>
+            <tr>
+                <td colspan="4">
+                    <p>By: <b>{{ $test->staff?->name }}</b></p>
+                    <p class="text-xs">{{ $test->updated_at->format('Y-m-d h:i A') }}</p>
+                </td>
+            </tr>
+            <tr class="border-t">
+                <th>Name</th>
+                <th>Result</th>
+                <th>Unit</th>
+                <th>Ref. range</th>
+            </tr>
+        </thead>
+        <tbody>
             <tr wire:key="test:{{ $test->name }}">
                 <td colspan="3"><b>{{ $test->name }}</b></td>
                 <td class="text-xs">
@@ -30,13 +36,14 @@
                     <td colspan="4">No result provided.</td>
                 </tr>
             @endforelse
+        </tbody>
 
+        <tfoot class="border-t">
             <tr>
                 <td colspan="4">
-                    <p>By: <b>{{ $test->staff->name }}</b></p>
-                    <p class="text-xs">{{ $test->updated_at->format('Y-m-d h:i A') }}</p>
+                    <button class="btn btn-sm btn-blue px-4" onclick="() => printElement(this.closest('table'))">Print</button>
                 </td>
             </tr>
-        @endforeach
-    </tbody>
-</table>
+        </tfoot>
+    </table>
+@endforeach

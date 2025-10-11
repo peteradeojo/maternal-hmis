@@ -21,8 +21,12 @@ class Product extends Model
     static public function created($callback)
     {
         static::booted(function (Self $model) {
-            if  ($model->amount == 0) {
-                Department::find(DepartmentEnum::IT->value)->notifyParticipants(new StaffNotification("A new product has been created with no amount. Product id {$model->id}"));
+            if ($model->amount == 0) {
+                Department::find(
+                    DepartmentEnum::IT->value,
+                    DepartmentEnum::PHA->value,
+                    DepartmentEnum::DIS->value
+                )->notifyParticipants(new StaffNotification("A new product has been created with no amount. Product id {$model->id}"));
             }
         });
     }

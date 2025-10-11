@@ -1,17 +1,5 @@
 @import "colors";
 
-.btn {
-    padding: 6px 8px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-a.btn {
-    text-decoration: none;
-}
-
-// @include colors;
-
 @each $color in $colors {
     .btn-#{"" + $color} {
         background-color: $color;
@@ -27,4 +15,18 @@ a.btn {
     //     }
     //     color: #fff;
     // }
+}
+
+.btn {
+    padding: 6px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    &:disabled {
+        @apply bg-gray-600;
+        cursor: not-allowed;
+    }
+}
+a.btn {
+    text-decoration: none;
 }

@@ -16,9 +16,13 @@ class Admission extends Model implements InterfacesDocumentable
 
     protected $guarded = [];
 
-    protected $with = ['ward', 'patient'];
+    protected $with = ['ward', 'patient', 'plan'];
 
     protected $appends = ['in_ward'];
+
+    public function visit() {
+        return $this->belongsTo(Visit::class, 'visit_id');
+    }
 
     public function patient()
     {
@@ -53,6 +57,10 @@ class Admission extends Model implements InterfacesDocumentable
     public function plans()
     {
         return $this->hasMany(AdmissionPlan::class)->latest();
+    }
+
+    public function tests() {
+        return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
     public function plan()

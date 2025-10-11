@@ -35,11 +35,12 @@ class AddPresciption extends Component
     {
         $this->visit = $visit->load(['prescriptions.prescriptionable']);
         $this->dispatchEvent = $dispatch;
+
+        $this->selections = [];
     }
 
-    public function addTempPrescription($product) {
-        dd($product);
-        $this->selections = new Product($product);
+    public function addTempPrescription($detail) {
+        $this->selections = (object) $detail['product'];
     }
 
     public function addPrescription($id)
@@ -53,7 +54,7 @@ class AddPresciption extends Component
         $this->validate();
 
         $dto = new PrescriptionDto([]);
-        $dto->productId = $this->selections->id;
+        $dto->productId = $this->selections->id ?? null;
         $dto->setProduct($this->selections);
         $dto->setDosage($this->requestForm->dosage);
         $dto->setDuration($this->requestForm->duration);

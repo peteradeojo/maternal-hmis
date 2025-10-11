@@ -3,6 +3,13 @@
 @import "components/modals";
 @import "components/spacings";
 
+@media print {
+  body *:not(.printable, .printable *) {
+    // hide everything but printable elements and their children
+    display: none;
+  }
+}
+
 @layer utilities {
     .bold {
         @apply font-semibold;

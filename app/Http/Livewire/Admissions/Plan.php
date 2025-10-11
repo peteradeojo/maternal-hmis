@@ -72,6 +72,11 @@ class Plan extends Component
             ]);
 
             foreach ($this->plans as $p) {
+                if (empty($p['productId'])) {
+                    $prd = Product::create($p['product']);
+                    $p['productId'] = $prd->id;
+                }
+
                 $plan->treatments()->create([
                     'prescriptionable_type' => Product::class,
                     'prescriptionable_id' => $p['productId'],
@@ -85,7 +90,7 @@ class Plan extends Component
                 ]);
             }
 
-            $this->tests->each(fn ($test) => $plan->tests()->create([
+            $this->tests->each(fn ($test) => $admission->tests()->create([
                 'name' => $test['name'],
                 'describable_type' => Product::class,
                 'describable_id' => $test['id'],

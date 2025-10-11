@@ -6,7 +6,7 @@
             <div class="card-header bold">Admissions</div>
         </div>
         <div class="body py-2">
-            <table class="table">
+            <table class="table" id="admissions">
                 <thead>
                     <tr>
                         <th>Patient</th>
@@ -41,3 +41,11 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(() => {
+        $("#admissions").DataTable();
+    });
+</script>
+@endpush

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- @dump($admission->admittable->treatments) --}}
+    {{-- @dd($admission) --}}
     <div class="card py px">
         <div class="header">
             <p>{{ $admission->patient->name }} (Admitted: {{ $admission->created_at->format('Y-m-d') }})</p>
@@ -37,13 +37,13 @@
                         <h3>Drugs</h3>
                         <div class="pt-1"></div>
                         <p><b>Tick boxes to submit administration</b></p>
-                        <form action="?log-treatments" method="post">
+                        <form action="?submit=treatment-log" method="post">
                             @csrf
                             <table class="table-list">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Route</th>
+                                        {{-- <th>Route</th> --}}
                                         <th>Dosage</th>
                                         <th>Frequency</th>
                                         <th>Duration</th>
@@ -51,10 +51,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($admission->admittable->treatments ?? [] as $p)
+                                    @forelse ($admission->plan->treatments ?? [] as $p)
                                         <tr>
                                             <td>{{ $p->name }}</td>
-                                            <td>{{ $p->route }}</td>
+                                            {{-- <td>{{ $p->route }}</td> --}}
                                             <td>{{ $p->dosage }}</td>
                                             <td>{{ $p->frequency }}</td>
                                             <td>{{ $p->duration }}</td>
@@ -67,7 +67,7 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            @if ($admission->admittable->treatments?->count() > 0 && $admission->in_ward)
+                            @if ($admission->plan->treatments?->count() > 0 && $admission->in_ward)
                                 <div class="pt-1"></div>
                                 <button type="submit" class="btn btn-red">Submit</button>
                             @endif
@@ -100,7 +100,7 @@
                     <h2>Vitals Chart</h2>
 
                     <div class="pt-1"></div>
-                    <form action="?vitals" method="post">
+                    <form action="?submit=vitals" method="post">
                         @csrf
                         <div class="row">
                             @include('nursing.components.vitals-form')

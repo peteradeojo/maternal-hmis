@@ -37,6 +37,7 @@ function departmentRoutes()
 
     $lab = array_merge([
         route('lab.history') => 'History',
+        route('lab.admissions') => 'Admissions',
         route('lab.antenatals') => 'Antenatals',
     ], $base);
 

@@ -42,8 +42,7 @@
                 },
                 {
                     data: (row, type, set) => {
-                        return `<a href="{{ route('lab.report-test', ':id') }}">View</a>`.replace(':id', row
-                            .id);
+                        return `<a href="{{ route('lab.report-test', ':id') }}">View</a>`.replace(':id', row.patient.id);
                     }
                 }
             ],

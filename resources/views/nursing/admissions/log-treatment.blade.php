@@ -20,7 +20,7 @@
                 @endforeach
 
                 <div class="form-group">
-                    <button type="submit" class="btn">Confirm</button>
+                    <button type="submit" class="btn btn-red">Confirm</button>
                 </div>
             </form>
 

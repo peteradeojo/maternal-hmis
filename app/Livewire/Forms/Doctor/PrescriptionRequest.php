@@ -15,4 +15,7 @@ class PrescriptionRequest extends Form
 
     #[Validate('required|string')]
     public $frequency = 'stat';
+
+    // #[Validate('required|string')]
+    // public $route = '';
 }

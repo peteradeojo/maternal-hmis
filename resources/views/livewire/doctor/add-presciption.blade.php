@@ -18,9 +18,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($selections)
+                    @if (!empty($selections))
                         <tr>
-                            <form wire:submit="saveRequest" wire:key="{{ $selections->id }}">
+                            <form wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"
@@ -68,7 +68,7 @@
 
                     @if ($updating)
                         <tr>
-                            <form wire:submit="saveRequest" wire:key="{{ $updating->id }}">
+                            <form wire:submit="saveRequest" wire:key="{{ $updating->name }}">
                                 <td>{{ $updating->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"

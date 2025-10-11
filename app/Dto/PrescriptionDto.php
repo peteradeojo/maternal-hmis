@@ -24,10 +24,10 @@ class PrescriptionDto
         $this->frequency = $data['frequency'] ?? '';
     }
 
-    public function setProduct(Product $product)
+    public function setProduct($product)
     {
         $this->product = $product;
-        $this->name  = $product->name;
+        $this->name = $product->name;
     }
 
     public function setDuration($duration)
@@ -39,10 +39,12 @@ class PrescriptionDto
     {
         $this->dosage = $v;
     }
+
     public function setRoute($v)
     {
         $this->route = $v;
     }
+
     public function setFrequency($v)
     {
         $this->frequency = $v;

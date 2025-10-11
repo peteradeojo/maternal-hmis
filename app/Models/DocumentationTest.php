@@ -19,6 +19,11 @@ class DocumentationTest extends Model
         'describable_id',
     ];
 
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
+
     protected $casts = [
         'results' => 'object',
     ];
