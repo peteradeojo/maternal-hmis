@@ -31,7 +31,7 @@ class PatientStats extends Component
 
         $this->currentAdmissions = Admission::where('status', Status::active->value)->count();
 
-        $this->visits = Visit::where("status", "!=", Status::closed->value)->latest()->limit(50)->get();
+        $this->visits = Visit::where("status", "=", Status::active->value)->latest()->limit(50)->get();
     }
 
     public function hydrate()
