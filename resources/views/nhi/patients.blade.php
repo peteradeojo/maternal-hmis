@@ -26,6 +26,7 @@
         $(() => {
             $("table").DataTable({
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: "{{ route('api.nhi.patients') }}"
                 },

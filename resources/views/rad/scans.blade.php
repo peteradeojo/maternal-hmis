@@ -44,7 +44,8 @@
                             `<a href="{{ route('rad.scan', ':id') }}" class="btn btn-sm bg-green-400">View</a>`
                             .replace(':id', row.id),
                     }
-                ]
+                ],
+                responsive: true,
             });
         });
     </script>

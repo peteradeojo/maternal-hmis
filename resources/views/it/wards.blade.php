@@ -59,7 +59,9 @@
 @push('scripts')
     <script>
         $(() => {
-            $("table").DataTable({});
+            $("table").DataTable({
+                responsive: true,
+            });
         })
     </script>
 @endpush

@@ -1,4 +1,4 @@
-<nav class="navbar-nav no-print">
+<nav class="navbar-nav no-print w-full">
     <div class="navbar-brand">
         <img src="{{ asset('favicon-3.png') }}" alt="" width="30">
         <a href="{{ route('dashboard') }}">Dashboard</a>

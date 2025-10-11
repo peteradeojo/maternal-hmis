@@ -164,6 +164,7 @@
 @push('scripts')
 <script>
     $("#anc-history-table")?.DataTable({
+        responsive: true,
         dom: "Brtip",
         language: {
             infoEmpty: "No previous visits found",

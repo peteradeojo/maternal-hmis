@@ -24,6 +24,7 @@
 @push('scripts')
     <script>
         $("#history").DataTable({
+            responsive: true,
             serverSide: true,
             ajax: {
                 url: "{{ route('api.lab.history') }}",

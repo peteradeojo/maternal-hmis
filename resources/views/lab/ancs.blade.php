@@ -25,6 +25,7 @@
 @push('scripts')
     <script>
         $("#anc-table").DataTable({
+            responsive: true,
             serverSide: true,
             ajax: "{{ route('api.lab.antenatal-tests') }}",
             columns: [{

@@ -46,6 +46,7 @@
                         ":id", row.id)
                 },
             ],
+            responsive: true,
         });
     </script>
 @endpush

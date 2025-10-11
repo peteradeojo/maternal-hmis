@@ -26,6 +26,7 @@
     <script>
         $(function() {
             $("#patients-table").DataTable({
+                responsive: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('api.doctor.fetch-patients') }}"

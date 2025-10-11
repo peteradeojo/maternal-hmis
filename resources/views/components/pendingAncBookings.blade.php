@@ -15,6 +15,7 @@
     <script>
         $(function() {
             $("#bookings").DataTable({
+                responsive: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('api.nursing.anc-bookings') }}",

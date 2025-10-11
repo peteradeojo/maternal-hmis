@@ -44,6 +44,7 @@
             order: [
                 [2, 'desc']
             ],
+            responsive: true,
         });
     </script>
 @endpushOnce

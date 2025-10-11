@@ -48,7 +48,8 @@
                         .replace(':id', row.id),
                 },
             ],
-            order: false,
+            order: [[3, 'desc']],
+            responsive: true,
         });
 
         function fetchUpdatedData() {

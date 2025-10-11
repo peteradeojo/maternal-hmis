@@ -23,6 +23,7 @@
     <script>
         $(() => {
             $("table").DataTable({
+                responsive: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('api.doctor.visits') }}",

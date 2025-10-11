@@ -11,18 +11,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
 
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" integrity="sha512-Z/def5z5u2aR89OuzYcxmDJ0Bnd5V1cKqBEbvLOiUNWdg9PQeXVvXLI90SE4QOHGlfLqUnDNVAYyZi8UwUTmWQ==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
-    {{-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="//cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.8/b-3.1.2/fc-5.0.3/r-3.0.3/sp-2.3.3/datatables.min.css"
-        rel="stylesheet"> --}}
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/datatables.css') }}">
     @vite(['resources/css/app.css', 'resources/css/app.scss', 'resources/js/app.js', 'resources/js/util.js'])
 </head>
 
-<body class="md:flex grid-cols-12">
+<body class="md:flex">
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
@@ -57,29 +51,39 @@
     </div>
 
     {{-- Large Nav --}}
-    <aside id="navigation" class="col-span-3 hidden md:block md:fixed md:w-[300px]">
+    <aside id="navigation" class="hidden md:block z-50 w-2/12 fixed top-0 left-0 h-screen bg-gray-800 text-white">
         @include('components.sidebar')
     </aside>
 
-    <div class="h-20 sm:hidden"></div>
-    <main class="col-span-6 bg-gray-400 md:ml-[300px] md:w-2/3 p-4 min-h-[100dvh]">
-        @if (session('error'))
-            <p>{{ session('error') }}</p>
-        @endif
-        @if (isset($errors))
-            @foreach ($errors->all() as $error)
-                <p class="notice">{{ $error }}</p>
-            @endforeach
-        @endif
-        @yield('content')
+    {{-- <div class="h-20 sm:hidden"></div> --}}
+    <main class="w-screen md:ml-[16.666667%] bg-gray-400 min-h-screen p-6 overflow-y-auto">
+        <div class="p-2 flex items-center justify-end">
+            <div class="text-center">
+                <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt=""
+                    class="rounded-full w-12 m-auto">
+                <p>{{ auth()->user()->name }}</p>
+                <small>{{ auth()->user()->department->name }}</small>
+            </div>
+        </div>
+        <div class="p-4">
+            @if (session('error'))
+                <p>{{ session('error') }}</p>
+            @endif
+            @if (isset($errors))
+                @foreach ($errors->all() as $error)
+                    <p class="notice">{{ $error }}</p>
+                @endforeach
+            @endif
+            @yield('content')
+        </div>
     </main>
 
-    <aside id="noticeboard" class="col-span-3 md:max-w-[20%] p-1">
+    {{-- <aside id="noticeboard" class="col-span-3 md:max-w-[20%] p-1">
         <h3>Notifications</h3>
         <div class="px">
             @livewire('get-notifications', ['user' => auth()->user()])
         </div>
-    </aside>
+    </aside> --}}
 
     <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/datatables.js') }}"></script>
