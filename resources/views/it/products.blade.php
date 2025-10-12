@@ -72,7 +72,6 @@
     <script defer>
         $(() => {
             $("#table").DataTable({
-                responsive: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('it.get-products') }}",

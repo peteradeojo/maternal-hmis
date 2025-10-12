@@ -29,7 +29,7 @@
     <script>
         $(() => {
             $("#departments-table").DataTable({
-                dom: 'frtip'
+                dom: 'frtip',
                 responsive: true,
             });
         });
