@@ -51,12 +51,12 @@
     </div>
 
     {{-- Large Nav --}}
-    <aside id="navigation" class="hidden md:block z-50 w-2/12 fixed top-0 left-0 h-screen bg-gray-800 text-white">
+    <aside id="navigation" class="hidden sm:block z-50 w-2/12 fixed top-0 left-0 h-screen bg-gray-800 text-white">
         @include('components.sidebar')
     </aside>
 
     {{-- <div class="h-20 sm:hidden"></div> --}}
-    <main class="w-screen md:ml-[16.666667%] bg-gray-400 min-h-screen p-6 overflow-y-auto">
+    <main class="w-screen sm:ml-[16.666667%] bg-gray-400 min-h-screen p-2 sm:p-6 overflow-y-auto">
         <div class="p-2 flex items-center justify-end">
             <div class="text-center">
                 <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt=""
@@ -78,7 +78,7 @@
         </div>
     </main>
 
-    {{-- <aside id="noticeboard" class="col-span-3 md:max-w-[20%] p-1">
+    {{-- <aside id="noticeboard" class="col-span-3 sm:max-w-[20%] p-1">
         <h3>Notifications</h3>
         <div class="px">
             @livewire('get-notifications', ['user' => auth()->user()])
