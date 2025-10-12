@@ -33,6 +33,7 @@ function departmentRoutes()
         route('it.staff') => 'Staff',
         route('it.wards') => 'Wards',
         route('it.products') => 'Products',
+        route('it.crm-index') => 'CRM',
     ], $base);
 
     $lab = array_merge([

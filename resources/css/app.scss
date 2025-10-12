@@ -1,13 +1,12 @@
-@import "components/forms";
-@import "components/buttons";
-@import "components/modals";
-@import "components/spacings";
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
 
 @media print {
-  body *:not(.printable, .printable *) {
-    // hide everything but printable elements and their children
-    display: none;
-  }
+    body *:not(.printable, .printable *) {
+        // hide everything but printable elements and their children
+        display: none;
+    }
 }
 
 @layer utilities {
@@ -100,9 +99,11 @@
         @apply text-xs;
     }
 
-    .bg-secondary, .btn-secondary {
+    .bg-secondary,
+    .btn-secondary {
         @apply bg-green-700;
     }
+
     .btn-secondary {
         @apply text-white;
     }
@@ -122,8 +123,13 @@
     }
 
     .link {
-        @apply underline hover:text-blue-600 cursor-pointer;
+        @apply hover:underline text-blue-600 cursor-pointer;
     }
+
+    @import "components/forms";
+    @import "components/buttons";
+    @import "components/modals";
+    @import "components/spacings";
 }
 
 ::root {
@@ -278,7 +284,3 @@ p {
         display: none;
     }
 }
-
-@tailwind base;
-@tailwind utilities;
-@tailwind components;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\IT\CrmController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +30,6 @@ Route::middleware(['auth'])->group(function () {
     include_once __DIR__ . '/api/nhi.php';
 });
 // include_once __DIR__ . '/api/records.php';
+
+Route::get('/posts', [CrmController::class, 'index']);
+Route::get('/posts/{post}', [CrmController::class, 'show']);
