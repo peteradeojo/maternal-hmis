@@ -20,7 +20,7 @@
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
-    <div class="fixed w-full z-[1000] sm:hidden">
+    <div class="sticky top-0 w-full z-[1000] sm:hidden">
         <div class="px-2 py-4 bg-green-400 flex w-full items-center justify-between">
             <div>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-x-3 link">
@@ -28,9 +28,13 @@
                     Home
                 </a>
             </div>
-            <button id="nav-burger" class="border border-black w-[30px] h-[30px] rounded">
-                <i class="fa fa-bars"></i>
-            </button>
+            <div class="flex gap-x-3 items-center">
+                <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt=""
+                    class="rounded-full w-10 m-auto">
+                <button id="nav-burger" class="border border-black px-2 rounded">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
         </div>
 
         <div class="p-2 hidden bg-green-800 text-white" id="mobile-nav-list">
@@ -57,7 +61,7 @@
 
     {{-- <div class="h-20 sm:hidden"></div> --}}
     <main class="w-screen sm:ml-[16.666667%] bg-gray-400 min-h-screen p-2 sm:p-6 overflow-y-auto">
-        <div class="p-2 flex items-center justify-end">
+        <div class="p-2 hidden sm:flex items-center justify-end">
             <div class="text-center">
                 <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt=""
                     class="rounded-full w-12 m-auto">
