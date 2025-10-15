@@ -65,6 +65,7 @@ class CrmController extends Controller
                     'id',
                     'title',
                     'user.name',
+                    'image',
                     'created_at',
                 ])->merge(['by' => $post->user->name]),
                 'data' => $postText,
