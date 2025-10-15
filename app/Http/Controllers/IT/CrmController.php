@@ -33,12 +33,15 @@ class CrmController extends Controller
             'title' => 'required|string',
             'description' => 'string|nullable',
             'post' => 'required|string',
+            'image' => 'required|image'
         ]);
 
+        $image = $request->file('image')?->store('post_uploads');
         $postText = $request->input('post');
         $post = new Post([
             'user_id' => auth()->user()->id,
             'title' => $request->title,
+            'image' => $image,
         ]);
 
         $filename = 'posts/' . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';

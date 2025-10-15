@@ -3,8 +3,12 @@
 @section('content')
     <div class="container">
         <div class="card p-2">
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 @csrf
+                <div class="form-group">
+                    <label>Cover Image</label>
+                    <input type="file" name="image" accept=".jpg,.jpeg,.png" placeholder="Select a cover image" required class="form-control" />
+                </div>
                 <div class="form-group">
                     {{-- <label>Title</label> --}}
                     <input type="text" name="title" class="form-control my-1" id="title" required placeholder="Title" />
