@@ -12,7 +12,7 @@ class CrmController extends Controller
 {
     public function index(Request $request)
     {
-        $posts = Post::select(['title', 'id', 'created_at', 'status'])
+        $posts = Post::select(['title', 'id', 'created_at', 'status', 'image'])
             ->where('status', Status::active->value)->latest()->get();
 
         if ($request->expectsJson()) {
