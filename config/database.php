@@ -106,8 +106,19 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => 'prefer',
-        ]
-
+        ],
+        'libsql' => [
+            'driver' => 'libsql',
+            'url' => env('TURSO_DB_URL'),
+            'authToken' => env('TURSO_DB_TOKEN', ''),
+            'syncUrl' => null, // env('TURSO_DB_URL', ''),
+            'syncInterval' => null, // env('TURSO_SYNC_INTERVAL', 5),
+            'read_your_writes' => env('TURSO_READ_YOUR_WRITES', true),
+            'encryptionKey' => env('TURSO_ENCRYPTION_KEY', ''),
+            'remoteOnly' => env('TURSO_REMOTE_ONLY', false),
+            'database' => null,
+            'prefix' => '',
+        ],
     ],
 
     /*

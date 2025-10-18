@@ -19,12 +19,15 @@
                     </thead>
                     <tbody>
                         @foreach ($posts as $post)
+                            @php
+                                $post = (object) $post;
+                            @endphp
                             <tr>
                                 <td>{{ $post->title }}</td>
-                                <td>{{ $post->created_at?->format('Y-m-d h:i A') }}</td>
+                                <td>{{ $post->created_at }}</td>
                                 <td></td>
                                 <td>
-                                    <a href="{{route('it.crm-show', $post)}}" class="link">View</a>
+                                    <a href="{{ route('it.crm-show', $post->id) }}" class="link">View</a>
                                 </td>
                             </tr>
                         @endforeach

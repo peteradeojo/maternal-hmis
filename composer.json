@@ -14,7 +14,9 @@
         "livewire/livewire": "^3.5",
         "onezero/laas": "^1.1",
         "predis/predis": "^2.2",
-        "spatie/simple-excel": "^3.6"
+        "spatie/simple-excel": "^3.6",
+        "turso/libsql": "dev-master",
+        "tursodatabase/turso-driver-laravel": "dev-main"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",
