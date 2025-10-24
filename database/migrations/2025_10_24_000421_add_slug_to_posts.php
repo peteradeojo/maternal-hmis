@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('libsql')->table('posts', function (Blueprint $table) {
-            $table->text('slug')->unique();
+            $table->text('slug');
+            $table->unique(['slug']);
         });
     }
 
