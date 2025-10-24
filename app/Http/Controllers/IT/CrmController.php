@@ -72,26 +72,6 @@ class CrmController extends Controller
         $post->save();
         unlink($filename);
 
-        dd($post);
-
-
-        // $post = [
-        //     'user' => auth()->user()->name,
-        //     'title' => $request->title,
-        //     'image' => $image,
-        //     'post' => $postText,
-        // ];
-
-        // $db = new LibSQL(config('database.connections.libsql'));
-        // $db->execute("INSERT INTO posts (title, image, post, user, created_at) VALUES (?, ?, ?, ?, ?)", [
-        //     $request->title,
-        //     $image,
-        //     $postText,
-        //     auth()->user()->name,
-        //     now()->format('Y-m-d H:i:s'),
-        // ]);
-
-
         return redirect()->route('it.crm-index');
     }
 
