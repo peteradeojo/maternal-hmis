@@ -79,7 +79,7 @@ class CrmController extends Controller
     {
         $post->load(['user']);
 
-        $postText = Storage::read($post->post);
+        $postText = app()->isProduction() ? file_get_contents($post->post) : Storage::read($post->post);
 
         if ($request->expectsJson()) {
             return response()->json([
