@@ -17,7 +17,7 @@ return new class extends Migration
             // $table->string('title')->nullable(false);
             // $table->string('description', 64)->nullable();
             // $table->text('post');
-            // $table->smallInteger('status')->default(Status::active->value);
+            // $table->smallInteger('status')->default(1);
             // $table->string('user')->nullable();
             // $table->string('image')->nullable();
             // $table->timestamps();
