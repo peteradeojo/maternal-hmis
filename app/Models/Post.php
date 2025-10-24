@@ -9,8 +9,10 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $connection = 'libsql';
+
     protected $fillable = [
-        'title', 'description', 'post', 'user_id', 'image'
+        'title', 'description', 'post', 'user', 'image', 'status', 'slug'
     ];
 
     public function user() {

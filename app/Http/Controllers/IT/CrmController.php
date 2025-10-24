@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\IT;
 
-use App\Enums\Status;
-use App\Http\Controllers\Controller;
+use LibSQL;
 use App\Models\Post;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use App\Enums\Status;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-use LibSQL;
-use Libsql\LibsqlException;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Http\File;
 
 class CrmController extends Controller
 {
     public function index(Request $request)
     {
-        $db = new LibSQL(config('database.connections.libsql'));
-        $posts = $db->query("SELECT * FROM posts")->fetchArray();
-
-        $db->close();
+        $posts = Post::latest()->get();
 
         if ($request->expectsJson()) {
             return response()->json($posts);
@@ -55,22 +53,27 @@ class CrmController extends Controller
             return redirect()->back()->withErrors("Unable to write post content to temp file.");
         }
 
-        $image = cloudinary()->uploadFile($request->file('image')->getRealPath())->getSecurePath();
+        $image = app()->isProduction() && !empty($request->file('image')) ? cloudinary()->uploadFile($request->file('image')->getRealPath())->getSecurePath() : $request->file('image')?->store('post_uploads');
 
         $postText = $request->input('post');
-        // $post = new Post([
-        //     'user_id' => auth()->user()->id,
-        //     'title' => $request->title,
-        //     'image' => $image,
-        // ]);
+        $post = new Post([
+            'user_id' => auth()->user()->id,
+            'title' => $request->title,
+            'image' => $image,
+            'slug' => Str::slug($request->title),
+        ]);
 
         fwrite($fh, $postText);
         fclose($fh);
 
-        $postText = cloudinary()->uploadFile($filename)->getSecurePath();
+        $postText = app()->isProduction() ? cloudinary()->uploadFile($filename)->getSecurePath() : Storage::putFileAs('posts', new File($filename, true), $post->slug . ".html");
 
-        // $post->post = $postText;
-        // $post->save();
+        $post->post = $postText;
+        $post->save();
+        unlink($filename);
+
+        dd($post);
+
 
         // $post = [
         //     'user' => auth()->user()->name,
@@ -79,16 +82,15 @@ class CrmController extends Controller
         //     'post' => $postText,
         // ];
 
-        $db = new LibSQL(config('database.connections.libsql'));
-        $db->execute("INSERT INTO posts (title, image, post, user, created_at) VALUES (?, ?, ?, ?, ?)", [
-            $request->title,
-            $image,
-            $postText,
-            auth()->user()->name,
-            now()->format('Y-m-d H:i:s'),
-        ]);
+        // $db = new LibSQL(config('database.connections.libsql'));
+        // $db->execute("INSERT INTO posts (title, image, post, user, created_at) VALUES (?, ?, ?, ?, ?)", [
+        //     $request->title,
+        //     $image,
+        //     $postText,
+        //     auth()->user()->name,
+        //     now()->format('Y-m-d H:i:s'),
+        // ]);
 
-        unlink($filename);
 
         return redirect()->route('it.crm-index');
     }

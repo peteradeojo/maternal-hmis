@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\Datalog;
 use App\Http\Middleware\RestrictDepartment;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Turso\Driver\Laravel\LibSQLDriverServiceProvider;
 
 class Kernel extends HttpKernel
 {

@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.1",
@@ -16,7 +19,7 @@
         "predis/predis": "^2.2",
         "spatie/simple-excel": "^3.6",
         "turso/libsql": "dev-master",
-        "tursodatabase/turso-driver-laravel": "dev-main"
+        "tursodatabase/turso-driver-laravel": "dev-main#89c3e15"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",
