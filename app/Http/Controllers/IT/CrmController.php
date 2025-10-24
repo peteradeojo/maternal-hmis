@@ -57,7 +57,7 @@ class CrmController extends Controller
 
         $postText = $request->input('post');
         $post = new Post([
-            'user_id' => auth()->user()->id,
+            'user' => auth()->user()->name,
             'title' => $request->title,
             'image' => $image,
             'slug' => Str::slug($request->title),
