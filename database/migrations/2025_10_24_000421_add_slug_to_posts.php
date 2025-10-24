@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::connection('libsql')->table('posts', function (Blueprint $table) {
             $table->text('slug');
-            $table->unique(['slug']);
         });
     }
 
