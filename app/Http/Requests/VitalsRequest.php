@@ -37,6 +37,7 @@ class VitalsRequest extends FormRequest
             'edd' => 'required_with:lmp|date',
             'gravida'  => 'required|integer',
             'parity'  => 'required|integer',
+            'risk_assessment' => 'nullable|array',
         ];
     }
 }

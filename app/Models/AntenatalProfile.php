@@ -36,7 +36,8 @@ class AntenatalProfile extends Model
     protected $casts = [
         'lmp' => 'datetime',
         'edd' => 'datetime',
-        'vitals' => 'array'
+        'vitals' => 'array',
+        'risk_assessment',
     ];
 
     protected $with = ['tests'];

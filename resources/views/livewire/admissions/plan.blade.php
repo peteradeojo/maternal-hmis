@@ -4,22 +4,13 @@
 
     <div class="py-2 px-2 bg-gray-200 grid gap-y-4">
         <p class="bold">Indication for Admission</p>
-        <input type="text" name="indication" id="" placeholder="Indication for Admission"
-            wire:model="indication">
-
-        <p><b>Treatment Plan</b></p>
-        <ul class="list-disc px-3 text-sm">
-            @forelse ($visit->prescriptions as $pres)
-                <li>{{ $pres }}</li>
-            @empty
-                <li>No presciption</li>
-            @endforelse
-        </ul>
+        <input type="text" name="indication" id="" placeholder="Indication for Admission" wire:model="indication"
+            value="{{ $admission?->plan->indication }}">
 
         <livewire:doctor.add-presciption :visit="$visit" :dispatch="true"
             @prescription_selected="addPrescription($event.detail.product)" :title="'Add Treatment Plan'" />
 
-        <p class="text-lg bold mt-3">Added Plans</p>
+        <p class="text-lg bold">Added Plans</p>
         <table class="table">
             <thead>
                 <tr>
@@ -53,11 +44,18 @@
                 <p class="bold">Tests</p>
                 <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)" />
 
-                <ul class="list-disc list-inside">
+                <ul class="list-disc list-inside pt-1">
+                    {{-- @dump($tests) --}}
                     @foreach ($tests as $selectedTest)
                         <li class="flex justify-between items-center">
-                            <span>{{ $selectedTest['name'] }}</span>
-                            <a href="#" wire.prevent wire:click="removeTest({{$selectedTest['id']}})" class="link p-3">&times;</a>
+                            @unless ($selectedTest->results)
+                                <span>{{ $selectedTest['name'] }}</span>
+                                <a href="#" wire.prevent wire:click="removeTest({{ $selectedTest['id'] }})"
+                                    class="btn btn-sm btn-red">Remove</a>
+                            @else
+                                <a href="{{ route('doctor.show-admission', $admission) }}" target="_blank"
+                                    class="link">{{ $selectedTest['name'] }} - View Result</a>
+                            @endunless
                         </li>
                     @endforeach
                 </ul>
@@ -66,12 +64,12 @@
                 <p class="bold">Investigations</p>
                 <livewire:dynamic-product-search :departmentId="7" @selected="addInvestigation($event.detail)" />
 
-                <ul class="list-disc list-inside">
+                <ul class="list-disc list-inside pt-1">
                     @foreach ($investigations as $i)
-                        {{-- <li>{{ $i['name'] }}</li> --}}
                         <li class="flex justify-between items-center">
                             <span>{{ $i['name'] }}</span>
-                            <a href="#" wire.prevent wire:click="removeInvestigation({{$i['id']}})" class="link p-3">&times;</a>
+                            <a href="#" wire.prevent wire:click="removeInvestigation({{ $i['id'] }})"
+                                class="btn btn-sm btn-red">Remove</a>
                         </li>
                     @endforeach
                 </ul>

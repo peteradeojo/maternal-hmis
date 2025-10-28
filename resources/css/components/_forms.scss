@@ -1,15 +1,17 @@
 .form-control {
-    display: block;
-    width: 100%;
-    padding: 6px 4px;
-    border-radius: 5px;
+    // display: block;
+    // width: 100%;
+    // padding: 6px 4px;
+    // border-radius: 5px;
     border: 1px solid #888;
     font: inherit;
 
     &:has(:focus) {
         outline: none;
-        border-color: #333;
+        outline-color: #333;
     }
+
+    @apply rounded-none w-full;
 }
 
 input.form-control:read-only {

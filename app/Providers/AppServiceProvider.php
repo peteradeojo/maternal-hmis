@@ -22,7 +22,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->environment('production')) {
-            // URL::forceScheme('https');
+            if (request()->host() == "portal.maternalchildhosp.com") {
+                URL::forceScheme('https');
+            }
         }
 
         Blade::directive('unslug', function (string $str) {

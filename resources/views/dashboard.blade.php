@@ -38,6 +38,7 @@
 
 @push('scripts')
     <script>
+        axios.get("/sanctum/csrf-cookie");
         $("table#prescriptions").DataTable();
     </script>
 @endpush

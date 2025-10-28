@@ -55,10 +55,14 @@ class PatientsController extends Controller
     {
         $validated = $request->safe();
 
-        $profile->vitals = array_merge($profile->vitals ?? [], $validated->except(['lmp', 'edd']));
+        // $profile->vitals = array_merge($profile->vitals ?? []);
+        $profile->parity = $validated->parity;
+        $profile->gravida = $validated->gravida;
         $profile->lmp = $validated->lmp;
         $profile->edd = $validated->edd;
         $profile->awaiting_vitals = false;
+
+        // $profile->risk_assessment = $validated->risk_assessment;
         $profile->save();
 
         return redirect()->route('nurses.anc-bookings')->with('success', 'Vitals submitted successfully');

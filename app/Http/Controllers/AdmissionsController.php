@@ -73,6 +73,16 @@ class AdmissionsController extends Controller
         }
     }
 
+    public function edit(Request $request, Admission $admission) {
+        $admission->plan->load(['tests', 'treatments']);
+
+        if (!$request->isMethod('POST')) {
+            return view('doctors.admissions.edit', compact('admission'));
+        }
+
+        dd($request->all());
+    }
+
     public function showPlan(Request $request, Admission $admission) {
         return view('doctors.admissions.view-plan', ['data' => $admission]);
 

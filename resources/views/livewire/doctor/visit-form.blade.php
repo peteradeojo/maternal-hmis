@@ -22,8 +22,8 @@
                     </div>
                 </div>
                 @if ($visit->type == 'Antenatal')
-                    <div class="tab my-5">
-                        <p class="text-3xl border-b border-gray-300 pb-2 mb-2">Antenatal Booking Details</p>
+                    <div class="tab py-3 px-2">
+                        <p class="text-3xl border-b border-gray-300">Antenatal Booking Details</p>
                         @isset($profile)
                             <livewire:antenatal-profile :profile="$profile" />
                         @else
@@ -67,7 +67,6 @@
             </div>
 
             <div id="actions" class="py-1">
-                {{-- Antenatal Doings --}}
                 @if ($visit->type == 'Antenatal')
                     <div class="tab">
                         @livewire('doctor.anc-visit', ['visit' => $visit])

@@ -1,4 +1,4 @@
-<div class="grid grid-cols-2 gap-x-3">
+<div class="grid md:grid-cols-2 gap-x-3">
     <div class="form-group">
         <label for="lmp">LMP</label>
         <input type="date" name="lmp" id="lmp" class="form-control" wire:model="lmp" value="{{ old('lmp') }}"
@@ -7,7 +7,7 @@
     </div>
     <div class="form-group">
         <label for="edd">EDD</label>
-        <input type="date" name="edd" id="edd" value="{{ $edd }}" class="form-control" readonly
-            required>
+        <input type="date" wire:model="edd" wire:change="setEDD($event.target.value)" name="edd" id="edd" value="{{ $edd }}" class="form-control"
+            readonly required>
     </div>
 </div>

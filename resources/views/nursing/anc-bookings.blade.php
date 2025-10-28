@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    @livewire('nursing.anc-bookings')
+    {{-- @livewire('nursing.anc-bookings') --}}
 
     <div class="card py px">
         <div class="header">

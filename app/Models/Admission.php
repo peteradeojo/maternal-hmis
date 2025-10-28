@@ -8,7 +8,6 @@ use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Admission extends Model implements InterfacesDocumentable
 {
@@ -16,7 +15,7 @@ class Admission extends Model implements InterfacesDocumentable
 
     protected $guarded = [];
 
-    protected $with = ['ward', 'patient', 'plan'];
+    protected $with = ['patient', 'plan'];
 
     protected $appends = ['in_ward'];
 

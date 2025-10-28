@@ -1,5 +1,8 @@
 <div>
-    <div class="grid grid-cols-3 gap-x-3 justify-between">
+    <div class="grid grid-cols-3 gap-x-2 justify-between">
+        <p class="col-span-3 py-1">
+            <b>Booking date: </b> {{$profile->created_at->format('Y-m-d')}}
+        </p>
         <p>
             <b>LMP: </b>
             @if ($editingLmp)
@@ -28,8 +31,7 @@
         </p>
     </div>
 
-    <div class="py-2"></div>
-    <div class="grid grid-cols-3 gap-y-2">
+    <div class="grid grid-cols-3 gap-y-0">
         @unless ($obsEdit)
             <p><b>Gravida: </b> {{ $profile->gravida }}</p>
             <p><b>Parity: </b> {{ $profile->parity }}</p>

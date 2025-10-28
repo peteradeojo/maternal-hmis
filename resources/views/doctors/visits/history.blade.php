@@ -21,7 +21,9 @@
 
 @push('scripts')
     <script>
-        $(() => {
+        $(async () => {
+            await axios.get("{{route('sanctum.csrf-cookie')}}");
+
             $("table").DataTable({
                 responsive: true,
                 serverSide: true,
