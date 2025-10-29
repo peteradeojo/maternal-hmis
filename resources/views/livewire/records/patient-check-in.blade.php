@@ -2,7 +2,7 @@
     <form wire:submit.prevent="startVisit" method="post">
         <div class="form-group">
             <label>Consultant</label>
-            <select wire:model.live="consultant_id" class="form-control">
+            <select wire:model.live="consultant" class="form-control">
                 @foreach ($consultants as $consultant)
                     <option wire:key="{{$consultant->id}}" value="{{ $consultant->id }}">{{ $consultant->name }}</option>
                 @endforeach

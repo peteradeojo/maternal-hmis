@@ -365,6 +365,8 @@ class PatientsController extends Controller
         $physical = $request->physical_exams;
         $other = $request->except('_token', 'physical_exams');
 
+        dd($visit);
+
         if ($visit->examination()->exists()) {
             $visit->examination()->update([
                 'general' => $physical,
@@ -377,7 +379,6 @@ class PatientsController extends Controller
                 'specifics' => $other,
             ]);
         }
-
 
         return json_encode(compact('physical',  'other'));
     }

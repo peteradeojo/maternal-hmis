@@ -12,21 +12,22 @@ class PatientCheckIn extends Component
     public $patient;
     public $consultants;
 
-    // #[Validate('required|integer')]
-    public $consultant_id;
+    #[Validate('required|integer')]
+    public $consultant;
 
     #[Validate('required|integer')]
     public $visit_type;
 
     public function mount()
     {
-        if ($this->patient->category->name == "Antenatal") $this->visit_type = "2";
+        // if ($this->patient->category->name == "Antenatal") {
+        //     $this->visit_type = "2";
+        // }
 
         $this->consultants = User::whereIn(
             'department_id',
             [
                 Department::DOC->value,
-                // Department::NUR->value
             ]
         )->get();
 
@@ -41,6 +42,6 @@ class PatientCheckIn extends Component
     public function startVisit()
     {
         // $this->validate();
-        dd($this->consultant_id, $this->visit_type);
+        dd($this->consultant, $this->visit_type);
     }
 }

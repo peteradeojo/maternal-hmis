@@ -37,11 +37,9 @@
 @endsection
 
 @push('scripts')
-    <script>
-        axios.get("/sanctum/csrf-cookie");
+    <script defer>
+        window.axios.get("/sanctum/csrf-cookie");
         $("table#prescriptions").DataTable();
     </script>
 @endpush
 
-@push('scripts')
-@endpush
