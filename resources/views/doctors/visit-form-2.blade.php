@@ -2,7 +2,7 @@
 @section('title', $visit->patient->name . " | Doctor's Visit")
 
 @section('content')
-    <livewire:doctor.visit-form :visit="$visit->visit" @anc-profile-refresh="refreshProfile" />
+    <livewire:doctor.visit-form :visit="$visit" @anc-profile-refresh="refreshProfile" />
 
     <div class="modal hide" id="diagnosis-modal">
         <div class="content bg-white p-2">

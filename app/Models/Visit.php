@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Dto\PrescriptionDto;
 use App\Enums\Status;
+use App\Traits\Documentable;
+use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Visit extends Model
 {
-    use HasFactory;
+    use HasFactory, HasVisitData, Documentable;
 
     protected $fillable = [
         'visit_type',
@@ -141,23 +142,6 @@ class Visit extends Model
     // {
     //     return $this->morphMany(DocumentationPrescription::class, 'event');
     // }
-
-    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
-    {
-        return $this->visit->prescriptions()->create([
-            'patient_id' => $patient->id,
-            'prescriptionable_type' => $product::class,
-            'prescriptionable_id' => $product->id,
-            'name' => $product->name,
-            'dosage' => $data->dosage,
-            'duration' => $data->duration,
-            'route' => $data->route,
-            'frequency' => $data->frequency,
-            'requested_by' => auth()->user()?->id,
-            'event_type' => $event::class,
-            'event_id' => $event->id,
-        ]);
-    }
 
     // public function imagings()
     // {

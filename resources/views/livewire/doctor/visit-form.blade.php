@@ -160,9 +160,8 @@
     </div>
 
     <div class="modal hide" id="exams-modal">
-        <div class="content bg-white p-3">
+        <div class="content bg-white p-1 overflow-y-auto">
             <p class="text-xl bold">Examination</p>
-            <div class="py-2"></div>
             <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
                 @csrf
                 @include('components.examinations-form', ['exam' => $visit->examination])

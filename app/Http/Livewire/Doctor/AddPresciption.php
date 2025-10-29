@@ -14,7 +14,7 @@ use App\Livewire\Forms\Doctor\PrescriptionRequest;
 class AddPresciption extends Component
 {
     /**
-     * @var Visit|AncVisit
+     * @var Visit
      */
     public $visit;
     public $search;
@@ -40,7 +40,7 @@ class AddPresciption extends Component
     }
 
     public function addTempPrescription($detail) {
-        $this->selections = (object) $detail['product'];
+        $this->selections = Product::where('name', $detail['product'])->first() ?? (object) $detail['product'];
     }
 
     public function addPrescription($id)

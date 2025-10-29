@@ -7,12 +7,14 @@ use App\Models\Product;
 use App\Dto\PrescriptionDto;
 use App\Models\ConsultationNote;
 use App\Models\DocumentationPrescription;
+use App\Models\DocumentationTest;
 use App\Models\PatientExaminations;
 use App\Models\PatientHistory;
 use App\Models\PatientImaging;
 use App\Models\Visit;
 use App\Models\Vitals;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Override;
 use stdClass;
 
 trait HasVisitData
@@ -29,7 +31,7 @@ trait HasVisitData
 
     public function addPrescription(Patient $patient, $product, PrescriptionDto $data, $event)
     {
-        if ($product instanceof stdClass) {
+        if ($product instanceof stdClass) { // product was newly created triggers this behavior
             $product = new Product((array) $product);
             $product->save();
         }
@@ -57,31 +59,11 @@ trait HasVisitData
         return $this->morphMany(PatientHistory::class, 'visit');
     }
 
-    public  function examination(): MorphOne
-    {
-        return $this->morphOne(PatientExaminations::class, 'visit');
-    }
-
-    public function imagings()
-    {
-        return $this->morphMany(PatientImaging::class, 'documentable');
-    }
-
-    public function radios()
-    {
-        return $this->imagings();
-    }
-
-    public function prescriptions() {
-        return $this->treatments();
-    }
-
-    public function treatments()
-    {
-        return $this->morphMany(DocumentationPrescription::class, 'event');
-    }
-
     public function vitals() {
         return $this->morphOne(Vitals::class, 'recordable')->latest();
     }
+
+    // public function tests() {
+    //     return $this->morphMany(DocumentationTest::class, 'testable');
+    // }
 }

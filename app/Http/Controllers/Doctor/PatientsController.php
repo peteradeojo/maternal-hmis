@@ -325,7 +325,7 @@ class PatientsController extends Controller
             'note' => 'required|string'
         ]);
 
-        $visit->visit->notes()->create([
+        $visit->notes()->create([
             'note' => $request->note,
             'patient_id' => $visit->patient_id,
             'consultant_id' => $request->user()->id,

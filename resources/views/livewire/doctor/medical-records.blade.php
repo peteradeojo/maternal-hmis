@@ -10,7 +10,7 @@
                     <p>Date: {{ $v->created_at->format('Y-m-d h:i A') }}</p>
                     <div class="flex gap-x-3">
                         @if ($i == 0)
-                            <a href="{{ route('doctor.admit', ['visit' => $visit->visit]) }}"
+                            <a href="{{ route('doctor.admit', ['visit' => $visit]) }}"
                                 class="btn btn-sm bg-green-500 text-white">Admit</a>
                             <button wire:click="close" wire:confirm="Are you done with this patient?"
                                 class="btn btn-sm bg-blue-500 text-white">Close</button>

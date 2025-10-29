@@ -1,41 +1,38 @@
-<div class="py-2">
-    <div class="row start">
-        <div class="col-6 pr-1">
-            <h3>General Physical Examinations</h3>
-            <div class="form-group">
-                <textarea name="physical_exams" class="form-control">{{ $exam?->general }}</textarea>
-            </div>
+<div class="grid grid-cols-2 items-start gap-x-4 justify-start">
+    <div class="col-span-1">
+        <h3>General Physical Examinations</h3>
+        <div class="form-group">
+            <textarea name="physical_exams" class="form-control">{{ $exam?->general }}</textarea>
         </div>
-        <div class="col-6 pl-1">
-            <div class="foldable ">
-                <div class="foldable-header">
-                    <h3>Specific Examinations</h3>
+    </div>
+
+    <div class="col-span-1 overflow-y-scroll max-h-[400px]">
+        <div class="foldable ">
+            <div class="foldable-header">
+                <h3>Specific Examinations</h3>
+            </div>
+            <div class="foldable-body unfolded">
+                <div class="form-group">
+                    <label for="spec-head">Head & Neck</label>
+                    <textarea type="text" name="head_and_neck" class="form-control" id="spec-head">{{ $exam?->specifics['head_and_neck'] }}</textarea>
                 </div>
-                <div class="foldable-body unfolded">
-                    <div class="form-group">
-                        <label for="spec-head">Head & Neck</label>
-                        <textarea type="text" name="head_and_neck" class="form-control" id="spec-head">{{ $exam?->specifics['head_and_neck'] }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="chest">Chest</label>
-                        <textarea name="chest" id="chest" class="form-control">{{ $exam?->specifics['chest'] }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="abdo">Abdomen</label>
-                        <textarea name="abdomen" id="abdo" class="form-control">{{ $exam?->specifics['abdomen'] }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="muscles">Muscloskeletal</label>
-                        <textarea name="muscle_skeletal" id="muscles" class="form-control">{{ $exam?->specifics['muscle_skeletal'] }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="vag">Vaginal/Rectal</label>
-                        <textarea id="vag" name="vaginal_digital_rectal" class="form-control">{{ $exam?->specifics['vaginal_digital_rectal'] }}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label for="chest">Chest</label>
+                    <textarea name="chest" id="chest" class="form-control">{{ $exam?->specifics['chest'] }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="abdo">Abdomen</label>
+                    <textarea name="abdomen" id="abdo" class="form-control">{{ $exam?->specifics['abdomen'] }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="muscles">Muscloskeletal</label>
+                    <textarea name="muscle_skeletal" id="muscles" class="form-control">{{ $exam?->specifics['muscle_skeletal'] }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="vag">Vaginal/Rectal</label>
+                    <textarea id="vag" name="vaginal_digital_rectal" class="form-control">{{ $exam?->specifics['vaginal_digital_rectal'] }}</textarea>
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>

@@ -14,9 +14,6 @@ use App\Livewire\Forms\Doctor\HistoryForm;
 
 class VisitForm extends Component
 {
-    /**
-     * @var AncVisit|GeneralVisit
-     */
     public $visit;
     public $profile;
 
@@ -36,7 +33,7 @@ class VisitForm extends Component
     public function mount($visit)
     {
         $this->visit = $visit;
-        if ($visit->type == 'Antenatal') {
+        if ($visit->readable_visit_type == 'Antenatal') {
             $this->profile = $visit->patient->antenatalProfiles[0];
         }
 

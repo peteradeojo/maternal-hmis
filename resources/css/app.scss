@@ -148,10 +148,10 @@
         }
     }
 
-    .foldable-header::before {
-        content: "(Click to view)";
+    .foldable-header *::after {
+        content: " (Click to view)";
         font-size: small;
-        vertical-align: middle;
+        // vertical-align: middle;
     }
 
     .foldable-header {
