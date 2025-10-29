@@ -81,7 +81,7 @@
                 <div class="py-2"></div>
 
                 <p><b>Diagnoses</b></p>
-                @forelse ($v->diagnoses as $dia)
+                @forelse ($visit->diagnoses as $dia)
                     <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
                         <p class="text-sm"><b>Diagnosed: </b>{{ $dia->diagnoses }}</p>
                         <div class="text-xs">
@@ -97,7 +97,7 @@
 
                 <p><b>Tests</b></p>
 
-                @include('doctors.components.test-results', ['tests' => $v->tests])
+                @include('doctors.components.test-results', ['tests' => $visit->tests])
 
                 @if ($visit->imagings?->count() > 0)
                     <div class="py-2"></div>
