@@ -10,6 +10,6 @@ class HistoryForm extends Form
     #[Validate('required|string')]
     public string $presentation = "";
 
-    #[Validate('required|string')]
+    #[Validate('string')]
     public string $duration = "";
 }

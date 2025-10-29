@@ -285,7 +285,7 @@ class PatientsController extends Controller
         return $this->dataTable($request, $visits, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%");
+                    $q->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%");
                 });
             }
         ]);
@@ -298,7 +298,7 @@ class PatientsController extends Controller
         // $documentations = $visit->documentations; //Documentation::where('visit_id', $visit->id)->with(['tests', 'treatments', 'diagnoses'])->get();
 
         if ($request->has('brief')) {
-            return view('doctors.components.history-report', ['visit' => $visit->visit]);
+            return view('doctors.components.history-report', ['visit' => $visit]);
         }
         return view('doctors.visits.show', compact('visit'));
     }
@@ -340,7 +340,7 @@ class PatientsController extends Controller
     {
         $request->validate(['diagnosis' => 'required|string']);
 
-        $visit->visit->diagnoses()->create([
+        $visit->diagnoses()->create([
             'user_id' => $request->user()->id,
             'patient_id' => $visit->patient_id,
             'diagnoses' =>  $request->diagnosis,
@@ -365,13 +365,13 @@ class PatientsController extends Controller
         $physical = $request->physical_exams;
         $other = $request->except('_token', 'physical_exams');
 
-        if ($visit->visit->examination()->exists()) {
-            $visit->visit->examination()->update([
+        if ($visit->examination()->exists()) {
+            $visit->examination()->update([
                 'general' => $physical,
                 'specifics' => $other,
             ]);
         } else {
-            $exam = $visit->visit->examination()->create([
+            $exam = $visit->examination()->create([
                 'patient_id' => $visit->patient_id,
                 'general' => $physical,
                 'specifics' => $other,

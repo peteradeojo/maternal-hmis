@@ -75,17 +75,22 @@ class VisitForm extends Component
 
     public function addHistory()
     {
-        $this->historyForm->validate();
+        try {
+            $this->historyForm->validate();
 
-        $this->visit->histories()->create([
-            'patient_id' => $this->visit->patient_id,
-            ...($this->historyForm->all()),
-        ]);
 
-        $this->historyForm->reset();
+            $this->visit->histories()->create([
+                'patient_id' => $this->visit->patient_id,
+                ...($this->historyForm->all()),
+            ]);
 
-        $this->visit->refresh();
-        $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
+            $this->historyForm->reset();
+
+            $this->visit->refresh();
+            $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
+        } catch (\Error $e) {
+            dump($e);
+        }
     }
 
     public function removeScan($id)
