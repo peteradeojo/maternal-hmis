@@ -130,6 +130,14 @@
     @import "components/buttons";
     @import "components/modals";
     // @import "components/spacings";
+
+    .app-notification {
+        @apply rounded-md p-3 shadow-md w-fit opacity-100 transform transition-all duration-300;
+    }
+
+    .app-notification.fade-out {
+        @apply opacity-0 translate-x-5
+    }
 }
 
 ::root {

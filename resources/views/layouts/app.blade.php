@@ -13,7 +13,6 @@
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
 
-    {{-- <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -21,7 +20,7 @@
         href="https://cdn.datatables.net/v/dt/dt-2.3.4/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/r-3.0.7/datatables.min.css"
         rel="stylesheet" integrity="sha384-HqTYeA3lyfNdehjeLkXVLdK3rVP01dsvAMQW/oV6M0a6+8Tht7YtWjP/sWP89O0j"
         crossorigin="anonymous">
-    @vite(['resources/css/app.css', 'resources/css/app.scss', 'resources/js/app.js', 'resources/js/util.js'])
+    @vite(['resources/css/app.css', 'resources/css/app.scss'])
 </head>
 
 <body class="md:flex">
@@ -91,6 +90,10 @@
         </div>
     </main>
 
+    {{-- <div class="app-notification bg-red-500 text-white">
+        <p>Hello world</p>
+    </div> --}}
+
     {{-- Global modal for displaying content --}}
     <div id="global-overlay" class="fixed inset-0 bg-black/40 hidden z-50"></div>
     <div id="global-content-slide"
@@ -105,14 +108,11 @@
         </div>
     </div>
 
+    <div id="notifications" class="fixed top-4 right-4 flex flex-col gap-2 z-[1000]"></div>
 
-    {{-- <aside id="noticeboard" class="col-span-3 sm:max-w-[20%] p-1">
-        <h3>Notifications</h3>
-        <div class="px">
-            @livewire('get-notifications', ['user' => auth()->user()])
-        </div>
-    </aside> --}}
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"
+        integrity="sha512-6BTOlkauINO65nLhXhthZMtepgJSghyimIalb+crKRPhvhmsCdnIuGcVbR5/aQY2A+260iC1OPy1oCdB6pSSwQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -121,12 +121,37 @@
         src="https://cdn.datatables.net/v/dt/dt-2.3.4/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/r-3.0.7/datatables.min.js"
         integrity="sha384-N+pTNAj6u3zQeBQuZo/qd20fG6LAD0KVj49eFU9robOJpS7LYXJn/vy7zoXayWW6" crossorigin="anonymous">
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"
-        integrity="sha512-6BTOlkauINO65nLhXhthZMtepgJSghyimIalb+crKRPhvhmsCdnIuGcVbR5/aQY2A+260iC1OPy1oCdB6pSSwQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @vite(['resources/js/app.js', 'resources/js/util.js'])
     @livewireScripts
 
+    <script>
+        $(document).ready(() => {
+            function displayNotification(data) {
+                const el = document.createElement(`div`);
+                el.textContent = data.message;
+                el.classList.add(...data.bg, 'app-notification');
+
+                document.querySelector("#notifications").appendChild(el);
+
+                setTimeout(() => {
+                    el.classList.add("fade-out");
+                }, 3000);
+
+                setTimeout(() => {
+                    el.remove();
+                }, 3300);
+            }
+
+            Echo.channel('department.{{ auth()->user()->department_id }}').listen('NotificationSent', (e) => {
+                displayNotification(e);
+            });
+            Echo.private('user.{{ auth()->user()->id }}').listen('.UserEvent', (e) => {
+                displayNotification(e);
+            });
+        });
+    </script>
     <script src="{{ asset('js/util.js') }}"></script>
+
     @stack('scripts')
 </body>
 

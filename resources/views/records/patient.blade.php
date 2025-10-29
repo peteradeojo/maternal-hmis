@@ -121,12 +121,10 @@
                     axios.get("{{ route('records.new-anc', $patient) }}").then(({
                         data
                     }) => {
-                        console.log(data);
-
                         a.find("#global-modal-content").html(data);
                     }).catch((err) => {
                         a.find("#global-modal-content").html(err.response.data);
-                    }); //.finally(() => window.livewire.rescan());
+                    });
                 });
             });
 
@@ -151,8 +149,6 @@
 
             $("#close-anc-profile").on("click", function() {
                 useGlobalModal((a) => {
-                    console.log(this);
-
                     a.find("#global-modal-title").text("Close Antenatal Profile")
                     axios.get("{{ route('records.close-anc', ':profile') }}".replace(":profile", $(
                         this).attr('data-id'))).then(({

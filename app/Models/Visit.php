@@ -21,6 +21,7 @@ class Visit extends Model
         'visit_id',
         'status',
         'patient_id',
+        'consultant_id',
         'awaiting_vitals',
         'awaiting_doctor',
         'awaiting_lab_results',
@@ -122,31 +123,6 @@ class Visit extends Model
     {
         return $this->vitals();
     }
-
-    // public function notes()
-    // {
-    //     return $this->morphMany(ConsultationNote::class, 'visit');
-    // }
-
-    // public function diagnoses()
-    // {
-    //     return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
-    // }
-
-    // public function tests()
-    // {
-    //     return $this->morphMany(DocumentationTest::class, 'testable');
-    // }
-
-    // public function prescriptions()
-    // {
-    //     return $this->morphMany(DocumentationPrescription::class, 'event');
-    // }
-
-    // public function imagings()
-    // {
-    //     return $this->morphMany(PatientImaging::class, 'documentable');
-    // }
 
     public function getWaitingForDoctorAttribute() {
         $b = ($this->visit->tests()->where('results', '!=', null)->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;

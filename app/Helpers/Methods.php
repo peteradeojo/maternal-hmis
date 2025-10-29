@@ -2,6 +2,7 @@
 
 use App\Enums\AncCategory;
 use App\Enums\Department;
+use Illuminate\Support\Facades\Broadcast;
 
 function departmentRoutes()
 {
@@ -110,3 +111,13 @@ function resolve_render($value, $mode = null)
             return $value->format('Y-m-d h:i A');
     }
 }
+
+function sendUserMessage($message)
+{
+    Broadcast::private("user." . auth()->user()->id)
+        ->as("UserEvent")
+        ->with($message)
+        ->send();
+}
+
+function sendDepartmentMessage($message) {}
