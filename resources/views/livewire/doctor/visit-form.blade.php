@@ -200,7 +200,7 @@
 
 @script
     <script>
-        asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit->visit]) }}", async (e, res) => {
+        asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
             const data = await res.json();
             console.log(data);
         });
