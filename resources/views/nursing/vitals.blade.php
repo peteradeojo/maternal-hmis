@@ -25,8 +25,16 @@
 @push('scripts')
     <script defer>
         let dataTable = $("#table").DataTable({
+            serverSide: true,
+            ajax: {
+                url: "{{route('api.nursing.vitals')}}",
+                headers: {
+                    "Accept": "application/json",
+                }
+            },
             language: {
                 emptyTable: 'No results',
+                searchPlaceholder: "Name, card number",
             },
             columns: [{
                     data: 'patient.name'
@@ -40,7 +48,7 @@
                 {
                     data: ({
                         created_at
-                    }) => new Date(created_at).toLocaleString('en-GB'),
+                    }) => new Date(created_at).toLocaleString('en-CA'),
                 },
                 {
                     data: (row) =>
@@ -59,7 +67,6 @@
                     return response.data;
                 })
                 .catch(error => console.error('Error fetching data:', error));
-
         }
 
         function updateDataTable(newData) {
@@ -79,9 +86,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            getUpdate().then(() => {
-                startPolling();
-            });
+            // getUpdate().then(() => {
+                // startPolling();
+            // });
         });
     </script>
 @endpush

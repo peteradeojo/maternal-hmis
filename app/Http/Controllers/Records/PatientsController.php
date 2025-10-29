@@ -213,6 +213,8 @@ class PatientsController extends Controller
             'patient_id' => $patient->id,
             'visit_type' => $subVisit::class,
             'visit_id' => $subVisit->id,
+            'awaiting_vitals' => 1,
+            'awaiting_doctor' => 1,
         ]);
 
         return response()->json([

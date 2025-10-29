@@ -20,7 +20,13 @@ class PatientsController extends Controller
 
     public function getPendingVitals(Request $request)
     {
-        return $this->dataTable($request, Vitals::getPendingVitalVisits(), []);
+        return $this->dataTable($request, Vitals::getPendingVitalVisits(), [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($query) use ($search) {
+                    $query->where('name', 'like', "$search%")->orWhere('card_number', "like", "$search%");
+                });
+            },
+        ]);
     }
 
     public function getAncBookings(Request $request)

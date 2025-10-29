@@ -26,12 +26,15 @@ class Controller extends BaseController
             }
         });
 
+
         $data = [
-            'data' => $results->clone()->skip($start)->limit($length)->get(),
+            'data' => $results->clone()->skip($start)->limit($length)->get()->toArray(),
             'recordsTotal' => $builder->count(),
             'recordsFiltered' => $results->count(),
             'draw' => (int) $request->input('draw'),
         ];
+
+        // dd($data);
 
         return response()->json($data);
     }
