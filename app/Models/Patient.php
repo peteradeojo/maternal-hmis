@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\Gender;
+use App\Enums\MaritalStatus;
+use App\Enums\Religion;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,9 +16,26 @@ class Patient extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'card_number', 'name', 'gender', 'phone', 'email', 'address', 'dob', 'marital_status',
-        'occupation', 'religion', 'tribe', 'place_of_origin', 'nok_name', 'nok_phone',
-        'nok_address', 'spouse_name', 'spouse_phone', 'spouse_occupation', 'spouse_educational_status', 'category_id'
+        'card_number',
+        'name',
+        'gender',
+        'phone',
+        'email',
+        'address',
+        'dob',
+        'marital_status',
+        'occupation',
+        'religion',
+        'tribe',
+        'place_of_origin',
+        'nok_name',
+        'nok_phone',
+        'nok_address',
+        'spouse_name',
+        'spouse_phone',
+        'spouse_occupation',
+        'spouse_educational_status',
+        'category_id'
     ];
 
     protected $casts = [
@@ -33,8 +52,23 @@ class Patient extends Model
         });
     }
 
-    public function getAncProfileAttribute() {
+    public function getAncProfileAttribute()
+    {
         return $this->antenatalProfiles[0];
+    }
+
+    protected function maritalstatus(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value != 0 ? MaritalStatus::tryFrom($value)?->name ?? "Unknown" : "Unknown",
+        );
+    }
+
+    protected function religion(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value != 0 ? Religion::tryFrom($value)?->name ?? "Unknown" : "Unknown",
+        );
     }
 
     public static function generateCardNumber($category)
@@ -72,19 +106,23 @@ class Patient extends Model
         return $this->hasMany(Documentation::class)->limit(10)->latest();
     }
 
-    public function insurance() {
-        return $this->hasOne(InsuranceProfiles::class, 'patient_id');
+    public function insurance()
+    {
+        return $this->hasMany(InsuranceProfiles::class, 'patient_id');
     }
 
-    public function visits() {
+    public function visits()
+    {
         return $this->hasMany(Visit::class, 'patient_id')->latest();
     }
 
-    public function notes () {
+    public function notes()
+    {
         return $this->hasMany(ConsultationNote::class, 'patient_id');
     }
 
-    public function scans() {
+    public function scans()
+    {
         return $this->hasMany(PatientImaging::class, 'patient_id');
     }
 }

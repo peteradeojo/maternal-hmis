@@ -19,12 +19,19 @@ class Controller extends BaseController
         $start = $request->query('start', 0);
         $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
 
+        $order = $request->input('order');
         $results = $builder->clone();
         $results = $results->where(function ($query) use ($search, $searchableColumns) {
             foreach ($searchableColumns as $column) {
                 $column($query, $search);
             }
         });
+
+        foreach($order ?? [] as $o) {
+            if ($o['name'] != null) {
+                $results = $results->orderBy($o['name'], $o['dir']);
+            }
+        }
 
 
         $data = [

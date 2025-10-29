@@ -1,5 +1,5 @@
 .form-control {
-    // display: block;
+    display: block;
     // width: 100%;
     // padding: 6px 4px;
     // border-radius: 5px;
@@ -11,7 +11,7 @@
         outline-color: #333;
     }
 
-    @apply rounded-none w-full;
+    @apply rounded-none w-full px-1 py-1.5;
 }
 
 input.form-control:read-only {

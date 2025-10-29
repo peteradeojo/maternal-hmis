@@ -19,6 +19,8 @@ class PatientSearch extends Component
     public function mount()
     {
         $this->categories = PatientCategory::all();
+
+        $this->search();
     }
 
     public function render()
@@ -28,12 +30,19 @@ class PatientSearch extends Component
 
     public function search()
     {
-        if (empty($this->searchNumber) && empty ($this->searchName)) {
-            $this->searchResults = [];
+        $autoSearch = empty($this->searchNumber) && empty($this->searchName);
+        $query = Patient::with(['category']);
+
+        if ($autoSearch) {
+            $query->latest(); //->limit(20)->get();
+            if (!empty($this->category)) {
+                $query->whereHas('category', function ($q) {
+                    $q->where('name', $this->category);
+                });
+            }
+            $this->searchResults = $query->limit(20)->get();
             return;
         }
-
-        $query = Patient::with(['category']);
 
         if (!empty($this->searchName)) {
             $query->where('name', 'like', "%{$this->searchName}%");

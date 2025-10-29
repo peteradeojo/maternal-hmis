@@ -88,7 +88,7 @@ function initTab(el) {
     });
 }
 
-function asyncForm(form, route, callback = (e, data) => {}) {
+function asyncForm(form, route, callback = (e, data) => { }) {
     $(form).on("submit", (e) => {
         e.preventDefault();
         fetch(route, {
@@ -105,4 +105,20 @@ function asyncForm(form, route, callback = (e, data) => {}) {
                 console.error(err);
             });
     });
+}
+
+function useGlobalModal(callback) {
+    $("#global-overlay").removeClass("hidden");
+    $("#global-content-slide").removeClass("translate-x-full");
+
+    callback($("#global-content-slide"));
+}
+
+$('#closeGlobalModal, #global-overlay').on('click', function () {
+    removeGlobalModal();
+});
+
+function removeGlobalModal() {
+    $("#global-content-slide").addClass("translate-x-full");
+    setTimeout(() => $("#global-overlay").addClass("hidden"), 300);
 }

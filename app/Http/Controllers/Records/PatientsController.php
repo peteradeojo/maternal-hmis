@@ -22,9 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
-    public function __construct(private PatientService $patientService)
-    {
-    }
+    public function __construct(private PatientService $patientService) {}
 
     public function index()
     {
@@ -116,35 +114,10 @@ class PatientsController extends Controller
 
     public function getPatients(Request $request)
     {
-        Carbon::now()->diffForHumans();
-        // CarbonInterface::DIFF
-        // $length = $request->query('length', 10);
-        // $start = $request->query('start', 0);
-
-        $patientData = Patient::with('category')->latest();
-
-        // $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
-
-        // $results = $patientData->clone();
-        // if ($search) {
-        //     $results = $results->where('name', "like", "$search%")->orWhere("card_number", "like", "%$search%");
-        // }
-
-        // $data = [
-        //     'data' => $results->clone()->skip($start)->take($length)->get(),
-        //     'recordsTotal' => Patient::count(),
-        //     'recordsFiltered' => $results->count(),
-        //     'draw' => (int) $request->input('draw'),
-        // ];
-
-        // return response()->json($data);
-        return $this->dataTable($request, $patientData, [
+        return $this->dataTable($request, Patient::with('category')->latest(), [
             function ($query, $search) {
-                $query->where('name', 'like', "%$search%");
+                $query->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%")->orWhere('phone', 'like', "$search%");
             },
-            function ($query, $search) {
-                $query->orWhere('card_number', 'like', "$search%");
-            }
         ]);
     }
 
@@ -177,6 +150,10 @@ class PatientsController extends Controller
 
     public function checkIn(Request $request, Patient $patient)
     {
+        if (!$request->isMethod('POST')) {
+            return view('records.check-in', compact('patient'));
+        }
+
         /**
          * @var Department
          */
@@ -191,7 +168,7 @@ class PatientsController extends Controller
             ]);
         }
 
-        if ($request->query('mode') == 'anc') {
+        if ($request->input('mode') == 'anc') {
             $ancProfile = AntenatalProfile::where('patient_id', $patient->id)->where('status', Status::active->value)->latest()->first();
             if (!$ancProfile) {
                 return response()->json([
@@ -250,4 +227,6 @@ class PatientsController extends Controller
         $visit->checkOut($request->has('force'));
         return redirect()->route('dashboard');
     }
+
+    
 }

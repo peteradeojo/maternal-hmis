@@ -31,6 +31,12 @@ class AntenatalProfile extends Model
         'presentation_relationship',
         'status',
         'risk_assessment',
+
+        // closing
+        'closed_on',
+        'closed_by',
+        'closed_date',
+        'close_reason',
     ];
 
     protected $casts = [

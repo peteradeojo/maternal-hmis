@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Antenatal;
 use App\Http\Controllers\Records\AdmissionsController;
 use App\Http\Controllers\Records\HistoryController;
 use App\Http\Controllers\Records\PatientsController;
@@ -22,4 +23,13 @@ Route::name('records.')->prefix('/records')->group(function () {
     Route::prefix('admissions')->name('admissions')->group(function () {
         Route::get('/', [AdmissionsController::class, 'index']);
     });
+
+    // Antenatal
+    Route::get('/antenatal/new/{patient}', [Antenatal::class, 'create'])->name('new-anc');
+    Route::post('/antenatal/new/{patient}', [Antenatal::class, 'create'])->middleware(['datalog'])->name('new-anc');
+
+    Route::match(['GET', 'DELETE'], '/antenatal/{profile}/close', [Antenatal::class, 'closeProfile'])->middleware(['datalog'])->name('close-anc');
+
+    // Visits
+    Route::get('/create-visit/{patient}', [PatientsController::class, 'checkIn'])->name('start-visit');
 });

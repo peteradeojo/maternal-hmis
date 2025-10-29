@@ -53,7 +53,7 @@
                     <tbody>
                         @foreach ($visits as $v)
                             <tr>
-                                <td>{{ $v->patient->name }}</td>
+                                <td><a href="{{route('records.patient', $v->patient)}}" class="link">{{ $v->patient->name }}</a></td>
                                 <td>{{ $v->patient->card_number }}</td>
                                 <td>{{ $v->patient->category->name }}</td>
                                 <td>{{ $v->patient->gender_value[0] }}</td>

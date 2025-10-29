@@ -92,7 +92,7 @@
     }
 
     .card {
-        @apply px-1 py-2;
+        @apply px-1 py-2 mb-4;
     }
 
     .btn-sm {
@@ -129,11 +129,11 @@
     @import "components/forms";
     @import "components/buttons";
     @import "components/modals";
-    @import "components/spacings";
+    // @import "components/spacings";
 }
 
 ::root {
-    font-size: 16px;
+    font-size: 12px;
     scroll-behavior: smooth;
 }
 
@@ -148,19 +148,23 @@
         }
     }
 
-    .foldable-header *::after {
-        content: " (Click to view)";
-        font-size: small;
+    .foldable-header {
+        h1::after,
+        h2::after,
+        h3::after,
+        h4::after,
+        h5::after,
+        p::after
+         {
+            content: " (Click to view)";
+            font-size: small;
+        }
         // vertical-align: middle;
     }
 
     .foldable-header {
         cursor: pointer;
     }
-}
-
-p {
-    max-width: 100%;
 }
 
 .card {
