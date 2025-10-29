@@ -120,7 +120,7 @@ class Visit extends Model
 
     public function svitals()
     {
-        return $this->morphOne(Vitals::class, 'recordable');
+        return $this->vitals();
     }
 
     // public function notes()
