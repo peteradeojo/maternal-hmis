@@ -45,8 +45,6 @@
                 <div class="pt-1"></div>
                 <p><b>Examinations</b></p>
 
-                @dump($visit)
-
                 <div class="p-1 bg-gray-100">
                     @unless ($visit->examination || $visit->visit->examination)
                         <p>No examination was conducted.</p>
