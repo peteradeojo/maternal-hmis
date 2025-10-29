@@ -26,7 +26,8 @@
                         <th>Duration</th>
                         <th></th>
                     </tr>
-                    @forelse ($v->histories as $h)
+
+                    @forelse ($visit->histories as $h)
                         <tr>
                             <td>{{ $h->presentation }}</td>
                             <td>{{ $h->duration }}</td>

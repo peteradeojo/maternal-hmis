@@ -136,26 +136,26 @@
     <div class="modal hide" id="history-modal">
         <div class="content p-3 bg-white">
             <p class="text-xl bold">Add History</p>
-            <div class="py-3"></div>
-            <div class="flex gap-x-3">
-                <div>
-                    <input type="text" class="form-control" list="histories" placeholder="Presentation"
-                        wire:model="historyForm.presentation" />
-                    @error('historyForm.presentation')
-                        <span class="error text-xs text-red-600">{{ $message }}</span>
-                    @enderror
-                </div>
+            <form wire:submit.prevent="addHistory" class="py-3">
+                <div class="flex gap-x-3 py-3">
+                    <div>
+                        <input type="text" class="form-control" list="histories" placeholder="Presentation"
+                            wire:model="historyForm.presentation" />
+                        @error('historyForm.presentation')
+                            <span class="error text-xs text-red-600">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                <div>
-                    <input type="text" class="form-control" placeholder="Duration"
-                        wire:model="historyForm.duration" />
-                    @error('historyForm.duration')
-                        <span class="error text-xs text-red-600">{{ $message }}</span>
-                    @enderror
+                    <div>
+                        <input type="text" class="form-control" placeholder="Duration"
+                            wire:model="historyForm.duration" />
+                        @error('historyForm.duration')
+                            <span class="error text-xs text-red-600">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
-            </div>
-            <div class="py-1"></div>
-            <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
+                <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
+            </form>
         </div>
     </div>
 
