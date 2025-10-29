@@ -30,7 +30,7 @@ class VitalsController extends Controller
             'height' => 'nullable|numeric',
         ]);
 
-        $visit->visit->vitals()->create($request->except('_token', 'respiratory_rate') + [
+        $visit->vitals()->create($request->except('_token', 'respiratory_rate') + [
             'respiration' => $request->respiratory_rate,
             'recording_user_id' => auth()->user()->id,
         ]);

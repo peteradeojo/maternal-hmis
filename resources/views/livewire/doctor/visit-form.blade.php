@@ -33,7 +33,8 @@
                 @else
                     <div class="tab">
                         <p class="bold mt-4 mb-1 text-xl header">Vitals</p>
-                        @isset($visit->svitals)
+                        {{-- @dump($visit->visit->vitals) --}}
+                        @isset($visit->vitals)
                             <div class="grid grid-cols-2">
                                 <p><b>Weight</b>: {{ $visit->svitals->weight }} kg</p>
                                 <p><b>Blood Pressure</b>: {{ $visit->svitals->blood_pressure }} mmHg</p>

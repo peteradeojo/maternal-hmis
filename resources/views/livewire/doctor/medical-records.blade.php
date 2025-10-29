@@ -7,7 +7,7 @@
             @endphp
             <div class="border-2 border-red-300 p-1">
                 <div class="flex justify-between">
-                    <p>Date: {{ $v->created_at->format('Y-m-d h:i A') }}</p>
+                    <p>Date: {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
                     <div class="flex gap-x-3">
                         @if ($i == 0)
                             <a href="{{ route('doctor.admit', ['visit' => $visit]) }}"

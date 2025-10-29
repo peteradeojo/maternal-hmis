@@ -59,36 +59,5 @@
             order: [[3, 'desc']],
             responsive: true,
         });
-
-        function fetchUpdatedData() {
-            return window.axios.get("{{ route('api.nursing.vitals') }}")
-                .then(response => {
-                    console.log('Fetched data:', response.data);
-                    return response.data;
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function updateDataTable(newData) {
-            dataTable.clear();
-            dataTable.rows.add(newData.data);
-            dataTable.draw();
-        }
-
-        function getUpdate() {
-            return fetchUpdatedData().then(newData => {
-                updateDataTable(newData);
-            });
-        }
-
-        function startPolling(interval = 30000) {
-            setInterval(getUpdate, interval);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // getUpdate().then(() => {
-                // startPolling();
-            // });
-        });
     </script>
 @endpush
