@@ -13,6 +13,7 @@ use App\Models\PatientImaging;
 use App\Models\Visit;
 use App\Models\Vitals;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use stdClass;
 
 trait HasVisitData
 {
@@ -26,9 +27,12 @@ trait HasVisitData
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function addPrescription(Patient $patient, Product $product, PrescriptionDto $data, $event)
+    public function addPrescription(Patient $patient, $product, PrescriptionDto $data, $event)
     {
-        dd($product, $data, $event);
+        if ($product instanceof stdClass) {
+            $product = new Product((array) $product);
+            $product->save();
+        }
 
         return $this->prescriptions()->create([
             'patient_id' => $patient->id,
