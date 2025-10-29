@@ -54,8 +54,6 @@ class PatientCheckIn extends Component
     {
         $this->validate();
 
-        $user = auth()->user();
-
         if ($this->patient->visits->count() > 0 && $this->patient->visits[0]?->status == Status::active->value) {
             sendUserMessage([
                 'message' => "Last visit for {$this->patient->card_number} is still active.",
@@ -75,13 +73,6 @@ class PatientCheckIn extends Component
 
         if (is_a($subVisit, AncVisit::class)) {
             if ($this->patient->anc_profile->status != Status::active->value) {
-                // Broadcast::private('user.' . $this->user->id)
-                //     ->as('UserEvent')
-                //     ->with([
-                //         'message' => "Patient does not have an active antenatal profile. Please create one.",
-                //         'bg' => ['bg-blue-700', 'text-white'],
-                //     ])
-                //     ->send();
                 sendUserMessage(
                     [
                         'message' => "Patient does not have an active antenatal profile. Please create one.",
@@ -92,8 +83,8 @@ class PatientCheckIn extends Component
             }
 
             $subVisit->antenatal_profile_id = $this->patient->anc_profile?->id;
-            $subVisit->save();
         }
+        $subVisit->save();
 
         $visit = new Visit([
             'patient_id' => $this->patient->id,
@@ -107,17 +98,18 @@ class PatientCheckIn extends Component
 
         $visit->save();
 
-        Broadcast::on("user.{$this->user->id}")->with([
+        sendUserMessage([
             'message' => "Consultation started for {$this->patient->card_number}",
             'bg' => ['bg-blue-200'],
-        ])->as('UserEvent')->send();
+            'close_modal' => true
+        ]);
 
-        NotificationSent::dispatch(Department::NUR->value, [
+        broadcastToDepartment(Department::NUR->value, [
             'message' => "Consultation started for {$this->patient->card_number}",
             'bg' => ['bg-green-400', 'text-white'],
         ]);
 
-        NotificationSent::dispatch(Department::DOC->value, [
+        broadcastToDepartment(Department::DOC->value, [
             'message' => "Consultation started for {$this->patient->card_number}",
             'bg' => ['bg-green-400', 'text-white'],
         ]);

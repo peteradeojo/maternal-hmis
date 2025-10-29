@@ -129,9 +129,13 @@
             function displayNotification(data) {
                 const el = document.createElement(`div`);
                 el.textContent = data.message;
-                el.classList.add(...data.bg, 'app-notification');
+                el.classList.add(...(data.bg), 'app-notification');
 
                 document.querySelector("#notifications").appendChild(el);
+
+                if (data.close_modal) {
+                    removeGlobalModal();
+                }
 
                 setTimeout(() => {
                     el.classList.add("fade-out");
@@ -143,7 +147,7 @@
             }
 
             Echo.channel('department.{{ auth()->user()->department_id }}').listen('NotificationSent', (e) => {
-                displayNotification(e);
+                displayNotification(e.message);
             });
             Echo.private('user.{{ auth()->user()->id }}').listen('.UserEvent', (e) => {
                 displayNotification(e);

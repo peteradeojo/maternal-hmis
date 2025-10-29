@@ -2,6 +2,7 @@
 
 use App\Enums\AncCategory;
 use App\Enums\Department;
+use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Broadcast;
 
 function departmentRoutes()
@@ -120,4 +121,6 @@ function sendUserMessage($message)
         ->send();
 }
 
-function sendDepartmentMessage($message) {}
+function broadcastToDepartment($departmentId, $message) {
+    broadcast(new NotificationSent($departmentId, $message))->toOthers();
+}

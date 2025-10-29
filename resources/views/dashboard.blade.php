@@ -38,8 +38,10 @@
 
 @push('scripts')
     <script defer>
-        window.axios.get("/sanctum/csrf-cookie");
-        $("table#prescriptions").DataTable();
+        $(document).ready(() => {
+            window.axios.get("/sanctum/csrf-cookie");
+            $("table#prescriptions").DataTable();
+        })
     </script>
 @endpush
 

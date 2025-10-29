@@ -54,7 +54,7 @@ class Patient extends Model
 
     public function getAncProfileAttribute()
     {
-        return $this->antenatalProfiles[0];
+        return $this->antenatalProfiles->count() > 0 ? $this->antenatalProfiles[0] : null;
     }
 
     protected function maritalstatus(): Attribute
