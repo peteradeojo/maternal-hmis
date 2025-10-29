@@ -42,20 +42,24 @@
 
                 </table>
 
-                {{-- Examinations --}}
                 <div class="pt-1"></div>
                 <p><b>Examinations</b></p>
 
+                @dump($visit)
+
                 <div class="p-1 bg-gray-100">
-                    @unless ($visit->examination)
+                    @unless ($visit->examination || $visit->visit->examination)
                         <p>No examination was conducted.</p>
                     @else
+                        @php
+                            $exam = $visit->examination ?? $visit->visit->examination;
+                        @endphp
                         <div>
                             <p><b>General</b></p>
-                            <p>{{ $visit->examination->general }}</p>
+                            <p>{{ $exam->general }}</p>
                         </div>
 
-                        @foreach ($visit->examination->specifics as $k => $sp)
+                        @foreach ($exam->specifics as $k => $sp)
                             <div>
                                 <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
                                 <p>{{ $sp }}</p>
