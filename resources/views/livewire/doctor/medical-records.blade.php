@@ -1,10 +1,7 @@
 <div wire:poll.3000ms>
     {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
-    @for ($i = 0; $i < $visit->patient->visits->count(); $i++)
+    @foreach ($visit->patient->visits->slice(0, 5) as $i => $visit)
         <div class="py-2">
-            @php
-                $v = $visit->patient->visits[$i]->visit;
-            @endphp
             <div class="border-2 border-red-300 p-1">
                 <div class="flex justify-between">
                     <p>Date: {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
@@ -39,7 +36,6 @@
                             <td colspan="2">No history</td>
                         </tr>
                     @endforelse
-
                 </table>
 
                 <div class="pt-1"></div>
@@ -68,7 +64,7 @@
 
                 <div class="pt-1"></div>
                 <p><b>Notes</b></p>
-                @forelse ($v->notes->slice(0,10) as $note)
+                @forelse ($visit->notes->slice(0,10) as $note)
                     <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
                         <p>{{ $note->note }}</p>
                         <div class="text-xs">
@@ -136,7 +132,7 @@
                 </div>
             </div>
         </div>
-    @endfor
+    @endforeach
 </div>
 
 @script
