@@ -192,6 +192,7 @@ class AdmissionsController extends Controller
 
         $admission->discharged_on = now();
         $admission->status = Status::closed->value;
+        $admission->deleted_at = now();
         $admission->save();
 
         $ward = $admission->ward;
