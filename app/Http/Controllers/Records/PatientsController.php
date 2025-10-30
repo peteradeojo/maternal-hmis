@@ -135,7 +135,6 @@ class PatientsController extends Controller
         }
 
         $data = $request->except('_token');
-        // dd($data);
         DB::beginTransaction();
         try {
             $patient->update($data);
@@ -228,5 +227,5 @@ class PatientsController extends Controller
         return redirect()->route('dashboard');
     }
 
-    
+
 }

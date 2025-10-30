@@ -97,13 +97,13 @@
     {{-- Global modal for displaying content --}}
     <div id="global-overlay" class="fixed inset-0 bg-black/40 hidden z-50"></div>
     <div id="global-content-slide"
-        class="fixed top-0 right-0 h-full max-w-[600px] w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
+        class="fixed top-0 right-0 h-dvh overflow-y-auto max-w-[600px] w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
 
-        <div class="p-4 border-b flex justify-between items-center">
+        <div class="p-4 border-b flex justify-between items-center sticky bg-white top-0">
             <h2 class="text-lg font-semibold" id="global-modal-title">Modal Title</h2>
             <button id="closeGlobalModal" class="text-gray-600">&times;</button>
         </div>
-        <div class="p-4 max-h-full overflow-auto" id="global-modal-content">
+        <div class="px-4 py-8 h-fit" id="global-modal-content">
             <p>Modal content goes here.</p>
         </div>
     </div>

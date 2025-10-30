@@ -130,7 +130,14 @@
 
             $("#edit-patient").on("click", () => {
                 useGlobalModal(async (a) => {
-
+                    a.find("#global-modal-title").text("Edit Patient Information");
+                    axios.get("{{ route('records.patient.edit', $patient) }}").then(({
+                        data
+                    }) => {
+                        a.find("#global-modal-content").html(data);
+                    }).catch((err) => {
+                        a.find("#global-modal-content").html(err.response.data);
+                    });
                 });
             });
 

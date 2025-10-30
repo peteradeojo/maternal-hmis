@@ -6,35 +6,37 @@
 
 <div class="form-group">
     <label for="card_number">Card Number</label>
-    <input type="text" name="card_number" id="card_number" value="{{ old('card_number') ?? $patient?->card_number }}" class="form-control" />
+    <input type="text" name="card_number" id="card_number" value="{{ old('card_number') ?? $patient?->card_number }}"
+        @isset($patient)
+        readonly
+    @endisset class="form-control" />
 </div>
 <div class="form-group">
     <label for="name">Name *</label>
-    <input type="text" name="name" id="name" class="form-control" value="{{ old('name') ?? $patient?->name }}" required />
+    <input type="text" name="name" id="name" class="form-control" value="{{ old('name') ?? $patient?->name }}"
+        required />
 </div>
 <div class="form-group">
     <label for="gender">Gender</label>
     <select name="gender" id="gender" class="form-control" required="required">
-        <option value="0" @if ($patient?->gender == 0)
-            selected
-        @endif>Female</option>
-        <option value="1" @if ($patient?->gender == 1)
-            selected
-        @endif>Male</option>
+        <option value="0" @if ($patient?->gender == 0) selected @endif>Female</option>
+        <option value="1" @if ($patient?->gender == 1) selected @endif>Male</option>
     </select>
 </div>
 <div class="form-group">
     <label for="dob">Date of Birth</label>
-    <input type="date" name="dob" id="dob" class="form-control" value="{{ old('dob') ?? ($patient?->dob?->format('Y-m-d')) }}"
-        max="{{ date('Y-m-d') }}" />
+    <input type="date" name="dob" id="dob" class="form-control"
+        value="{{ old('dob') ?? $patient?->dob?->format('Y-m-d') }}" max="{{ date('Y-m-d') }}" />
 </div>
 <div class="form-group">
     <label for="phone">Phone</label>
-    <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') ?? $patient?->phone }}" />
+    <input type="text" name="phone" id="phone" class="form-control"
+        value="{{ old('phone') ?? $patient?->phone }}" />
 </div>
 <div class="form-group">
     <label for="email">E-mail</label>
-    <input type="email" name="email" id="email" class="form-control" value="{{ old('email') ?? $patient?->email }}" />
+    <input type="email" name="email" id="email" class="form-control"
+        value="{{ old('email') ?? $patient?->email }}" />
 </div>
 <div class="form-group">
     <label for="address">Address</label>
@@ -47,7 +49,8 @@
 </div>
 <div class="form-group">
     <label for="tribe">Tribe</label>
-    <input type="text" name="tribe" id="tribe" class="form-control" value="{{ old('tribe') ?? $patient?->tribe }}" />
+    <input type="text" name="tribe" id="tribe" class="form-control"
+        value="{{ old('tribe') ?? $patient?->tribe }}" />
 </div>
 <div class="form-group">
     <label for="marital_status">Marital Status</label>
@@ -60,7 +63,8 @@
 </div>
 <div class="form-group">
     <label for="occupation">Occupation</label>
-    <input type="text" name="occupation" id="occupation" class="form-control" value="{{ old('occupation') ?? $patient?->occupation }}" />
+    <input type="text" name="occupation" id="occupation" class="form-control"
+        value="{{ old('occupation') ?? $patient?->occupation }}" />
 </div>
 <div class="form-group">
     <label for="religion">Religion</label>
