@@ -19,6 +19,11 @@ class Vitals extends Model
         'pulse',
         'respiration',
         'recording_user_id',
+        'recorded_date',
+    ];
+
+    protected $casts = [
+        'recorded_date' => 'datetime',
     ];
 
     public function recordable()

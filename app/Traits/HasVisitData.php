@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Patient;
 use App\Models\Product;
 use App\Dto\PrescriptionDto;
+use App\Interfaces\OperationalEvent;
 use App\Models\ConsultationNote;
 use App\Models\DocumentationPrescription;
 use App\Models\DocumentationTest;
@@ -29,7 +30,7 @@ trait HasVisitData
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function addPrescription(Patient $patient, $product, PrescriptionDto $data, $event)
+    public function addPrescription(Patient $patient, $product, mixed $data, OperationalEvent $event)
     {
         if ($product instanceof stdClass) { // product was newly created triggers this behavior
             $product = new Product((array) $product);

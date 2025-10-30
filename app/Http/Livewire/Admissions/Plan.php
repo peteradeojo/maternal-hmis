@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admissions;
 
+use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionPlan;
 use App\Models\DocumentationTest;
@@ -57,12 +58,36 @@ class Plan extends Component
 
     public function addPrescription($data)
     {
-        $this->plans[] = $data;
+        if (empty($this->admission)) {
+            $this->plans[] = $data['product'];
+            return;
+        }
+
+        $product = Product::find($data['product']['id']);
+
+        if (empty($product)) {
+            $product = (object) ($data['product']);
+        }
+
+        $this->admission->plan->addPrescription($this->admission->patient, $product, (object) $data, $this->admission->plan);
+
+        $this->admission->refresh();
+        $this->plans = $this->admission->plan->treatments;
     }
 
-    public function removePlanItem($id)
+    public function removePlanItem($id, $index = null)
     {
-        $this->plans = array_slice($this->plans, 0, $id) + array_slice($this->plans, $id + 1, count($this->plans));
+        if (empty($this->admission)) {
+            unset($this->plans[$id]);
+            $this->plans = array_values($this->plans);
+            return;
+        }
+
+        $this->admission->plan->treatments()->where('id', $index)->delete();
+        $this->admission->refresh();
+
+        $this->plans = $this->admission->plan->treatments;
+        // $this->admission->plan->refresh();
     }
 
     public function savePlan()
@@ -100,6 +125,7 @@ class Plan extends Component
                         'requested_by' => auth()->user()->id,
                         'frequency' => $p['frequency'],
                         'route' => $p['route'],
+                        'status' => Status::active->value,
                     ]);
                 }
 
@@ -143,16 +169,56 @@ class Plan extends Component
 
     public function addTest($data)
     {
-        if ($this->tests->doesntContain("id", '=', $data['id'])) {
-            $this->tests->add($data);
+        if (empty($this->admission)) {
+            if ($this->tests->doesntContain("id", '=', $data['id'])) {
+                $this->tests->add($data);
+            }
+
+            return;
+        } else {
+            $this->admission->plan->tests()->firstOrCreate([
+                'describable_type' => Product::class,
+                'describable_id' => $data['id'],
+                'patient_id' => $this->admission->patient_id,
+                'name' => $data['name'],
+                'status' => Status::pending->value,
+            ], [
+                'describable_type' => Product::class,
+                'describable_id' => $data['id'],
+                'patient_id' => $this->admission->patient_id,
+                'name' => $data['name'],
+            ]);
+
+            $this->admission->refresh();
+            $this->tests = $this->admission->plan->tests;
         }
     }
 
     public function addInvestigation($data)
     {
-        if ($this->investigations->doesntContain("id", "=", $data["id"])) {
-            $this->investigations->add($data);
+        if (empty($this->admission)) {
+            if ($this->investigations->doesntContain("id", "=", $data['id'])) {
+                $this->investigations->add($data);
+            }
+            return;
         }
+
+        $this->admission->plan->scans()->firstOrCreate([
+            'describable_type' => Product::class,
+            'describable_id' => $data['id'],
+            'patient_id' => $this->admission->patient_id,
+            'name' => $data['name'],
+            'status' => Status::pending->value,
+        ], [
+            'describable_type' => Product::class,
+            'describable_id' => $data['id'],
+            'patient_id' => $this->admission->patient_id,
+            'name' => $data['name'],
+            'requested_by' => auth()->user()->id,
+        ]);
+
+        $this->admission->refresh();
+        $this->investigations = $this->admission->plan->scans;
     }
 
     public function removeTest($id)
