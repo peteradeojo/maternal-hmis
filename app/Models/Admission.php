@@ -8,10 +8,11 @@ use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Admission extends Model implements InterfacesDocumentable
 {
-    use HasFactory, Documentable, HasVisitData;
+    use HasFactory, Documentable, HasVisitData, SoftDeletes;
 
     protected $guarded = [];
 
@@ -43,8 +44,7 @@ class Admission extends Model implements InterfacesDocumentable
         return $this->morphTo();
     }
 
-    public function vitals()
-    {
+    final public function vitals() {
         return $this->morphMany(Vitals::class, 'recordable');
     }
 
@@ -56,10 +56,6 @@ class Admission extends Model implements InterfacesDocumentable
     public function plans()
     {
         return $this->hasMany(AdmissionPlan::class)->latest();
-    }
-
-    public function tests() {
-        return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
     public function plan()

@@ -24,7 +24,6 @@ class AdmissionsController extends Controller
     public function show(Request  $request, Admission $admission)
     {
         if ($request->isMethod('POST')) {
-
             $action = $request->input('submit');
             // Log vitals
             if ($action === 'vitals') {
@@ -182,15 +181,16 @@ class AdmissionsController extends Controller
     public function createAdmission(Request $request, Visit $visit)
     {
         return view('doctors.admissions.start', ['visit' => $visit]);
-    }
+}
 
     public function discharge(Request $request, Admission $admission)
     {
         $request->validate([
             'discharge_summary' => 'required|string',
+            'discharged_on' => 'required',
         ]);
 
-        $admission->discharged_on = now();
+        $admission->discharged_on = $request->input('discharged_on');
         $admission->status = Status::closed->value;
         $admission->deleted_at = now();
         $admission->save();

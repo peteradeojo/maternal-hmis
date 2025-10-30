@@ -31,6 +31,7 @@
 
 
                 <div id="list">
+                    {{-- Plan --}}
                     <div id="admission-plan" class="tab p-1">
                         <h2>Admission Plan</h2>
                         <div class="pb-1"></div>
@@ -97,6 +98,8 @@
                             </tbody>
                         </table>
                     </div>
+
+                    {{-- Vitals --}}
                     <div class="tab p-1">
                         <h2>Vitals Chart</h2>
 
@@ -123,7 +126,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($admission->vitals as $vital)
+                                @forelse ($admission->vitals ?? [] as $vital)
                                     <tr>
                                         <td>{{ $vital->created_at->format('d/m/Y h:i A') }}</td>
                                         <td>{{ $vital->blood_pressure }}</td>
@@ -149,6 +152,10 @@
 
                         <form action="{{route('nurses.admissions.discharge', $admission)}}" method="post">
                             @csrf
+                            <div class="form-group">
+                                <label>Discharge Date</label>
+                                <input type="datetime-local" name="discharged_on" class="form-control" required/>
+                            </div>
                             <div class="form-group">
                                 <label>Discharge summary</label>
                                 <textarea name="discharge_summary" rows="5" class="form-control"></textarea>
