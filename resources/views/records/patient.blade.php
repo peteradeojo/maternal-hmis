@@ -98,9 +98,9 @@
         <div class="body foldable-body">
             @forelse ($patient->insurance as $insurance)
                 <div class="py">
-                    <p><b>HMO:</b> {{ $patient->insurance?->hmo_name }}</p>
-                    <p><b>Company:</b> {{ $patient->insurance?->hmo_name }}</p>
-                    <p><b>ID No:</b> {{ $patient->insurance?->hmo_id_no }}</p>
+                    <p><b>HMO:</b> {{ $insurance?->hmo_name }}</p>
+                    <p><b>Company:</b> {{ $insurance?->hmo_name }}</p>
+                    <p><b>ID No:</b> {{ $insurance?->hmo_id_no }}</p>
                 </div>
             @empty
                 <div class="p-2">
