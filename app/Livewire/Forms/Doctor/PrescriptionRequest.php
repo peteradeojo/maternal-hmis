@@ -7,13 +7,13 @@ use Livewire\Form;
 
 class PrescriptionRequest extends Form
 {
-    #[Validate('required|string')]
+    #[Validate('nullable|string')]
     public $dosage = '';
 
-    #[Validate('required|string')]
+    #[Validate('nullable|string')]
     public $duration = '';
 
-    #[Validate('required|string')]
+    #[Validate('nullable|string')]
     public $frequency = 'stat';
 
     // #[Validate('required|string')]

@@ -53,6 +53,7 @@ class AddPresciption extends Component
     {
         $this->validate();
 
+
         $dto = new PrescriptionDto([]);
         $dto->productId = $this->selections->id ?? null;
         $dto->setProduct($this->selections);

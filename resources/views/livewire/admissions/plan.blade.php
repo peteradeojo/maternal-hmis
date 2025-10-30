@@ -28,7 +28,7 @@
                     <td>{{ $plan['duration'] }}</td>
                     <td>{{ $plan['frequency'] }}</td>
                     <td>
-                        <button wire:click="removePlanItem({{ $i }})"
+                        <button wire:click="removePlanItem({{ $i }}, {{ $plan['id'] ?? null }})"
                             class="btn btn-sm btn-red text-white">&times;</button>
                     </td>
                 </tr>
@@ -50,8 +50,8 @@
                         <li class="flex justify-between items-center">
                             @unless ($selectedTest->results)
                                 <span>{{ $selectedTest['name'] }}</span>
-                                <a href="#" wire.prevent wire:click="removeTest({{ $selectedTest['id'] }})"
-                                    class="btn btn-sm btn-red">Remove</a>
+                                <button wire.prevent wire:click="removeTest({{ $selectedTest['id'] }})"
+                                    class="btn btn-sm btn-red">Remove</button>
                             @else
                                 <a href="{{ route('doctor.show-admission', $admission) }}" target="_blank"
                                     class="link">{{ $selectedTest['name'] }} - View Result</a>
@@ -68,8 +68,8 @@
                     @foreach ($investigations as $i)
                         <li class="flex justify-between items-center">
                             <span>{{ $i['name'] }}</span>
-                            <a href="#" wire.prevent wire:click="removeInvestigation({{ $i['id'] }})"
-                                class="btn btn-sm btn-red">Remove</a>
+                            <button wire.prevent wire:click="removeInvestigation({{ $i['id'] }})"
+                                class="btn btn-sm btn-red">Remove</button>
                         </li>
                     @endforeach
                 </ul>

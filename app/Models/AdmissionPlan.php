@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Interfaces\OperationalEvent;
+use App\Traits\Documentable;
+use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AdmissionPlan extends Model
+class AdmissionPlan extends Model implements OperationalEvent
 {
-    use HasFactory;
+    use HasFactory, HasVisitData, Documentable;
 
     protected $fillable  = [
         'admission_id',
