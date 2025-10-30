@@ -73,7 +73,8 @@ class AdmissionsController extends Controller
         }
     }
 
-    public function edit(Request $request, Admission $admission) {
+    public function edit(Request $request, Admission $admission)
+    {
         $admission->plan->load(['tests', 'treatments']);
 
         if (!$request->isMethod('POST')) {
@@ -83,9 +84,9 @@ class AdmissionsController extends Controller
         dd($request->all());
     }
 
-    public function showPlan(Request $request, Admission $admission) {
+    public function showPlan(Request $request, Admission $admission)
+    {
         return view('doctors.admissions.view-plan', ['data' => $admission]);
-
     }
 
     public function getAdmissions(Request $request)
@@ -178,7 +179,27 @@ class AdmissionsController extends Controller
         }
     }
 
-    public function createAdmission(Request $request, Visit $visit) {
+    public function createAdmission(Request $request, Visit $visit)
+    {
         return view('doctors.admissions.start', ['visit' => $visit]);
+    }
+
+    public function discharge(Request $request, Admission $admission)
+    {
+        $request->validate([
+            'discharge_summary' => 'required|string',
+        ]);
+
+        $admission->discharged_on = now();
+        $admission->status = Status::closed->value;
+        $admission->save();
+
+        $ward = $admission->ward;
+        if ($ward) {
+            $ward->filled_beds = max(0, $ward->filled_beds - 1);
+            $ward->save();
+        }
+
+        return redirect()->route('nurses.admissions.get');
     }
 }

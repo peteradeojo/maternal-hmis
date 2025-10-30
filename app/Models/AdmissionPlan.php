@@ -33,4 +33,8 @@ class AdmissionPlan extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function notes() {
+        return $this->morphMany(ConsultationNote::class, 'visit');
+    }
 }

@@ -20,5 +20,7 @@ Route::name('nurses.')->middleware(['department:' . Department::NUR->value])->gr
         Route::match(['get', 'post'], '/{admission}/view', [AdmissionsController::class, 'show'])->name('show');
         Route::match(['get', 'post'], '/{admission}/assign-ward', [AdmissionsController::class, 'assignWard'])->name('assign-ward');
         Route::match(['get', 'post'], '/{admission}/preview-treatment', [AdmissionsController::class, 'previewTreatment'])->name('treatment-preview');
+
+        Route::post('/discharge/{admission}', [AdmissionsController::class, 'discharge'])->name('discharge');
     });
 });
