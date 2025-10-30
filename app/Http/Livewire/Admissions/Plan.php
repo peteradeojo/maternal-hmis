@@ -59,7 +59,7 @@ class Plan extends Component
     public function addPrescription($data)
     {
         if (empty($this->admission)) {
-            $this->plans[] = $data['product'];
+            $this->plans[] = $data;
             return;
         }
 
