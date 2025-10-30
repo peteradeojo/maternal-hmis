@@ -33,8 +33,7 @@
                 @else
                     <div class="tab">
                         <p class="bold mt-4 mb-1 text-xl header">Vitals</p>
-                        {{-- @dump($visit->visit->vitals) --}}
-                        @if($visit->vitals || $visit->visit->vitals)
+                        @if($visit->svitals)
                             <div class="grid grid-cols-2">
                                 <p><b>Weight</b>: {{ $visit->svitals?->weight ?? $visit->visit->vitals->weight }} kg</p>
                                 <p><b>Blood Pressure</b>: {{ $visit->svitals?->blood_pressure ?? $visit->visit->vitals->blood_pressure }} mmHg</p>
