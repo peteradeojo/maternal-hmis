@@ -104,7 +104,7 @@
                         <h2>Vitals Chart</h2>
 
                         <div class="pt-1"></div>
-                        <form action="?submit=vitals" method="post">
+                        {{-- <form action="?submit=vitals" method="post">
                             @csrf
                             <div class="row">
                                 @include('nursing.components.vitals-form')
@@ -112,10 +112,11 @@
                             <div class="form-group">
                                 <button class="btn btn-blue">Submit</button>
                             </div>
-                        </form>
+                        </form> --}}
+                        <livewire:nurses.vitals :event="$admission" />
 
                         <div class="py-1"></div>
-                        <table class="table-list">
+                        {{-- <table class="table-list">
                             <thead>
                                 <tr>
                                     <th>Date/Time</th>
@@ -140,7 +141,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-                        </table>
+                        </table> --}}
                     </div>
 
                     <div class="tab p-1">

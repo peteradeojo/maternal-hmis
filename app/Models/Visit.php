@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property AncVisit|GeneralVisit $visit
  */
-class Visit extends Model
+class Visit extends Model implements OperationalEvent
 {
     use HasFactory, HasVisitData, Documentable;
 

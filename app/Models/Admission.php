@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Interfaces\Documentable as InterfacesDocumentable;
+use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Admission extends Model implements InterfacesDocumentable
+class Admission extends Model implements OperationalEvent
 {
     use HasFactory, Documentable, HasVisitData, SoftDeletes;
 
