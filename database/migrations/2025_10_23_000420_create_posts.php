@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('libsql')->create('posts', function (Blueprint $table) {
+        // Schema::connection('libsql')->create('posts', function (Blueprint $table) {
             // $table->id();
             // $table->string('title')->nullable(false);
             // $table->string('description', 64)->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             // $table->string('user')->nullable();
             // $table->string('image')->nullable();
             // $table->timestamps();
-        });
+        // });
     }
 
     /**
