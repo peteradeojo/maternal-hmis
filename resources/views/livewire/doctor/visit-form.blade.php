@@ -33,13 +33,13 @@
                 @else
                     <div class="tab">
                         <p class="bold mt-4 mb-1 text-xl header">Vitals</p>
-                        @if($visit->svitals)
+                        @if ($visit->svitals)
                             <div class="grid grid-cols-2">
-                                <p><b>Weight</b>: {{ $visit->svitals?->weight ?? $visit->visit->vitals->weight }} kg</p>
-                                <p><b>Blood Pressure</b>: {{ $visit->svitals?->blood_pressure ?? $visit->visit->vitals->blood_pressure }} mmHg</p>
-                                <p><b>Temperature</b>: {{ $visit->svitals?->temperature ?? $visit->visit->vitals->temperature }} &deg;C</p>
-                                <p><b>Pulse</b>: {{ $visit->svitals?->pulse ?? $visit->visit->vitals->pulse }} bpm</p>
-                                <p><b>Respiration</b>: {{ $visit->svitals?->respiration ?? $visit->visit->vitals->respiration }} bpm</p>
+                                <p><b>Weight</b>: {{ $visit->svitals?->weight }} kg</p>
+                                <p><b>Blood Pressure</b>: {{ $visit->svitals?->blood_pressure }} mmHg</p>
+                                <p><b>Temperature</b>: {{ $visit->svitals?->temperature }} &deg;C</p>
+                                <p><b>Pulse</b>: {{ $visit->svitals?->pulse }} bpm</p>
+                                <p><b>Respiration</b>: {{ $visit->svitals?->respiration }} bpm</p>
                             </div>
                         @else
                             <p>No vitals have been recorded for this visit.</p>
