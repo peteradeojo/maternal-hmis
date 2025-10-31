@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Interfaces\Documentable as InterfacesDocumentable;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;

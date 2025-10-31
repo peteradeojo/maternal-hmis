@@ -84,14 +84,14 @@
 
     {{-- Global modal for displaying content --}}
     <div id="global-overlay" class="fixed inset-0 bg-black/40 hidden z-50"></div>
-    <div id="global-content-slide"
+    <div id="global-modal"
         class="fixed top-0 right-0 h-dvh overflow-y-auto max-w-[600px] w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
 
         <div class="p-4 border-b flex justify-between items-center sticky bg-white top-0">
-            <h2 class="text-lg font-semibold" id="global-modal-title">Modal Title</h2>
+            <h2 class="text-lg font-semibold modal-title" id="global-modal-title">Modal Title</h2>
             <button id="closeGlobalModal" class="text-gray-600">&times;</button>
         </div>
-        <div class="px-4 py-8 h-fit" id="global-modal-content">
+        <div class="px-4 py-8 h-fit modal-body" id="global-modal-content">
             <p>Modal content goes here.</p>
         </div>
     </div>
@@ -114,32 +114,6 @@
 
     <script>
         $(document).ready(() => {
-            function displayNotification(data) {
-                if (Notification.permission === 'granted') {
-                    const n = new Notification('New Notification', {
-                        body: data.message,
-                    });
-                }
-
-                const el = document.createElement(`div`);
-                el.textContent = data.message;
-                el.classList.add(...(data.bg), 'app-notification');
-
-                document.querySelector("#notifications").appendChild(el);
-
-                if (data.close_modal) {
-                    removeGlobalModal();
-                }
-
-                setTimeout(() => {
-                    el.classList.add("fade-out");
-                }, 3000);
-
-                setTimeout(() => {
-                    el.remove();
-                }, 3300);
-            }
-
             Echo.channel('department.{{ auth()->user()->department_id }}').listen('NotificationSent', (e) => {
                 displayNotification(e.message);
             });
@@ -151,7 +125,6 @@
             if (Notification.permission !== 'granted') {
                 Notification.requestPermission().then(function(result) {
                     if (result === 'granted') {
-                        console.log('Notifications permission granted.');
                         const n = new Notification('Notifications enabled', {
                             body: 'You will receive notifications when they arrive.',
                         });

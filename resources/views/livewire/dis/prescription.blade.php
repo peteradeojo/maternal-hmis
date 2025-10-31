@@ -1,8 +1,21 @@
 <div>
     @php
-        $editable = $doc->treatments->every(fn($t) => $t->status !== Status::quoted->value);
+        $editable = $doc->treatments->contains(fn($t) => $t->status !== Status::quoted->value);
     @endphp
-    <form action="" method="post">
+    <form wire:submit.prevent="save"
+        action="{{ route('dis.get-prescription') }}?type={{ $type }}&id={{ $id }}" method="post"
+        x-data="{
+            items: @entangle('items'),
+            quoteDone: @entangle('quoteDone'),
+            get totalAmount() {
+                return this.items.reduce((a, b) => {
+                    if (b.available) {
+                        return parseFloat(a) + parseFloat(b.amount || 0);
+                    }
+                    return a;
+                }, 0);
+            }
+        }">
         @csrf
         <table class="table table-list" id="p-table">
             <thead>
@@ -13,81 +26,58 @@
                 </tr>
             </thead>
             <tbody>
-                @php
+                {{-- @php
                     $total = 0;
-                @endphp
-                @foreach ($doc->treatments as $t)
-                    @php
-                        $total += $t->amount;
-                    @endphp
+                @endphp --}}
+                {{-- @foreach ($items as $i => $t)
                     <tr>
                         <td>{{ $t->name }} {{ $t->dosage }} {{ $t->frequency }} {{ $t->duration }}</td>
-                        <td><input type="checkbox" name="available[{{ $t->id }}]" data-id="{{ $t->id }}"
-                                class="availability" @if ($t->available) checked @endif
+                        <td><input type="checkbox" wire:model="items.{{ $i }}.available"
+                                data-id="{{ $t->id }}" class="availability"
+                                @if ($t->available) checked @endif
                                 @unless ($editable) disabled @endunless>
                         </td>
                         <td>
-                            <input type="number" name="amount[{{ $t->id }}]" step="0.01" min="0"
+                            <input type="number" name="amount[{{ $t->id }}]"
+                                wire:model="items.{{ $i }}.amount" step="0.01" min="0"
                                 data-id="{{ $t->id }}" class="amount form-control" value="{{ $t->amount }}"
                                 @unless ($editable) readonly @endunless />
                         </td>
                     </tr>
-                @endforeach
+                @endforeach --}}
+
+                <template x-for="(t, i) in items" :key="i">
+                    <tr>
+                        <td x-text="`${t.name} ${t.dosage} ${t.frequency} ${t.duration}`"></td>
+                        <td>
+                            <input type="checkbox" x-model="t.available"
+                                :disabled="!@js($editable)" />
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" min="0" x-model.number="t.amount"
+                                class="form-control" :readonly="!@js($editable)" />
+                        </td>
+                    </tr>
+                </template>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="2">Total</td>
-                    <td id="total">{{ $total }}</td>
+                    <td x-text="totalAmount"></td>
                 </tr>
                 <tr>
                     @unless ($doc->all_prescriptions_available)
-                        <td colspan="2">Are you done with this quote? <input type="checkbox" name="complete" /></td>
+                        <td colspan="2">Are you done with this quote? <input type="checkbox" x-model="quoteDone" />
+                        </td>
                     @endunless
                 </tr>
             </tfoot>
         </table>
 
-        <div class="pt-1"></div>
         @if ($editable)
-            <button class="form-control btn btn-blue">Submit</button>
+            <div class="form-group flex justify-end">
+                <button class="btn bg-blue-400 hover:bg-green-400 text-white">Save <i class="fa fa-save"></i></button>
+            </div>
         @endif
     </form>
-
-    @push('scripts')
-        <script>
-            $(() => {
-                const totals = [];
-                const totalEl = document.querySelector("#total");
-
-                const checkAvailable = (id) => {
-                    const checked = document.querySelector(`.availability[data-id="${id}"]`);
-
-                    return checked.checked;
-                }
-
-                const updateTotal = (el) => {
-                    const sum = totals.reduce((a, b) => {
-                        const id = b.getAttribute('data-id');
-
-                        if (checkAvailable(id))
-                            return parseFloat(a) + parseFloat(b.value || 0);
-
-                        return a;
-                    }, 0);
-                    totalEl.innerHTML = parseFloat(sum);
-                }
-
-                document.querySelectorAll('.availability').forEach(function(el) {
-                    el.addEventListener('change', updateTotal);
-                });
-
-                document.querySelectorAll('.amount').forEach(function(el) {
-                    totals.push(el);
-                    el.addEventListener('change', updateTotal);
-                });
-
-                updateTotal();
-            });
-        </script>
-    @endpush
 </div>

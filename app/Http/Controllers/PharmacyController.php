@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EventLookup;
 use App\Enums\Status;
 use App\Models\Documentation;
 use App\Models\DocumentationPrescription;
@@ -13,13 +14,19 @@ class PharmacyController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value]))->get();
+        $data = Documentation::with(['patient'])->whereHas('treatments', fn($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value]))->get();
         return view('phm.prescriptions', compact('data'));
     }
 
     public function getPrescriptions(Request $request)
     {
-        return $this->dataTable($request, DocumentationPrescription::query());
+        $query = DocumentationPrescription::query()->groupBy('event_type', 'event_id', 'patient_id')
+            ->selectRaw('event_type, event_id, COUNT(*) as total, patient_id, MAX(created_at) created_at')->with(['patient'])
+            ->havingRaw('SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END) > 0', [Status::quoted->value, Status::pending->value])
+            ->has('event');
+
+        return $this->dataTable($request, $query);
+        // return $this->dataTable($request, DocumentationPrescription::query());
     }
 
     public function show(Request $request, Documentation $doc)
@@ -33,47 +40,50 @@ class PharmacyController extends Controller
         // $data = Visit::with(['patient'])->whereHas('visit', function ($query) {
         //     $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::quoted->value, Status::closed->value, Status::completed->value]));
         // })->get();
-        $data  = Visit::with(['patient', 'visit'])->whereHas('visit', function ($q) {
-            $q->has('treatments');
-        })->get();
-        return view('phm.prescriptions', compact('data'));
+        // $data  = Visit::with(['patient', 'visit'])->whereHas('visit', function ($q) {
+        //     $q->has('treatments');
+        // })->get();
+        return view('phm.prescriptions');
     }
 
-    public function dispensaryShow(Request $request, Visit $visit)
+    public function dispensaryShow(Request $request)
     {
-        $doc = $visit->visit;
-        if ($request->method() == 'POST') {
-            $request->mergeIfMissing(['available' => []]);
+        $id = $request->input('id');
+        $type = $request->input('type');
 
-            $amount = $request->amount;
-            $available = $request->available;
+        $doc = EventLookup::fromName($type)->value::findOrFail($id)->load('treatments');
+        // if ($request->method() == 'POST') {
+        //     dd($request->all());
+        //     $request->mergeIfMissing(['available' => []]);
 
-            DB::beginTransaction();
+        //     $amount = $request->amount;
+        //     $available = $request->available;
 
-            $available_ids = array_keys($available);
+        //     DB::beginTransaction();
 
-            try {
-                foreach ($amount as $i => $amt) {
-                    if ($amt) $doc->treatments()->where('id', $i)->update(['amount' => $amt]);
-                }
-                $doc->treatments()->whereIn('id', $available_ids)->update(['available' => true]);
-                $doc->treatments()->whereNotIn('id', $available_ids)->update(['available' => false]);
+        //     $available_ids = array_keys($available);
 
-                if ($request->has('complete')) {
-                    $doc->treatments()->update(['status' => Status::quoted->value]);
-                    DB::commit();
-                    return redirect()->route('dis.index');
-                } else {
-                    $doc->treatments()->whereIn('status', [Status::quoted->value])->update(['status' => Status::pending->value]);
-                }
-                DB::commit();
-            } catch (\Throwable $th) {
-                DB::rollBack();
-            }
-            return redirect()->back();
-        }
-        $doc->load(['patient', 'treatments']);
-        return view('dis.show-prescription', compact('doc'));
+        //     try {
+        //         foreach ($amount as $i => $amt) {
+        //             if ($amt) $doc->treatments()->where('id', $i)->update(['amount' => $amt]);
+        //         }
+        //         $doc->treatments()->whereIn('id', $available_ids)->update(['available' => true]);
+        //         $doc->treatments()->whereNotIn('id', $available_ids)->update(['available' => false]);
+
+        //         if ($request->has('complete')) {
+        //             $doc->treatments()->update(['status' => Status::quoted->value]);
+        //             DB::commit();
+        //             return redirect()->route('dis.index');
+        //         } else {
+        //             $doc->treatments()->whereIn('status', [Status::quoted->value])->update(['status' => Status::pending->value]);
+        //         }
+        //         DB::commit();
+        //     } catch (\Throwable $th) {
+        //         DB::rollBack();
+        //     }
+        //     return redirect()->back();
+        // }
+        return view('dis.show-prescription', compact('doc', 'type', 'id'));
     }
 
     public function closePrescription(Request $request, Documentation $doc)

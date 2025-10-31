@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     // include_once __DIR__ . '/api/rad.php';
     include_once __DIR__ . '/api/doctor.php';
     include_once __DIR__ . '/api/nhi.php';
+    include_once __DIR__ . '/api/dispensary.php';
 });
 // include_once __DIR__ . '/api/records.php';
 

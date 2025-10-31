@@ -4,18 +4,13 @@ namespace App\Traits;
 
 use App\Models\Patient;
 use App\Models\Product;
-use App\Dto\PrescriptionDto;
+use App\Enums\EventLookup;
 use App\Interfaces\OperationalEvent;
 use App\Models\ConsultationNote;
-use App\Models\DocumentationPrescription;
-use App\Models\DocumentationTest;
-use App\Models\PatientExaminations;
 use App\Models\PatientHistory;
-use App\Models\PatientImaging;
 use App\Models\Visit;
 use App\Models\Vitals;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Override;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use stdClass;
 
 trait HasVisitData
@@ -63,8 +58,4 @@ trait HasVisitData
     public function vitals() {
         return $this->morphOne(Vitals::class, 'recordable')->latest();
     }
-
-    // public function tests() {
-    //     return $this->morphMany(DocumentationTest::class, 'testable');
-    // }
 }

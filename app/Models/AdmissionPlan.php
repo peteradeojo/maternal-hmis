@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +19,7 @@ class AdmissionPlan extends Model implements OperationalEvent
     ];
 
     public function admission() {
-        return $this->belongsTo(Admission::class);
+        return $this->belongsTo(Admission::class, 'admission_id');
     }
 
     public function treatments() {
@@ -39,5 +40,11 @@ class AdmissionPlan extends Model implements OperationalEvent
 
     public function notes() {
         return $this->morphMany(ConsultationNote::class, 'visit');
+    }
+
+    public function patient(): Attribute {
+        return Attribute::make(
+            get: fn($_, $attributes) => Admission::find($attributes['admission_id'])?->patient,
+        );
     }
 }

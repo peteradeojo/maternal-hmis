@@ -1,8 +1,10 @@
 <?php
 
 use App\Enums\AncCategory;
+use App\Enums\AppNotifications;
 use App\Enums\Department;
 use App\Events\NotificationSent;
+use App\Models\Visit;
 use Illuminate\Support\Facades\Broadcast;
 
 function departmentRoutes()
@@ -113,14 +115,31 @@ function resolve_render($value, $mode = null)
     }
 }
 
-function sendUserMessage($message)
+function notifyUserSuccess(string $message, $options = [])
 {
+    sendUserMessage(['message' => $message, 'bg' => ['bg-blue-400', 'text-white']], $options);
+}
+
+function notifyUserError(string $message, $options = [])
+{
+    sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $options);
+}
+
+function sendUserMessage($message, $options = [])
+{
+    $options['mode'] ??= AppNotifications::$BOTH;
+
+    $message = array_merge($message, ['options' => $options]);
     Broadcast::private("user." . auth()->user()->id)
         ->as("UserEvent")
         ->with($message)
-        ->send();
+        ->sendNow();
 }
 
-function broadcastToDepartment($departmentId, $message) {
+function broadcastToDepartment($departmentId, $message, $options = [])
+{
+    $options['mode'] ??= 'both';
+
+    $message = array_merge($message, ['options' => $options]);
     broadcast(new NotificationSent($departmentId, $message))->toOthers();
 }

@@ -109,9 +109,9 @@ function asyncForm(form, route, callback = (e, data) => { }) {
 
 function useGlobalModal(callback) {
     $("#global-overlay").removeClass("hidden");
-    $("#global-content-slide").removeClass("translate-x-full");
+    $("#global-modal").removeClass("translate-x-full");
 
-    callback($("#global-content-slide"));
+    callback($("#global-modal"));
 }
 
 $('#closeGlobalModal, #global-overlay').on('click', function () {
@@ -119,6 +119,39 @@ $('#closeGlobalModal, #global-overlay').on('click', function () {
 });
 
 function removeGlobalModal() {
-    $("#global-content-slide").addClass("translate-x-full");
+    $("#global-modal").addClass("translate-x-full");
     setTimeout(() => $("#global-overlay").addClass("hidden"), 300);
+}
+
+/**
+ * @param {{message: string; bg: string; [key: string]: any}} data
+ */
+function displayNotification(data) {
+    if (Notification.permission === 'granted' && ['both', 'desktop'].includes(data.options.mode)) {
+        const n = new Notification(data.title || 'New Notification', {
+            body: data.message,
+        });
+    }
+
+    if (!['both', 'in-app'].includes(data.options.mode)) {
+        return;
+    }
+
+    const el = document.createElement(`div`);
+    el.textContent = data.message;
+    el.classList.add(...(data.bg), 'app-notification');
+
+    document.querySelector("#notifications").appendChild(el);
+
+    if (data.close_modal) {
+        removeGlobalModal();
+    }
+
+    setTimeout(() => {
+        el.classList.add("fade-out");
+    }, 3000);
+
+    setTimeout(() => {
+        el.remove();
+    }, 3300);
 }

@@ -22,6 +22,8 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    @apply duration-200;
+
     &:disabled {
         @apply bg-gray-600;
         cursor: not-allowed;

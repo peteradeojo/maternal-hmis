@@ -71,6 +71,15 @@ class Patient extends Model
         );
     }
 
+    protected function gender(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                return Gender::tryFrom($value)?->name ?? "Unknown";
+            },
+        );
+    }
+
     public static function generateCardNumber($category)
     {
         $prefix = Patient::where('category_id', $category)->count();
@@ -85,7 +94,7 @@ class Patient extends Model
 
     public function getGenderValueAttribute()
     {
-        return Gender::tryFrom($this->gender)?->name;
+        return $this->gender; // Gender::tryFrom($this->gender)?->name;
     }
 
     public function antenatalProfiles()
@@ -126,7 +135,8 @@ class Patient extends Model
         return $this->hasMany(PatientImaging::class, 'patient_id');
     }
 
-    public function scopeActiveInsurance() {
+    public function scopeActiveInsurance()
+    {
         $this->insurance()->where('status', Status::active);
     }
 }

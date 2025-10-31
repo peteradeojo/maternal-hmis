@@ -6,13 +6,14 @@ use App\Dto\PrescriptionDto;
 use App\Models\Visit;
 use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
+use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable as TraitsDocumentable;
 use App\Traits\HasVisitData;
 use App\Traits\Visit as VisitTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AncVisit extends Model implements Documentable, Visitation
+class AncVisit extends Model implements Documentable, Visitation, OperationalEvent
 {
     use HasFactory, VisitTrait, TraitsDocumentable, HasVisitData;
 

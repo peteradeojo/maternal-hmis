@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use App\Interfaces\Documentable;
+use App\Interfaces\OperationalEvent;
 use App\Interfaces\Visitation;
-use App\Models\Visit as ModelsVisit;
 use App\Traits\Documentable as TraitsDocumentable;
 use App\Traits\HasVisitData;
 use App\Traits\Visit;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GeneralVisit extends Model implements Visitation //, Documentable
+class GeneralVisit extends Model implements Visitation, OperationalEvent //, Documentable
 {
     use HasFactory, Visit, TraitsDocumentable, HasVisitData;
 

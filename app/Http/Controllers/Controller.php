@@ -27,12 +27,11 @@ class Controller extends BaseController
             }
         });
 
-        foreach($order ?? [] as $o) {
-            if ($o['name'] != null) {
-                $results = $results->orderBy($o['name'], $o['dir']);
-            }
-        }
-
+        // foreach($order ?? [] as $o) {
+        //     if ($o['name'] != null) {
+        //         $results = $results->orderBy($o['name'], $o['dir']);
+        //     }
+        // }
 
         $data = [
             'data' => $results->clone()->skip($start)->limit($length)->get()->toArray(),
@@ -40,8 +39,6 @@ class Controller extends BaseController
             'recordsFiltered' => $results->count(),
             'draw' => (int) $request->input('draw'),
         ];
-
-        // dd($data);
 
         return response()->json($data);
     }

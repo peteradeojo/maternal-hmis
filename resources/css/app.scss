@@ -132,7 +132,7 @@
     // @import "components/spacings";
 
     .app-notification {
-        @apply rounded-md p-3 shadow-md w-fit opacity-100 transform transition-all duration-300;
+        @apply rounded-md p-3 shadow-md w-fit opacity-100 transform transition-all duration-300 max-w-[350px];
     }
 
     .app-notification.fade-out {
