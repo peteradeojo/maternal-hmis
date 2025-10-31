@@ -125,4 +125,8 @@ class Patient extends Model
     {
         return $this->hasMany(PatientImaging::class, 'patient_id');
     }
+
+    public function scopeActiveInsurance() {
+        $this->insurance()->where('status', Status::active);
+    }
 }

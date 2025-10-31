@@ -19,7 +19,7 @@
                             {{ $admission->ward->name }}
                         @endunless
                     </p>
-                    <p><b>Insurance: </b> {{ $admission->patient->insurance?->hmo_name ?? 'None' }}</p>
+                    <p><b>Insurance: </b> {{ $admission->patient->active_insurance->first()?->hmo_name ?? 'None' }}</p>
                 </div>
             </div>
         </div>

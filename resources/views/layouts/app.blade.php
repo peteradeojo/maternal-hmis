@@ -27,7 +27,7 @@
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
-    {{-- <div class="sticky top-0 w-full z-[1000] sm:hidden">
+    <div class="sticky top-0 w-full z-[1000] sm:hidden">
         <div class="px-2 py-4 bg-green-400 flex w-full items-center justify-between">
             <div>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-x-3 link">
@@ -59,7 +59,7 @@
                 </li>
             </ul>
         </div>
-    </div> --}}
+    </div>
 
     {{-- Large Nav --}}
     <aside id="navigation" class="hidden sm:block z-50 w-2/12 fixed left-0 h-screen bg-gray-800">
@@ -69,14 +69,6 @@
     </aside>
 
     <main class="w-screen sm:ml-[16.666667%] bg-blue-100 min-h-screen sm:p-8 overflow-y-auto">
-        {{-- <div class="p-1 hidden sm:flex items-center justify-end">
-            <div class="text-center">
-                <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt=""
-                    class="rounded-full w-12 m-auto">
-                <p>{{ auth()->user()->name }}</p>
-                <small>{{ auth()->user()->department->name }}</small>
-            </div>
-        </div> --}}
         <div class="p-1">
             @if (session('error'))
                 <p>{{ session('error') }}</p>
@@ -89,10 +81,6 @@
             @yield('content')
         </div>
     </main>
-
-    {{-- <div class="app-notification bg-red-500 text-white">
-        <p>Hello world</p>
-    </div> --}}
 
     {{-- Global modal for displaying content --}}
     <div id="global-overlay" class="fixed inset-0 bg-black/40 hidden z-50"></div>
@@ -127,6 +115,12 @@
     <script>
         $(document).ready(() => {
             function displayNotification(data) {
+                if (Notification.permission === 'granted') {
+                    const n = new Notification('New Notification', {
+                        body: data.message,
+                    });
+                }
+
                 const el = document.createElement(`div`);
                 el.textContent = data.message;
                 el.classList.add(...(data.bg), 'app-notification');
@@ -152,6 +146,18 @@
             Echo.private('user.{{ auth()->user()->id }}').listen('.UserEvent', (e) => {
                 displayNotification(e);
             });
+
+            // Check for notification permission
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission().then(function(result) {
+                    if (result === 'granted') {
+                        console.log('Notifications permission granted.');
+                        const n = new Notification('Notifications enabled', {
+                            body: 'You will receive notifications when they arrive.',
+                        });
+                    }
+                });
+            }
         });
     </script>
     <script src="{{ asset('js/util.js') }}"></script>
