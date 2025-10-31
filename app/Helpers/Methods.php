@@ -136,7 +136,7 @@ function sendUserMessage($message, $options = [])
         ->sendNow();
 }
 
-function broadcastToDepartment($departmentId, $message, $options = [])
+function notifyDepartment($departmentId, $message, $options = [])
 {
     $options['mode'] ??= 'both';
 

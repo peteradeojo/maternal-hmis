@@ -143,7 +143,7 @@ function displayNotification(data) {
 
     document.querySelector("#notifications").appendChild(el);
 
-    if (data.close_modal) {
+    if (data.options.close_modal) {
         removeGlobalModal();
     }
 

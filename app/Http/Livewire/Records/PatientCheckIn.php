@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Records;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department;
 use App\Enums\Status;
 use App\Events\NotificationSent;
@@ -98,20 +99,23 @@ class PatientCheckIn extends Component
 
         $visit->save();
 
-        sendUserMessage([
-            'message' => "Consultation started for {$this->patient->card_number}",
-            'bg' => ['bg-blue-200'],
+        notifyUserSuccess("Consultation started for {$this->patient->card_number}", [
+            'mode' => AppNotifications::$IN_APP,
             'close_modal' => true
         ]);
 
-        broadcastToDepartment(Department::NUR->value, [
+        notifyDepartment(Department::NUR->value, [
             'message' => "Consultation started for {$this->patient->card_number}",
             'bg' => ['bg-green-400', 'text-white'],
+        ], [
+            'mode' => AppNotifications::$DESKTOP,
         ]);
 
-        broadcastToDepartment(Department::DOC->value, [
+        notifyDepartment(Department::DOC->value, [
             'message' => "Consultation started for {$this->patient->card_number}",
             'bg' => ['bg-green-400', 'text-white'],
+        ], [
+            'mode' => AppNotifications::$DESKTOP,
         ]);
     }
 }
