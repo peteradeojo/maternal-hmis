@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/health-check', function () {
+    return response()->json(['status' => 'ok'], 200);
+})->middleware('throttle:10,1');
+
 Route::get('/login', function () {
     return view('login');
 });
