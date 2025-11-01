@@ -23,7 +23,7 @@
     @vite(['resources/css/app.css', 'resources/css/app.scss'])
 </head>
 
-<body class="md:flex">
+<body class="md:flex" x-data @closeModal.window="removeGlobalModal">
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
@@ -83,7 +83,7 @@
     </main>
 
     {{-- Global modal for displaying content --}}
-    <div id="global-overlay" class="fixed inset-0 bg-black/40 hidden z-50"></div>
+    <div id="global-overlay" x-on:keyup.escape.window="removeGlobalModal" class="fixed inset-0 bg-black/40 hidden z-50"></div>
     <div id="global-modal"
         class="fixed top-0 right-0 h-dvh overflow-y-auto max-w-[600px] w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
 

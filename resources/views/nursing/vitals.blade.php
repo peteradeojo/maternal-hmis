@@ -24,40 +24,75 @@
 
 @push('scripts')
     <script defer>
-        let dataTable = $("#table").DataTable({
-            serverSide: true,
-            ajax: {
-                url: "{{route('api.nursing.vitals')}}",
-                headers: {
-                    "Accept": "application/json",
-                }
-            },
-            language: {
-                emptyTable: 'No results',
-                searchPlaceholder: "Name, card number",
-            },
-            columns: [{
-                    data: 'patient.name'
+        $(document).ready(function() {
+            function getVisits() {}
+
+            let dataTable = $("#table").DataTable({
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('api.nursing.vitals') }}",
+                    headers: {
+                        "Accept": "application/json",
+                    }
                 },
-                {
-                    data: 'patient.card_number'
+                language: {
+                    emptyTable: 'No results',
+                    searchPlaceholder: "Name, card number",
                 },
-                {
-                    data: 'patient.category.name'
-                },
-                {
-                    data: ({
-                        created_at
-                    }) => new Date(created_at).toLocaleString('en-CA'),
-                },
-                {
-                    data: (row) =>
-                        `<a href="{{ route('nurses.patient-vitals', ':id') }}" class="link">Take Vitals</a>`
-                        .replace(':id', row.id),
-                },
-            ],
-            order: [[3, 'desc']],
-            responsive: true,
+                columns: [{
+                        data: 'patient.name'
+                    },
+                    {
+                        data: 'patient.card_number'
+                    },
+                    {
+                        data: 'patient.category.name'
+                    },
+                    {
+                        data: ({
+                            created_at
+                        }) => new Date(created_at).toLocaleDateString('en-CA', {
+                            minute: '2-digit',
+                            hour: '2-digit',
+                        }),
+                    },
+                    {
+                        data: (row) =>
+                            `<a href="#" data-visit="${row.id}" class="link load-vitals">Take Vitals</a>`
+                    },
+                ],
+                order: [
+                    [3, 'desc']
+                ],
+                ordering: false,
+                responsive: true,
+            });
+
+            $(document).on('click', '.load-vitals', function(e) {
+                e.preventDefault();
+                let visitId = $(this).data('visit');
+
+                axios.get("{{ route('nurses.patient-vitals', ':id') }}".replace(':id', visitId))
+                    .then(res => {
+                        useGlobalModal((a) => {
+                            a.find(".modal-title").text("Patient Vitals");
+                            a.find(".modal-body").html(res.data);
+                        });
+                    })
+                    .catch(err => {
+                        useGlobalModal((a) => {
+                            a.find(".modal-title").text("Patient Vitals");
+                            a.find(".modal-body").html(err.response.data);
+                        });
+                        // displayNotification({
+                        //     message: `An error occurred while loading vitals for visit #${visitId}.`,
+                        //     options: {
+                        //         mode: 'in-app',
+                        //     },
+                        //     bg: ['bg-red-500', 'text-white'],
+                        // });
+                    });
+            });
         });
     </script>
 @endpush

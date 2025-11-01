@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Status;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('admission_plans', function (Blueprint $table) {
-            $table->smallInteger('status')->default(Status::active->value)->after('note');
+        Schema::table('visits', function (Blueprint $table) {
+            $table->dropColumn('vitals');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('admission_plans', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('visits', function (Blueprint $table) {
+            $table->json('vitals')->nullable();
         });
     }
 };

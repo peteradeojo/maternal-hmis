@@ -33,11 +33,9 @@ class Visit extends Model implements OperationalEvent
 
     protected $with = ['visit'];
 
-    protected $appends = ['vital_staff', 'can_check_out'];
+    protected $appends = ['can_check_out'];
 
-    protected $casts = [
-        'vitals' => 'object',
-    ];
+    protected $casts = [];
 
     // Relationships
     public function patient()
@@ -56,32 +54,15 @@ class Visit extends Model implements OperationalEvent
         return $this->visit?->getType();
     }
 
-    public function setVitals($data, User $user)
-    {
-        $vitals = [
-            'data' => $data,
-            'staff' => $user->id,
-            'time' => now(),
-        ];
-        $this->vitals = $vitals;
-        $this->save();
-    }
-
-    public function getVitalStaffAttribute()
-    {
-        if (isset($this->vitals?->staff))
-            return User::find($this->vitals?->staff);
-    }
-
     public function canCheckOut(): Attribute
     {
-        return Attribute::make(fn () =>  !$this->awaiting_pharmacy && !$this->awaiting_doctor);
+        return Attribute::make(fn() =>  !$this->awaiting_pharmacy && !$this->awaiting_doctor);
     }
 
     // Scopes
     public function scopeAwaitingDoctor($query)
     {
-        $query->whereNotNull('vitals')->where('awaiting_doctor', true);
+        $query->has('vitals')->where('awaiting_doctor', true);
     }
 
     public function scopeCompleted($query)
@@ -122,10 +103,11 @@ class Visit extends Model implements OperationalEvent
 
     public function svitals()
     {
-        return $this->vitals();
+        return $this->morphMany(Vitals::class, 'recordable');
     }
 
-    public function getWaitingForDoctorAttribute() {
+    public function getWaitingForDoctorAttribute()
+    {
         $b = ($this->visit->tests()->where('results', '!=', null)->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
         return $b;
     }

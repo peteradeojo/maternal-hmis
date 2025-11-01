@@ -4,13 +4,11 @@ namespace App\Traits;
 
 use App\Models\Patient;
 use App\Models\Product;
-use App\Enums\EventLookup;
 use App\Interfaces\OperationalEvent;
 use App\Models\ConsultationNote;
 use App\Models\PatientHistory;
 use App\Models\Visit;
 use App\Models\Vitals;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use stdClass;
 
 trait HasVisitData

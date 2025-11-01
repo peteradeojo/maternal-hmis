@@ -41,13 +41,22 @@ class Vitals extends Component
             ...$data,
         ]);
 
-        $this->vitals->reset();
-        $this->vitals->resetErrorBag();
+        $this->dispatch('saved');
+        $this->dispatch('closeModal');
+        // $this->dispatch('closeModal');
+        // $this->
 
-        $this->hydrate();
+        $this->vitals->reset();
+
+        $this->vitals->resetErrorBag(['recorded_date']);
     }
 
-    public function hydrate() {
-        $this->evt->refresh();
+    public function deleteVitals($id)
+    {
+        $vital = ModelsVitals::find($id);
+        if ($vital) {
+            $vital->delete();
+            $this->dispatch('saved');
+        }
     }
 }

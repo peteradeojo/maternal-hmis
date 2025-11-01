@@ -33,6 +33,5 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value])->gr
         Route::get('/create/{visit}', [AdmissionsController::class, 'createAdmission'])->name('admit');
         Route::get('/{admission}', [AdmissionsController::class, 'show'])->name('show-admission');
         Route::get('/{admission}/edit', [AdmissionsController::class, 'edit'])->name('show-admission-plan');
-        // Route::get('/plan/{admission}', [AdmissionsController::class, 'showPlan'])->name('show-admission-plan');
     });
 })->middleware(['auth']);
