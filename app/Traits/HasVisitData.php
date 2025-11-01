@@ -56,4 +56,9 @@ trait HasVisitData
     public function vitals() {
         return $this->morphOne(Vitals::class, 'recordable')->latest();
     }
+
+    public function svitals()
+    {
+        return $this->morphMany(Vitals::class, 'recordable');
+    }
 }

@@ -44,9 +44,9 @@ class Admission extends Model implements OperationalEvent
         return $this->morphTo();
     }
 
-    final public function vitals() {
-        return $this->morphMany(Vitals::class, 'recordable');
-    }
+    // final public function vitals() {
+    //     return $this->morphMany(Vitals::class, 'recordable');
+    // }
 
     public function administrations()
     {
