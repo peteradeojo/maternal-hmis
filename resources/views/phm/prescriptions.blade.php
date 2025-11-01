@@ -11,8 +11,8 @@
                         <th>Patient</th>
                         <th>Card Number</th>
                         <th>Gender</th>
+                        <th>Phone No.</th>
                         <th>Date</th>
-                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -89,9 +89,8 @@
                         searchable: false
                     },
                 ],
-                order: [
-                    [0, null]
-                ]
+                responsive: true,
+                ordering: false,
             });
 
             $(document).on('click', '.view-prescription', loadPrescription);

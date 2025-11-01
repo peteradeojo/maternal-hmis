@@ -21,12 +21,22 @@ class PharmacyController extends Controller
     public function getPrescriptions(Request $request)
     {
         $query = DocumentationPrescription::query()->groupBy('event_type', 'event_id', 'patient_id')
-            ->selectRaw('event_type, event_id, COUNT(*) as total, patient_id, MAX(created_at) created_at')->with(['patient'])
-            ->havingRaw('SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END) > 0', [Status::quoted->value, Status::pending->value])
-            ->has('event');
+            ->selectRaw('event_type, event_id, COUNT(*) as total, patient_id,
+            MAX(created_at) created_at,
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending_count', [Status::pending->value])
+            ->with(['patient'])
+            ->havingRaw('SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END) > 0', [Status::pending->value, Status::quoted->value])
+            ->orderByDesc('pending_count')
+            ->orderByDesc('created_at')
+            ->where("event_type", '!=', "");
 
-        return $this->dataTable($request, $query);
-        // return $this->dataTable($request, DocumentationPrescription::query());
+        return $this->dataTable($request, $query, [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")->orWhere('phone', 'like', "$search%");
+                });
+            }
+        ]);
     }
 
     public function show(Request $request, Documentation $doc)
@@ -37,12 +47,6 @@ class PharmacyController extends Controller
 
     public function dispensaryIndex(Request $request)
     {
-        // $data = Visit::with(['patient'])->whereHas('visit', function ($query) {
-        //     $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::quoted->value, Status::closed->value, Status::completed->value]));
-        // })->get();
-        // $data  = Visit::with(['patient', 'visit'])->whereHas('visit', function ($q) {
-        //     $q->has('treatments');
-        // })->get();
         return view('phm.prescriptions');
     }
 
@@ -52,37 +56,6 @@ class PharmacyController extends Controller
         $type = $request->input('type');
 
         $doc = EventLookup::fromName($type)->value::findOrFail($id)->load('treatments');
-        // if ($request->method() == 'POST') {
-        //     dd($request->all());
-        //     $request->mergeIfMissing(['available' => []]);
-
-        //     $amount = $request->amount;
-        //     $available = $request->available;
-
-        //     DB::beginTransaction();
-
-        //     $available_ids = array_keys($available);
-
-        //     try {
-        //         foreach ($amount as $i => $amt) {
-        //             if ($amt) $doc->treatments()->where('id', $i)->update(['amount' => $amt]);
-        //         }
-        //         $doc->treatments()->whereIn('id', $available_ids)->update(['available' => true]);
-        //         $doc->treatments()->whereNotIn('id', $available_ids)->update(['available' => false]);
-
-        //         if ($request->has('complete')) {
-        //             $doc->treatments()->update(['status' => Status::quoted->value]);
-        //             DB::commit();
-        //             return redirect()->route('dis.index');
-        //         } else {
-        //             $doc->treatments()->whereIn('status', [Status::quoted->value])->update(['status' => Status::pending->value]);
-        //         }
-        //         DB::commit();
-        //     } catch (\Throwable $th) {
-        //         DB::rollBack();
-        //     }
-        //     return redirect()->back();
-        // }
         return view('dis.show-prescription', compact('doc', 'type', 'id'));
     }
 
