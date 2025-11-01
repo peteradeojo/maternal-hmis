@@ -3,19 +3,17 @@
 namespace App\Http\Controllers\Records;
 
 use App\Enums\AncCategory;
+use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
-use App\Models\Department;
 use App\Models\GeneralVisit;
 use App\Models\Patient;
 use App\Models\PatientCategory;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use App\Services\PatientService;
-use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -98,9 +96,24 @@ class PatientsController extends Controller
                     // 'status' => Status::pending->value,
                 ]);
 
-                Department::where('id', EnumsDepartment::NUR->value)->first()->notifyParticipants(new StaffNotification("A new antenatal patient was just registered. Pending booking for {$patient->name}"));
-                Department::where('id', EnumsDepartment::LAB->value)->first()->notifyParticipants(new StaffNotification("A new antenatal patient was just registered. Pending booking for {$patient->name}"));
-                Department::where('id', EnumsDepartment::DOC->value)->first()->notifyParticipants(new StaffNotification("A new antenatal patient was just registered. Pending booking for {$patient->name}"));
+                notifyDepartment(EnumsDepartment::NUR->value, [
+                    'title' => 'New Antenatal Patient Registered',
+                    'message' => "A new antenatal patient was just registered. Pending booking for {$patient->name}",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
+                notifyDepartment(EnumsDepartment::LAB->value, [
+                    'title' => 'New Antenatal Patient Registered',
+                    'message' => "A new antenatal patient was just registered. Pending booking for {$patient->name}",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
+                notifyDepartment(EnumsDepartment::DOC->value, [
+                    'title' => 'New Antenatal Patient Registered',
+                    'message' => "A new antenatal patient was just registered. Pending booking for {$patient->name}",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
             }
 
             DB::commit();
@@ -153,13 +166,6 @@ class PatientsController extends Controller
             return view('records.check-in', compact('patient'));
         }
 
-        /**
-         * @var Department
-         */
-        $nursing = Department::where('id', EnumsDepartment::NUR->value)->first();
-
-        $nursing->notifyParticipants(new StaffNotification("A patient was just checked in"));
-
         if (Visit::where('patient_id', $patient->id)->where('status', Status::active->value)->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])->exists()) {
             return response()->json([
                 'success' => false,
@@ -191,6 +197,13 @@ class PatientsController extends Controller
             'visit_id' => $subVisit->id,
             'awaiting_vitals' => 1,
             'awaiting_doctor' => 1,
+        ]);
+
+        notifyDepartment(EnumsDepartment::NUR->value, [
+            'title' => 'Patient Checked-In',
+            'message' => "Patient {$patient->name} was just checked in",
+        ], [
+            'mode' => AppNotifications::$BOTH,
         ]);
 
         return response()->json([
@@ -226,6 +239,4 @@ class PatientsController extends Controller
         $visit->checkOut($request->has('force'));
         return redirect()->route('dashboard');
     }
-
-
 }

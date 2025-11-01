@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
-use App\Models\Department;
-use App\Models\Documentation;
 use App\Models\DocumentationTest;
 use App\Models\GeneralVisit;
 use App\Models\Patient;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -213,8 +211,13 @@ class LabController extends Controller
             'user_id' =>  $request->user()->id,
         ]);
 
-        $lab = Department::where('id', EnumsDepartment::LAB->value)->first();
-        $lab->notifyParticipants(new StaffNotification("New test requested for {$visit->patient->name}"));
+        notifyDepartment(EnumsDepartment::LAB->value, [
+            'title' => 'New Lab Test Requested',
+            'message' => "New test requested for {$visit->patient->name}",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
+
 
         return response()->json([
             'ok' => true,

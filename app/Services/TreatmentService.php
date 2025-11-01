@@ -2,15 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\AppNotifications;
 use App\Enums\Status;
 use App\Models\Visit;
-use App\Models\Department;
 use App\Models\Documentation;
-use App\Models\PatientImaging;
 use Illuminate\Support\Facades\DB;
 use App\Models\PatientExaminations;
-use App\Notifications\StaffNotification;
-use App\Enums\Department as EnumsDepartment;
+use App\Enums\Department;
 use App\Interfaces\Documentable;
 use App\Models\Admission;
 use App\Models\AncVisit;
@@ -19,9 +17,7 @@ use App\Models\User;
 
 class TreatmentService
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     private function saveDiagnoses(Documentable|Documentation|AncVisit &$doc, $data, $doctor_id)
     {
@@ -33,7 +29,7 @@ class TreatmentService
         //     ]);
         // }
         if (isset($data['diagnosis'])) {
-            foreach($data['diagnosis'] as $d) {
+            foreach ($data['diagnosis'] as $d) {
                 $doc->diagnoses()->create([
                     'diagnoses' => $d,
                     'patient_id' => $doc->patient_id,
@@ -47,7 +43,7 @@ class TreatmentService
     {
         // Save complaints
         foreach ($complaints as $c) {
-            $doc->complaints()->create(['name' => $c['name'], 'duration' => $c['duration'] ]);
+            $doc->complaints()->create(['name' => $c['name'], 'duration' => $c['duration']]);
         }
 
         // Save history of complaints
@@ -114,20 +110,34 @@ class TreatmentService
 
             if (count($data['tests']) > 0) {
                 $this->saveTests($doc, $data['tests']);
-                Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+                notifyDepartment(Department::LAB->value, [
+                    'title' => 'New Lab Tests Requested',
+                    'message' => "<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them",
+                ], [
+                    'mode' => AppNotifications::$IN_APP,
+                ]);
                 $visit->awaiting_lab_results = true;
             }
 
             if (count($data['imgs'] ?? []) > 0) {
                 $this->saveImagings($doc, $data['imgs'], $treater->id);
-                Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
+                notifyDepartment(Department::RAD->value, [
+                    'title' => 'New Radiology Requests',
+                    'message' => "<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
                 $visit->awaiting_radiology = true;
             }
 
             if (count($data['treatments'] ?? []) > 0) {
                 $this->savePrescriptions($doc, $data, $treater->id);
-                Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
+                notifyDepartment(Department::DIS->value, [
+                    'title' => 'New Prescription',
+                    'message' => "<u>{$visit->patient->name}</u> has left the consulting room and requires your attention.",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
                 $visit->awaiting_pharmacy = true;
             }
 
@@ -185,8 +195,12 @@ class TreatmentService
         if (count($data['treatments'] ?? []) > 0) {
             $this->savePrescriptions($ancVisit, $data, $doctor_id);
 
-            $pharmacy = Department::find(EnumsDepartment::PHA->value);
-            $pharmacy?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+            notifyDepartment(Department::DIS->value, [
+                'title' => 'New Prescription',
+                'message' => "<u>{$visit->patient->name}</u> has left the consulting room and requires your attention.",
+            ], [
+                'mode' => AppNotifications::$BOTH,
+            ]);
         }
 
         if (count($data['imgs'] ?? []) > 0) {
@@ -197,8 +211,12 @@ class TreatmentService
             $this->saveTests($ancVisit, $data['tests']);
         }
 
-        $records = Department::find(EnumsDepartment::REC->value);
-        $records->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+        notifyDepartment(Department::REC->value, [
+            'title' => "Update: {$visit->patient->name}",
+            'message' => "<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
 
         return $ancVisit;
     }

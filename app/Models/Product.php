@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\Department as DepartmentEnum;
-use App\Notifications\StaffNotification;
+use App\Enums\AppNotifications;
+use App\Enums\Department;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,11 +22,14 @@ class Product extends Model
     {
         static::booted(function (Self $model) {
             if ($model->amount == 0) {
-                Department::find(
-                    DepartmentEnum::IT->value,
-                    DepartmentEnum::PHA->value,
-                    DepartmentEnum::DIS->value
-                )->notifyParticipants(new StaffNotification("A new product has been created with no amount. Product id {$model->id}"));
+                foreach ([Department::IT->value, Department::PHA->value, Department::DIS->value] as $deptId) {
+                    notifyDepartment($deptId, [
+                        'title' => 'New Product Created with No Amount',
+                        'message' => "A new product has been created with no amount. Product id {$model->id}",
+                    ], [
+                        'mode' => AppNotifications::$BOTH,
+                    ]);
+                }
             }
         });
     }

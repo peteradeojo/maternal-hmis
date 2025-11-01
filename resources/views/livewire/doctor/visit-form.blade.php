@@ -62,7 +62,7 @@
                             : ['Medical Records'],
                 ])
 
-                <button class="btn btn-blue btn-sm modal-trigger" data-target="#previous-history-modal">View
+                <button class="btn bg-blue-500 text-white btn-sm" data-target="#previous-history-modal">View
                     History</button>
             </div>
 

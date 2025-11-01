@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
 use App\Jobs\UploadPatientScans;
-use App\Models\Department;
-use App\Models\Documentation;
-use App\Models\Patient;
 use App\Models\PatientImaging;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class RadiologyController extends Controller
 {
@@ -65,8 +60,12 @@ class RadiologyController extends Controller
             'name' => $request->scan,
         ]);
 
-        $dept = Department::where('id', EnumsDepartment::RAD->value)->first();
-        $dept->notifyParticipants(new StaffNotification("Imaging request for {$visit->patient->name}"));
+        notifyDepartment(EnumsDepartment::RAD->value, [
+            'title' => 'New Imaging Request',
+            'message' => "Imaging request for {$visit->patient->name}",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
 
         return response()->json([
             'ok' => true,

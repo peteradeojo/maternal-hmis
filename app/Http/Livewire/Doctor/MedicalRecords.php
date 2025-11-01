@@ -2,11 +2,10 @@
 
 namespace App\Http\Livewire\Doctor;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department;
 use App\Enums\Status;
-use App\Models\Department as ModelsDepartment;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use Livewire\Component;
 
 class MedicalRecords extends Component
@@ -69,7 +68,12 @@ class MedicalRecords extends Component
         $this->visit->saveOrFail();
 
         foreach ($notify as $department) {
-            ModelsDepartment::where('id', $department)->first()?->notifyParticipants(new StaffNotification("You have a new request for {$this->visit->patient->name}"));
+            notifyDepartment($department, [
+                'title' => 'New Request',
+                'message' => "You have a new request for {$this->visit->patient->name}",
+            ], [
+                'mode' => AppNotifications::$BOTH,
+            ]);
         }
 
         $this->redirect('/dashboard');

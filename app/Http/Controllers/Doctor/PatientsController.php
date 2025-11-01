@@ -2,23 +2,14 @@
 
 namespace App\Http\Controllers\Doctor;
 
-use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
-use App\Models\Department;
 use App\Models\Documentation;
-use App\Models\DocumentationComplaints;
-use App\Models\DocumentationPrescription;
-use App\Models\DocumentationTest;
 use App\Models\DocumentedDiagnosis;
 use App\Models\Patient;
-use App\Models\PatientExaminations;
-use App\Models\PatientImaging;
-use App\Models\Product;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use App\Services\TreatmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,15 +27,6 @@ class PatientsController extends Controller
 
     private function loadAutoCompleteData()
     {
-        // $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
-        // $prescriptions = Product::whereHas('category', function ($q) {
-        //     $q->where('department_id', 4);
-        // })->get()->pluck('name', 'id')->toArray();
-
-        // $tests = Product::whereHas('category', function ($q) {
-        //     $q->where('department_id', 5);
-        // })->get()->pluck('name', 'id')->toArray();
-
         $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
         $data = compact('diagnoses');
         return $data;

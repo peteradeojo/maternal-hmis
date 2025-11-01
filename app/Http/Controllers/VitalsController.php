@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
-use App\Models\Department;
 use App\Models\Visit;
-use App\Models\Vitals;
-use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
 
 class VitalsController extends Controller
@@ -17,7 +15,7 @@ class VitalsController extends Controller
             return view('nursing.patient-vitals', compact('visit'));
         }
 
-        $data = $request->validate([
+        $request->validate([
             'temperature' => 'nullable|numeric',
             'blood_pressure' => ['nullable', function ($attr, $value, $fail) {
                 if (!preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
@@ -35,11 +33,12 @@ class VitalsController extends Controller
             'recording_user_id' => auth()->user()->id,
         ]);
 
-        /**
-         * @var Department
-         */
-        $consultants = Department::where('id', EnumsDepartment::DOC->value)->first();
-        $consultants?->notifyParticipants(new StaffNotification("Vitals taken for {$visit->patient->name}. Patient is ready to see the doctor."));
+        notifyDepartment(EnumsDepartment::DOC->value, [
+            'title' => 'New Vitals Recorded',
+            'message' => "Vitals taken for {$visit->patient->name}. Patient is ready to see the doctor.",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
 
         return redirect()->to('/')->with('success', 'Vitals taken successfully');
     }
