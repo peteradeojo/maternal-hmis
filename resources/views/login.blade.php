@@ -18,7 +18,7 @@
 
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone</label>
-                        <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                        <input type="text" autofocus class="form-control @error('phone') is-invalid @enderror" id="phone"
                             name="phone" value="{{ old('phone') }}" required autofocus>
 
                         @error('email')

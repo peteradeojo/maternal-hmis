@@ -20,7 +20,7 @@
                 <tbody>
                     @if (!empty($selections))
                         <tr>
-                            <form wire:key="{{ $selections?->id ?? $selections->name }}">
+                            <form wire:submit.prevent="saveRequest" wire:keyup.escape.stop="cancel" wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"
@@ -49,7 +49,7 @@
                                 </td>
                                 <td>
                                     <input type="number" wire:model="requestForm.duration" name="duration"
-                                        value="1" />
+                                        value="1" autocomplete="off" />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -68,7 +68,7 @@
 
                     @if ($updating)
                         <tr>
-                            <form wire:submit="saveRequest" wire:key="{{ $updating->name }}">
+                            <form wire:submit.prevent="saveRequest" wire:key="{{ $updating->name }}">
                                 <td>{{ $updating->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"
@@ -97,7 +97,7 @@
                                 </td>
                                 <td>
                                     <input type="number" wire:model="requestForm.duration" name="duration"
-                                        value="1" />
+                                        value="1" autocomplete="off" />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
