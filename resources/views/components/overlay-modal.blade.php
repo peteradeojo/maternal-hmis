@@ -8,7 +8,7 @@
         x-transition.opacity></div>
 
     <!-- Sliding panel -->
-    <div class="relative h-dvh overflow-y-auto w-1/2 bg-white shadow-xl transition-transform duration-300"
+    <div class="relative h-dvh overflow-y-auto min-w-[50%] w-fit bg-white shadow-xl transition-transform duration-300"
         :class="open ? 'translate-x-0' : 'translate-x-full'"
 
         x-transition:enter="transform transition ease-in duration-300" x-transition:enter-start="translate-x-full"
