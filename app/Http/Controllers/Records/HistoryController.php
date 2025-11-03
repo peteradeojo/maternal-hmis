@@ -29,6 +29,6 @@ class HistoryController extends Controller
     {
         $visit->load(['visit', 'patient', 'visit.tests', 'visit.radios', 'visit.prescriptions']);
         $patient = $visit->patient;
-        return view('records.show-history', ['visit' => $visit->visit, 'patient' => $patient]);
+        return view('records.show-history', ['visit' => $visit, 'patient' => $patient]);
     }
 }
