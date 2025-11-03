@@ -12,8 +12,8 @@
                     <tr>
                         <th>Prescription</th>
                         <th>Dosage</th>
-                        <th>Duration</th>
                         <th>Frequency</th>
+                        <th>Duration (in days)</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -27,15 +27,6 @@
                                         value="1" />
                                     <div>
                                         @error('requestForm.dosage')
-                                            <span class="error text-xs text-red-600">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </td>
-                                <td>
-                                    <input type="text" wire:model="requestForm.duration" name="duration"
-                                        value="1" />
-                                    <div>
-                                        @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -55,6 +46,15 @@
                                         <option value="needed">as needed</option>
                                         <option value="other">Others</option>
                                     </select>
+                                </td>
+                                <td>
+                                    <input type="number" wire:model="requestForm.duration" name="duration"
+                                        value="1" />
+                                    <div>
+                                        @error('requestForm.duration')
+                                            <span class="error text-xs text-red-600">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </td>
                                 <td class="flex gap-x-3 items-center">
                                     <button type="button" wire:click.prevent="saveRequest"
