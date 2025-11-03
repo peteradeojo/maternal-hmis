@@ -117,11 +117,13 @@ function resolve_render($value, $mode = null)
 
 function notifyUserSuccess(string $message, $options = [])
 {
+    $options['mode'] ??= AppNotifications::$IN_APP;
     sendUserMessage(['message' => $message, 'bg' => ['bg-blue-400', 'text-white']], $options);
 }
 
 function notifyUserError(string $message, $options = [])
 {
+    $options['mode'] ??= AppNotifications::$IN_APP;
     sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $options);
 }
 

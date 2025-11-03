@@ -155,3 +155,23 @@ function displayNotification(data) {
         el.remove();
     }, 3300);
 }
+
+function notifyError(message) {
+    return displayNotification({
+        message,
+        bg: ['bg-red-500', 'text-white'],
+        options: {
+            mode: 'in-app',
+        }
+    })
+}
+
+function notifySuccess(message) {
+    return displayNotification({
+        message,
+        bg: ['bg-blue-400', 'text-white'],
+        options: {
+            mode: 'in-app',
+        }
+    })
+}

@@ -2,9 +2,9 @@
     <div class="relative">
         <p class="bold">{{ $title ?? 'Add Prescription' }}</p>
 
-        <div class="w-1/2">
+        {{-- <div class="w-1/2"> --}}
             <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)" @selected_temp="addTempPrescription($event.detail)" />
-        </div>
+        {{-- </div> --}}
 
         @if ($selections || $updating || $visit->prescriptions->count() > 0)
             <table id="drugs-table" class="table">

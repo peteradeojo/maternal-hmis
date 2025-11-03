@@ -4,23 +4,22 @@
         <div class="card-header header">Profile</div>
         <div id="nav-tab" data-tablist="#tablist">
             <div id="tablist" class="py-1">
-                <div class="tab">
-                    <div>
-                        {{ $visit->created_at?->format('Y-m-d h:i A') }}
-                    </div>
-                    <div class="grid grid-cols-3">
-                        <p><b>Name</b>: {{ $visit->patient->name }}</p>
-                        <p><b>Gender</b>: {{ $visit->patient->gender_value }}</p>
-                        <p><b>Date of Birth</b>: {{ $visit->patient->dob?->format('Y-m-d') }}</p>
-                        <p><b>Card Number</b>: {{ $visit->patient->card_number }}</p>
-                        <p><b>Card Type</b>: {{ $visit->patient->category->name }}</p>
-                        <p><b>Visit Type</b>: {{ $visit->type }}</p>
-                        <p><b></b></p>
-                        <p><b></b></p>
-                        <p><b></b></p>
-                        <p><b></b></p>
-                    </div>
+                <div>
+                    {{ $visit->created_at?->format('Y-m-d h:i A') }}
                 </div>
+                <div class="grid grid-cols-3">
+                    <p><b>Name</b>: {{ $visit->patient->name }}</p>
+                    <p><b>Gender</b>: {{ $visit->patient->gender_value }}</p>
+                    <p><b>Date of Birth</b>: {{ $visit->patient->dob?->format('Y-m-d') }}</p>
+                    <p><b>Card Number</b>: {{ $visit->patient->card_number }}</p>
+                    <p><b>Card Type</b>: {{ $visit->patient->category->name }}</p>
+                    <p><b>Visit Type</b>: {{ $visit->type }}</p>
+                    {{-- <p><b></b></p>
+                    <p><b></b></p>
+                    <p><b></b></p>
+                    <p><b></b></p> --}}
+                </div>
+
                 @if ($visit->type == 'Antenatal')
                     <div class="tab py-3 px-2">
                         <p class="text-3xl border-b border-gray-300">Antenatal Booking Details</p>
@@ -62,7 +61,7 @@
                             : ['Medical Records'],
                 ])
 
-                <button class="btn bg-blue-500 text-white btn-sm" data-target="#previous-history-modal">View
+                <button class="btn bg-blue-500 text-white btn-sm" id="view-history">View
                     History</button>
             </div>
 
@@ -77,23 +76,25 @@
                 @endif
 
                 <div class="tab">
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#history-modal">Add History</button>
+                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-history-modal')">Presenting
+                        Complaints</button>
+                    {{-- <button class="btn btn-blue btn-sm" @click="$dispatch('open-history-poc-modal')">History of
+                        Presenting Complaints</button> --}}
 
+                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-notes-modal')">Add Note</button>
                     @if ($visit->examination)
-                        <button class="btn btn-green btn-sm modal-trigger" data-target="#exams-modal">Edit
+                        <button class="btn btn-green btn-sm" @click="$dispatch('open-exams-modal')">Edit
                             Examination</button>
                     @else
-                        <button class="btn btn-blue btn-sm modal-trigger" data-target="#exams-modal">Add
+                        <button class="btn btn-blue btn-sm" @click="$dispatch('open-exams-modal')">Add
                             Examination</button>
                     @endif
 
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
-
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#diagnosis-modal">Add
-                        Diagnosis</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#tests-modal">Add
+                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-tests-modal')">Add
                         Investigation</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
+                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-diagnosis-modal')">Add
+                        Diagnosis</button>
+                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-prescriptions-modal')">Add
                         Prescription</button>
 
                     <livewire:doctor.medical-records :visit="$visit" />
@@ -102,108 +103,136 @@
         </div>
     </div>
 
-    <div class="modal hide" id="prescriptions-modal">
-        <div class="content p-3 bg-white">
-            @livewire('doctor.add-presciption', ['visit' => $visit])
-        </div>
-    </div>
+    <x-overlay-modal id="history-modal" title="Record History">
+        {{-- Add History --}}
+        <form wire:submit.prevent="addHistory">
+            <div class="flex gap-x-3">
+                <div>
+                    <input type="text" class="form-control" list="histories" placeholder="Presentation"
+                        wire:model="historyForm.presentation" />
+                    @error('historyForm.presentation')
+                        <span class="error text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
 
-    <div class="modal hide" id="tests-modal">
-        <div class="content p-3 bg-white">
-            <p class="text-xl bold">Add Investigation</p>
+                <div>
+                    <input type="text" class="form-control" placeholder="Duration"
+                        wire:model="historyForm.duration" />
+                    @error('historyForm.duration')
+                        <span class="error text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+            <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
+        </form>
+    </x-overlay-modal>
 
-            <div class="tablist" id="tests-tabs" data-tablist="#investigations">
-                @include('components.tabs', ['options' => ['Lab', 'Radiology']])
+    {{-- <x-overlay-modal id="history-poc-modal" title="History of Presenting Complaints">
+        <form wire:submit.prevent="saveHistoryOfComplaint">
 
-                <div id="investigations" class="py-1">
-                    <div class="tab">
-                        <div class="form-group">
-                            <label>Select Test</label>
-                            <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail.id)" />
-                        </div>
+        </form>
+    </x-overlay-modal> --}}
+
+    <x-overlay-modal id="exams-modal" title="Patient Examination">
+        <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
+            @csrf
+            @include('components.examinations-form', ['exam' => $visit->examination])
+
+            <button type="submit" class="btn btn-blue">Submit &triangleright;</button>
+        </form>
+    </x-overlay-modal>
+
+    <x-overlay-modal id="prescriptions-modal" title="Add Prescription">
+        @livewire('doctor.add-presciption', ['visit' => $visit])
+    </x-overlay-modal>
+
+    <x-overlay-modal id="tests-modal" title="Request Investigations">
+        {{-- <div class="tablist" id="tests-tabs" data-tablist="#investigations">
+            @include('components.tabs', ['options' => ['Lab', 'Radiology']])
+
+            <div id="investigations" class="py-1">
+                <div class="tab">
+                    <div class="form-group">
+                        <label>Select Test</label>
+                        <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail)" @selected_temp="addTest($event.detail)" />
                     </div>
-                    <div class="tab">
-                        <div class="form-group">
-                            <label>Request Scan</label>
-                            <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
-                        </div>
+                </div>
+                <div class="tab">
+                    <div class="form-group">
+                        <label>Request Scan</label>
+                        <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div> --}}
 
-    <div class="modal hide" id="history-modal">
-        <div class="content p-3 bg-white">
-            <p class="text-xl bold">Add History</p>
-            <form wire:submit.prevent="addHistory" class="py-3">
-                <div class="flex gap-x-3 py-3">
-                    <div>
-                        <input type="text" class="form-control" list="histories" placeholder="Presentation"
-                            wire:model="historyForm.presentation" />
-                        @error('historyForm.presentation')
-                            <span class="error text-xs text-red-600">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <input type="text" class="form-control" placeholder="Duration"
-                            wire:model="historyForm.duration" />
-                        @error('historyForm.duration')
-                            <span class="error text-xs text-red-600">{{ $message }}</span>
-                        @enderror
-                    </div>
+        {{-- <x-tabs_v2 :options="['Lab Tests', 'Radiology']" id="tests-tabs" target="investigations">
+            <x-tab :option="'Lab Tests'">
+                <div class="form-group">
+                    <label for="">Select Test</label>
+                    <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)"
+                        @selected_temp="addTest($event.detail)" />
                 </div>
-                <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
-            </form>
-        </div>
-    </div>
+            </x-tab>
+            <x-tab :option="'Radiology'">
+                <div class="form-group">
+                    <label>Request Scan</label>
+                    <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
+                </div>
+            </x-tab>
+        </x-tabs_v2> --}}
 
-    <div class="modal hide" id="exams-modal">
-        <div class="content bg-white p-1 overflow-y-auto">
-            <p class="text-xl bold">Examination</p>
-            <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
-                @csrf
-                @include('components.examinations-form', ['exam' => $visit->examination])
-
-                <button type="submit" class="btn btn-blue">Submit &triangleright;</button>
-            </form>
+        <div class="">
+            <p class="text-lg font-semibold">Lab Tests</p>
+            <div class="form-group">
+                <label>Select Test</label>
+                <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail)"
+                    @selected_temp="addTest($event.detail)" />
+            </div>
         </div>
-    </div>
+
+        <div class="">
+            <p class="text-lg font-semibold">Radiology</p>
+            <div class="form-group">
+                <label>Request Scan</label>
+                <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
+            </div>
+        </div>
+    </x-overlay-modal>
 
     <datalist id="histories">
         @foreach ($histories as $history)
             <option value="{{ $history->presentation }}">{{ $history->presentation }}</option>
         @endforeach
     </datalist>
-
-    <div class="modal hide" id="previous-history-modal">
-        <div class="content max-w-full p-3 bg-white">
-            <p class="text-xl bold">Previous Visits</p>
-
-            <div class="py-4 grid grid-cols-2">
-                <div>
-                    @foreach ($visit->patient->visits as $previous_visit)
-                        <button onClick="loadVisitReport({{ $previous_visit->id }})"
-                            class="flex w-full justify-between py-2 px-3 bg-gray-200 hover:bg-gray-300">
-                            <p class="text-xl bold">{{ $previous_visit->created_at->format('Y-m-d') }}</p>
-                        </button>
-                    @endforeach
-                </div>
-                <div class="border-2 border-l-0 overflow-y-auto p-3" id="previous-visit-report">
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @script
     <script>
         asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
             const data = await res.json();
-            console.log(data);
+            notifySuccess("Examination saved for visit #{{$visit->id}}");
+        });
 
-            $("#exams-modal").addClass("hide");
+        $(document).ready(() => {
+            $(document).on("click", "#view-history", (e) => {
+                axios.get(`{{ route('patient.medical-history', ':id') }}`.replace(':id',
+                    {{ $visit->patient->id }})).then((res) => {
+                    useGlobalModal((a) => {
+                        a.find(".modal-title").text("Medical History")
+                        a.find(".modal-body").html(res.data);
+                    });
+                }).catch((err) => {
+                    console.log(err.response.data);
+                    displayNotification({
+                        message: err.response.data,
+                        bg: ['bg-red-500', 'text-white'],
+                        options: {
+                            mode: 'in-app'
+                        }
+                    })
+                })
+            });
         });
     </script>
 @endscript

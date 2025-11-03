@@ -16,7 +16,6 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value])->gr
     Route::get('/visits', [PatientsController::class, 'history'])->name('history');
     Route::get('/visits/{visit}', [PatientsController::class, 'visit'])->name('visit');
 
-
     Route::prefix('med')->group(function () {
         Route::post('/notes/{visit}', [PatientsController::class, 'note'])->whereNumber('visit')->name('visit-note');
         Route::get('/patients', [PatientsController::class, 'index'])->name('patients');

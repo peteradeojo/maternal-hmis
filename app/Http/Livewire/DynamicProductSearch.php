@@ -14,7 +14,7 @@ class DynamicProductSearch extends Component
     public $queryString;
     public $results;
 
-    public $display = true;
+    public $display = false;
 
     public function mount($departmentId = null, $category = null)
     {
@@ -62,11 +62,13 @@ class DynamicProductSearch extends Component
                 'amount'  => 0,
             ]);
 
-            $this->dispatch('selected_temp', product: $product);
+            $this->reset('queryString', 'results');
+
+            $this->dispatch('selected_temp', product: $product, name: $product->name, id: null);
             return;
         }
 
-        $this->dispatch('selected', id: $id, name: $product['name']);
+        $this->dispatch('selected', id: $id, name: $product['name'], product: $product);
     }
 
     public function render()

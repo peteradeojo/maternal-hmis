@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,4 +53,6 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/phm.php';
     include __DIR__ . '/web/dis.php';
     include __DIR__ . '/web/nhi.php';
+
+    Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
 });

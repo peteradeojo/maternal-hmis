@@ -33,102 +33,107 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2">No history</td>
+                            <td colspan="2">No history documented</td>
                         </tr>
                     @endforelse
                 </table>
 
-                <div class="pt-1"></div>
-                <p><b>Examinations</b></p>
-
-                <div class="p-1 bg-gray-100">
-                    @unless ($visit->examination || $visit->visit->examination)
-                        <p>No examination was conducted.</p>
-                    @else
-                        @php
-                            $exam = $visit->examination ?? $visit->visit->examination;
-                        @endphp
-                        <div>
-                            <p><b>General</b></p>
-                            <p>{{ $exam->general }}</p>
-                        </div>
-
-                        @foreach ($exam->specifics as $k => $sp)
-                            <div>
-                                <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
-                                <p>{{ $sp }}</p>
+                <div class="py-2">
+                    <p><b>Notes</b></p>
+                    @forelse ($visit->notes->slice(0,10) as $note)
+                        <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
+                            <p>{{ $note->note }}</p>
+                            <div class="text-xs">
+                                <p class=" text-red">Consultant: {{ $note->consultant->name }}</p>
+                                <p>{{ $note->created_at->format('Y-m-d h:i A') }}</p>
                             </div>
-                        @endforeach
-                    @endunless
+                        </div>
+                    @empty
+                        <p>No notes added</p>
+                    @endforelse
                 </div>
 
-                <div class="pt-1"></div>
-                <p><b>Notes</b></p>
-                @forelse ($visit->notes->slice(0,10) as $note)
-                    <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
-                        <p>{{ $note->note }}</p>
-                        <div class="text-xs">
-                            <p class=" text-red">Consultant: {{ $note->consultant->name }}</p>
-                            <p>{{ $note->created_at->format('Y-m-d h:i A') }}</p>
-                        </div>
+                <div class="pb-2">
+                    <p><b>Examinations</b></p>
+
+                    <div class="px-1 bg-gray-100">
+                        @unless ($visit->examination || $visit->visit->examination)
+                            <p>No examination conducted.</p>
+                        @else
+                            @php
+                                $exam = $visit->examination ?? $visit->visit->examination;
+                            @endphp
+                            <div>
+                                <p><b>General</b></p>
+                                <p>{{ $exam->general }}</p>
+                            </div>
+
+                            @foreach ($exam->specifics as $k => $sp)
+                                <div>
+                                    <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
+                                    <p>{{ $sp }}</p>
+                                </div>
+                            @endforeach
+                        @endunless
                     </div>
-                @empty
-                    <p>No notes added</p>
-                @endforelse
+                </div>
 
-                <div class="py-2"></div>
-
-                <p><b>Diagnoses</b></p>
-                @forelse ($visit->diagnoses as $dia)
-                    <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
-                        <p class="text-sm"><b>Diagnosed: </b>{{ $dia->diagnoses }}</p>
-                        <div class="text-xs">
-                            <p class="text-red">Consultant: {{ $dia->made_by->name }}</p>
-                            <p>{{ $dia->created_at->format('Y-m-d h:i A') }}</p>
-                        </div>
-                    </div>
-                @empty
-                    <p class="p-1 bg-gray-100">No diagnosis has been made during this visit.</p>
-                @endforelse
-
-                <div class="py-2"></div>
-
-                <p><b>Tests</b></p>
-
-                @include('doctors.components.test-results', ['tests' => $visit->tests])
+                <div class="py-2">
+                    <p><b>Tests</b></p>
+                    @include('doctors.components.test-results', ['tests' => $visit->tests])
+                </div>
 
                 @if ($visit->imagings?->count() > 0)
-                    <div class="py-2"></div>
-                    <p><b>Scans</b></p>
-                    @foreach ($visit->imagings as $img)
-                        <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
-                            <p><b class="text-sm">{{ $img->name }}</b>:
-                                <br>
-                                <small>Result: @empty($img->path)
-                                        No result
-                                    @else
-                                        <a href="#" data-target="#scan-result-modal"
-                                            data-scanid="{{ $img->id }}"
-                                            class="scan-result text-blue-500 underline">View Result</a>
-                                    @endempty
-                                </small>
-                                <br>
-                                <small>Comment: {{ $img->comment ?? 'No comment' }}</small>
-                            </p>
+                    <div class="py-2">
+                        <p><b>Scans</b></p>
+                        @foreach ($visit->imagings as $img)
+                            <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
+                                <p><b class="text-sm">{{ $img->name }}</b>:
+                                    <br>
+                                    <small>Result: @empty($img->path)
+                                            No result
+                                        @else
+                                            <a href="#" data-target="#scan-result-modal"
+                                                data-scanid="{{ $img->id }}"
+                                                class="scan-result text-blue-500 underline">View Result</a>
+                                        @endempty
+                                    </small>
+                                    <br>
+                                    <small>Comment: {{ $img->comment ?? 'No comment' }}</small>
+                                </p>
 
-                        </div>
-                    @endforeach
+                            </div>
+                        @endforeach
+                    </div>
                 @endif
 
-                <div class="py-2"></div>
-                <p><b>Prescriptions & Treatments</b></p>
+                <div class="pb-2">
+                    <p><b>Diagnoses</b></p>
+                    @forelse ($visit->diagnoses as $dia)
+                        <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
+                            <p class="text-sm"><b>Diagnosed: </b>{{ $dia->diagnoses }}</p>
+                            <div class="text-xs">
+                                <p class="text-red">Consultant: {{ $dia->made_by->name }}</p>
+                                <p>{{ $dia->created_at->format('Y-m-d h:i A') }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="p-1 bg-gray-100">No diagnosis has been made during this visit.</p>
+                    @endforelse
+                </div>
 
-                <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
-                    <ul class="list-disc px-3 text-sm">
-                        @foreach ($visit->prescriptions as $pres)
-                            <li>{{ $pres }}</li>
-                        @endforeach
-                    </ul>
+                <div class="py-2">
+                    <p><b>Prescriptions & Treatments</b></p>
+
+                    <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
+                        <ul class="list-disc px-3 text-sm">
+                            @forelse ($visit->prescriptions as $pres)
+                                <li>{{ $pres }}</li>
+                            @empty
+                                <li>No prescriptions provided.</li>
+                            @endforelse
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

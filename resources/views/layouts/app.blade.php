@@ -21,6 +21,10 @@
         rel="stylesheet" integrity="sha384-HqTYeA3lyfNdehjeLkXVLdK3rVP01dsvAMQW/oV6M0a6+8Tht7YtWjP/sWP89O0j"
         crossorigin="anonymous">
     @vite(['resources/css/app.css', 'resources/css/app.scss'])
+
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
 <body class="md:flex" x-data @closeModal.window="removeGlobalModal">

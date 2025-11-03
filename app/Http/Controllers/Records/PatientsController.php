@@ -239,4 +239,8 @@ class PatientsController extends Controller
         $visit->checkOut($request->has('force'));
         return redirect()->route('dashboard');
     }
+
+    public function medicalHistory(Request $request, Patient $patient) {
+        return view('patients.medical-history', compact('patient'));
+    }
 }

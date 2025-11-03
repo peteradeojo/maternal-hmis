@@ -54,6 +54,12 @@ class Visit extends Model implements OperationalEvent
         return $this->visit?->getType();
     }
 
+    public function type(): Attribute {
+        return Attribute::make(
+            get: fn () => $this->visit->type,
+        );
+    }
+
     public function canCheckOut(): Attribute
     {
         return Attribute::make(fn() =>  !$this->awaiting_pharmacy && !$this->awaiting_doctor);
