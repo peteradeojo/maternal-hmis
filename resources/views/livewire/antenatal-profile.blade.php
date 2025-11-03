@@ -27,7 +27,7 @@
 
         <p>
             <b>Maturity Weeks: </b>
-            <span>{{ $profile->lmp ? $profile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}</span>
+            <span>{{ $profile->lmp ? (int) $profile->lmp->diffInWeeks() . ' weeks' : 'LMP Not Supplied' }}</span>
         </p>
     </div>
 

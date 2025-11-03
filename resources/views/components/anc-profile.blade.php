@@ -23,7 +23,7 @@
 
     <p>
         <b>Maturity Weeks: </b>
-        <span>{{ $ancProfile->lmp ? $ancProfile->lmp->diffInWeeks() . ' week(s)' : 'LMP Not Supplied' }}</span>
+        <span>{{ $ancProfile->lmp ? (int) $ancProfile->lmp->diffInWeeks() . ' weeks' : 'LMP Not Supplied' }}</span>
     </p>
 
     <p><b>Date of Booking: </b> {{ $ancProfile->created_at?->format('Y-m-d') }}</p>
