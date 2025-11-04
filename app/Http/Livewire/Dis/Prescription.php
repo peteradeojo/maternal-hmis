@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Dis;
 
 use App\Enums\AppNotifications;
 use App\Enums\Status;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -44,13 +45,22 @@ class Prescription extends Component
         DB::beginTransaction();
         try {
             foreach ($this->items as $item) {
-                $t = $this->doc->treatments()->find($item->id);
+                $t = $this->doc->treatments()->find($item->id)?->load('prescriptionable');
                 $t->amount = $item->amount;
                 $t->available = $item->available;
                 if ($this->quoteDone || $item->available && (int) $item->amount > 0) {
                     $t->status = Status::quoted->value;
                 }
                 $t->save();
+
+                try {
+                    // $t->prescriptionable->save(['amount' => $item->amount]);
+                    Product::where('id', $item->id)->update([
+                        'amount' => $item->amount,
+                    ]);
+                } catch (\Throwable $th) {
+                    logger()->emergency("Unable to save price for product: {$item->id}");
+                }
             }
 
             DB::commit();

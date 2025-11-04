@@ -26,7 +26,6 @@ class PharmacyController extends Controller
             SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending_count', [Status::pending->value])
             ->with(['patient'])
             ->havingRaw('SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END) > 0', [Status::pending->value, Status::quoted->value])
-            ->orderByDesc('pending_count')
             ->orderByDesc('created_at')
             ->where("event_type", '!=', "");
 
