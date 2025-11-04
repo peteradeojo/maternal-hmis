@@ -24,6 +24,12 @@ window.Echo = new Echo({
     wsHost: reverbHostname, // import.meta.env.VITE_REVERB_HOST,
     wsPort: 8080, // import.meta.env.VITE_REVERB_PORT ?? 80,
     wssPort: 443, // import.meta.env.VITE_REVERB_PORT ?? 443,
-    forceTLS: ['localhost', '127.0.0.1', '100.114.76.111', 'portal', 'portal.lan', '192.168.0.171'].includes(hostname) == false,
+    // forceTLS: ['localhost', '127.0.0.1', '100.114.76.111', 'portal', 'portal.lan', '192.168.0.171'].includes(hostname) == false,
+    forceTLS: window.location.protocol === 'https:',
     enabledTransports: ['ws', 'wss'],
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        }
+    }
 });
