@@ -18,6 +18,4 @@ Broadcast::channel('department.{departmentId}', function (User $user, int $depar
     return $user->department_id === $departmentId;
 });
 
-Broadcast::channel('user.{userId}', function (User $user, int $userId) {
-    return $user->id === $userId;
-});
+Broadcast::channel('user.{userId}', fn($user, int $id) => (int) $user->id == $id);

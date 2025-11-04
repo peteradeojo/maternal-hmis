@@ -27,6 +27,8 @@ class NotificationSent implements ShouldBroadcast, ShouldRescue
      */
     public function broadcastOn(): Channel
     {
+        dump($this->departmentId);
         return new Channel('department.' . $this->departmentId);
     }
 }
+
