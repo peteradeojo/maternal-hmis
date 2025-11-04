@@ -46,20 +46,32 @@ class Prescription extends Component
         try {
             foreach ($this->items as $item) {
                 $t = $this->doc->treatments()->find($item->id)?->load('prescriptionable');
+
+                $update_amt = $t->amount != $item->amount;
+
                 $t->amount = $item->amount;
                 $t->available = $item->available;
-                if ($this->quoteDone || $item->available && (int) $item->amount > 0) {
-                    $t->status = Status::quoted->value;
+                // if ($this->quoteDone || $item->available && (int) $item->amount > 0) {
+                //     $t->status = Status::quoted->value;
+                // }
+                if (!$item->available) {
+                    $t->status = Status::blocked->value;
+                } else {
+                    if ((int) $item->amount > 0) {
+                        $t->status = Status::quoted->value;
+                    }
                 }
                 $t->save();
 
-                try {
-                    // $t->prescriptionable->save(['amount' => $item->amount]);
-                    Product::where('id', $item->id)->update([
-                        'amount' => $item->amount,
-                    ]);
-                } catch (\Throwable $th) {
-                    logger()->emergency("Unable to save price for product: {$item->id}");
+                if ($update_amt) {
+                    try {
+                        // $t->prescriptionable->save(['amount' => $item->amount]);
+                        Product::where('id', $item->id)->update([
+                            'amount' => $item->amount,
+                        ]);
+                    } catch (\Throwable $th) {
+                        logger()->emergency("Unable to save price for product: {$item->id}");
+                    }
                 }
             }
 

@@ -141,27 +141,32 @@
                     <tr>
                         <td>{{ $img['name'] }} {{ $img['dosage'] }} {{ $img['duration'] }}</td>
                         <td class="flex items-center justify-between">
-                            @if ($img['saved'] ?? true)
-                                <span>{{ $img['amount'] ?? '0.00' }}</span>
-                                <span>
-                                    <button wire:click="removeItem({{ $i }}, 'drugs')"
-                                        class="btn btn-sm bg-red-500 text-white">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                    <button wire:click="editItem({{ $i }}, 'drugs')"
-                                        class="btn btn-sm bg-green-400 text-white">
-                                        <i class="fa fa-pencil"></i>
-                                    </button>
-                                </span>
+                            @unless ($img['available'])
+                                <span>Not available</span>
                             @else
-                                <input type="number" wire:model="drugs.{{ $i }}.amount"
-                                    value="{{ $img['amount'] }}"
-                                    wire:keyup.enter="saveItem({{ $i }}, 'drugs')" />
-                                <button wire:click="saveItem({{ $i }}, 'drugs')"
-                                    class="btn btn-sm bg-blue-400 text-white">
-                                    <i class="fa fa-save"></i>
-                                </button>
-                            @endif
+                                @if ($img['saved'] ?? true)
+                                    <span>{{ $img['amount'] ?? '0.00' }}</span>
+                                    <span>
+                                        <button wire:click="removeItem({{ $i }}, 'drugs')"
+                                            class="btn btn-sm bg-red-500 text-white">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                        <button wire:click="editItem({{ $i }}, 'drugs')"
+                                            class="btn btn-sm bg-green-400 text-white">
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                    </span>
+                                @else
+                                    <input type="number" wire:model="drugs.{{ $i }}.amount"
+                                        value="{{ $img['amount'] }}"
+                                        wire:keyup.enter="saveItem({{ $i }}, 'drugs')" />
+                                    <button wire:click="saveItem({{ $i }}, 'drugs')"
+                                        class="btn btn-sm bg-blue-400 text-white">
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                @endif
+                            @endunless
+
                         </td>
                         @php
                             $thisTotal += $img['amount'];
