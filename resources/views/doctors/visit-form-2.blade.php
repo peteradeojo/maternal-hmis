@@ -53,48 +53,52 @@
 
 @pushOnce('scripts')
     <script>
-        // initTab(document.querySelector('#nav-tab'));
-        initTab(document.querySelector('#actions-tab'));
-        initTab(document.querySelector('#notes-tabs'));
-        // initTab(document.querySelector('#tests-tabs'));
-        initTab(document.querySelector('#anc-visit-tests-2'));
+        $(document).ready(function() {
 
-        $(() => {
-            $("#note-form").on('submit', (e) => {
-                e.preventDefault();
-                fetch("{{ route('api.doctor.note', ['visit' => $visit->id]) }}", {
-                    method: 'POST',
-                    body: new FormData(e.currentTarget),
-                }).then((res) => {
-                    e.currentTarget.reset();
-                    notifySuccess("Note saved!");
-                }).catch((err) => {
-                    notifyError(err.message);
+
+            // initTab(document.querySelector('#nav-tab'));
+            initTab(document.querySelector('#actions-tab'));
+            initTab(document.querySelector('#notes-tabs'));
+            // initTab(document.querySelector('#tests-tabs'));
+            initTab(document.querySelector('#anc-visit-tests-2'));
+
+            $(() => {
+                $("#note-form").on('submit', (e) => {
+                    e.preventDefault();
+                    fetch("{{ route('api.doctor.note', ['visit' => $visit->id]) }}", {
+                        method: 'POST',
+                        body: new FormData(e.currentTarget),
+                    }).then((res) => {
+                        e.currentTarget.reset();
+                        notifySuccess("Note saved!");
+                    }).catch((err) => {
+                        notifyError(err.message);
+                    });
+                });
+
+                $("#diagnosis-form").on('submit', (e) => {
+                    e.preventDefault();
+                    fetch("{{ route('api.doctor.diagnosis', ['visit' => $visit->id]) }}", {
+                        method: 'POST',
+                        body: new FormData(e.currentTarget),
+                    }).then((res) => {
+                        e.currentTarget.reset();
+                        notifySuccess("Diagnosis saved!");
+                    }).catch((err) => {
+                        console.error(err);
+                    });
                 });
             });
 
-            $("#diagnosis-form").on('submit', (e) => {
-                e.preventDefault();
-                fetch("{{ route('api.doctor.diagnosis', ['visit' => $visit->id]) }}", {
-                    method: 'POST',
-                    body: new FormData(e.currentTarget),
-                }).then((res) => {
-                    e.currentTarget.reset();
-                    notifySuccess("Diagnosis saved!");
-                }).catch((err) => {
-                    console.error(err);
+            function loadVisitReport(id) {
+                const display = document.querySelector("#previous-visit-report");
+
+                fetch("{{ route('doctor.visit', ['visit' => ':id']) }}?brief".replace(":id", id)).then((res) => {
+                    res.text().then((text) => {
+                        display.innerHTML = text;
+                    }).catch(err => console.error(err));
                 });
-            });
+            }
         });
-
-        function loadVisitReport(id) {
-            const display = document.querySelector("#previous-visit-report");
-
-            fetch("{{ route('doctor.visit', ['visit' => ':id']) }}?brief".replace(":id", id)).then((res) => {
-                res.text().then((text) => {
-                    display.innerHTML = text;
-                }).catch(err => console.error(err));
-            });
-        }
     </script>
 @endpushOnce
