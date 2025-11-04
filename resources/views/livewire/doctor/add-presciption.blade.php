@@ -7,7 +7,7 @@
         {{-- </div> --}}
 
         @if ($selections || $updating || $visit->prescriptions->count() > 0)
-            <table id="drugs-table" class="table">
+            <table id="drugs-table" class="table max-w-full">
                 <thead>
                     <tr>
                         <th>Prescription</th>
@@ -20,7 +20,7 @@
                 <tbody>
                     @if (!empty($selections))
                         <tr>
-                            <form wire:key="{{ $selections?->id ?? $selections->name }}">
+                            <form wire:submit.prevent="saveRequest" wire:keyup.escape.stop="cancel" wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"
@@ -49,7 +49,7 @@
                                 </td>
                                 <td>
                                     <input type="number" wire:model="requestForm.duration" name="duration"
-                                        value="1" />
+                                        value="1" autocomplete="off" />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -68,22 +68,13 @@
 
                     @if ($updating)
                         <tr>
-                            <form wire:submit="saveRequest" wire:key="{{ $updating->name }}">
+                            <form wire:submit.prevent="saveRequest" wire:key="{{ $updating->name }}">
                                 <td>{{ $updating->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"
                                         value="1" />
                                     <div>
                                         @error('requestForm.dosage')
-                                            <span class="error text-xs text-red-600">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </td>
-                                <td>
-                                    <input type="text" wire:model="requestForm.duration" name="duration"
-                                        value="1" />
-                                    <div>
-                                        @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -104,6 +95,15 @@
                                         <option value="other">Others</option>
                                     </select>
                                 </td>
+                                <td>
+                                    <input type="number" wire:model="requestForm.duration" name="duration"
+                                        value="1" autocomplete="off" />
+                                    <div>
+                                        @error('requestForm.duration')
+                                            <span class="error text-xs text-red-600">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </td>
                                 <td class="flex gap-x-3 items-center">
                                     <button type="button" wire:click="saveUpdate({{ $updating->id }})"
                                         class="btn btn-sm bg-blue-200 hover:bg-blue-500">&check;</button>
@@ -118,8 +118,8 @@
                         <tr>
                             <td>{{ $prescription->name }}</td>
                             <td>{{ $prescription->dosage }}</td>
-                            <td>{{ $prescription->duration }}</td>
                             <td>{{ $prescription->frequency }}</td>
+                            <td>{{ $prescription->duration }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
                                     wire:click="edit({{ $prescription->id }})">Edit</button>

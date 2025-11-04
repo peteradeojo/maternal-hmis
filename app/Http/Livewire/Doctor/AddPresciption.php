@@ -63,8 +63,8 @@ class AddPresciption extends Component
 
         if ($this->dispatchEvent) {
             $this->dispatch("prescription_selected", product: $dto);
-            // $this->requestForm->reset();
-            // $this->selections = null;
+            $this->requestForm->reset();
+            $this->selections = null;
             return;
         }
 
