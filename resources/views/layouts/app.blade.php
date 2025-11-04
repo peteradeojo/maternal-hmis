@@ -143,7 +143,7 @@
             }
         });
     </script>
-    <script src="{{ asset('js/util.js') }}"></script>
+    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
 
     @stack('scripts')
 </body>
