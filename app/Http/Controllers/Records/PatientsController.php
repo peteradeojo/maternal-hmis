@@ -236,11 +236,41 @@ class PatientsController extends Controller
 
     public function checkOut(Request $request, Visit $visit)
     {
-        $visit->checkOut($request->has('force'));
-        return redirect()->route('dashboard');
+        if ($visit->status != Status::active->value) {
+            return response()->json([
+                'message' => 'Patient has been checkout. Please contact IT if there is any issue.',
+                'ok' => false,
+            ]);
+        }
+
+        if ($visit->bills->count() == 0) {
+            return response()->json([
+                'message' => 'No bill has been created for this patient. Please create a bill payment first.',
+                'ok' => false,
+                'status' => 'requires_action'
+            ]);
+        }
+
+        if ($visit->bills->contains(fn($bill) => $bill->balance > 0)) {
+            return response()->json([
+                'message' => 'Patient has unpaid bills. Please check their bills and try again.',
+                'action' => 'confirm_action',
+                'confirmation_data' => ['force' => true],
+                'status' => 'requires_action',
+                'ok' => false,
+            ]);
+        }
+
+        $visit->update(['status' => Status::completed->value]);
+        return response()->json([
+            'message' => 'Patient checked out!',
+            'status' => 'success',
+            'ok' => true,
+        ]);
     }
 
-    public function medicalHistory(Request $request, Patient $patient) {
+    public function medicalHistory(Request $request, Patient $patient)
+    {
         return view('patients.medical-history', compact('patient'));
     }
 }

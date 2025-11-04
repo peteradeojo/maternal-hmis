@@ -23,7 +23,9 @@
     @vite(['resources/css/app.css', 'resources/css/app.scss'])
 
     <style>
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -72,8 +74,11 @@
         </div>
     </aside>
 
-    <main class="w-screen sm:ml-[16.666667%] bg-blue-100 min-h-screen sm:p-8 overflow-y-auto">
-        <div class="p-1">
+    <main class="w-screen bg-blue-100 sm:ml-[16.666667%] min-h-screen overflow-y-auto">
+        <div class="flex justify-end">
+            <p class="text-gray-400 sm:px-8">v{{ env('APP_VERSION', '0.0.1') }}</p>
+        </div>
+        <div class="sm:px-8 sm:py-4">
             @if (session('error'))
                 <p>{{ session('error') }}</p>
             @endif
@@ -87,7 +92,8 @@
     </main>
 
     {{-- Global modal for displaying content --}}
-    <div id="global-overlay" x-on:keyup.escape.window="removeGlobalModal" class="fixed inset-0 bg-black/40 hidden z-50"></div>
+    <div id="global-overlay" x-on:keyup.escape.window="removeGlobalModal" class="fixed inset-0 bg-black/40 hidden z-50">
+    </div>
     <div id="global-modal"
         class="fixed top-0 right-0 h-dvh overflow-y-auto max-w-[600px] w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
 

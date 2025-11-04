@@ -61,7 +61,7 @@
                                 <td>{{ $v->readable_visit_type }}</td>
                                 <td>
                                     @if ($user->department_id == DepartmentsEnum::REC->value)
-                                        <a href="{{ route('records.show-history', ['visit' => $v]) }}">Check out</a>
+                                        <a class="btn btn-sm bg-green-400" href="{{ route('billing.patient-bills', ['patient' => $v->patient_id]) }}">Check out</a>
                                     @endif
                                 </td>
                             </tr>

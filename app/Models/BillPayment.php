@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class BillPayment extends Model
+{
+    use SoftDeletes;
+
+    protected $fillable = [
+        'bill_id',
+        'payment_date',
+        'amount',
+        'payment_method',
+        'reference',
+        'notes',
+        'status',
+        'user_id',
+    ];
+}

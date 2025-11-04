@@ -139,4 +139,8 @@ class Patient extends Model
     {
         $this->insurance()->where('status', Status::active);
     }
+
+    public function bills() {
+        return $this->hasMany(Bill::class, 'patient_id');
+    }
 }

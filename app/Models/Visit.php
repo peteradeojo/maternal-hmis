@@ -91,6 +91,10 @@ class Visit extends Model implements OperationalEvent
         $query->where('awaiting_doctor', true)->orWhere('awaiting_vitals', true)->orWhere('awaiting_pharmacy', true);
     }
 
+    public function scopeActive($query) {
+        $query->where('status', Status::active->value)->latest();
+    }
+
     public function checkOut($force = false)
     {
         if ($force) {
@@ -116,5 +120,17 @@ class Visit extends Model implements OperationalEvent
     {
         $b = ($this->visit->tests()->where('results', '!=', null)->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
         return $b;
+    }
+
+    public function bills() {
+        return $this->morphMany(Bill::class, 'billable');
+    }
+
+    public function admission() {
+        return $this->hasOne(Admission::class);
+    }
+
+    public function active_bills() {
+        return  $this->bills()->where('status', Status::pending->value);
     }
 }

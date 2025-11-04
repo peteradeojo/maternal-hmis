@@ -107,6 +107,10 @@ function asyncForm(form, route, callback = (e, data) => { }) {
     });
 }
 
+const MODAL_TITLE=".modal-title";
+const MODAL_CONTENT=".modal-body";
+const MODAL_BODY=".modal-body";
+
 function useGlobalModal(callback) {
     $("#global-overlay").removeClass("hidden");
     $("#global-modal").removeClass("translate-x-full");
@@ -170,6 +174,16 @@ function notifySuccess(message) {
     return displayNotification({
         message,
         bg: ['bg-blue-400', 'text-white'],
+        options: {
+            mode: 'in-app',
+        }
+    })
+}
+
+function notifyAction(message) {
+    return displayNotification({
+        message,
+        bg: ['bg-green-500', 'text-white'],
         options: {
             mode: 'in-app',
         }

@@ -22,11 +22,13 @@ class DocumentationPrescription extends Model
         return $this->morphTo();
     }
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function event() {
+    public function event()
+    {
         return $this->morphTo();
     }
 
@@ -35,9 +37,17 @@ class DocumentationPrescription extends Model
         return "{$this->name} {$this->route} {$this->dosage} {$this->frequency} - for {$this->duration}";
     }
 
-    public function eventName(): Attribute {
+    public function eventName(): Attribute
+    {
         return Attribute::make(
-            get: fn ($value, $attributes) => EventLookup::tryFrom($attributes['event_type'])?->name ?? 'unknown_event', //"{$attributes['event_type']} #{$attributes['event_id']}"
+            get: fn($value, $attributes) => EventLookup::tryFrom($attributes['event_type'])?->name ?? 'unknown_event', //"{$attributes['event_type']} #{$attributes['event_id']}"
         );
+    }
+
+    protected static function booted()
+    {
+        static::created(function (Self $self) {
+            
+        });
     }
 }
