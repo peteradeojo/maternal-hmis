@@ -32,7 +32,12 @@ class BillReport extends Component
         $this->visit = $visit;
 
         $this->tests = $this->visit->tests->load('describable')->pluck('describable')->toArray();
-        $this->drugs = $this->visit->treatments->pluck('prescriptionable')->toArray();
+
+        if($visit->type == "Antenatal") {
+            $this->tests = array_merge($this->tests, $visit->visit->tests->load('describable')->pluck('describable')->toArray());
+        }
+
+        $this->drugs = $this->visit->treatments->toArray();
         $this->scans = $this->visit->imagings->load('describable')->pluck('describable')->toArray();
         $this->others = [];
 

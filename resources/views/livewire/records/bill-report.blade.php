@@ -35,7 +35,8 @@
                                 {{-- <span>
                                     {{ $test['amount'] ?? '0.00' }}
                                 </span> --}}
-                                <button wire:click="saveItem({{$i}}, 'tests')" class="btn btn-sm bg-blue-400 text-white"><i class="fa fa-save"></i></button>
+                                <button wire:click="saveItem({{ $i }}, 'tests')"
+                                    class="btn btn-sm bg-blue-400 text-white"><i class="fa fa-save"></i></button>
                             @endif
                         </td>
                         @php
@@ -138,7 +139,7 @@
             <tbody>
                 @foreach ($drugs as $i => $img)
                     <tr>
-                        <td>{{ $img['name'] }}</td>
+                        <td>{{ $img['name'] }} {{ $img['dosage'] }} {{ $img['duration'] }}</td>
                         <td class="flex items-center justify-between">
                             @if ($img['saved'] ?? true)
                                 <span>{{ $img['amount'] ?? '0.00' }}</span>
@@ -212,11 +213,12 @@
                                 <span>
                                     <button wire:click.prevent="removeItem({{ $i }}, 'others')"
                                         class="btn btn-sm bg-red-600 text-white"><i class="fa fa-trash"></i></button>
-                                    <button wire:click.prevent="editItem({{ $i }}, 'others')" class="btn btn-sm bg-green-400"><i
-                                            class="fa fa-pencil"></i></button>
+                                    <button wire:click.prevent="editItem({{ $i }}, 'others')"
+                                        class="btn btn-sm bg-green-400"><i class="fa fa-pencil"></i></button>
                                 </span>
                             @else
-                                <input type="number" wire:keyup.enter.prevent="saveItem({{ $i }}, 'others')"
+                                <input type="number"
+                                    wire:keyup.enter.prevent="saveItem({{ $i }}, 'others')"
                                     wire:model="others.{{ $i }}.amount" class="form-control"
                                     value="{{ $item['amount'] }}" step="1" required />
                                 <button wire:click.prevent="saveItem({{ $i }}, 'others')" href="#"
