@@ -67,7 +67,7 @@
                     data-target="#anc-visit-tests-modal">Add
                     Investigation</button>
             </div>
-            @include('doctors.components.test-results', ['tests' => $visit->tests])
+            @include('doctors.components.test-results', ['tests' => $visit->visit->tests])
             <div class="flex justify-between pt-2 items-center">
                 <p class="text-xl bold">Scans</p>
             </div>
