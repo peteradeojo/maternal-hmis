@@ -78,4 +78,9 @@ class MedicalRecords extends Component
 
         $this->redirect('/dashboard');
     }
+
+    public function removeTest($id) {
+        $this->visit->tests()->where('id', $id)->delete();
+        $this->dispatch('$refresh');
+    }
 }

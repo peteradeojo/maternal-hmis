@@ -35,7 +35,7 @@ class PharmacyController extends Controller
             $query->where('status', Status::active->value)->has('treatments');
         })->whereHas('entries', function (Builder $query) {
             $query->where('tag', 'drug');
-        })->whereIn('status', [Status::pending->value, Status::quoted->value]);
+        })->whereIn('status', [Status::pending->value, Status::quoted->value])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {

@@ -80,7 +80,7 @@
 
                 <div class="py-2">
                     <p><b>Tests</b></p>
-                    @include('doctors.components.test-results', ['tests' => $visit->tests])
+                    @include('doctors.components.test-results', ['tests' => $visit->tests, 'cancellable' => true])
                 </div>
 
                 @if ($visit->imagings?->count() > 0)

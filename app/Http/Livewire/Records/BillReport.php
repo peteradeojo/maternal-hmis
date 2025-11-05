@@ -39,19 +39,19 @@ class BillReport extends Component
             'saved' => true,
             'product' => $test->describable->toArray(),
             'data' => $test->toArray()
-        ]);
+        ])->toArray();
 
         $this->drugs = $this->visit->treatments->load('prescriptionable')->map(fn($item) => [
             'saved' => true,
             'product' => $item->prescriptionable->toArray(),
             'data' => $item->toArray(),
-        ]);
+        ])->toArray();
 
         $this->scans = $this->visit->imagings->load('describable')->map(fn($item) => [
             'saved' => true,
             'product' => $item->describable->toArray(),
             'data' => $item->toArray(),
-        ]);
+        ])->toArray();
 
         $this->others = [];
     }
@@ -64,17 +64,11 @@ class BillReport extends Component
     public function addItem($id, $prop)
     {
         $pdt = Product::find($id);
+        $comp = ['saved' => true, 'data' => null, 'product' => $pdt->toArray()];
+        // $comp = ['saved' => true, 'data' => null, 'product' => $pdt];
 
-        // switch ($prop) {
-        //     case 'tests':
-        //         return $this->addTest($pdt);
-        //     case 'drugs':
-        //         return $this->addDrug($pdt);
-        //     case 'scans':
-        //         return $this->addScan($pdt);
-        // }
-
-        $this->{$prop}[] = ['saved' => true, 'data' => null, 'product' => $pdt->toArray()];
+        // dd($this->{$prop}, $comp);
+        $this->{$prop}[] = $comp;
         $this->subTotal($prop);
     }
 
@@ -97,8 +91,7 @@ class BillReport extends Component
 
     public function subTotal($prop)
     {
-        // dd($this->{$prop});
-        $this->{$prop . "_amt"} = $this->{$prop}->reduce(fn($a, $p) => $a + $p['product']['amount'], 0);
+        $this->{$prop . "_amt"} = collect($this->{$prop})->reduce(fn($a, $p) => $a + $p['product']['amount'], 0);
     }
 
     public function removeItem($index, $prop)
@@ -234,6 +227,6 @@ class BillReport extends Component
     public function addDrug($data)
     {
         $comp = ['product' => $data['product'], 'data' => $data['data'], 'saved' => true];
-        $this->drugs->push($comp);
+        $this->drugs[] = ($comp);
     }
 }

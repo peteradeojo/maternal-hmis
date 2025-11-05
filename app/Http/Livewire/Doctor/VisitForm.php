@@ -130,6 +130,12 @@ class VisitForm extends Component
         $this->refresh();
     }
 
+    public function removeTest($id)
+    {
+        $this->visit->tests()->where('id', $id)->delete();
+        $this->refresh();
+    }
+
     public function render()
     {
         return view('livewire.doctor.visit-form');
