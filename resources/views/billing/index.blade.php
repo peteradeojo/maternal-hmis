@@ -32,9 +32,13 @@
                         data: 'patient.card_number'
                     },
                     {
-                        data: (row) => new Date(row.created_at).toLocaleDateString('en-CA')
+                        data: (row) => new Date(row.created_at).toLocaleDateString('en-CA', {
+                            minute: '2-digit',
+                            hour: '2-digit',
+                        })
                     },
                 ],
+                ordering: false,
             });
         });
     </script>
