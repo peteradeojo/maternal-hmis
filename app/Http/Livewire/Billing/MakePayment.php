@@ -102,12 +102,13 @@ class MakePayment extends Component
     private function getItems()
     {
         $this->items = $this->bill->entries->map(fn($b) => [
-            'description' => $b->description,
+            'description' => $b->name,
             'amount' => $b->amount,
             'total_price' => $b->total_price,
             'tag' => $b->tag,
             'saved' => true,
             'id' => $b->id,
+            'meta' => $b->meta,
         ])->toArray();
     }
 

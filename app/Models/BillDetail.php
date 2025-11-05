@@ -26,4 +26,16 @@ class BillDetail extends Model
             get: fn ($v, $attributes) => $attributes['tag'] == 'drug' ? $attributes['total_price'] * 1.5 : $attributes['total_price'],
         );
     }
+
+    public function name(): Attribute {
+        return Attribute::make(
+            // get: fn($value, $attributes) => $attributes['tag'] != 'drug' ? $attributes['description'] : "{$attributes['meta']['data']['name']}"
+            get: function ($value, $attributes) {
+                if ($attributes['tag'] != 'drug') return $attributes['description'];
+
+                $meta = json_decode($attributes['meta']);
+                return "{$meta->data->name} {$meta->data->dosage} {$meta->data->frequency} {$meta->data->duration} (days)";
+            }
+        );
+    }
 }

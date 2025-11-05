@@ -15,7 +15,11 @@
             <tbody>
                 @foreach ($items as $i => $entry)
                     <tr>
-                        <td>{{ $entry['description'] }}</td>
+                        @if ($entry['tag'] == 'drug')
+                            <td>{{ $entry['description'] }}</td>
+                        @else
+                            <td>{{ $entry['description'] }}</td>
+                        @endif
                         <td class="flex justify-between items-center">
                             @if ($entry['saved'])
                                 <span>{{ number_format($entry['amount']) }}
@@ -26,7 +30,8 @@
                                 <button wire:click="edit({{ $i }})"
                                     class="btn btn-sm bg-green-500 text-white"><i class="fa fa-pencil"></i></button>
                             @else
-                                <input type="number" class="form-control" wire:keyup.enter.stop="save({{ $i }})"
+                                <input type="number" class="form-control"
+                                    wire:keyup.enter.stop="save({{ $i }})"
                                     wire:model="items.{{ $i }}.total_price" />
                             @endif
                         </td>
@@ -36,8 +41,9 @@
                 <tr>
                     <td></td>
                     <td class="flex justify-end">
-                        <button wire:click="updateBillDetailsAmt" class="btn bg-blue-400 text-white" @if ($currentHash == $initHash) disabled="disabled" @endif><i
-                                class="fa fa-save"></i> Save</button>
+                        <button wire:click="updateBillDetailsAmt" class="btn bg-blue-400 text-white"
+                            @if ($currentHash == $initHash) disabled="disabled" @endif><i class="fa fa-save"></i>
+                            Save</button>
                     </td>
                 </tr>
 
