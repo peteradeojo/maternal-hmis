@@ -2,11 +2,12 @@
     <div class="relative">
         <p class="bold">{{ $title ?? 'Add Prescription' }}</p>
 
-        {{-- <div class="w-1/2"> --}}
-            <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)" @selected_temp="addTempPrescription($event.detail)" />
-        {{-- </div> --}}
+        <div class="py-2">
+            <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)"
+                @selected_temp="addTempPrescription($event.detail)" />
+        </div>
 
-        @if ($selections || $updating || $visit->prescriptions->count() > 0)
+        @if ($display || $selections || $updating)
             <table id="drugs-table" class="table max-w-full">
                 <thead>
                     <tr>
@@ -20,7 +21,8 @@
                 <tbody>
                     @if (!empty($selections))
                         <tr>
-                            <form wire:submit.prevent="saveRequest" wire:keyup.escape.stop="cancel" wire:key="{{ $selections?->id ?? $selections->name }}">
+                            <form wire:submit.prevent="saveRequest" wire:keyup.escape.stop="cancel"
+                                wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }}</td>
                                 <td>
                                     <input type="text" wire:model="requestForm.dosage" name="dosage"
@@ -114,20 +116,28 @@
                         </tr>
                     @endif
 
-                    @foreach ($visit->prescriptions as $prescription)
-                        <tr>
-                            <td>{{ $prescription->name }}</td>
-                            <td>{{ $prescription->dosage }}</td>
-                            <td>{{ $prescription->frequency }}</td>
-                            <td>{{ $prescription->duration }}</td>
-                            <td>
-                                <button type="button" class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
-                                    wire:click="edit({{ $prescription->id }})">Edit</button>
-                                <button type="button" class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
-                                    wire:click="deleteRequestItem({{ $prescription->id }})">&times;</button>
-                            </td>
-                        </tr>
-                    @endforeach
+                    @if ($display)
+                        @forelse ($visit->prescriptions as $prescription)
+                            <tr>
+                                <td>{{ $prescription->name }}</td>
+                                <td>{{ $prescription->dosage }}</td>
+                                <td>{{ $prescription->frequency }}</td>
+                                <td>{{ $prescription->duration }}</td>
+                                <td>
+                                    <button type="button"
+                                        class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
+                                        wire:click="edit({{ $prescription->id }})">Edit</button>
+                                    <button type="button"
+                                        class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
+                                        wire:click="deleteRequestItem({{ $prescription->id }})">&times;</button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5">No treatment added.</td>
+                            </tr>
+                        @endforelse
+                    @endif
                 </tbody>
             </table>
         @endif

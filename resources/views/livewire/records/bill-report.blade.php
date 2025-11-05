@@ -16,12 +16,12 @@
             <tbody>
                 @foreach ($tests as $i => $test)
                     <tr>
-                        <td>{{ $test['name'] }}</td>
+                        <td>{{ $test['product']['name'] }}</td>
                         <td class="flex justify-between items-center">
-                            @if ($test['saved'] ?? true)
-                                <span>
-                                    {{ $test['amount'] ?? '0.00' }}
-                                </span>
+                            <span>
+                                {{ $test['product']['amount'] ?? '0.00' }}
+                            </span>
+                            {{-- @if ($test['saved'] ?? true)
                                 <span>
                                     <button wire:click="removeItem({{ $i }}, 'tests')"
                                         class="btn bg-red-500 text-white"><i class="fa fa-trash"></i></button>
@@ -30,17 +30,14 @@
                                 </span>
                             @else
                                 <input type="number" wire:keyup.enter="saveItem({{ $i }}, 'tests')"
-                                    wire:model="tests.{{ $i }}.amount" value="{{ $test['amount'] }}"
-                                    required />
-                                {{-- <span>
-                                    {{ $test['amount'] ?? '0.00' }}
-                                </span> --}}
+                                    wire:model="tests.{{ $i }}.product.amount"
+                                    value="{{ $test['product']['amount'] }}" required />
                                 <button wire:click="saveItem({{ $i }}, 'tests')"
                                     class="btn btn-sm bg-blue-400 text-white"><i class="fa fa-save"></i></button>
-                            @endif
+                            @endif --}}
                         </td>
                         @php
-                            $thisTotal += $test['amount'];
+                            $thisTotal += $test['product']['amount'];
                         @endphp
                     </tr>
                 @endforeach
@@ -77,10 +74,10 @@
             <tbody>
                 @foreach ($scans as $i => $img)
                     <tr>
-                        <td>{{ $img['name'] }}</td>
+                        <td>{{ $img['product']['name'] }}</td>
                         <td class="flex items-center justify-between">
-                            @if ($img['saved'] ?? true)
-                                <span>{{ $img['amount'] ?? '0.00' }}</span>
+                            <span>{{ $img['product']['amount'] ?? '0.00' }}</span>
+                            {{-- @if ($img['saved'] ?? true)
                                 <span>
                                     <button wire:click="removeItem({{ $i }}, 'scans')"
                                         class="btn btn-sm bg-red-500 text-white">
@@ -99,10 +96,10 @@
                                     class="btn btn-sm bg-blue-400 text-white">
                                     <i class="fa fa-save"></i>
                                 </button>
-                            @endif
+                            @endif --}}
                         </td>
                         @php
-                            $thisTotal += $img['amount'];
+                            $thisTotal += $img['product']['amount'];
                         @endphp
                     </tr>
                 @endforeach
@@ -132,44 +129,20 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Procedure</th>
+                    <th>Description</th>
                     <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($drugs as $i => $img)
                     <tr>
-                        <td>{{ $img['name'] }} {{ $img['dosage'] }} {{ $img['duration'] }}</td>
+                        <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }} (days)
+                        </td>
                         <td class="flex items-center justify-between">
-                            @unless ($img['available'])
-                                <span>Not available</span>
-                            @else
-                                @if ($img['saved'] ?? true)
-                                    <span>{{ $img['amount'] ?? '0.00' }}</span>
-                                    <span>
-                                        <button wire:click="removeItem({{ $i }}, 'drugs')"
-                                            class="btn btn-sm bg-red-500 text-white">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                        <button wire:click="editItem({{ $i }}, 'drugs')"
-                                            class="btn btn-sm bg-green-400 text-white">
-                                            <i class="fa fa-pencil"></i>
-                                        </button>
-                                    </span>
-                                @else
-                                    <input type="number" wire:model="drugs.{{ $i }}.amount"
-                                        value="{{ $img['amount'] }}"
-                                        wire:keyup.enter="saveItem({{ $i }}, 'drugs')" />
-                                    <button wire:click="saveItem({{ $i }}, 'drugs')"
-                                        class="btn btn-sm bg-blue-400 text-white">
-                                        <i class="fa fa-save"></i>
-                                    </button>
-                                @endif
-                            @endunless
-
+                            <span>{{ $img['data']['amount'] ?? 0 }}</span>
                         </td>
                         @php
-                            $thisTotal += $img['amount'];
+                            $thisTotal += $img['data']['amount'] ?? 0;
                         @endphp
                     </tr>
                 @endforeach
@@ -178,7 +151,6 @@
                     <td class="bold">Subtotal</td>
                     <td class="text-right bold">{{ number_format($thisTotal, 2) }}</td>
                 </tr>
-
                 @php
                     $grandTotal += $thisTotal;
                 @endphp
@@ -187,7 +159,7 @@
 
         <div class="p-3">
             <p class="text-lg font-semibold">Add more drugs</p>
-            <livewire:dynamic-product-search :departmentId="4" @selected="addItem($event.detail.id, 'drugs')" />
+            <livewire:billing.add-prescription @selected="addDrug($event.detail)" />
         </div>
     </div>
 
@@ -248,7 +220,7 @@
         </div>
     </div>
 
-    <div class="flex justify-end">
-        <button wire:click="saveBill" class="btn bg-blue-400 text-white"><i class="fa fa-save"></i> Save Bill</button>
+    <div class="flex justify-end sticky bottom-0 pb-4">
+        <button wire:click="saveBill" class="btn bg-blue-400 text-white"><i class="fa fa-plus"></i> Create Bill</button>
     </div>
 </div>

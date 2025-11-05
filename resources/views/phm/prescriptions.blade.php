@@ -31,18 +31,20 @@
                 try {
                     e.preventDefault();
                     const el = e.currentTarget;
-                    const [type, id] = el.dataset.event.split(":") || [];
+                    // const [type, id] = el.dataset.event.split(":") || [];
+                    const bill = el.dataset.bill;
 
                     useGlobalModal((a) => {
                         a.find(".modal-title").text("Prescription");
+                        a.find(MODAL_BODY).html(`@include('components.spinner')`)
 
-                        axios.get("{{ route('dis.get-prescription') }}?type=:type&id=:id".replace(':type',
-                                    type)
-                                .replace(':id', id))
+                        axios.get("{{ route('dis.get-bill', ':id') }}".replace(':id', bill), {
+                            headers: {Accept: 'text/html'}
+                        })
                             .then((response) => {
                                 a.find(".modal-body").html(response.data);
                             }).catch((err) => {
-                                a.find(".modal-body").html(err.response.data);
+                                a.find(".modal-body").html(`<p>An error occurred.</p>`);
                                 displayNotification({
                                     message: "An error occurred while loading the prescription.",
                                     bg: ["bg-red-500", "text-white"],
@@ -83,8 +85,8 @@
                         }),
                     },
                     {
-                        data: (row) =>
-                            `<a data-event="${row.event_name}:${row.event_id}" href="#" class='link view-prescription'>View</a>`,
+                        data: (row) => row.status !== {{Status::quoted->value}} ?
+                            `<a data-bill="${row.id}" href="#" class='btn bg-blue-400 text-white view-prescription'>View <i class="fa fa-open"></i></a>` : `<a data-bill="${row.id}" href="#" class='btn bg-green-400 text-white view-prescription'>Done <i class="fa fa-check"></i> </a>`,
                         orderable: false,
                         searchable: false
                     },

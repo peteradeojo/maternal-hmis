@@ -133,10 +133,15 @@ function sendUserMessage($message, $options = [])
     $options['mode'] ??= AppNotifications::$BOTH;
 
     $message = array_merge($message, ['options' => $options]);
-    Broadcast::private("user." . auth()->user()->id)
-        ->as("UserEvent")
-        ->with($message)
-        ->sendNow();
+    try {
+        Broadcast::private("user." . auth()->user()->id)
+            ->as("UserEvent")
+            ->with($message)
+            ->sendNow();
+    } catch (\Exception $e) {
+        // report($e);
+        logger()->emergency("Error when trying to send notification: " . $e->getMessage());
+    }
 }
 
 function notifyDepartment($departmentId, $message, $options = [])

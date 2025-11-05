@@ -16,7 +16,12 @@
                 @foreach ($bill->entries as $entry)
                     <tr>
                         <td>{{ $entry->description }}</td>
-                        <td>{{ $entry->total_price }}</td>
+                        <td>{{ $entry->amount }}
+                            @if ($entry->tag == 'drug')
+                                <small>({{ $entry->total_price }})</small>
+                            @endif
+
+                        </td>
                     </tr>
                 @endforeach
 

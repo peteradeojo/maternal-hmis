@@ -51,7 +51,7 @@ class Bill extends Model
     public function balance(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->entries->sum('total_price') - $this->payments->where('status', Status::PAID->value)->sum('amount'),
+            get: fn() => $this->entries->sum('amount') - $this->payments->where('status', Status::PAID->value)->sum('amount'),
         );
     }
 
@@ -63,7 +63,7 @@ class Bill extends Model
 
     public function amount(): Attribute {
         return Attribute::make(
-            get: fn () => $this->entries->sum('total_price'),
+            get: fn () => $this->entries->sum('amount'),
         );
     }
 }

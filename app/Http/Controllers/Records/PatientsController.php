@@ -251,7 +251,7 @@ class PatientsController extends Controller
             ]);
         }
 
-        if ($visit->bills->contains(fn($bill) => $bill->balance > 0)) {
+        if ($visit->bills->where('status', '!=', Status::cancelled->value)->contains(fn($bill) => $bill->balance > 0)) {
             return response()->json([
                 'message' => 'Patient has unpaid bills. Please check their bills and try again.',
                 'action' => 'confirm_action',

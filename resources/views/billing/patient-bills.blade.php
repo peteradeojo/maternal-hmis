@@ -59,6 +59,7 @@
                         }
 
                         notifySuccess(message);
+                        window.location.href = "{{route('billing.index')}}";
                     })
                     .catch((err) => {
                         notifyError(err.message);

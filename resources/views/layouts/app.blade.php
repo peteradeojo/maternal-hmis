@@ -12,6 +12,7 @@
     <title>@yield('title')</title>
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
@@ -95,7 +96,7 @@
     <div id="global-overlay" x-on:keyup.escape.window="removeGlobalModal" class="fixed inset-0 bg-black/40 hidden z-50">
     </div>
     <div id="global-modal"
-        class="fixed top-0 right-0 h-dvh overflow-y-auto max-w-[600px] w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
+        class="fixed top-0 right-0 h-dvh overflow-y-auto min-w-fit w-1/2 bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
 
         <div class="p-4 border-b flex justify-between items-center sticky bg-white top-0">
             <h2 class="text-lg font-semibold modal-title" id="global-modal-title">Modal Title</h2>
@@ -115,6 +116,7 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script
         src="https://cdn.datatables.net/v/dt/dt-2.3.4/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/r-3.0.7/datatables.min.js"
         integrity="sha384-N+pTNAj6u3zQeBQuZo/qd20fG6LAD0KVj49eFU9robOJpS7LYXJn/vy7zoXayWW6" crossorigin="anonymous">

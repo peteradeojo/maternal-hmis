@@ -20,6 +20,7 @@ class AddPresciption extends Component
     public $search;
 
     public $dispatchEvent;
+    public $display;
 
     public PrescriptionRequest $requestForm;
 
@@ -31,10 +32,11 @@ class AddPresciption extends Component
 
     public $title;
 
-    public function mount($visit, $dispatch = false)
+    public function mount($visit, $dispatch = false, $display = true)
     {
         $this->visit = $visit->load(['prescriptions.prescriptionable']);
         $this->dispatchEvent = $dispatch;
+        $this->display = $display;
 
         $this->selections = [];
     }

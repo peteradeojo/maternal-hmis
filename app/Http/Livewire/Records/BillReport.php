@@ -31,17 +31,27 @@ class BillReport extends Component
     {
         $this->visit = $visit;
 
-        $this->tests = $this->visit->tests->load('describable')->pluck('describable')->toArray();
+        $tests = $this->visit->tests->load('describable');
 
-        if($visit->type == "Antenatal") {
-            $this->tests = array_merge($this->tests, $visit->visit->tests->load('describable')->pluck('describable')->toArray());
+        if ($visit->type == "Antenatal") {
+            $tests = array_merge($tests, $visit->visit->tests->load('describable'));
         }
 
-        $this->drugs = $this->visit->treatments->toArray();
-        $this->scans = $this->visit->imagings->load('describable')->pluck('describable')->toArray();
-        $this->others = [];
+        $this->tests = $tests->map(fn ($test) => ['saved' => false, 'product' => $test->describable, 'data' => $test]);
 
-        // dd($this->tests);
+        $this->drugs = $this->visit->treatments->load('prescriptionable')->map(fn ($item) => [
+            'saved' => true,
+            'product' => $item->prescriptionable,
+            'data' => $item,
+        ]);
+
+        $this->scans = $this->visit->imagings->load('describable')->map(fn ($item) => [
+            'saved' => true,
+            'product' => $item->describable,
+            'data' => $item,
+        ]);
+
+        $this->others = [];
     }
 
     public function render()
@@ -62,18 +72,9 @@ class BillReport extends Component
         //         return $this->addScan($pdt);
         // }
 
-        $this->{$prop}[] = [...$pdt->only(['name', 'id', 'amount']), 'saved' => true,];
+        $this->{$prop}[] = ['saved' => true, 'data' => null, 'product' => $pdt->toArray()];
         $this->subTotal($prop);
     }
-
-    public function addTest($p)
-    {
-        $this->tests = [];
-    }
-
-    public function addDrug($p) {}
-
-    public function addScan($p) {}
 
     public function addNewItem($name)
     {
@@ -94,7 +95,7 @@ class BillReport extends Component
 
     public function subTotal($prop)
     {
-        $this->{$prop . "_amt"} = array_reduce($this->{$prop}, fn($a, $p) => $a + $p['amount'], 0);;
+        $this->{$prop . "_amt"} = $this->{$prop}->reduce(fn($a, $p) => $a + $p['product']['amount'], 0);
     }
 
     public function removeItem($index, $prop)
@@ -125,9 +126,6 @@ class BillReport extends Component
 
     public function saveBill()
     {
-        // dd($this->others, $this->tests, $this->drugs, $this->scans);
-        // $bill = $this->visit->bill;
-
         $bill = $this->visit->bills()->create([
             'status' => Status::pending->value,
             'created_by' => auth()->user()->id,
@@ -164,11 +162,14 @@ class BillReport extends Component
             $bill->entries()->create([
                 'chargeable_type' => Product::class,
                 'user_id' => $bill->created_by,
-                'chargeable_id' => $test['id'],
-                'unit_price' => $test['amount'],
-                'total_price' => $test['amount'],
-                'description' => $test['name'],
+                'chargeable_id' => $test['product']['id'],
+                'unit_price' => $test['product']['amount'],
+                'total_price' => $test['product']['amount'],
+                'description' => $test['data']['name'],
                 'tag' => 'test',
+                'meta' => [
+                    'test_id' => $test['data']['id'],
+                ],
             ]);
         }
     }
@@ -176,14 +177,20 @@ class BillReport extends Component
     public function saveDrugs(Bill $bill)
     {
         foreach ($this->drugs as $d) {
+            $useNull = !isset($d['product']['id']);
+
             $bill->entries()->create([
-                'chargeable_type' => Product::class,
+                'chargeable_type' => $useNull ? null : Product::class,
                 'user_id' => $bill->created_by,
-                'chargeable_id' => $d['id'],
-                'unit_price' => $d['amount'],
-                'total_price' => $d['amount'],
-                'description' => $d['name'],
+                'chargeable_id' => $useNull ? null : $d['product']['id'],
+                'unit_price' => $d['data']['amount'] ?? $d['product']['amount'] ?? 0,
+                'total_price' => $d['data']['amount'] ?? $d['product']['amount'] ?? 0,
+                'description' => $d['data']['name'],
                 'tag' => 'drug',
+                'meta' => [
+                    'id' => $d['data']['id'] ?? null,
+                    'data' => $d['data'],
+                ],
             ]);
         }
     }
@@ -194,12 +201,20 @@ class BillReport extends Component
             $bill->entries()->create([
                 'chargeable_type' => Product::class,
                 'user_id' => $bill->created_by,
-                'chargeable_id' => $d['id'],
-                'unit_price' => $d['amount'],
-                'total_price' => $d['amount'],
-                'description' => $d['name'],
+                'chargeable_id' => $d['product']['id'],
+                'unit_price' => $d['product']['amount'],
+                'total_price' => $d['product']['amount'],
+                'description' => $d['data']['name'],
                 'tag' => 'scan',
+                'meta' => [
+                    'id' => $d['data']['id'],
+                ]
             ]);
         }
+    }
+
+    public function addDrug($data) {
+        $comp = ['product' => $data['product'], 'data' => $data['data'], 'saved' => true];
+        $this->drugs->push($comp);
     }
 }
