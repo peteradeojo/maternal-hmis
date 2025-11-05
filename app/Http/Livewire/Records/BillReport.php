@@ -98,7 +98,7 @@ class BillReport extends Component
     public function subTotal($prop)
     {
         // dd($this->{$prop});
-        $this->{$prop . "_amt"} = array_reduce($this->{$prop}, fn($a, $p) => $a + $p['product']['amount'], 0);
+        $this->{$prop . "_amt"} = $this->{$prop}->reduce(fn($a, $p) => $a + $p['product']['amount'], 0);
     }
 
     public function removeItem($index, $prop)
@@ -184,7 +184,7 @@ class BillReport extends Component
                 'description' => $test['product']['name'],
                 'tag' => 'test',
                 'meta' => [
-                    'id' => $test['data']['id'] ?? null,
+                    'id' => isset($test['data']) ? $test['data']['id'] : null,
                     'data' => $test['data'],
                 ],
             ]);
@@ -221,10 +221,10 @@ class BillReport extends Component
                 'chargeable_id' => $d['product']['id'],
                 'unit_price' => $d['product']['amount'],
                 'total_price' => $d['product']['amount'],
-                'description' => $d['data']['name'],
+                'description' => $d['product']['name'],
                 'tag' => 'scan',
                 'meta' => [
-                    'id' => $d['data']['id'],
+                    'id' => isset($d['data']) ? $d['data']['id'] : null,
                     'data' => $d['data'],
                 ]
             ]);
