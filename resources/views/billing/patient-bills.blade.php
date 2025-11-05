@@ -7,7 +7,7 @@
             <x-patient-profile :patient="$patient" />
         </div>
 
-        @foreach ($patient->visits as $visit)
+        @foreach ($patient->visits->where('status', Status::active) as $visit)
             <div class="p-2 bg-white">
                 <div class="flex justify-between items-start">
                     <div>
