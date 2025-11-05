@@ -135,6 +135,7 @@
             </thead>
             <tbody>
                 @foreach ($drugs as $i => $img)
+                    {{-- @dump($img) --}}
                     <tr>
                         <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }} (days)
                         </td>
@@ -182,11 +183,11 @@
             <tbody>
                 @forelse ($others as $i => $item)
                     <tr>
-                        <td>{{ $item['name'] }}</td>
+                        <td>{{ $item['product']['name'] }}</td>
                         {{-- <td>{{ number_format($item->amount, 2) }}</td> --}}
                         <td class="no-print flex items-center justify-between gap-x-4">
                             @if ($item['saved'] ?? false)
-                                <span>{{ number_format($item['amount']) }}</span>
+                                <span>{{ number_format($item['product']['amount']) }}</span>
                                 <span>
                                     <button wire:click.prevent="removeItem({{ $i }}, 'others')"
                                         class="btn btn-sm bg-red-600 text-white"><i class="fa fa-trash"></i></button>
@@ -196,8 +197,8 @@
                             @else
                                 <input type="number"
                                     wire:keyup.enter.prevent="saveItem({{ $i }}, 'others')"
-                                    wire:model="others.{{ $i }}.amount" class="form-control"
-                                    value="{{ $item['amount'] }}" step="1" required />
+                                    wire:model="others.{{ $i }}.product.amount" class="form-control"
+                                    value="{{ $item['product']['amount'] }}" step="1" required />
                                 <button wire:click.prevent="saveItem({{ $i }}, 'others')" href="#"
                                     class="btn btn-sm bg-blue-400 text-white"><i class="fa fa-save"></i></button>
                             @endif

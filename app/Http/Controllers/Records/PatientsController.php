@@ -238,12 +238,12 @@ class PatientsController extends Controller
     {
         if ($visit->status != Status::active->value) {
             return response()->json([
-                'message' => 'Patient has been checkout. Please contact IT if there is any issue.',
+                'message' => 'Patient has been checked out. Please contact IT if there is any issue.',
                 'ok' => false,
             ]);
         }
 
-        if ($visit->bills->count() == 0) {
+        if ($visit->bills->where('status', '!=', Status::cancelled->value)->count() == 0) {
             return response()->json([
                 'message' => 'No bill has been created for this patient. Please create a bill payment first.',
                 'ok' => false,

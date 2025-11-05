@@ -37,18 +37,22 @@ class BillReport extends Component
             $tests = array_merge($tests, $visit->visit->tests->load('describable'));
         }
 
-        $this->tests = $tests->map(fn ($test) => ['saved' => false, 'product' => $test->describable, 'data' => $test]);
-
-        $this->drugs = $this->visit->treatments->load('prescriptionable')->map(fn ($item) => [
+        $this->tests = $tests->map(fn($test) => [
             'saved' => true,
-            'product' => $item->prescriptionable,
-            'data' => $item,
+            'product' => $test->describable->toArray(),
+            'data' => $test->toArray()
         ]);
 
-        $this->scans = $this->visit->imagings->load('describable')->map(fn ($item) => [
+        $this->drugs = $this->visit->treatments->load('prescriptionable')->map(fn($item) => [
             'saved' => true,
-            'product' => $item->describable,
-            'data' => $item,
+            'product' => $item->prescriptionable->toArray(),
+            'data' => $item->toArray(),
+        ]);
+
+        $this->scans = $this->visit->imagings->load('describable')->map(fn($item) => [
+            'saved' => true,
+            'product' => $item->describable->toArray(),
+            'data' => $item->toArray(),
         ]);
 
         $this->others = [];
@@ -95,7 +99,8 @@ class BillReport extends Component
 
     public function subTotal($prop)
     {
-        $this->{$prop . "_amt"} = $this->{$prop}->reduce(fn($a, $p) => $a + $p['product']['amount'], 0);
+        // dd($this->{$prop});
+        $this->{$prop . "_amt"} = array_reduce($this->{$prop}, fn($a, $p) => $a + $p['product']['amount'], 0);
     }
 
     public function removeItem($index, $prop)
@@ -126,30 +131,43 @@ class BillReport extends Component
 
     public function saveBill()
     {
-        $bill = $this->visit->bills()->create([
-            'status' => Status::pending->value,
-            'created_by' => auth()->user()->id,
-            'bill_number' => date('ym-') . str_pad(
-                Bill::whereRaw("MONTH(created_at) = ? AND YEAR(created_at) = ?", [date('m'), date('Y')])->count() + 1,
-                6,
-                "0",
-                STR_PAD_LEFT
-            ) . "-{$this->visit->id}",
-            'patient_id' => $this->visit->patient_id,
-            'bill_date' => now(),
-        ]);
+        DB::beginTransaction();
+        try {
 
-        $this->saveTests($bill);
-        $this->saveDrugs($bill);
-        $this->saveScans($bill);
 
-        foreach ($this->others as $o) {
-            $bill->entries()->create([
-                'unit_price' => 0,
-                'total_price' => $o['amount'],
-                'description' => $o['name'],
-                'user_id' => $bill->created_by,
+            $bill = $this->visit->bills()->create([
+                'status' => Status::pending->value,
+                'created_by' => auth()->user()->id,
+                'bill_number' => date('ym-') . str_pad(
+                    Bill::whereRaw("MONTH(created_at) = ? AND YEAR(created_at) = ?", [date('m'), date('Y')])->count() + 1,
+                    6,
+                    "0",
+                    STR_PAD_LEFT
+                ) . "-{$this->visit->id}",
+                'patient_id' => $this->visit->patient_id,
+                'bill_date' => now(),
             ]);
+
+            $this->saveTests($bill);
+            $this->saveDrugs($bill);
+            $this->saveScans($bill);
+
+            foreach ($this->others as $o) {
+                $bill->entries()->create([
+                    'unit_price' => 0,
+                    'total_price' => $o['product']['amount'],
+                    'description' => $o['product']['name'],
+                    'user_id' => $bill->created_by,
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            notifyUserError($e->getMessage());
+            logger()->emergency("Unable to create bill: ");
+            report($e);
+            return;
         }
 
         notifyUserSuccess("Bill created successfully [#{$bill->id}]");
@@ -165,10 +183,11 @@ class BillReport extends Component
                 'chargeable_id' => $test['product']['id'],
                 'unit_price' => $test['product']['amount'],
                 'total_price' => $test['product']['amount'],
-                'description' => $test['data']['name'],
+                'description' => $test['product']['name'],
                 'tag' => 'test',
                 'meta' => [
-                    'test_id' => $test['data']['id'],
+                    'id' => $test['data']['id'] ?? null,
+                    'data' => $test['data'],
                 ],
             ]);
         }
@@ -208,12 +227,14 @@ class BillReport extends Component
                 'tag' => 'scan',
                 'meta' => [
                     'id' => $d['data']['id'],
+                    'data' => $d['data'],
                 ]
             ]);
         }
     }
 
-    public function addDrug($data) {
+    public function addDrug($data)
+    {
         $comp = ['product' => $data['product'], 'data' => $data['data'], 'saved' => true];
         $this->drugs->push($comp);
     }
