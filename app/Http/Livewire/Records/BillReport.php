@@ -6,9 +6,7 @@ use App\Models\Bill;
 use App\Enums\Status;
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\BillDetail;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class BillReport extends Component
 {

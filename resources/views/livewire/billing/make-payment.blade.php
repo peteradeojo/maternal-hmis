@@ -13,29 +13,45 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($bill->entries as $entry)
+                @foreach ($items as $i => $entry)
                     <tr>
-                        <td>{{ $entry->description }}</td>
-                        <td>{{ $entry->amount }}
-                            @if ($entry->tag == 'drug')
-                                <small>({{ $entry->total_price }})</small>
+                        <td>{{ $entry['description'] }}</td>
+                        <td class="flex justify-between items-center">
+                            @if ($entry['saved'])
+                                <span>{{ number_format($entry['amount']) }}
+                                    @if ($entry['tag'] == 'drug')
+                                        <small>({{ $entry['total_price'] }})</small>
+                                    @endif
+                                </span>
+                                <button wire:click="edit({{ $i }})"
+                                    class="btn btn-sm bg-green-500 text-white"><i class="fa fa-pencil"></i></button>
+                            @else
+                                <input type="number" class="form-control" wire:keyup.enter.stop="save({{ $i }})"
+                                    wire:model="items.{{ $i }}.total_price" />
                             @endif
-
                         </td>
                     </tr>
                 @endforeach
 
                 <tr>
-                    <td>Total</td>
-                    <td>{{ number_format($bill->amount) }}</td>
+                    <td></td>
+                    <td class="flex justify-end">
+                        <button wire:click="updateBillDetailsAmt" class="btn bg-blue-400 text-white" @if ($currentHash == $initHash) disabled="disabled" @endif><i
+                                class="fa fa-save"></i> Save</button>
+                    </td>
                 </tr>
-                <tr>
+
+                <tr class="font-bold">
+                    <td>Total</td>
+                    <td>{{ number_format(collect($items)->sum('amount')) }}</td>
+                </tr>
+                <tr class="font-bold">
                     <td>Paid</td>
                     <td>{{ number_format($bill->paid) }}</td>
                 </tr>
-                <tr>
+                <tr class="font-bold">
                     <td>Balance</td>
-                    <td>{{ number_format($bill->balance) }}</td>
+                    <td>{{ number_format(collect($items)->sum('amount') - $bill->paid) }}</td>
                 </tr>
             </tbody>
         </table>
