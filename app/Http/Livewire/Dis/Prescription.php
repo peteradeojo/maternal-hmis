@@ -159,6 +159,7 @@ class Prescription extends Component
         }
 
         notifyUserSuccess("Quote saved!", ['mode' => 'in-app']);
+        $this->dispatch('quote-saved');
         $this->dispatch('$refresh');
     }
 }

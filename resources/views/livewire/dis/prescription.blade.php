@@ -1,4 +1,4 @@
-<div>
+<div x-on:quote-saved="window.location.href=''">
     @php
         $editable = !$quoteDone;
     @endphp
@@ -59,6 +59,8 @@
         <div class="form-group flex justify-end">
             <button class="btn bg-blue-400 hover:bg-green-400 text-white"
                 @if ($bill->status == 6 && $quoteDone) disabled @endif>Save <i class="fa fa-save"></i></button>
+
+            <span wire:loading><x-spinner w="w-6" /></span>
         </div>
     </form>
 </div>
