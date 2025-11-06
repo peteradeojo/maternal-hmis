@@ -77,7 +77,7 @@
 
     <main class="w-screen bg-blue-100 sm:ml-[16.666667%] min-h-screen overflow-y-auto">
         <div class="flex justify-end">
-            <p class="text-gray-400 sm:px-8">v{{ env('APP_VERSION', '0.0.1') }}</p>
+            <p class="text-black sm:px-8">Version: {{ env('APP_VERSION', '0.0.1') }}</p>
         </div>
         <div class="sm:px-8 sm:py-4">
             @if (session('error'))
