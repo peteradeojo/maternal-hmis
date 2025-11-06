@@ -29,7 +29,7 @@ class BillReport extends Component
     {
         $this->visit = $visit;
 
-        $tests = $this->visit->tests->load('describable');
+        $tests = $this->visit->valid_tests->load('describable');
 
         if ($visit->type == "Antenatal") {
             $tests = $tests->merge($visit->visit->tests->load('describable'));

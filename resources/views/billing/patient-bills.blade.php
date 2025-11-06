@@ -29,7 +29,7 @@
                     <a href="#" data-visit="{{ $visit->id }}" class="btn bg-green-400 get-bill">Create
                         Bill</a>
 
-                    @if ($visit->bills->count() > 0)
+                    @if ($visit->active_bills->count() > 0)
                         <a href="{{ route('billing.view-bills', $visit) }}" class="btn text-white bg-blue-400">View
                             bills</a>
                     @endif

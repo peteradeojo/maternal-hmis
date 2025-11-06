@@ -30,6 +30,11 @@ trait Documentable
         return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
+    public function valid_tests(): MorphMany
+    {
+        return $this->morphMany(DocumentationTest::class, 'testable')->where('status', '!=', Status::cancelled->value);
+    }
+
     public function allPrescriptionsAvailable(): Attribute
     {
         return Attribute::make(get: fn () => $this->treatments->every(fn ($t) => $t->status == Status::quoted->value));

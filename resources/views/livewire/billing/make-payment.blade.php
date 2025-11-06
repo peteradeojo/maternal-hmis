@@ -1,6 +1,6 @@
 <div x-data="{
     bill: @entangle('bill'),
-}" wire:poll.3s>
+}" wire:poll.5s>
     <p>Bill No: {{ $bill->bill_number }}</p>
     <p>Patient: {{ $bill->patient->name }} ({{ $bill->patient->card_number }})</p>
 

@@ -104,16 +104,20 @@ class MakePayment extends Component
 
     private function getItems()
     {
-        $this->items = $this->bill->entries->map(fn($b) => [
-            'description' => $b->name,
-            'amount' => $b->amount,
-            'total_price' => $b->total_price,
-            'tag' => $b->tag,
-            'saved' => true,
-            'id' => $b->id,
-            'meta' => $b->meta,
-            'status' => $b->view_billable_status
-        ])->toArray();
+        $this->items = $this->bill->entries->map(function ($b) {
+            $b->pushMetaData();
+            $b->refresh();
+            return [
+                'description' => $b->name,
+                'amount' => $b->amount,
+                'total_price' => $b->total_price,
+                'tag' => $b->tag,
+                'saved' => true,
+                'id' => $b->id,
+                'meta' => $b->meta,
+                'status' => $b->view_billable_status
+            ];
+        })->toArray();
     }
 
     public function isDiff()

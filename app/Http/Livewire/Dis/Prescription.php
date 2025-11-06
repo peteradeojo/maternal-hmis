@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Dis;
 use App\Enums\AppNotifications;
 use App\Enums\Status;
 use App\Models\BillDetail;
+use App\Models\DocumentationPrescription;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
@@ -106,6 +107,9 @@ class Prescription extends Component
         DB::beginTransaction();
         $this->items->each(function ($item) use (&$errors) {
             try {
+                /**
+                 * @var BillDetail
+                 */
                 $entry = BillDetail::find($item->id);
                 if (!$entry) return;
 
@@ -115,10 +119,16 @@ class Prescription extends Component
                 $entry->total_price = $item->amount;
                 $entry->save();
 
+                $entry->pushMetaData();
+
                 if ($item->meta['data']['prescriptionable_id'] ?? false) {
                     Product::where('id', $item->meta['data']['prescriptionable_id'])->update([
                         'amount' => $item->amount,
                     ]);
+
+                    // DocumentationPrescription::where('id', $item->meta['data']['id'])->update([
+                    //     'available' => $item->available,
+                    // ]);
                 } else {
                     Product::create([
                         'name' => $item->description,

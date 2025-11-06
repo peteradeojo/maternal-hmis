@@ -57,9 +57,9 @@ class BillDetail extends Model
     {
         return Attribute::make(
             get: function ($value, $attrs) {
+                $meta = json_decode($attrs['meta']);
                 switch ($attrs['tag']) {
                     case 'drug':
-                        $meta = json_decode($attrs['meta']);
                         if (!empty($attrs['quoted_at'])) {
                             return isset($meta->available) && $meta->available ? "Available" : "Unavailable";
                         } else {
@@ -67,21 +67,48 @@ class BillDetail extends Model
                         }
                         // return !empty($attrs['quoted_at']) ? "Quoted" : (($meta->available ?? false) ? "Available" : false);
                     case 'test':
-                        if ($attrs['status'] == Status::cancelled->value) {
-                            return "Rejected";
+                        if (isset($meta->data)) {
+                            if ($meta->data['status'] == Status::cancelled->value) {
+                                return "Rejected";
+                            }
+                            if ($meta->data['status'] == Status::pending->value) {
+                                return "Pending";
+                            }
+                            if ($meta->data['status'] == Status::closed->value) {
+                                return "Delivered";
+                            }
+                            if ($meta->data['status'] == Status::active->value) {
+                                return "Samples collected";
+                            }
                         }
-                        if ($attrs['status'] == Status::pending->value) {
-                            return "Pending";
-                        }
-                        if ($attrs['status'] == Status::closed->value) {
-                            return "Delivered";
-                        }
-                        if ($attrs['status'] == Status::active->value) {
-                            return "Samples collected";
-                        }
-                        return "Pending";
+
+                        return "Added to bill";
                 }
             }
         );
+    }
+
+    public function pushMetaData()
+    {
+        if (!isset($this->meta['data']) || !isset($this->tag)) return;
+
+        $tag = $this->tag;
+        $meta = $this->meta;
+        $id = $this->id;
+        dispatch(function () use ($meta, $id, $tag) {
+            $meta_data = $meta['data'];
+            if ($tag == 'drug' && isset($meta_data['id'])) {
+                DocumentationPrescription::find($meta_data['id'])?->update([
+                    'available' => $meta['available'],
+                    // 'amount' => BillDetail::find($id)->
+                ]);
+            }
+
+            if ($tag == 'test' && isset($meta_data['id'])) {
+                BillDetail::find($id)->update([
+                    'meta->data' => DocumentationTest::find($meta_data['id'])->toArray(),
+                ]);
+            }
+        });
     }
 }
