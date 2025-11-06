@@ -5,7 +5,7 @@
         </div>
         <div class="body foldable-body unfolded">
             <div class="py">
-                <table id="tests-table">
+                <table id="tests-table" class="table rounded-md">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -16,14 +16,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($documentations as $doc)
+                        @foreach ($visits as $doc)
                             <tr>
                                 <td>{{ $doc->patient->name }}</td>
                                 <td>{{ $doc->patient->card_number }}</td>
                                 <td>{{ $doc->created_at }}</td>
-                                <td>{{ $doc->patient->gender_value[0] }}</td>
+                                <td class="text-center">{{ $doc->patient->gender[0] }}</td>
                                 <td>
-                                    <a href="{{ route('lab.view-tests', $doc->patient_id) }}">View Tests</a>
+                                    <a href="{{ route('lab.view-tests', $doc->id) }}">View Tests</a>
                                 </td>
                             </tr>
                         @endforeach

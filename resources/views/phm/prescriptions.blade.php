@@ -46,7 +46,7 @@
                             }).catch((err) => {
                                 a.find(".modal-body").html(`<p>An error occurred.</p>`);
                                 displayNotification({
-                                    message: "An error occurred while loading the prescription.",
+                                    message: "An error occurred while loading the prescription: " + err.message,
                                     bg: ["bg-red-500", "text-white"],
                                     type: 'in-app'
                                 });

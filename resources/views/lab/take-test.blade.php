@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container">
-        <div class="card foldable py px mb-2">
+        <div class="bg-white p-2 mb-2">
             <div class="header foldable-header">
                 <p class="card-header">{{ $documentation->patient->name }}</p>
             </div>
-            <div class="foldable-body body">
-                <div class="py">
+            <div class="body">
+                <div class="p-1">
                     <p><b>Name: </b> {{ $documentation->patient->name }} </p>
                     <p><b>Card Number: </b> {{ $documentation->patient->card_number }} </p>
                     <p><b>Gender: </b> {{ $documentation->patient->gender_value }} </p>

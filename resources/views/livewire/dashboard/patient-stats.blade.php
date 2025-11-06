@@ -1,35 +1,41 @@
 <div>
-    <div class="flex-col md:flex-row flex gap-y-2 justify-between gap-x-3 pb-3">
-        <div class="w-full md:w-1/3">
-            <div class="card">
-                <div class="header card-header">
-                    {{ $patients }}
-                </div>
-                <div class="footer">
-                    Patients
-                </div>
+    {{-- <div class="flex-col md:flex-row flex gap-y-2 justify-between gap-x-3 pb-3"> --}}
+    <div class="grid md:grid-cols-3 gap-y-2 gap-x-3">
+        <div class="card">
+            <div class="header card-header">
+                {{ $patients }}
+            </div>
+            <div class="footer">
+                Patients
             </div>
         </div>
-        <div class="w-full md:w-1/3">
-            <div class="card">
-                <div class="header card-header">
-                    {{ $patientsToday }}
-                </div>
-                <div class="footer">
-                    Patients Today
-                </div>
+        <div class="card">
+            <div class="header card-header">
+                {{ $patientsToday }}
+            </div>
+            <div class="footer">
+                Patients Today
             </div>
         </div>
-        <div class="w-full md:w-1/3">
-            <div class="card">
-                <div class="header card-header">
-                    {{ $currentAdmissions }}
-                </div>
-                <div class="footer">
-                    Admissions
-                </div>
+        <div class="card">
+            <div class="header card-header">
+                {{ $currentAdmissions }}
+            </div>
+            <div class="footer">
+                Admissions
             </div>
         </div>
+
+        @if ($user->department->name == 'Records')
+            <div class="card">
+                <div class="card-header header">
+                    {{ $stats['pendingBills'] }}
+                </div>
+                <div class="footer">
+                    <a class="link" href="{{route('billing.index')}}">Pending Bills</a>
+                </div>
+            </div>
+        @endif
     </div>
 
     @if (in_array($user->department_id, [DepartmentsEnum::REC->value]))
@@ -53,7 +59,8 @@
                     <tbody>
                         @foreach ($visits as $v)
                             <tr>
-                                <td><a href="{{route('records.patient', $v->patient)}}" class="link">{{ $v->patient->name }}</a></td>
+                                <td><a href="{{ route('records.patient', $v->patient) }}"
+                                        class="link">{{ $v->patient->name }}</a></td>
                                 <td>{{ $v->patient->card_number }}</td>
                                 <td>{{ $v->patient->category->name }}</td>
                                 <td>{{ $v->patient->gender_value[0] }}</td>
@@ -61,7 +68,9 @@
                                 <td>{{ $v->readable_visit_type }}</td>
                                 <td>
                                     @if ($user->department_id == DepartmentsEnum::REC->value)
-                                        <a class="btn btn-sm bg-green-400" href="{{ route('billing.patient-bills', ['patient' => $v->patient_id]) }}">Check out</a>
+                                        <a class="btn btn-sm bg-green-400"
+                                            href="{{ route('billing.patient-bills', ['patient' => $v->patient_id]) }}">Check
+                                            out</a>
                                     @endif
                                 </td>
                             </tr>
@@ -76,8 +85,10 @@
 @push('scripts')
     <script>
         let table = $("#waitlist-table").DataTable({
-            responsive:  true,
-            order: [[4, 'desc']]
+            responsive: true,
+            order: [
+                [4, 'desc']
+            ]
         });
     </script>
 @endpush

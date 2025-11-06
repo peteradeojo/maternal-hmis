@@ -49,74 +49,76 @@ class LabController extends Controller
 
     public function viewPatientTests(Request $request, Patient $patient)
     {
-        $tests = DocumentationTest::where('patient_id', $patient->id)->where('status', Status::pending->value)->latest()->get();
+        $tests = DocumentationTest::where('patient_id', $patient->id)
+            ->where('status', '!=', Status::cancelled->value)
+            ->latest()->get();
         return view('lab.take-tests', compact('tests', 'patient'));
     }
 
-    public function test(Request $request, $visit)
-    {
-        if ($request->method() !== 'POST') {
-            dd($visit);
-            return view('lab.take-test', ['documentation' => $test->testable]);
-        }
+    // public function test(Request $request, $visit)
+    // {
+    //     if ($request->method() !== 'POST') {
+    //         dd($visit);
+    //         return view('lab.take-test', ['documentation' => $test->testable]);
+    //     }
 
-        $data = $request->validate([
-            'completed' => 'array',
-            'description' => 'array',
-            'description.*.*' => 'required|string',
-            'result' => 'array',
-            'result.*.*' => 'required|string',
-            'unit' => 'array',
-            'unit.*.*' => 'nullable|string',
-            'reference_range' => 'array',
-            'reference_range.*.*' => 'nullable|string',
-            'comment' => 'nullable|string',
-        ]);
+    //     $data = $request->validate([
+    //         'completed' => 'array',
+    //         'description' => 'array',
+    //         'description.*.*' => 'required|string',
+    //         'result' => 'array',
+    //         'result.*.*' => 'required|string',
+    //         'unit' => 'array',
+    //         'unit.*.*' => 'nullable|string',
+    //         'reference_range' => 'array',
+    //         'reference_range.*.*' => 'nullable|string',
+    //         'comment' => 'nullable|string',
+    //     ]);
 
-        foreach ($visit->visit->tests as $i => $test) {
-            if (isset($data['result'][$i])) {
-                $results = [];
-                $resultData = $data['result'][$i] ?? [];
-                $descriptionData = $data['description'][$i] ?? [];
-                $unitData = $data['unit'][$i] ?? [];
-                $referenceRangeData = $data['reference_range'][$i] ?? [];
+    //     foreach ($visit->visit->tests as $i => $test) {
+    //         if (isset($data['result'][$i])) {
+    //             $results = [];
+    //             $resultData = $data['result'][$i] ?? [];
+    //             $descriptionData = $data['description'][$i] ?? [];
+    //             $unitData = $data['unit'][$i] ?? [];
+    //             $referenceRangeData = $data['reference_range'][$i] ?? [];
 
-                foreach ($resultData as $j => $result) {
-                    $results[] = [
-                        'result' => $result,
-                        'description' => $descriptionData[$j],
-                        'unit' => $unitData[$j],
-                        'reference_range' => $referenceRangeData[$j],
-                    ];
-                }
+    //             foreach ($resultData as $j => $result) {
+    //                 $results[] = [
+    //                     'result' => $result,
+    //                     'description' => $descriptionData[$j],
+    //                     'unit' => $unitData[$j],
+    //                     'reference_range' => $referenceRangeData[$j],
+    //                 ];
+    //             }
 
-                DB::beginTransaction();
-                try {
-                    if (isset($data['completed'][$i])) {
-                        $test->status = Status::completed->value;
-                    }
+    //             DB::beginTransaction();
+    //             try {
+    //                 if (isset($data['completed'][$i])) {
+    //                     $test->status = Status::completed->value;
+    //                 }
 
-                    $test->results = $results;
-                    $test->tested_by = $request->user()->id;
-                    $test->save();
-                    DB::commit();
-                } catch (\Throwable $th) {
-                    DB::rollBack();
-                    logger()->emergency($th->getMessage());
-                    return back()->with('error', 'An error occured while saving test results');
-                }
-            }
-        }
+    //                 $test->results = $results;
+    //                 $test->tested_by = $request->user()->id;
+    //                 $test->save();
+    //                 DB::commit();
+    //             } catch (\Throwable $th) {
+    //                 DB::rollBack();
+    //                 logger()->emergency($th->getMessage());
+    //                 return back()->with('error', 'An error occured while saving test results');
+    //             }
+    //         }
+    //     }
 
-        if ($visit->visit->tests()->where('status', Status::completed->value)->count() > 0) {
-            $visit->awaiting_lab_results = false;
-        }
+    //     if ($visit->visit->tests()->where('status', Status::completed->value)->count() > 0) {
+    //         $visit->awaiting_lab_results = false;
+    //     }
 
-        $visit->awaiting_doctor = true;
-        $visit->save();
+    //     $visit->awaiting_doctor = true;
+    //     $visit->save();
 
-        return redirect()->route('dashboard')->with('success', 'Test results saved successfully');
-    }
+    //     return redirect()->route('dashboard')->with('success', 'Test results saved successfully');
+    // }
 
     public function history(Request $request)
     {
@@ -218,7 +220,6 @@ class LabController extends Controller
             'mode' => AppNotifications::$BOTH,
         ]);
 
-
         return response()->json([
             'ok' => true,
         ]);
@@ -233,21 +234,26 @@ class LabController extends Controller
     public function saveTest(Request $request, DocumentationTest $test)
     {
         $request->validate([
-            'results' => 'required|array|min:1',
+            'results' => 'nullable|array',
             'results.*' => 'array',
             'results.*.description' => 'string',
             'results.*.result' => 'string|nullable',
             'results.*.unit' => 'string|nullable',
             'results.*.reference_range' => 'string|nullable',
-            'completed' => 'boolean|nullable',
+            'status' => 'integer|nullable',
         ]);
 
         $test->results = $request->input('results');
-        $test->status = $request->completed == true ? Status::completed->value : Status::pending->value;
+        $test->status = $request->input('status'); // == true ? Status::completed->value : Status::pending->value;
         $test->tested_by = auth()->user()->id;
 
         $test->save();
 
         return response()->json(['test' => $test]);
+    }
+
+    public function viewTests(Request $request, Visit $visit)
+    {
+        return view('lab.tests', compact('visit'));
     }
 }

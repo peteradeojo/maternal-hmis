@@ -2,6 +2,7 @@
 @section('title', 'Patients')
 
 @section('content')
+    <x-back-link to="{{ route('dashboard') }}" />
     <div class="container">
         <div class="card py px mb-1">
             <h2>Register Patient</h2>
@@ -42,7 +43,9 @@
                 ajax: "{{ route('api.records.patients') }}",
                 ordering: false,
                 columns: [{
-                        data: (row) => `<a href='{{route('records.patient', ':row')}}' class='link'>${row.name}</a>`.replace(':row', row.id),
+                        data: (row) =>
+                            `<a href='{{ route('records.patient', ':row') }}' class='link'>${row.name}</a>`
+                            .replace(':row', row.id),
                         name: 'id'
                     },
                     {

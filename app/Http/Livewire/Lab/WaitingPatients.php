@@ -18,7 +18,8 @@ class WaitingPatients extends Component
 {
     public User $user;
 
-    public $documentations = [];
+    // public $documentations = [];
+    public $visits = [];
 
     public function mount()
     {
@@ -27,24 +28,25 @@ class WaitingPatients extends Component
 
     public function load()
     {
-        $this->documentations = DocumentationTest::whereHasMorph('testable', [
-            Visit::class,
-            AdmissionPlan::class,
-            Admission::class,
-            GeneralVisit::class,
-            AncVisit::class,
-            AntenatalProfile::class,
-            Documentation::class,
-        ])->selectRaw(
-            'patient_id, testable_type, testable_id, MIN(created_at) as created_at'
-        )->groupBy(
-            'patient_id',
-            'testable_type',
-            'testable_id'
-        )->whereIn('status', [
-            Status::pending->value,
-            Status::active->value,
-        ])->orderBy('created_at', 'DESC')->get()->load('testable', 'patient');
+        // $this->documentations = DocumentationTest::whereHasMorph('testable', [
+        //     Visit::class,
+        //     AdmissionPlan::class,
+        //     Admission::class,
+        //     GeneralVisit::class,
+        //     AncVisit::class,
+        //     AntenatalProfile::class,
+        //     Documentation::class,
+        // ])->selectRaw(
+        //     'patient_id, testable_type, testable_id, MIN(created_at) as created_at'
+        // )->groupBy(
+        //     'patient_id',
+        //     'testable_type',
+        //     'testable_id'
+        // )->whereIn('status', [
+        //     Status::pending->value,
+        //     Status::active->value,
+        // ])->orderBy('created_at', 'DESC')->get()->load('testable', 'patient');
+        $this->visits = Visit::has('tests')->where('status', '!=', Status::completed->value)->latest()->get();
     }
 
     public function render()
