@@ -127,12 +127,10 @@
     <script>
         $(document).ready(() => {
             Echo.channel('department.{{ auth()->user()->department_id }}').listen('NotificationSent', (e) => {
-                console.log(e);
                 displayNotification(e.message);
             });
 
             Echo.private('user.{{ auth()->user()->id }}').listen('.UserEvent', (e) => {
-                console.log(e);
                 displayNotification(e);
             });
 
