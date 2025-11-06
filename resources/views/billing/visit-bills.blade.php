@@ -2,12 +2,13 @@
 @section('title', "Billing [#{$visit->id}]")
 
 @section('content')
+    <x-back-link />
     <div class="p-3 bg-white">
         <x-patient-profile :patient="$visit->patient" />
     </div>
     <div class="py-3"></div>
 
-    <div x-data="{ bills: @js($visit->bills).map((o) => ({ id: o.id, show: false })) }" class="grid gap-y-2">
+    {{-- <div x-data="{ bills: @js($visit->bills).map((o) => ({ id: o.id, show: false })) }" class="grid gap-y-2">
         @foreach ($visit->bills as $i => $bill)
             <div x-data class="p-3 bg-white">
                 <p>Bill No. <span class="font-bold">#{{ $bill->bill_number }}</span></p>
@@ -47,7 +48,9 @@
                 @endunless
             </div>
         @endforeach
-    </div>
+    </div> --}}
+
+    <livewire:billing.visit-bills :visit="$visit" />
 @endsection
 
 @push('scripts')

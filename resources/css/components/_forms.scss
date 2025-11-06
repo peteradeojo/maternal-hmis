@@ -19,6 +19,7 @@ input.form-control:read-only {
 }
 select[readonly] {
     pointer-events: none;
+    background-color: #eee;
 }
 
 textarea.form-control {

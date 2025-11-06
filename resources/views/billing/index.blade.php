@@ -2,6 +2,7 @@
 @section('title', 'Billing')
 
 @section('content')
+    <x-back-link to="{{ route('dashboard') }}" />
     <div class="bg-white p-2">
         <table id="table" class="table">
             <thead>

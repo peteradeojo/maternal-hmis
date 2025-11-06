@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Dashboard;
 
 use App\Enums\Status;
 use App\Models\Admission;
+use App\Models\Bill;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Visit;
@@ -18,6 +19,8 @@ class PatientStats extends Component
     public $currentAdmissions = 0;
     public $visits = [];
 
+    public $stats = [];
+
     public function mount(User $user)
     {
         $this->user = $user;
@@ -30,6 +33,8 @@ class PatientStats extends Component
         $this->patientsToday = Patient::whereDate('created_at', today())->count();
 
         $this->currentAdmissions = Admission::where('status', Status::active->value)->count();
+
+        $this->stats['pendingBills'] = Bill::where('status', Status::pending->value)->count();
 
         $this->visits = Visit::where("status", "=", Status::active->value)->latest()->limit(50)->get();
     }

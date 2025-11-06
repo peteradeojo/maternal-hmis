@@ -2,6 +2,7 @@
 @section('title', "Bills | {$patient->name}")
 
 @section('content')
+    <x-back-link />
     <div class="grid gap-y-4">
         <div class="p-4 bg-white">
             <x-patient-profile :patient="$patient" />

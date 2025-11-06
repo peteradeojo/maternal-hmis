@@ -30,5 +30,9 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('unslug', function (string $str) {
             return "<?php echo str_replace(['_'], ' ',  $str); ?>";
         });
+
+        Blade::if('match', function ($a, $b) {
+            return $a == $b;
+        });
     }
 }

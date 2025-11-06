@@ -4,6 +4,7 @@
     <p><b>Gender:</b> {{ $patient->gender }}</p>
     <p><b>Phone number:</b> {{ $patient->gender }}</p>
     <p><b>Date of birth:</b> {{ $patient->gender }}</p>
+    {{-- <p><b>Insurance: {{ $patient->insurance }}</b></p> --}}
 
     @if (isset($expanded) && $expanded)
     @endif

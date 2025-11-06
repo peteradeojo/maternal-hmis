@@ -89,7 +89,7 @@ class TreatmentService
         }
     }
 
-    public function saveTreatment(Visit $visit, $data, User $treater, Documentation $doc = null)
+    public function saveTreatment(Visit $visit, $data, User $treater, ?Documentation $doc = null)
     {
         $data['tests'] = array_unique($data['tests'] ?? []);
         $complaints = $data['complaints'] ?? [];
