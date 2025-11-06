@@ -131,6 +131,6 @@ class Visit extends Model implements OperationalEvent
     }
 
     public function active_bills() {
-        return  $this->bills()->where('status', Status::pending->value);
+        return  $this->bills()->where('status', '!=', Status::cancelled->value);
     }
 }
