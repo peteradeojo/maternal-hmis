@@ -68,16 +68,16 @@ class BillDetail extends Model
                         // return !empty($attrs['quoted_at']) ? "Quoted" : (($meta->available ?? false) ? "Available" : false);
                     case 'test':
                         if (isset($meta->data)) {
-                            if ($meta->data['status'] == Status::cancelled->value) {
+                            if ($meta->data->status == Status::cancelled->value) {
                                 return "Rejected";
                             }
-                            if ($meta->data['status'] == Status::pending->value) {
+                            if ($meta->data->status == Status::pending->value) {
                                 return "Pending";
                             }
-                            if ($meta->data['status'] == Status::closed->value) {
+                            if ($meta->data->status == Status::closed->value) {
                                 return "Delivered";
                             }
-                            if ($meta->data['status'] == Status::active->value) {
+                            if ($meta->data->status == Status::active->value) {
                                 return "Samples collected";
                             }
                         }
