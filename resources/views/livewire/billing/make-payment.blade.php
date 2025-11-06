@@ -31,6 +31,7 @@
                                     class="btn btn-sm bg-green-500 text-white"><i class="fa fa-pencil"></i></button>
                             @else
                                 <input type="number" class="form-control"
+                                    wire:blur ="save({{ $i }})"
                                     wire:keyup.enter.stop="save({{ $i }})"
                                     wire:model="items.{{ $i }}.total_price" />
                             @endif

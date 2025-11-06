@@ -197,6 +197,7 @@
                             @else
                                 <input type="number"
                                     wire:keyup.enter.prevent="saveItem({{ $i }}, 'others')"
+                                    wire:blur="saveItem({{$i}}, 'others')"
                                     wire:model="others.{{ $i }}.product.amount" class="form-control"
                                     value="{{ $item['product']['amount'] }}" step="1" required />
                                 <button wire:click.prevent="saveItem({{ $i }}, 'others')" href="#"
