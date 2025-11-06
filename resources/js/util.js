@@ -51,9 +51,9 @@ window.asyncForm = (form, route, callback = (e, data) => { }) => {
     });
 }
 
-window.MODAL_TITLE=".modal-title";
-window.MODAL_CONTENT=".modal-body";
-window.MODAL_BODY=".modal-body";
+window.MODAL_TITLE = ".modal-title";
+window.MODAL_CONTENT = ".modal-body";
+window.MODAL_BODY = ".modal-body";
 
 window.useGlobalModal = function (callback) {
     $("#global-overlay").removeClass("hidden");
@@ -78,7 +78,22 @@ window.displayNotification = function (data) {
     if (Notification.permission === 'granted' && ['both', 'desktop'].includes(data.options.mode)) {
         const n = new Notification(data.title || 'New Notification', {
             body: data.message,
+            icon: '/favicon.ico',
+            requireInteraction: true,
+            data: data.meta,
         });
+
+        n.addEventListener('click', function (e) {
+            const { url } = this.data || {};
+            if (url) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = "_blank";
+                link.rel = "noreferrer noopener";
+                link.click();
+                n.close();
+            }
+        })
     }
 
     if (!['both', 'in-app'].includes(data.options.mode)) {

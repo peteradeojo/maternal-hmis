@@ -49,13 +49,13 @@ class VisitForm extends Component
 
         if (!$id) { // Attempt to create a new product as required
             if (Product::where('name', $name)->exists()) {
-                notifyUserError("Invalid action detected! This item is already in the database. Kindly select the option from the drop down.");
+                notifyUserError("Invalid action detected! This item is already in the database. Kindly select the option from the drop down.", auth()->user());
                 return;
             }
 
             $cat = ProductCategory::where('name', 'OTHER TESTS')->first();
             if (!$cat) {
-                notifyUserError("Unable to add this product. Kindly reach out to IT: Reason [MISSING PRODUCT CATEGORY: OTHER TESTS]");
+                notifyUserError("Unable to add this product. Kindly reach out to IT: Reason [MISSING PRODUCT CATEGORY: OTHER TESTS]", auth()->user());
                 return;
             }
 

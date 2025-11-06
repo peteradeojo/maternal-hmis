@@ -142,7 +142,7 @@ class Prescription extends Component
                 DB::rollBack();
 
                 $errors[] = $item->id;
-                notifyUserError($th->getMessage(), ['mode' => 'in-app']);
+                notifyUserError($th->getMessage(), auth()->user(), ['mode' => 'in-app']);
 
                 logger()->emergency("Failed to save prescription quote: " . $th->getMessage());
                 return false;
@@ -158,7 +158,7 @@ class Prescription extends Component
             $this->bill->update(['status' => Status::pending->value]);
         }
 
-        notifyUserSuccess("Quote saved!", ['mode' => 'in-app']);
+        notifyUserSuccess("Quote saved!", auth()->user(), ['mode' => 'in-app']);
         $this->dispatch('quote-saved');
         $this->dispatch('$refresh');
     }

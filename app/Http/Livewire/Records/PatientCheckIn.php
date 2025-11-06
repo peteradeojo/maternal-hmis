@@ -56,10 +56,7 @@ class PatientCheckIn extends Component
         $this->validate();
 
         if ($this->patient->visits->count() > 0 && $this->patient->visits[0]?->status == Status::active->value) {
-            sendUserMessage([
-                'message' => "Last visit for {$this->patient->card_number} is still active.",
-                'bg' => ['bg-red-500', 'text-white'],
-            ]);
+            notifyUserError("Last visit for {$this->patient->card_number} is still active.", auth()->user(), ['mode' => AppNotifications::$IN_APP]);
             return;
         }
 
@@ -74,12 +71,7 @@ class PatientCheckIn extends Component
 
         if (is_a($subVisit, AncVisit::class)) {
             if ($this->patient->anc_profile->status != Status::active->value) {
-                sendUserMessage(
-                    [
-                        'message' => "Patient does not have an active antenatal profile. Please create one.",
-                        'bg' => ['bg-blue-700', 'text-white'],
-                    ]
-                );
+                notifyUserError("Patient does not have an active antenatal profile. Please create one.", auth()->user(), ['mode' => AppNotifications::$IN_APP]);
                 return;
             }
 
@@ -99,7 +91,7 @@ class PatientCheckIn extends Component
 
         $visit->save();
 
-        notifyUserSuccess("Consultation started for {$this->patient->card_number}", [
+        notifyUserSuccess("Consultation started for {$this->patient->card_number}", auth()->user(), [
             'mode' => AppNotifications::$IN_APP,
             'close_modal' => true
         ]);

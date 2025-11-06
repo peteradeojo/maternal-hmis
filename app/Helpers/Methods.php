@@ -3,8 +3,7 @@
 use App\Enums\AncCategory;
 use App\Enums\AppNotifications;
 use App\Enums\Department;
-use App\Events\NotificationSent;
-use App\Models\Visit;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
 function departmentRoutes()
@@ -116,25 +115,25 @@ function resolve_render($value, $mode = null)
     }
 }
 
-function notifyUserSuccess(string $message, $options = [])
+function notifyUserSuccess(string $message, User|int $user, $options = [])
 {
     $options['mode'] ??= AppNotifications::$IN_APP;
-    sendUserMessage(['message' => $message, 'bg' => ['bg-blue-400', 'text-white']], $options);
+    sendUserMessage(['message' => $message, 'bg' => ['bg-blue-400', 'text-white']], $user, $options);
 }
 
-function notifyUserError(string $message, $options = [])
+function notifyUserError(string $message, User|int $user, $options = [])
 {
     $options['mode'] ??= AppNotifications::$IN_APP;
-    sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $options);
+    sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $user, $options);
 }
 
-function sendUserMessage($message, $options = [])
+function sendUserMessage($message, User|int $userId, $options = [])
 {
     $options['mode'] ??= AppNotifications::$BOTH;
 
     $message = array_merge($message, ['options' => $options]);
     try {
-        Broadcast::private("user." . auth()->user()->id)
+        Broadcast::private("user." . (is_a($userId, User::class) ? $userId->id : $userId))
             ->as("UserEvent")
             ->with($message)
             ->sendNow();
@@ -149,5 +148,6 @@ function notifyDepartment($departmentId, $message, $options = [])
     $options['mode'] ??= 'both';
 
     $message = array_merge($message, ['options' => $options]);
-    broadcast(new NotificationSent($departmentId, $message))->toOthers();
+    // broadcast(new NotificationSent($departmentId, $message))->toOthers();
+    Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->sendNow();
 }

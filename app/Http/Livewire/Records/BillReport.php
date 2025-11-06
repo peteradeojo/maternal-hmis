@@ -155,13 +155,13 @@ class BillReport extends Component
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            notifyUserError($e->getMessage());
+            notifyUserError($e->getMessage(), auth()->user());
             logger()->emergency("Unable to create bill: ");
             report($e);
             return;
         }
 
-        notifyUserSuccess("Bill created successfully [#{$bill->id}]");
+        notifyUserSuccess("Bill created successfully [#{$bill->id}]", auth()->user());
         $this->redirect(route('billing.patient-bills', [$this->visit->patient]));
     }
 

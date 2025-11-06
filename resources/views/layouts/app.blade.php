@@ -126,8 +126,8 @@
 
     <script>
         $(document).ready(() => {
-            Echo.channel('department.{{ auth()->user()->department_id }}').listen('NotificationSent', (e) => {
-                displayNotification(e.message);
+            Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
+                displayNotification(e);
             });
 
             Echo.private('user.{{ auth()->user()->id }}').listen('.UserEvent', (e) => {
