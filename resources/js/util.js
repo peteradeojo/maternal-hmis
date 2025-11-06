@@ -87,7 +87,7 @@ window.displayNotification = function (data) {
 
     const el = document.createElement(`div`);
     el.textContent = data.message;
-    el.classList.add(...(data.bg), 'app-notification');
+    el.classList.add(...(data.bg || ['bg-green-400', 'text-white']), 'app-notification');
 
     document.querySelector("#notifications").appendChild(el);
 
