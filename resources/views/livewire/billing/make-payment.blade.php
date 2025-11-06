@@ -1,6 +1,6 @@
 <div x-data="{
     bill: @entangle('bill'),
-}">
+}" wire:poll.3s>
     <p>Bill No: {{ $bill->bill_number }}</p>
     <p>Patient: {{ $bill->patient->name }} ({{ $bill->patient->card_number }})</p>
 
@@ -9,17 +9,17 @@
             <thead>
                 <tr>
                     <th>Description</th>
+                    <th>Status</th>
                     <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($items as $i => $entry)
                     <tr>
-                        @if ($entry['tag'] == 'drug')
-                            <td>{{ $entry['description'] }}</td>
-                        @else
-                            <td>{{ $entry['description'] }}</td>
-                        @endif
+                        <td>{{ $entry['description'] }}</td>
+
+                        <td>{{ $entry['status'] }}</td>
+
                         <td class="flex justify-between items-center">
                             @if ($entry['saved'])
                                 <span>{{ number_format($entry['amount']) }}

@@ -19,6 +19,8 @@ class MakePayment extends Component
     public $initHash = null;
     public $currentHash = null;
 
+    public $editing;
+
     public function mount($bill)
     {
         $this->bill = $bill;
@@ -63,6 +65,7 @@ class MakePayment extends Component
     public function edit($i)
     {
         $this->items[$i]['saved'] = false;
+        $this->editing = true;
     }
 
     public function save($i)
@@ -70,7 +73,6 @@ class MakePayment extends Component
         $this->items[$i]['saved'] = true;
         $this->items[$i]['tag'] == 'drug' ?
             ($this->items[$i]['amount'] = $this->items[$i]['total_price'] * 1.5) : ($this->items[$i]['amount'] = $this->items[$i]['total_price']);
-
 
         $this->updateHash();
         $this->dispatch('$refresh');
@@ -89,6 +91,7 @@ class MakePayment extends Component
             ]);
         }
 
+        $this->editing = false;
         $this->dispatch('$refresh');
         $this->resetHash();
     }
@@ -109,11 +112,19 @@ class MakePayment extends Component
             'saved' => true,
             'id' => $b->id,
             'meta' => $b->meta,
+            'status' => $b->view_billable_status
         ])->toArray();
     }
 
     public function isDiff()
     {
         return $this->currentHash == $this->initHash;
+    }
+
+    public function hydrate()
+    {
+        if (!$this->editing) {
+            $this->getItems();
+        }
     }
 }

@@ -142,11 +142,11 @@ class Prescription extends Component
         DB::commit();
         if (count($errors) > 0) return;
 
-        // if ($this->quoteDone) {
-        //     $this->bill->update(['status' => Status::quoted->value]);
-        // } else {
-        //     $this->bill->update(['status' => Status::pending->value]);
-        // }
+        if ($this->quoteDone) {
+            $this->bill->update(['status' => Status::quoted->value]);
+        } else {
+            $this->bill->update(['status' => Status::pending->value]);
+        }
 
         notifyUserSuccess("Quote saved!", ['mode' => 'in-app']);
         $this->dispatch('$refresh');
