@@ -46,7 +46,8 @@
             // ordering: false,
             order: [
                 [4, 'desc']
-            ]
+            ],
+            responsive: true,
         });
     </script>
 @endpush

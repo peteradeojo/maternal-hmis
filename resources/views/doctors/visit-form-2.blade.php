@@ -2,6 +2,7 @@
 @section('title', $visit->patient->name . " | Doctor's Visit")
 
 @section('content')
+    <x-back-link />
     <livewire:doctor.visit-form :visit="$visit" @anc-profile-refresh="refreshProfile" />
 
     <x-overlay-modal id="diagnosis-modal">

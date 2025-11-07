@@ -19,7 +19,8 @@
                 <tbody>
                     @foreach ($admissions as $a)
                         <tr>
-                            <td><a href="{{route('doctor.show-admission', $a)}}" class="link">{{ $a->patient->name }}</a></td>
+                            <td><a href="{{ route('doctor.show-admission', $a) }}" class="link">{{ $a->patient->name }}</a>
+                            </td>
                             <td>{{ $a->patient->card_number }}</td>
                             <td>
                                 @if ($a->ward)
@@ -39,9 +40,11 @@
 @endsection
 
 @push('scripts')
-<script>
-    $(() => {
-        $("#admissions").DataTable();
-    });
-</script>
+    <script>
+        $(() => {
+            $("#admissions").DataTable({
+                responsive: true,
+            });
+        });
+    </script>
 @endpush

@@ -1,27 +1,13 @@
 @extends('layouts.app')
+@section('title', 'Portal')
 
 @section('content')
     {{-- @dd($admission) --}}
     <div class="card py px">
         <div class="header">
-            <p>{{ $admission->patient->name }} (Admitted: {{ $admission->created_at->format('Y-m-d') }})</p>
-        </div>
-        <div class="header">
-            <div class="grid grid-cols-12">
-                <div class="col-span-6">
-                    <p><b>Patient:</b> {{ $admission->patient->name }}</p>
-                    <p><b>Age:</b> {{ $admission->patient->dob?->diffInYears() }}</p>
-                    <p><b>Category:</b> {{ $admission->patient->category->name }}</p>
-                    <p><b>Gender:</b> {{ $admission->patient->gender_value }}</p>
-                    <p><b>Ward:</b> @unless ($admission->ward)
-                            <a href="{{ route('nurses.admissions.assign-ward', $admission) }}">Assign to Ward</a>
-                        @else
-                            {{ $admission->ward->name }}
-                        @endunless
-                    </p>
-                    <p><b>Insurance: </b> {{ $admission->patient->activeInsurance()->first()?->hmo_name ?? 'None' }}</p>
-                </div>
-            </div>
+            <x-patient-profile :patient="$admission->patient">
+                <p>Admitted: {{ $admission->created_at->format('Y-m-d') }}</p>
+            </x-patient-profile>
         </div>
         <div class="body py">
             <div id="actions-tab" data-tablist="#list">
@@ -151,18 +137,19 @@
                     <div class="tab p-1">
                         <h2>Discharge</h2>
 
-                        <form action="{{route('nurses.admissions.discharge', $admission)}}" method="post">
+                        <form action="{{ route('nurses.admissions.discharge', $admission) }}" method="post">
                             @csrf
                             <div class="form-group">
                                 <label>Discharge Date</label>
-                                <input type="datetime-local" name="discharged_on" class="form-control" required/>
+                                <input type="datetime-local" name="discharged_on" class="form-control" required />
                             </div>
                             <div class="form-group">
                                 <label>Discharge summary</label>
                                 <textarea name="discharge_summary" rows="5" class="form-control"></textarea>
                             </div>
                             <div class="form-group flex justify-end">
-                                <button class="btn bg-blue-400 text-white">Discharge <i class="fa fa-wheelchair-move"></i></button>
+                                <button class="btn bg-blue-400 text-white">Discharge <i
+                                        class="fa fa-wheelchair-move"></i></button>
                             </div>
                         </form>
                     </div>

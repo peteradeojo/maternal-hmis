@@ -2,13 +2,13 @@
 
 <div x-cloak x-data="{ open: false }" x-on:open-{{ $id }}.window="open = true"
     x-on:close-{{ $id }}.window="open = false" x-on:keyup.escape.window="open = false"
-    class="fixed inset-0 z-50 flex justify-end" x-show="open">
+    class="fixed top-20 md:top-0 inset-0 z-50 flex justify-end" x-show="open">
     <!-- Backdrop -->
     <div class="absolute inset-0 bg-black/40 transition-opacity duration-300" @click="open = false" x-show="open"
         x-transition.opacity></div>
 
     <!-- Sliding panel -->
-    <div class="relative h-dvh overflow-y-auto min-w-[50%] w-fit bg-white shadow-xl transition-transform duration-300"
+    <div class="relative h-dvh overflow-y-auto max-w-[100vw] min-w-[50%] w-fit bg-white shadow-xl transition-transform duration-300"
         :class="open ? 'translate-x-0' : 'translate-x-full'"
 
         x-transition:enter="transform transition ease-in duration-300" x-transition:enter-start="translate-x-full"

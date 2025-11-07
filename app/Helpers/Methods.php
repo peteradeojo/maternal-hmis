@@ -56,7 +56,7 @@ function departmentRoutes()
     ];
 
     $dis = [
-        route('dis.index') => ['Prescriptions', 'fa-drug'],
+        route('dis.index') => ['Prescriptions', 'fa-prescription'],
     ];
 
     $nhi = [

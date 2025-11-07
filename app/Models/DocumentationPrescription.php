@@ -34,7 +34,7 @@ class DocumentationPrescription extends Model
 
     public function __toString()
     {
-        return "{$this->name} {$this->route} {$this->dosage} {$this->frequency} - for {$this->duration}";
+        return "{$this->name} {$this->route} {$this->dosage} {$this->frequency} - for {$this->duration} " . (is_numeric($this->duration) ? 'days' : '');
     }
 
     public function eventName(): Attribute
@@ -46,8 +46,6 @@ class DocumentationPrescription extends Model
 
     protected static function booted()
     {
-        static::created(function (Self $self) {
-            
-        });
+        static::created(function (Self $self) {});
     }
 }

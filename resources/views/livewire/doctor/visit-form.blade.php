@@ -1,26 +1,11 @@
 <div>
     {{-- In work, do what you enjoy. --}}
-    <div class="container card">
-        <div class="card-header header">Profile</div>
+    <div class="p-4 bg-white">
         <div id="nav-tab" data-tablist="#tablist">
             <div id="tablist" class="py-1">
-                <div>
-                    {{ $visit->created_at?->format('Y-m-d h:i A') }}
-                </div>
-                <div class="grid grid-cols-3">
-                    <p><b>Name</b>: {{ $visit->patient->name }}</p>
-                    <p><b>Gender</b>: {{ $visit->patient->gender_value }}</p>
-                    <p><b>Date of Birth</b>: {{ $visit->patient->dob?->format('Y-m-d') }}</p>
-                    <p><b>Card Number</b>: {{ $visit->patient->card_number }}</p>
-                    <p><b>Card Type</b>: {{ $visit->patient->category->name }}</p>
-                    <p><b>Visit Type</b>: {{ $visit->type }}</p>
-                    {{-- <p><b></b></p>
-                    <p><b></b></p>
-                    <p><b></b></p>
-                    <p><b></b></p> --}}
-                </div>
+                <x-patient-profile :patient="$visit->patient"></x-patient-profile>
 
-                @if ($visit->type == 'Antenatal')
+                @if ($visit->type == 'Antenatal' || strtolower($visit->patient->category->name) == "antenatal")
                     <div class="tab py-3 px-2">
                         <p class="text-3xl border-b border-gray-300">Antenatal Booking Details</p>
                         @isset($profile)
