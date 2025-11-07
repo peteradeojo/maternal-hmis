@@ -52,7 +52,7 @@ function departmentRoutes()
     ];
 
     $phm = [
-        route('phm.prescriptions') => ['Presciptions', 'fa-drug'],
+        route('phm.prescriptions') => ['Presciptions', 'fa-prescription'],
     ];
 
     $dis = [
