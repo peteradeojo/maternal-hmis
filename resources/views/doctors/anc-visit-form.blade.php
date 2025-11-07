@@ -24,7 +24,7 @@
             <div class="tab">
                 <form action="{{ route('doctor.treat-anc', $ancVisit->id) }}" method="post" class="mt-2">
                     @foreach ($errors->all() as $message)
-                        @dump($message)
+                        {{-- @dump($message) --}}
                     @endforeach
                     @csrf
                     <div class="row">

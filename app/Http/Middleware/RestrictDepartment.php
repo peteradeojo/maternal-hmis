@@ -15,6 +15,7 @@ class RestrictDepartment
      */
     public function handle(Request $request, Closure $next, string $department): Response
     {
+        $deps = explode(',', $department);
         if ($request->user()?->department_id != $department) {
             return redirect()->route('dashboard');
         }

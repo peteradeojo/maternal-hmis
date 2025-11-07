@@ -11,7 +11,7 @@
             <p>No records</p>
         @else
             @foreach ($visit->histories as $history)
-                @dump($history)
+                {{-- @dump($history) --}}
             @endforeach
         @endempty
     </div>
@@ -22,7 +22,7 @@
             <p>No records</p>
         @else
             @foreach ($visit->diagnoses as $history)
-                @dump($history)
+                {{-- @dump($history) --}}
             @endforeach
         @endempty
     </div>

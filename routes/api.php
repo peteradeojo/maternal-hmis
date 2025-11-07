@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'auth:sanctum'])->group(function () {
     Route::prefix('records')->name('api.records.')->group(base_path('routes/api/records.php'));
 
     Route::prefix('rad')->group(base_path('routes/api/rad.php'));

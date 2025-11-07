@@ -273,4 +273,18 @@ class PatientsController extends Controller
     {
         return view('patients.medical-history', compact('patient'));
     }
+
+    public function addInsuranceProfile(Request $request, Patient $patient)
+    {
+        $profile = $patient->insurance()->create($request->except('_token'));
+
+        notifyDepartment(EnumsDepartment::NHI->value, [
+            'message' => "New patient profile has been added for patient #{$patient->card_number}",
+            'bg' => ['bg-blue-400', 'text-white'],
+        ], ['mode' => AppNotifications::$BOTH]);
+
+        notifyUserSuccess("Insurance profile added successfully", $request->user(), ['mode' => 'in-app']);
+
+        return response()->json($profile);
+    }
 }

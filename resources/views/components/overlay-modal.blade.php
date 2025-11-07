@@ -19,7 +19,7 @@
             <h2 class="text-lg font-semibold" id="modal-title-{{ $id }}">
                 {{ $title ?? 'Title' }}
             </h2>
-            <button @click="open = false" class="text-gray-600">&times;</button>
+            <button @click="open = false" class="text-gray-600 text-2xl">&times;</button>
         </div>
         <div class="px-4 py-8" id="modal-body-{{ $id }}">
             {{ $slot }}

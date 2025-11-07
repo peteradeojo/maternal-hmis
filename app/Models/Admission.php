@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Admission extends Model implements OperationalEvent
 {
-    use HasFactory, Documentable, HasVisitData, SoftDeletes;
+    use HasFactory, Documentable, HasVisitData; //, SoftDeletes;
 
     protected $guarded = [];
 

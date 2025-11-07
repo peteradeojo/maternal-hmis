@@ -90,17 +90,38 @@
 
     <div class="p-8 bg-white my-3">
         <div class="header">
-            <div class="flex gap-x-2 items-center">
-                <p class="text-lg font-semibold">Health Insurance</p>
-                <button><i class="text-lg fa fa-plus-circle text-green-500"></i></button>
+            <div class="flex gap-x-2 items-center text-lg">
+                <p class="font-semibold">Health Insurance</p>
+                <button><i class="fa fa-plus-circle text-green-500"
+                        @click.stop="$dispatch('open-set-insurance')"></i></button>
             </div>
+            <x-overlay-modal id="set-insurance" title="Insurance Profile">
+                <form action="{{ route('api.records.insurance', $patient) }}" id="insurance-profile-form" method="post">
+                    <div class="form-group">
+                        <label>Provider Name</label>
+                        <input type="text" name="hmo_name" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" name="hmo_company" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Insurance ID. Number</label>
+                        <input type="text" name="hmo_id_no" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <button class="btn bg-blue-400 text-white">Save <i class="fa fa-save"></i></button>
+                    </div>
+                </form>
+            </x-overlay-modal>
         </div>
-        <div class="body foldable-body">
+        <div class="body grid">
             @forelse ($patient->insurance as $insurance)
-                <div class="py">
-                    <p><b>HMO:</b> {{ $insurance?->hmo_name }}</p>
-                    <p><b>Company:</b> {{ $insurance?->hmo_name }}</p>
-                    <p><b>ID No:</b> {{ $insurance?->hmo_id_no }}</p>
+                <div class="p-2 bg-gray-100">
+                    <p><b>HMO:</b> {{ $insurance->hmo_name }}</p>
+                    <p><b>Company:</b> {{ $insurance->hmo_name }}</p>
+                    <p><b>ID No:</b> {{ $insurance->hmo_id_no }}</p>
+                    <p><b>Status:</b> {{ ucfirst($insurance->status) }}</p>
                 </div>
             @empty
                 <div class="p-2">
@@ -113,7 +134,7 @@
 
 @push('scripts')
     <script>
-        $(() => {
+        $(document).ready(() => {
             $("#add-anc-profile").on("click", () => {
                 useGlobalModal(async (a) => {
                     a.find("#global-modal-title").text("Add Antenatal profile");
@@ -165,6 +186,13 @@
                     }).catch((err) => a.find("#global-modal-content").html(err.response.data))
                 });
             })
+
+            asyncForm('#insurance-profile-form', "{{ route('api.records.insurance', $patient->id) }}", function(
+            e, {
+                data
+            }) {
+                console.log(data);
+            });
         });
     </script>
 @endpush

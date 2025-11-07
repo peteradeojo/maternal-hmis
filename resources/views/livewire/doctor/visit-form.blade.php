@@ -210,8 +210,10 @@
 @script
     <script>
         asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
-            const data = await res.json();
-            notifySuccess("Examination saved for visit #{{$visit->id}}");
+            const {
+                data
+            } = res;
+            notifySuccess("Examination saved for visit #{{ $visit->id }}");
         });
 
         $(document).ready(() => {
