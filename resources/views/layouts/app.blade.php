@@ -30,7 +30,7 @@
     </style>
 </head>
 
-<body class="md:flex" x-data="{ aside: false }" @closeModal.window="removeGlobalModal" x-init="aside = localStorage.getItem('aside') === 'true'">
+<body class="md:flex" x-data="{ aside: false }" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
