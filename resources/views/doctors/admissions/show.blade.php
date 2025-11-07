@@ -120,7 +120,7 @@
                 </div>
 
                 {{-- Treatments --}}
-                <div class="tab">
+                <div class="tab p-2">
                     <p class="text-lg font-bold">Drugs</p>
 
                     <table class="table">
@@ -140,7 +140,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="2">No administrations have been recorded.</td>
+                                    <td colspan="3">No administrations have been recorded.</td>
                                 </tr>
                             @endforelse
                         </tbody>
