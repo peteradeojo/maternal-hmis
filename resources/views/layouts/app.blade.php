@@ -30,14 +30,14 @@
     </style>
 </head>
 
-<body class="md:flex" x-data @closeModal.window="removeGlobalModal">
+<body class="md:flex" x-data="{ aside: false }" @closeModal.window="removeGlobalModal" x-init="aside = localStorage.getItem('aside') === 'true'">
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
     <div class="sticky top-0 w-full z-[1000] sm:hidden">
         <div class="px-2 py-4 bg-green-400 flex w-full items-center justify-between">
             <div>
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-x-3 link">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-x-3 hover:text-blue-600">
                     <img src="{{ asset('favicon-3.png') }}">
                     Home
                 </a>
@@ -53,29 +53,38 @@
 
         <div class="p-2 hidden bg-green-800 text-white" id="mobile-nav-list">
             <ul>
-                @foreach ($routes as $d => $name)
+                @foreach ($routes as $d => [$name])
                     <li class="p-2">
                         <a href="{{ $d }}" class="nav-link">{{ $name }}</a>
                     </li>
                 @endforeach
-                <li class="p-2">
-                    <a href="{{ route('user-profile') }}" class="nav-link">Profile</a>
-                </li>
-                <li class="p-2">
-                    <a href="{{ route('logout') }}" class="nav-link">Logout</a>
-                </li>
             </ul>
         </div>
     </div>
 
     {{-- Large Nav --}}
-    <aside id="navigation" class="hidden sm:block z-50 w-2/12 fixed left-0 h-screen bg-gray-800">
+    <aside class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800" x-cloak
+        x-bind:class="aside ? 'w-[16%]' : 'w-[5%]'" x-transition>
         <div class="sticky top-0">
+            <div class="bg-white p-2 flex" :class="aside ? 'justify-end' : 'justify-center'">
+                <button x-show="!aside" x-on:click="aside = true;localStorage.setItem('aside', aside)"
+                    class="btn btn-sm rounded-full" title="Open">
+                    <span class="text-xl"><i class="fa fa-book-open"></i></span>
+                </button>
+                <button x-show="aside" x-on:click="aside = false;localStorage.setItem('aside', aside)"
+                    class="btn btn-sm rounded-full" title="Close">
+                    <span class="text-xl"><i class="fa fa-xmark"></i></span>
+                </button>
+                {{-- <button x-on:click="aside = !aside" class="btn btn-sm">
+                    <span class="text-lg"><i class="fa" :class="aside ? 'fa-xmark' : 'fa-book-open'"></i></span>
+                </button> --}}
+            </div>
             @include('components.sidebar')
         </div>
     </aside>
 
-    <main class="w-screen bg-blue-100 sm:ml-[16.666667%] min-h-screen overflow-y-auto">
+    <main class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms]" x-cloak
+        x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">
         <div class="flex justify-end">
             <p class="text-black sm:px-8">Version: {{ env('APP_VERSION', '0.0.1') }}</p>
         </div>

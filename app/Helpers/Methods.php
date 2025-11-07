@@ -8,71 +8,75 @@ use Illuminate\Support\Facades\Broadcast;
 
 function departmentRoutes()
 {
-    $base = [];
+    $base = [
+        route('user-profile') => ['Profile', 'fa-gear'],
+        route('logout') => ['Logout', 'fa-sign-out'],
+    ];
 
-    $doctors = array_merge(
+    $doctors =
         [
-            // route('doctor.patients') => 'Patients',
-            route('doctor.history') => 'History',
-            route('doctor.admissions') => 'Admissions',
-            route('doctor.anc-bookings') => 'Antenatal Bookings',
-        ],
-        $base,
-    );
+            route('doctor.history') => ['History', 'fa-clock'],
+            route('doctor.admissions') => ['Admissions', 'fa-bed'],
+            route('doctor.anc-bookings') => ['Antenatal Bookings', 'fa-book'],
+        ];
 
-    $nurses = array_merge([
+    $nurses = [
         // route('nurses.vitals') => 'Vitals',
-        route('nurses.admissions.get') => 'Admissions',
-        route('nurses.anc-bookings') => 'Antenatal Bookings',
-    ], $base);
+        route('nurses.admissions.get') => ['Admissions', 'fa-bed'],
+        route('nurses.anc-bookings') => ['Antenatal Bookings', 'fa-female'],
+    ];
 
-    $records = array_merge([
-        route('records.patients') => 'Patients',
-        route('billing.index') => 'Billing',
+    $records = [
+        route('records.patients') => ['Patients', 'fa-person'],
+        route('billing.index') => ['Billing', 'fa-money-bill-wave'],
         // route('records.history') => 'Visit History',
-        route('records.admissions') => 'Admissions',
-    ], $base);
+        route('records.admissions') => ['Admissions', 'fa-bed'],
+    ];
 
-    $it = array_merge([
-        route('it.staff') => 'Staff',
-        route('it.wards') => 'Wards',
-        route('it.products') => 'Products',
-        route('it.crm-index') => 'CRM',
-    ], $base);
+    $it = [
+        route('it.staff') => ['Staff', 'fa-people'],
+        route('it.wards') => ['Wards', 'fa-bed'],
+        route('it.products') => ['Products', 'fa-item'],
+        route('it.crm-index') => ['CRM', 'fa-list'],
+    ];
 
-    $lab = array_merge([
-        route('lab.history') => 'History',
-        route('lab.admissions') => 'Admissions',
-        route('lab.antenatals') => 'Antenatals',
-    ], $base);
+    $lab = [
+        route('lab.history') => ['History', 'fa-clock'],
+        route('lab.admissions') => ['Admissions', 'fa-bed'],
+        route('lab.antenatals') => ['Antenatals', 'fa-heart'],
+    ];
 
-    $rad = array_merge([
-        route('rad.scans') => 'Scans',
-        route('rad.history') => 'History',
-    ], $base);
+    $rad = [
+        route('rad.scans') => ['Scans', 'fa-xray'],
+        route('rad.history') => ['History', 'fa-clock'],
+    ];
 
-    $phm = array_merge([
-        route('phm.prescriptions') => 'Presciptions'
-    ], $base);
+    $phm = [
+        route('phm.prescriptions') => ['Presciptions', 'fa-drug'],
+    ];
 
-    $dis = array_merge([
-        route('dis.index') => 'Prescriptions'
-    ], $base);
+    $dis = [
+        route('dis.index') => ['Prescriptions', 'fa-drug'],
+    ];
 
-    $nhi = array_merge([
-        route('nhi.index') => 'Patients',
-    ], $base);
+    $nhi = [
+        route('nhi.index') => ['Patients', 'fa-person'],
+    ];
+
+    $dashboard = [
+        route('dashboard') => ['Dashboard', 'fa-home'],
+    ];
 
     return [
-        Department::DOC->value => $doctors,
-        Department::NUR->value => $nurses,
-        Department::REC->value => $records,
-        Department::IT->value => $it,
-        Department::LAB->value => $lab,
-        Department::RAD->value => $rad,
-        Department::PHA->value => $phm,
-        Department::DIS->value => $dis,
-        Department::NHI->value => $nhi,
+        Department::DOC->value => array_merge($dashboard, $doctors, $base),
+        Department::NUR->value => array_merge($dashboard, $nurses, $base),
+        Department::REC->value => array_merge($dashboard, $records, $base),
+        Department::IT->value => array_merge($dashboard, $it, $base),
+        Department::LAB->value => array_merge($dashboard, $lab, $base),
+        Department::RAD->value => array_merge($dashboard, $rad, $base),
+        Department::PHA->value => array_merge($dashboard, $phm, $base),
+        Department::DIS->value => array_merge($dashboard, $dis, $base),
+        Department::NHI->value => array_merge($dashboard, $nhi, $base),
     ];
 }
 

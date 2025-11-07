@@ -31,19 +31,23 @@ body {
     text-decoration: none;
 }
 
-.navbar-nav > .nav {
+.navbar-nav>.nav {
     list-style: none;
     padding: 4px;
 }
+
 .navbar-nav .nav-item {
-    padding: 4px;
+    /* padding: 4px; */
     border-bottom: 1px solid #ccc;
 }
+
 .navbar-nav .nav-link {
-    display: block;
+    /* display: block; */
     padding: 4px;
     text-decoration: none;
     color: #fff;
+
+    @apply flex items-center gap-x-2;
 }
 
 @media only print {
