@@ -25,7 +25,7 @@
                                 wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }}</td>
                                 <td>
-                                    <input type="text" wire:model="requestForm.dosage" name="dosage"
+                                    <input type="text" autofocus wire:model="requestForm.dosage" name="dosage"
                                         value="1" />
                                     <div>
                                         @error('requestForm.dosage')

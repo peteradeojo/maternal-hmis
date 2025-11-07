@@ -20,7 +20,7 @@
                         wire:key="{{ $selection['id'] ?? $selection['name'] }}">
                         <td>{{ $selection['name'] }}</td>
                         <td>
-                            <input type="text" wire:model="selection.dosage" name="dosage" value="1" />
+                            <input type="text" autofocus wire:model="selection.dosage" name="dosage" value="1" />
                             <div>
                                 @error('requestForm.dosage')
                                     <span class="error text-xs text-red-600">{{ $message }}</span>
