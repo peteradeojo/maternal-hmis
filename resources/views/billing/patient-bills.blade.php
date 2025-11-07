@@ -25,7 +25,7 @@
                         </p>
                     @endisset
                 </div>
-                <div class="py-2 flex gap-x-4">
+                <div class="py-2 flex gap-x-2">
                     <a href="#" data-visit="{{ $visit->id }}" class="btn bg-green-400 get-bill">Create
                         Bill</a>
 

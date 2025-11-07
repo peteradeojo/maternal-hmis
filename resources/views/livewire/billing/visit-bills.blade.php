@@ -28,7 +28,7 @@
             </p>
 
 
-            @unless ($bill->status == Status::cancelled->value)
+            {{-- @unless ($bill->status == Status::cancelled->value)
                 @if ($bill->balance > 0)
                     <button data-bill_id="{{ $bill->id }}"
                         class="pay-btn btn btn-sm bg-green-600 text-white">Pay</button>
@@ -47,7 +47,35 @@
                 @endif
             @else
                 <span class="inline-grid py-1 px-2 rounded-md text-white bg-red-500">Cancelled</span>
-            @endunless
+            @endunless --}}
+
+            <div class="flex gap-x-2">
+                @if ($bill->status == Status::cancelled->value)
+                    <span class="inline-grid py-1 px-2 rounded-md text-white bg-red-500">Cancelled</span>
+                @endif
+
+                @if ($bill->status == Status::pending->value)
+                    @if ($bill->paid > 0)
+                        <button data-bill_id="{{ $bill->id }}"
+                            class="pay-btn btn btn-sm bg-green-600 text-white">Finish payment</button>
+                    @else
+                        <button data-bill_id="{{ $bill->id }}"
+                            class="pay-btn btn btn-sm bg-green-600 text-white">Pay</button>
+                    @endif
+                    <button data-bill_id="{{ $bill->id }}"
+                        class="cancel-btn btn btn-sm bg-red-500 text-white">Cancel</button>
+                @endif
+
+                <button class="btn btn-sm bg-gray-200" @click="show = !show">More details</button>
+            </div>
+
+            <div class="p-1" x-show="show" x-cloak x-transition>
+                <ul class="p-4 list-disc list-inside bg-gray-100">
+                    @foreach ($bill->entries as $e)
+                        <li>{{ $e->description }} - {{ $e->total_price }}</li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
     @empty
         <div class="p-1 text-center">No bills</div>
