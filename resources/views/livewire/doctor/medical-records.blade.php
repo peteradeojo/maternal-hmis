@@ -1,5 +1,22 @@
 <div wire:poll.3000ms>
     {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
+    <x-overlay-modal id="admit" title="Admitting: {{ $visit->patient->name }}">
+        <form action="{{ route('doctor.admit', $visit) }}" method="post" id="start-admission-form">
+            @csrf
+            <div class="form-group">
+                <label class="required">Indication for Admission</label>
+                <input type="text" name="indication" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label>Notes/Further Instructions</label>
+                <textarea name="note" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-red-500 text-white">Submit</button>
+            </div>
+        </form>
+    </x-overlay-modal>
+
     @foreach ($visit->patient->visits->slice(0, 5) as $i => $visit)
         <div class="py-2">
             <div class="border-2 border-red-300 p-1">
@@ -7,8 +24,10 @@
                     <p>Date: {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
                     <div class="flex gap-x-3">
                         @if ($i == 0)
-                            <a href="{{ route('doctor.admit', ['visit' => $visit]) }}"
+                            <a href="#" @click.prevent="$dispatch('open-admit')"
                                 class="btn btn-sm bg-green-500 text-white">Admit</a>
+                            {{-- <a href="{{ route('doctor.admit', ['visit' => $visit]) }}"
+                                class="btn btn-sm bg-green-500 text-white">Admit</a> --}}
                             <button wire:click="close" wire:confirm="Are you done with this patient?"
                                 class="btn btn-sm bg-blue-500 text-white">Close</button>
                         @endif
@@ -80,7 +99,10 @@
 
                 <div class="py-2">
                     <p><b>Tests</b></p>
-                    @include('doctors.components.test-results', ['tests' => $visit->tests, 'cancellable' => true])
+                    @include('doctors.components.test-results', [
+                        'tests' => $visit->tests,
+                        'cancellable' => true,
+                    ])
                 </div>
 
                 @if ($visit->imagings?->count() > 0)

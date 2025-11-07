@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\Admission;
@@ -9,6 +10,7 @@ use App\Models\AdmissionTreatments;
 use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdmissionsController extends Controller
 {
@@ -180,8 +182,60 @@ class AdmissionsController extends Controller
 
     public function createAdmission(Request $request, Visit $visit)
     {
-        return view('doctors.admissions.start', ['visit' => $visit]);
-}
+        $request->validate([
+            'indication' => 'required|string',
+            'note' => 'nullable|string',
+        ]);
+
+        if (!empty($visit->admission) && ($visit->admission->status != Status::cancelled->value || $visit->admission->status != Status::closed->value)) {
+            return response()->json([
+                'message' => "There is still an ongoing admission for this patient",
+                'ok' => false,
+            ]);
+        }
+
+        $admission = $visit->admission()->create([
+            'visit_id' => $visit->id,
+            'patient_id' => $visit->patient_id,
+            'admittable_type' => $visit::class,
+            'admittable_id' => $visit->id,
+            'status' => Status::pending->value,
+        ]);
+
+        $plan = $admission->plans()->create([
+            'user_id' => $request->user()->id,
+            ...$request->except('_token'),
+            'status' => Status::active->value,
+        ]);
+
+        // ! Redirect all tests to show up for the admission
+        $visit->tests->each(fn($test) => $test->update([
+            'testable_type' => $admission::class,
+            'testable_id' => $admission->id,
+        ]));
+
+        // ! Redirect all prescriptions to show up for the admission plan
+        $visit->treatments->each(fn($t) => $t->update([
+            'event_type' => $plan::class,
+            'event_id' => $plan->id,
+        ]));
+
+        // TODO: Redirect all scan requests to Radiology
+        // * $visit->radios->each(fn ($scan) => $scan->update([]));
+
+        $visit->update(['status' => Status::Unavailable->value]);
+
+        notifyDepartment(Department::NUR->value, "{$visit->patient->name} #[{$visit->patient->card_number}] is being admitted.", [
+            'mode' => AppNotifications::$BOTH,
+        ]);
+
+        return response()->json([
+            'admission' => $admission,
+            'plan' => $plan,
+            'patient' => $visit->patient,
+            'ok' => true,
+        ]);
+    }
 
     public function discharge(Request $request, Admission $admission)
     {

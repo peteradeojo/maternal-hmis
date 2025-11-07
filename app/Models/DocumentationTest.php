@@ -17,6 +17,8 @@ class DocumentationTest extends Model
         'results',
         'describable_type',
         'describable_id',
+        'testable_type',
+        'testable_id',
     ];
 
     public function patient()

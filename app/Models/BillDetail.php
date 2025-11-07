@@ -24,6 +24,8 @@ class BillDetail extends Model
         'quoted_by',
     ];
 
+    protected $touches = ['bill'];
+
     protected $casts = [
         'meta' => 'array',
     ];

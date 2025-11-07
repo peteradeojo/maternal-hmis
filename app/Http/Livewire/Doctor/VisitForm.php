@@ -100,7 +100,7 @@ class VisitForm extends Component
     public function refresh()
     {
         $this->visit->refresh();
-        $this->profile->calculateEddLmp(true);
+        $this->profile?->calculateEddLmp(true);
         $this->hydrate();
     }
 

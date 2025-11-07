@@ -216,6 +216,20 @@
             notifySuccess("Examination saved for visit #{{ $visit->id }}");
         });
 
+        asyncForm("#start-admission-form", "{{ route('doctor.admit', $visit) }}", (e, res) => {
+            const {
+                data
+            } = res;
+
+            if (!data.ok) {
+                notifyError(data.message);
+                return;
+            }
+
+            notifySuccess(`Admission process started for ${data.patient.name}`);
+            $wire.dispatch('close-admit');
+        });
+
         $(document).ready(() => {
             $(document).on("click", "#view-history", (e) => {
                 axios.get(`{{ route('patient.medical-history', ':id') }}`.replace(':id',

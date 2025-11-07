@@ -29,3 +29,8 @@ textarea.form-control {
 .form-group {
     padding: 6px 0;
 }
+
+label.required::after {
+    content: " (required)";
+    color: red;
+}

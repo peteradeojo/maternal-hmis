@@ -42,14 +42,14 @@
                     <tr>
                         <td>Tests</td>
                         <td>
-                            @include('doctors.components.test-results', ['tests' => $data->plan->tests])
+                            @include('doctors.components.test-results', ['tests' => $data->tests])
                         </td>
                     </tr>
                     <tr>
                         <td>Investigations</td>
                         <td>
                             <ul class="list-disc list-inside">
-                                @forelse ($data->plan->scans ?? [] as $treatment)
+                                @forelse ($data->visit->scans ?? [] as $treatment)
                                     <li class="list-item">{{ $treatment }}</li>
                                 @empty
                                     <li>No scan</li>
@@ -63,7 +63,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <a href="{{route('doctor.show-admission-plan', $data)}}" class="link">View Plan</a>
+                            <a href="{{ route('doctor.show-admission-plan', $data) }}" class="link">View Plan</a>
                         </td>
                     </tr>
                 </tbody>

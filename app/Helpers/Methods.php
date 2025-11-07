@@ -147,6 +147,10 @@ function notifyDepartment($departmentId, $message, $options = [])
 {
     $options['mode'] ??= 'both';
 
+    if (is_string($message)) {
+        $message = ['message' => $message];
+    }
+
     $message = array_merge($message, ['options' => $options]);
     // broadcast(new NotificationSent($departmentId, $message))->toOthers();
     Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->sendNow();
