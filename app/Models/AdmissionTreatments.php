@@ -14,6 +14,8 @@ class AdmissionTreatments extends Model
 
     protected $guarded = [];
 
+    protected $touches = ['admission'];
+
     protected $with = ['minister', 'treatments'];
 
     public function admission() {
