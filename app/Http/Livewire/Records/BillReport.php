@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Records;
 
+use App\Enums\Department;
 use App\Models\Bill;
 use App\Enums\Status;
 use App\Models\Product;
@@ -162,6 +163,11 @@ class BillReport extends Component
         }
 
         notifyUserSuccess("Bill created successfully [#{$bill->id}]", auth()->user());
+        !empty($this->tests) && notifyDepartment(
+            Department::DIS->value,
+            "Pending quotes for {$this->visit->patient->name}",
+            ['title' => 'Pending Bill Quote']
+        );
         $this->redirect(route('billing.patient-bills', [$this->visit->patient]));
     }
 
