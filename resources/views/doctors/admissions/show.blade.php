@@ -133,7 +133,7 @@
                         <tbody>
                             @forelse ($data->administrations as $a)
                                 <tr>
-                                    <td>{{ $a }}</td>
+                                    <td>{{ $a->treatments }}</td>
                                     <td>{{ $a->minister->name }}</td>
                                 </tr>
                             @empty
