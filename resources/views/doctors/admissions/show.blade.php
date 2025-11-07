@@ -99,7 +99,7 @@
                             @forelse ($data->svitals as $v)
                                 <tr>
                                     <td></td>
-                                    <td>{{ $v->recorded_date }}</td>
+                                    <td>{{ ($v->recorded_date ?? $v->created_at)?->format('Y-m-d h:i A') }}</td>
                                     <td>{{ $v->temperature }}</td>
                                     <td>{{ $v->blood_pressure }}</td>
                                     <td>{{ $v->pulse }}</td>
@@ -111,9 +111,9 @@
                                     </td>
                                 </tr>
                             @empty
-                            <tr>
-                                <td colspan="7">No vitals recorded.</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="7">No vitals recorded.</td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -128,12 +128,14 @@
                             <tr>
                                 <th>Description</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($data->administrations as $a)
                                 <tr>
                                     <td>{{ $a->treatments }}</td>
+                                    <td>{{ $a->created_at?->format('Y-m-d h:i A') }}</td>
                                     <td>{{ $a->minister->name }}</td>
                                 </tr>
                             @empty
