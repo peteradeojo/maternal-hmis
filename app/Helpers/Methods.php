@@ -16,7 +16,7 @@ function departmentRoutes()
     $doctors =
         [
             route('doctor.history') => ['History', 'fa-clock'],
-            route('doctor.admissions') => ['Admissions', 'fa-bed'],
+            route('doctor.admissions') => ['Wards', 'fa-bed'],
             route('doctor.anc-bookings') => ['Antenatal Bookings', 'fa-book'],
         ];
 
