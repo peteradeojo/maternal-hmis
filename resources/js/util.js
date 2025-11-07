@@ -104,7 +104,9 @@ window.displayNotification = function (data) {
                 link.click();
                 n.close();
             }
-        })
+        });
+
+        setTimeout(() => n.close(), 30000);
     }
 
     if (!['both', 'in-app'].includes(data.options.mode)) {
