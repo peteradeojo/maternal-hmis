@@ -90,7 +90,7 @@ window.displayNotification = function (data) {
         const n = new Notification(data.title || 'New Notification', {
             body: data.message,
             icon: '/favicon.ico',
-            requireInteraction: true,
+            // requireInteraction: true,
             data: data.meta,
         });
 
