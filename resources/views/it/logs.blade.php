@@ -34,6 +34,9 @@
                 DEBUG: 'yellow-400',
             };
 
+            let logCount = 0;
+            let MAX_LOG_COUNT = 2000;
+
             Echo.private("logs").listen('.Log', function(ev) {
                 const {
                     context,
@@ -62,7 +65,12 @@ ${exception[index].file}:${exception[index].line}</span>`
                     }
                 }
 
+                if (logCount >= MAX_LOG_COUNT) {
+                    logs.innerHTML = '';
+                }
+
                 logs.innerHTML += HTML;
+                logCount++;
 
                 // logs.scroll
                 logs.scroll(0, logs.scrollHeight);
