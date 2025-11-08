@@ -51,15 +51,16 @@
                     extra
                 } = ev;
 
-                console.log(extra);
-                console.log(exception);
-
                 let HTML =
-                    `<span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>\n`;
+                    `<span>[User: ${extra.user} | Department: ${extra.department}]</span>\n
+                    <span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>\n`;
 
                 if (exception && exception.length > 0) {
                     for (let index = 0; index < Math.min(exception.length, 20); index++) {
-                        HTML += `<span class='text-${COLORS[level_name] || 'white'}'>${exception[index].file}:${exception[index].line}</span>\n`
+                        HTML += `<span class='text-${COLORS[level_name] || 'white'}'>
+                            ${exception[index].class}${exception[index].type}${exception[index].function}\n
+                            ${exception[index].file}:${exception[index].line}
+                        </span>\n`
                     }
                 }
 
