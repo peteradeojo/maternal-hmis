@@ -51,7 +51,7 @@
 
                 let HTML =
                     `<span class="text-${COLORS[level_name]}">[User: ${extra.user} | Department: ${extra.department}]</span>
-<span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>`;
+<span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>\n`;
 
                 if (exception && exception.length > 0) {
                     HTML += `<span>Trace:</span>`
