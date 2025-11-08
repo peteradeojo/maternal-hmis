@@ -83,6 +83,9 @@ class Plan extends Component
             return;
         }
 
+        // $this->admission->plan->treatments()->where('id', $index)->update([
+        //     'status' => Status::cancelled->value,
+        // ]);
         $this->admission->plan->treatments()->where('id', $index)->delete();
         $this->admission->refresh();
 
