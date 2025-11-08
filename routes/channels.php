@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('department.{departmentId}', function (User $user, int $departmentId) {
     return $user->department_id === $departmentId;
+});
+
+Broadcast::channel('logs', function (User $user) {
+    return $user->department_id === Department::IT->value;
 });
 
 Broadcast::channel('user.{userId}', fn($user, int $id) => (int) $user->id == $id);

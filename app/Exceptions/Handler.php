@@ -29,18 +29,18 @@ class Handler extends ExceptionHandler
                 return;
             }
 
-            $message = $e->getMessage() . "@" . $e->getFile() . ":" . $e->getLine();
-            $context = $this->context() + [
-                'stack' => $e->getTraceAsString(),
-            ];
-            dispatch(function () use (&$message, &$context) {
-                try {
-                    laas()->emergency($message, $context);
-                } catch (Throwable $e) {
-                    logger()->emergency($message, $context);
-                    logger()->emergency($e->getMessage());
-                }
-            });
+            // $message = $e->getMessage() . "@" . $e->getFile() . ":" . $e->getLine();
+            // $context = $this->context() + [
+            //     'stack' => $e->getTraceAsString(),
+            // ];
+            // dispatch(function () use (&$message, &$context) {
+            //     try {
+            //         laas()->emergency($message, $context);
+            //     } catch (Throwable $e) {
+            //         logger()->emergency($message, $context);
+            //         logger()->emergency($e->getMessage());
+            //     }
+            // });
         });
     }
 }

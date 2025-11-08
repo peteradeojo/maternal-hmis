@@ -25,6 +25,7 @@ class BillReport extends Component
     public $scans;
     public $scans_amt;
     public $others = [];
+    public $otherAmt = 0;
 
     public function mount($visit)
     {
@@ -83,11 +84,6 @@ class BillReport extends Component
         ];
 
         $this->subTotal('others');
-    }
-
-    public function subTotalOthers()
-    {
-        $this->others_amt = array_reduce($this->others, fn($a, $p) => $a + $p['amount'], 0);
     }
 
     public function subTotal($prop)

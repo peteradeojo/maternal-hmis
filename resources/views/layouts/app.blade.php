@@ -28,6 +28,8 @@
             display: none !important;
         }
     </style>
+
+    @stack('styles')
 </head>
 
 <body class="md:flex" x-data="{ aside: false }" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
@@ -155,8 +157,6 @@
             }
         });
     </script>
-    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
-
     @stack('scripts')
 </body>
 

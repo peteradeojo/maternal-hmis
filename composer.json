@@ -12,6 +12,7 @@
         "cloudinary-labs/cloudinary-laravel": "^2.3",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^12.0",
+        "laravel/octane": "^2.13",
         "laravel/reverb": "^1.6",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
@@ -19,6 +20,7 @@
         "onezero/laas": "^1.1",
         "predis/predis": "^2.2",
         "spatie/simple-excel": "^3.6",
+        "swoole/ide-helper": "^6.0",
         "turso/libsql": "dev-master",
         "tursodatabase/turso-driver-laravel": "dev-main#89c3e15"
     },
