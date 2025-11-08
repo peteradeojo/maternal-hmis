@@ -105,7 +105,7 @@
     <div id="global-overlay" x-on:keyup.escape.window="removeGlobalModal" class="fixed inset-0 bg-black/40 hidden z-50">
     </div>
     <div id="global-modal"
-        class="fixed top-0 right-0 h-dvh overflow-y-auto min-w-fit max-w-[100vw] bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
+        class="fixed top-0 right-0 h-dvh overflow-y-auto min-w-fit sm:min-w-1/2 max-w-[100vw] bg-white shadow-xl transform translate-x-full transition-transform duration-300 z-50">
 
         <div class="p-4 border-b shadow-sm flex justify-between items-center sticky bg-white top-0">
             <h2 class="text-lg font-semibold modal-title" id="global-modal-title">Modal Title</h2>
