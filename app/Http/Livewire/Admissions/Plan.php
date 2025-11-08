@@ -87,9 +87,9 @@ class Plan extends Component
         // $this->admission->plan->treatments()->where('id', $index)->update([
         //     'status' => Status::cancelled->value,
         // ]);
-        // $this->admission->plan->treatments()->where('id', $index)->delete();
+        $this->admission->plan->treatments()->where('id', $index)->delete();
 
-        DocumentationPrescription::where('event_type', AdmissionPlan::class)->where('event_id', $index)->delete();
+        // DocumentationPrescription::where('event_type', AdmissionPlan::class)->where('event_id', $index)->delete();
 
         $this->admission->refresh();
         $this->plans = $this->admission->plan->treatments;
