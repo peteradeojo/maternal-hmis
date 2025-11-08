@@ -18,9 +18,7 @@
     </div> --}}
 
     <div class="bg-black p-4 overflow-y-auto max-h-[90dvh]">
-        <pre id="log" class="border-yellow-500 text-white">
-
-        </pre>
+        <pre id="log" class="border-yellow-500 text-white"></pre>
     </div>
 @endsection
 
@@ -53,14 +51,13 @@
 
                 let HTML =
                     `<span class="text-${COLORS[level_name]}">[User: ${extra.user} | Department: ${extra.department}]</span>
-                    <span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>\n`;
+<span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>\n`;
 
                 if (exception && exception.length > 0) {
                     for (let index = 0; index < Math.min(exception.length, 20); index++) {
                         HTML += `<span class='text-${COLORS[level_name] || 'white'}'>
-                            ${exception[index].class}${exception[index].type}${exception[index].function}
-                            ${exception[index].file}:${exception[index].line}
-                        </span>\n`
+${exception[index].class}${exception[index].type}${exception[index].function}
+${exception[index].file}:${exception[index].line}</span>\n`
                     }
                 }
 
