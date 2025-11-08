@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Admissions;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionPlan;
+use App\Models\DocumentationPrescription;
 use App\Models\DocumentationTest;
 use App\Models\Product;
 use App\Models\Surgery;
@@ -86,9 +87,11 @@ class Plan extends Component
         // $this->admission->plan->treatments()->where('id', $index)->update([
         //     'status' => Status::cancelled->value,
         // ]);
-        $this->admission->plan->treatments()->where('id', $index)->delete();
-        $this->admission->refresh();
+        // $this->admission->plan->treatments()->where('id', $index)->delete();
 
+        DocumentationPrescription::where('event_type', AdmissionPlan::class)->where('event_id', $index)->delete();
+
+        $this->admission->refresh();
         $this->plans = $this->admission->plan->treatments;
         // $this->admission->plan->refresh();
     }
