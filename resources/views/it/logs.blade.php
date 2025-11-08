@@ -73,7 +73,7 @@ ${exception[index].file}:${exception[index].line}</span>`
                 logCount++;
 
                 // logs.scroll
-                logs.scroll(0, logs.scrollHeight);
+                document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
             });
         });
     </script>
