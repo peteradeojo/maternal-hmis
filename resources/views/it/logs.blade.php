@@ -1,46 +1,3 @@
-{{-- <!DOCTYPE html>
-<html>
-
-<head>
-    <title>Live Logs</title>
-
-    @vite(['resources/css/app.scss', 'resources/css/app.css'])
-    <style>
-        body {
-            font-family: monospace;
-            background: #111;
-            color: #0f0;
-            padding: 10px;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-    </style>
-</head>
-
-<body>
-    <h2>Laravel Log Stream</h2>
-    <pre id="log"></pre>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    @vite(['resources/js/app.js', 'resources/js/util.js'])
-    @livewireScripts
-    <script>
-        $(document).ready(() => {
-            // Echo.private("logs").listen('.LogEvent', function(e) {
-            //     console.log(e);
-            // });
-        });
-    </script>
-</body>
-
-</html> --}}
-
-
 @extends('layouts.app')
 @section('title', 'Log stream')
 
@@ -80,12 +37,36 @@
             };
 
             Echo.private("logs").listen('.Log', function(ev) {
-                // logs.textContent +=
-                //     `[${new Date(ev.datetime).toLocaleString()}] ${ev.channel}.${ev.level_name}: ${ev.message}\n`;
-                logs.innerHTML += `<span class="text-${COLORS[ev.level_name] || 'white'}">[${new Date(ev.datetime).toLocaleString()}] ${ev.channel}.${ev.level_name}: ${ev.message}<span>\n`;
+                const {
+                    context,
+                    level_name,
+                    channel,
+                    message,
+                    datetime,
+                    extra: {
+                        user,
+                        department,
+                        exception,
+                    },
+                    extra
+                } = ev;
+
+                console.log(extra);
+                console.log(exception);
+
+                let HTML =
+                    `<span class="text-${COLORS[level_name] || 'white'}">[${new Date(datetime).toLocaleString()}] ${channel}.${level_name}: ${message}<span>\n`;
+
+                if (exception && exception.length > 0) {
+                    for (let index = 0; index < Math.min(exception.length, 20); index++) {
+                        HTML += `<span class='text-${COLORS[level_name] || 'white'}'>${exception[index].file}:${exception[index].line}</span>\n`
+                    }
+                }
+
+                logs.innerHTML += HTML;
 
                 // logs.scroll
-                logs.scroll(0,logs.scrollHeight);
+                logs.scroll(0, logs.scrollHeight);
             });
         });
     </script>
