@@ -57,7 +57,7 @@
                     for (let index = 0; index < Math.min(exception.length, 20); index++) {
                         HTML += `<span class='text-${COLORS[level_name] || 'white'}'>
 ${exception[index].class}${exception[index].type}${exception[index].function}
-${exception[index].file}:${exception[index].line}</span>\n`
+${exception[index].file}:${exception[index].line}</span>`
                     }
                 }
 
