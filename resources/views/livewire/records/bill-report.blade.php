@@ -73,7 +73,6 @@
             </thead>
             <tbody>
                 @foreach ($scans as $i => $img)
-                @foreach ($scans as $i => $img)
                     <tr>
                         <td>{{ $img['product']['name'] }}</td>
                         <td class="flex items-center justify-between">
@@ -114,11 +113,6 @@
                 @endphp
             </tbody>
         </table>
-
-        <div class="p-3">
-            <p class="text-lg font-semibold">Add more Scans</p>
-            <livewire:dynamic-product-search :departmentId="7" @selected="addItem($event.detail.id, 'scans')" />
-        </div>
 
         <div class="p-3">
             <p class="text-lg font-semibold">Add more Scans</p>
@@ -174,10 +168,7 @@
         <p class="bold text-xl">Others</p>
 
         @unless ($visit->status == Status::closed->value)
-        @unless ($visit->status == Status::closed->value)
             <div class="py-2">
-                <livewire:dynamic-product-search @selected="addItem($event.detail.id, 'others')"
-                    @selected_temp="addNewItem($event.detail.name)" />
                 <livewire:dynamic-product-search @selected="addItem($event.detail.id, 'others')"
                     @selected_temp="addNewItem($event.detail.name)" />
             </div>
@@ -190,7 +181,6 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($others as $i => $item)
                 @forelse ($others as $i => $item)
                     <tr>
                         <td>{{ $item['product']['name'] }}</td>
@@ -222,7 +212,6 @@
                 @endforelse
                 <tr>
                     <td class="bold">Subtotal</td>
-                    <td>{{ number_format($others_amt, 2) }}</td>
                     <td>{{ number_format($others_amt, 2) }}</td>
                 </tr>
             </tbody>
