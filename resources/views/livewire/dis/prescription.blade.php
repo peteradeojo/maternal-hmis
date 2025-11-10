@@ -22,6 +22,10 @@
                     $total = 0;
                 @endphp --}}
                 @foreach ($items as $i => $t)
+                    @if ($bill->status == Status::PAID->value and $t->amount == 0)
+                        @continue
+                    @endif
+
                     <tr>
                         <td>{{ $t->description }}</td>
                         <td>{{ $t->meta['data']['dosage'] }}</td>
