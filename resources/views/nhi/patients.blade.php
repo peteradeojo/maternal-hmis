@@ -5,14 +5,13 @@
         <div class="card-header header">Patients</div>
         <div class="body">
             <div class="pt-1"></div>
-            <table>
+            <table id="table">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Patient</th>
                         <th>Card Number</th>
-                        <th>HMO</th>
                         <th>Phone Number</th>
+                        <th>Registration</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -24,28 +23,26 @@
 @push('scripts')
     <script>
         $(() => {
-            $("table").DataTable({
+            $("#table").DataTable({
                 serverSide: true,
                 responsive: true,
-                ajax: {
-                    url: "{{ route('api.nhi.patients') }}"
-                },
+                ajax: "{{ route('api.nhi.patients') }}",
                 columns: [{
-                        data: (row) => `<a href='{{ route('nhi.show-patient', ':id') }}'>${row.id}</a>`
-                            .replace(':id', row.id)
-                    },
-                    {
-                        data: 'name'
+                        data: ({
+                                id,
+                                name
+                            }) =>
+                            `<a data-id='${id}' class='link' href='{{route('records.patient', ':id')}}'>${name}</a>`.replace(':id', id)
                     },
                     {
                         data: 'card_number'
                     },
                     {
-                        data: 'insurance.hmo_name'
-                    },
-                    {
                         data: 'phone'
                     },
+                    {
+                        data: 'created_at',
+                    }
                 ]
             });
         });

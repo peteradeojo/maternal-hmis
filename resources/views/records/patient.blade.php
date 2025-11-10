@@ -29,30 +29,34 @@
                     <p><b>Occupation: </b> {{ $patient->occupation }}</p>
                     <p><b>Religion: </b> {{ $patient->religion }}</p>
                 </div>
-                <div class="grid grid-cols-2 p-2 gap-2 no-print">
-                    <button
-                        class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
-                        <span>Visits this year</span>
-                        <span class="text-xl font-semibold">
-                            {{ $patient->visits->where('created_at', '>=', date('Y-01-01'))->count() }}
-                        </span>
-                        <span>
-                            Last visit: {{ $patient->visits->last()?->created_at }}
-                        </span>
-                    </button>
-                    <button class="rounded bg-teal-400 hover:text-white hover:scale-[1.04] duration-200" id="edit-patient">
-                        Update patient details <i class="fa fa-edit"></i>
-                    </button>
-                    <button class="border rounded bg-green-400 hover:text-white hover:scale-[1.04] duration-200"
-                        id="start-visit">
-                        Start a visit <i class="fa fa-user-circle"></i>
-                    </button>
-                    <button class="border rounded bg-blue-200 hover:text-white hover:scale-[1.04] duration-200">
-                        Print patient profile <i class="fa fa-address-card"></i>
-                    </button>
-                    {{-- <button class="border rounded">
+
+                @if (auth()->user()->departmentId == DepartmentsEnum::REC->value)
+                    <div class="grid grid-cols-2 p-2 gap-2 no-print">
+                        <button
+                            class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
+                            <span>Visits this year</span>
+                            <span class="text-xl font-semibold">
+                                {{ $patient->visits->where('created_at', '>=', date('Y-01-01'))->count() }}
+                            </span>
+                            <span>
+                                Last visit: {{ $patient->visits->last()?->created_at }}
+                            </span>
+                        </button>
+                        <button class="rounded bg-teal-400 hover:text-white hover:scale-[1.04] duration-200"
+                            id="edit-patient">
+                            Update patient details <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="border rounded bg-green-400 hover:text-white hover:scale-[1.04] duration-200"
+                            id="start-visit">
+                            Start a visit <i class="fa fa-user-circle"></i>
+                        </button>
+                        <button class="border rounded bg-blue-200 hover:text-white hover:scale-[1.04] duration-200">
+                            Print patient profile <i class="fa fa-address-card"></i>
+                        </button>
+                        {{-- <button class="border rounded">
                     </button> --}}
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -188,9 +192,9 @@
             })
 
             asyncForm('#insurance-profile-form', "{{ route('api.records.insurance', $patient->id) }}", function(
-            e, {
-                data
-            }) {
+                e, {
+                    data
+                }) {
                 console.log(data);
             });
         });

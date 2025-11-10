@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Closure;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -13,7 +14,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    protected function dataTable(Request $request, Builder|QueryBuilder $builder, array $searchableColumns = [])
+    protected function dataTable(Request $request, Builder|QueryBuilder $builder, array $searchableColumns = [], ?Closure $orderFunction = null)
     {
         $length = $request->query('length', 10);
         $start = $request->query('start', 0);
@@ -27,14 +28,13 @@ class Controller extends BaseController
             }
         });
 
-        // foreach($order ?? [] as $o) {
-        //     if ($o['name'] != null) {
-        //         $results = $results->orderBy($o['name'], $o['dir']);
-        //     }
-        // }
+        $data = $results->clone()->skip($start)->limit($length)->get()->toArray();
+
+        if ($orderFunction)
+            $data = $orderFunction($data, $order);
 
         $data = [
-            'data' => $results->clone()->skip($start)->limit($length)->get()->toArray(),
+            'data' => $data,
             'recordsTotal' => $builder->count(),
             'recordsFiltered' => $results->count(),
             'draw' => (int) $request->input('draw'),

@@ -16,6 +16,7 @@ use App\Models\Visit;
 use App\Services\PatientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
@@ -286,5 +287,49 @@ class PatientsController extends Controller
         notifyUserSuccess("Insurance profile added successfully", $request->user(), ['mode' => 'in-app']);
 
         return response()->json($profile);
+    }
+
+    public function getVisits(Request $request) {
+        $query = Visit::with(['patient.insurance'])->latest();
+
+        return $this->dataTable($request, $query, [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")
+                    ->orWhere('card_number', 'like', "$search%")
+                    ->orWhere('phone', 'like', "$search%")
+                    ->orWhereHas('insurance', function ($q) use ($search) {
+                        $q->where('hmo_name', 'like', "$search%");
+                    });
+                });
+            },
+        ], function (array $data, $orders) {
+            if (empty($orders)) return $data;
+            logger()->info($orders);
+
+            $name = array_filter($orders, fn ($o) => $o['name'] == 'insurance');
+
+            if (!empty($name)) {
+                usort($data, function ($a, $b) {
+                    if (isset($a['patient']['insurance'])) {
+                        if (isset($b['patient']['insurance'])) {
+                            return 0;
+                        }
+
+                        return 1;
+                    }
+
+                    if (isset($b['patient']['insurance'])) {
+                        return -1;
+                    }
+
+                    return 0;
+                });
+            }
+
+            logger()->info($data);
+
+            return $data;
+        });
     }
 }

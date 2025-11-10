@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return Attribute::make(fn () => $this->firstname . ' ' . $this->lastname);
     }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
@@ -22,8 +23,8 @@ class AdmissionPlan extends Model implements OperationalEvent
         return $this->belongsTo(Admission::class, 'admission_id');
     }
 
-    public function treatments() {
-        return $this->morphMany(DocumentationPrescription::class, 'event');
+    final public function treatments() {
+        return $this->morphMany(DocumentationPrescription::class, 'event')->where('status', Status::active->value);
     }
 
     public function tests() {

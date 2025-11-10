@@ -17,7 +17,7 @@ class LogProcessor implements HandlerInterface
 
     public function handle(LogRecord $record): bool
     {
-        if ($record->context['exception']) {
+        if (isset($record->context['exception'])) {
             // $record->extra['exception'] = substr($record->context['exception']->getTraceAsString(), 0, 256);
             $record->extra['exception'] = array_slice($record->context['exception']->getTrace(), 0, 30);
         }
