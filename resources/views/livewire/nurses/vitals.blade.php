@@ -39,6 +39,13 @@
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="form-group">
+                <label>SPO<sub>2</sub></label>
+                <input type="number" class="form-control" x-model="vitals.spo2" />
+                @error('vitals.spo2')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div class="form-group">
                 <label for="weight">Weight (kg)</label>
@@ -70,6 +77,7 @@
                     <th>Temperature (&deg;C)</th>
                     <th>Pulse (b/m)</th>
                     <th>Respiration (c/m)</th>
+                    <th>SPO<sub>2</sub></th>
                 </tr>
             </thead>
             <tbody>
@@ -80,6 +88,7 @@
                         <td>{{ $vital->temperature }}</td>
                         <td>{{ $vital->pulse }}</td>
                         <td>{{ $vital->respiration }}</td>
+                        <td>{{ $vital->spo2 }}</td>
                     </tr>
                 @empty
                     <tr>

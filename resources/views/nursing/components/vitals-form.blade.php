@@ -19,6 +19,10 @@
         <input type="text" name="blood_pressure" id="blood_pressure" class="form-control"
             value="{{ $profile->vitals['temperature'] ?? '' }}">
     </div>
+    <div class="form-group">
+        <label for="spo2">SPO<sub>2</sub></label>
+        <input type="number" name="spo2" class="form " />
+    </div>
     @unless (isset($admission))
         <div class="form-group">
             <label for="weight">Weight (kg)</label>

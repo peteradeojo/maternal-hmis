@@ -16,6 +16,7 @@
     <div class="grid gap-y-2 py-4">
         @forelse ($admission->notes as $note)
             <div class="bg-gray-200 p-2">
+                <button class="px-1 bg-red-500 text-white float-end" wire:click="deleteNote({{$note->id}})">&times;</button>
                 <p>{{ $note->note }}</p>
                 <p><small>{{ $note->consultant->name }}</small></p>
                 <p><small>{{ $note->created_at->format('Y-m-d h:i A') }}</small></p>

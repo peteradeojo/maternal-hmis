@@ -26,6 +26,7 @@ class VitalsController extends Controller
             'respiratory_rate' => 'nullable|numeric',
             'weight' => 'nullable|numeric',
             'height' => 'nullable|numeric',
+            'spo2' => 'nullable|numeric',
         ]);
 
         $visit->vitals()->create($request->except('_token', 'respiratory_rate') + [

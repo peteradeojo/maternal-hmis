@@ -17,6 +17,9 @@ class VitalsForm extends Form
     public $blood_pressure;
 
     #[Validate('nullable|numeric')]
+    public $spo2;
+
+    #[Validate('nullable|numeric')]
     public $pulse;
 
     #[Validate('nullable|numeric')]

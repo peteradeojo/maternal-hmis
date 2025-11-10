@@ -20,6 +20,7 @@ class Vitals extends Model
         'respiration',
         'recording_user_id',
         'recorded_date',
+        'spo2',
     ];
 
     protected $casts = [

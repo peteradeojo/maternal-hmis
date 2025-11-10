@@ -4,7 +4,6 @@
     @endphp
     <p>#{{ $bill->bill_number }}</p>
     <form wire:submit.prevent="save">
-        {{-- @dd($items) --}}
         @csrf
         <table class="table table-list" id="p-table">
             <thead>
@@ -18,9 +17,6 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- @php
-                    $total = 0;
-                @endphp --}}
                 @foreach ($items as $i => $t)
                     @if ($bill->status == Status::PAID->value and $t->amount == 0)
                         @continue
@@ -43,7 +39,6 @@
                         </td>
                     </tr>
                 @endforeach
-
             </tbody>
             <tfoot>
                 <tr>
@@ -63,8 +58,6 @@
         <div class="form-group flex justify-end">
             <button class="btn bg-blue-400 hover:bg-green-400 text-white"
                 @if ($bill->status == 6 && $quoteDone) disabled @endif>Save <i class="fa fa-save"></i></button>
-
-            {{-- <span wire:loading><x-spinner w="w-6" /></span> --}}
         </div>
     </form>
 </div>

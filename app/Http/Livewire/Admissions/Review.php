@@ -26,4 +26,9 @@ class Review extends Component
         $this->dispatch('$refresh');
         $this->reset('note');
     }
+
+    public function deleteNote($id) {
+        $this->admission->notes()->where('id', $id)->delete();
+        $this->dispatch('$refresh');
+    }
 }
