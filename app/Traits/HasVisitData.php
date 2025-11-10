@@ -15,7 +15,7 @@ trait HasVisitData
 {
     public function notes()
     {
-        return $this->morphMany(ConsultationNote::class, 'visit');
+        return $this->morphMany(ConsultationNote::class, 'visit')->latest();
     }
 
     public function patient()

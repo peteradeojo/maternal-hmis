@@ -257,4 +257,8 @@ class AdmissionsController extends Controller
 
         return redirect()->route('nurses.admissions.get');
     }
+
+    public function reviewNote(Request $request, Admission $admission) {
+        return view('doctors.admissions.review', compact('admission'));
+    }
 }

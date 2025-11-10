@@ -76,6 +76,19 @@
                     </tr>
                 </tbody>
             </table>
+
+            <button class="review-btn btn my-2 bg-blue-400 text-white">Review</button>
+            {{-- <x-overlay-modal id="review-note" title="Review Note">
+                <x-patient-profile :patient="$data->patient" />
+
+                    <form action="" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label>Add Note</label>
+                            <textarea name="note" rows="10" class="form-control"></textarea>
+                        </div>
+                    </form>
+            </x-overlay-modal> --}}
         </div>
 
         <div class="p-3">
@@ -155,6 +168,18 @@
     <script>
         $(document).ready(() => {
             initTab(document.querySelector("#tablist"));
+
+            $(document).on('click', '.review-btn', (e) => {
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text("Review")
+
+                    axios.get("{{route('doctor.admissions.review', $data)}}").then((res) => {
+                        a.find(MODAL_BODY).html(res.data);
+                    }).catch((err) => {
+                        a.find(MODAL_BODY).html(err.response.data);
+                    });
+                });
+            });
         });
     </script>
 @endpush
