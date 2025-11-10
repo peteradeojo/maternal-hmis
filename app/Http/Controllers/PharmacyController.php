@@ -16,7 +16,7 @@ class PharmacyController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value]))->get();
+        $data = Documentation::with(['patient'])->whereHas('treatments', fn($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value, Status::PAID->value]))->get();
         return view('phm.prescriptions', compact('data'));
     }
 
