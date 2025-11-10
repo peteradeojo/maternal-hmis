@@ -54,7 +54,7 @@
                     <span class="inline-grid py-1 px-2 rounded-md text-white bg-red-500">Cancelled</span>
                 @endif
 
-                @if ($bill->status == Status::pending->value)
+                @if ($bill->status == Status::pending->value || $bill->status == Status::quoted->value)
                     @if ($bill->paid > 0)
                         <button data-bill_id="{{ $bill->id }}"
                             class="pay-btn btn btn-sm bg-green-600 text-white">Finish payment</button>

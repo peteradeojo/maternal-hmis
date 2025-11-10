@@ -8,7 +8,7 @@ use Livewire\Component;
 class VisitBills extends Component
 {
     public $visit;
-    public $status = Status::pending->value;
+    public $status = null; //Status::pending->value;
 
     public function render()
     {
