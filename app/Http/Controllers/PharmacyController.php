@@ -32,7 +32,7 @@ class PharmacyController extends Controller
         //     ->where("event_type", '!=', "");
 
         $query = Bill::with(['patient'])->whereHasMorph('billable', [Visit::class], function ($query) {
-            $query->where('status', Status::active->value)->has('treatments');
+            $query->whereIn('status', [Status::active->value, Status::quoted->value, Status::pending->value])->has('treatments');
         })->whereHas('entries', function (Builder $query) {
             $query->where('tag', 'drug');
         })->whereIn('status', [Status::pending->value, Status::quoted->value])->latest();
