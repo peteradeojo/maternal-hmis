@@ -22,20 +22,11 @@ class PharmacyController extends Controller
 
     public function getPrescriptions(Request $request)
     {
-        // $query = DocumentationPrescription::query()->groupBy('event_type', 'event_id', 'patient_id')
-        //     ->selectRaw('event_type, event_id, COUNT(*) as total, patient_id,
-        //     MAX(created_at) created_at,
-        //     SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as pending_count', [Status::pending->value])
-        //     ->with(['patient'])
-        //     ->havingRaw('SUM(CASE WHEN status IN (?, ?, ?) THEN 1 ELSE 0 END) > 0', [Status::pending->value, Status::quoted->value, Status::blocked->value])
-        //     ->orderByDesc('created_at')
-        //     ->where("event_type", '!=', "");
-
         $query = Bill::with(['patient'])->whereHasMorph('billable', [Visit::class], function ($query) {
             $query->whereIn('status', [Status::active->value, Status::quoted->value, Status::pending->value])->has('treatments');
         })->whereHas('entries', function (Builder $query) {
             $query->where('tag', 'drug');
-        })->whereIn('status', [Status::pending->value, Status::quoted->value])->latest();
+        })->whereIn('status', [Status::pending->value, Status::quoted->value, Status::active->value, Status::PAID->value])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
