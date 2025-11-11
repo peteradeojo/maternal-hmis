@@ -261,7 +261,8 @@ class LabController extends Controller
     {
         $query = Visit::with(['patient.category', 'visit'])->has('tests')->orWhereHas('visit', function ($query) {
             $query->has('tests');
-        })->latest(); //->orderBy('status');
+        })->latest();
+
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {

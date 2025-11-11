@@ -40,7 +40,9 @@
                     data: 'patient.card_number'
                 },
                 {
-                    data: ({created_at}) => new Date(created_at).toLocaleString('en-CA'),
+                    data: ({created_at}) => new Date(created_at).toLocaleString('en-US', {
+                        timeZone: 'Africa/Lagos'
+                    }),
                 },
                 {
                     data: 'patient.category.name'
