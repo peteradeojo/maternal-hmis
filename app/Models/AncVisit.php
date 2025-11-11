@@ -69,20 +69,8 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
         return $this->belongsTo(User::class, 'doctor_id');
     }
 
-    protected static function booted()
+    final public function visit()
     {
-        static::created(function (AncVisit $visit) {
-            $test = Product::where('name', 'like',  '%ROUTINE ANTENATAL %')->first();
-            if (!$test) {
-                return;
-            }
-
-            // $visit->visit->tests()->create([
-            //     'name' => $test->name,
-            //     'describable_type' => $test::class,
-            //     'describable_id' => $test->id,
-            //     'patient_id' => $visit->patient->id,
-            // ]);
-        });
+        return $this->morphOne(Visit::class, 'visit');
     }
 }

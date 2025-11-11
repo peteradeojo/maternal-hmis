@@ -54,9 +54,10 @@ class Visit extends Model implements OperationalEvent
         return $this->visit?->getType();
     }
 
-    public function type(): Attribute {
+    public function type(): Attribute
+    {
         return Attribute::make(
-            get: fn () => $this->visit->type,
+            get: fn() => $this->visit->type,
         );
     }
 
@@ -91,7 +92,8 @@ class Visit extends Model implements OperationalEvent
         $query->where('awaiting_doctor', true)->orWhere('awaiting_vitals', true)->orWhere('awaiting_pharmacy', true);
     }
 
-    public function scopeActive($query) {
+    public function scopeActive($query)
+    {
         $query->where('status', Status::active->value)->latest();
     }
 
@@ -122,15 +124,37 @@ class Visit extends Model implements OperationalEvent
         return $b;
     }
 
-    public function bills() {
+    public function bills()
+    {
         return $this->morphMany(Bill::class, 'billable');
     }
 
-    public function admission() {
+    public function admission()
+    {
         return $this->hasOne(Admission::class);
     }
 
-    public function active_bills() {
+    public function active_bills()
+    {
         return  $this->bills()->where('status', '!=', Status::cancelled->value);
+    }
+
+    protected static function booted()
+    {
+        static::created(function (Self $visit) {
+            if ($visit->visit_type == AncVisit::class) {
+                $test = Product::where('name', 'like',  '%ROUTINE ANTENATAL %')->first();
+                if (!$test) {
+                    return;
+                }
+
+                $visit->tests()->create([
+                    'name' => $test->name,
+                    'describable_type' => $test::class,
+                    'describable_id' => $test->id,
+                    'patient_id' => $visit->patient->id,
+                ]);
+            }
+        });
     }
 }
