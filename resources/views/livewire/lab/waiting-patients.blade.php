@@ -1,7 +1,7 @@
 <div>
     <div class="card py px foldable">
         <div class="header foldable-header">
-            <p class="card-header">Pending Tests</p>
+            <p class="card-header">Tests</p>
         </div>
         <div class="body foldable-body unfolded">
             <div class="py">
