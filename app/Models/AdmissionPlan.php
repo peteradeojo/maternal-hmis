@@ -24,7 +24,7 @@ class AdmissionPlan extends Model implements OperationalEvent
     }
 
     final public function treatments() {
-        return $this->morphMany(DocumentationPrescription::class, 'event')->where('status', Status::active->value);
+        return $this->morphMany(DocumentationPrescription::class, 'event');//->where('status', Status::active->value);
     }
 
     public function tests() {
