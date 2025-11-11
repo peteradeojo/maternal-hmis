@@ -17,18 +17,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @foreach ($visits as $doc)
-                            <tr>
-                                <td>{{ $doc->patient->name }}</td>
-                                <td>{{ $doc->patient->card_number }}</td>
-                                <td>{{ $doc->created_at }}</td>
-                                <td>{{ $doc->patient->category->name }}</td>
-                                <td class="text-center">{{ $doc->patient->gender[0] }}</td>
-                                <td>
-                                    <a href="{{ route('lab.view-tests', $doc->id) }}">View Tests</a>
-                                </td>
-                            </tr>
-                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -52,7 +40,7 @@
                     data: 'patient.card_number'
                 },
                 {
-                    data: 'patient.created_at'
+                    data: ({created_at}) => new Date(created_at).toLocaleString('en-CA'),
                 },
                 {
                     data: 'patient.category.name'
