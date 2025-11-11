@@ -46,6 +46,13 @@
                     <p class="text-red-500">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="form-group">
+                <label>Fetal Heart Rate (FHR)</label>
+                <input type="string" class="form-control" x-model="vitals.fetal_heart_rate" />
+                @error('vitals.fetal_heart_rate')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div class="form-group">
                 <label for="weight">Weight (kg)</label>
@@ -78,6 +85,7 @@
                     <th>Pulse (b/m)</th>
                     <th>Respiration (c/m)</th>
                     <th>SPO<sub>2</sub></th>
+                    <th>FHR</th>
                 </tr>
             </thead>
             <tbody>

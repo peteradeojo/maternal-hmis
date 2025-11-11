@@ -21,6 +21,7 @@ class Vitals extends Model
         'recording_user_id',
         'recorded_date',
         'spo2',
+        'fetal_heart_rate',
     ];
 
     protected $casts = [
