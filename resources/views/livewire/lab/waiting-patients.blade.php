@@ -40,9 +40,6 @@
 @pushOnce('scripts')
     <script>
         $("#tests-table").DataTable({
-            columns: [{
-                orderable: false,
-            }, {}, {}, {orderable: false,}, {orderable: false,}],
             order: [
                 [2, 'desc']
             ],
