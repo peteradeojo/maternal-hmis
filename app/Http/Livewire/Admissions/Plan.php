@@ -64,7 +64,7 @@ class Plan extends Component
             return;
         }
 
-        $product = Product::find($data['product']['id']);
+        $product = Product::find(@$data['product']['id']);
 
         if (empty($product)) {
             $product = (object) ($data['product']);
