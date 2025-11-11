@@ -43,7 +43,12 @@ class BillReport extends Component
             'data' => $test->toArray()
         ])->toArray();
 
-        $this->drugs = $this->visit->treatments->load('prescriptionable')->map(fn($item) => [
+        $drugs = $this->visit->treatments->load('prescriptionable');
+        if ($visit->type == "Antenatal") {
+            $drugs = $drugs->merge($this->visit->visit->treatments->load('prescriptionable'));
+        }
+
+        $this->drugs = $drugs->map(fn($item) => [
             'saved' => true,
             'product' => $item->prescriptionable->toArray(),
             'data' => $item->toArray(),
