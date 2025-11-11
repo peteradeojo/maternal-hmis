@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($visits as $doc)
+                        {{-- @foreach ($visits as $doc)
                             <tr>
                                 <td>{{ $doc->patient->name }}</td>
                                 <td>{{ $doc->patient->card_number }}</td>
@@ -28,7 +28,7 @@
                                     <a href="{{ route('lab.view-tests', $doc->id) }}">View Tests</a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -40,8 +40,30 @@
 @pushOnce('scripts')
     <script>
         $("#tests-table").DataTable({
+            serverSide: true,
             order: [
                 [2, 'desc']
+            ],
+            ajax: "{{ route('api.lab.tests') }}",
+            columns: [{
+                    data: 'patient.name'
+                },
+                {
+                    data: 'patient.card_number'
+                },
+                {
+                    data: 'patient.created_at'
+                },
+                {
+                    data: 'patient.category.name'
+                },
+                {
+                    data: 'patient.gender'
+                },
+                {
+                    data: (row) => `<a href='{{ route('lab.view-tests', ':id') }}' class='link'>View Tests</a>`
+                        .replace(':id', row.id)
+                },
             ],
             responsive: true,
         });
