@@ -64,11 +64,15 @@ class Plan extends Component
             return;
         }
 
-        $product = Product::find(@$data['product']['id']);
-
+        $product = null;
+        if (isset($data['product']['id'])) {
+            $product = Product::find($data['product']['id']);
+        }
         if (empty($product)) {
             $product = (object) ($data['product']);
         }
+
+        logger()->info("Adding product: " . var_export($product, true));
 
         $this->admission->plan->addPrescription($this->admission->patient, $product, (object) $data, $this->admission->plan);
 
