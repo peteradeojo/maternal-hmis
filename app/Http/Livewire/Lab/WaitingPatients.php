@@ -46,7 +46,9 @@ class WaitingPatients extends Component
         //     Status::pending->value,
         //     Status::active->value,
         // ])->orderBy('created_at', 'DESC')->get()->load('testable', 'patient');
-        $this->visits = Visit::has('tests')->where('status', '!=', Status::completed->value)->latest()->get();
+        $this->visits = Visit::has('tests')->orWhereHas('visit', function ($query) {
+            $query->has('tests');
+        })->latest()->get();
     }
 
     public function render()

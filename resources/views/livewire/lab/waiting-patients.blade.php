@@ -11,6 +11,7 @@
                             <th>Name</th>
                             <th>Card Number</th>
                             <th>Date</th>
+                            <th>Category</th>
                             <th>Gender</th>
                             <th></th>
                         </tr>
@@ -21,6 +22,7 @@
                                 <td>{{ $doc->patient->name }}</td>
                                 <td>{{ $doc->patient->card_number }}</td>
                                 <td>{{ $doc->created_at }}</td>
+                                <td>{{ $doc->patient->category->name }}</td>
                                 <td class="text-center">{{ $doc->patient->gender[0] }}</td>
                                 <td>
                                     <a href="{{ route('lab.view-tests', $doc->id) }}">View Tests</a>
