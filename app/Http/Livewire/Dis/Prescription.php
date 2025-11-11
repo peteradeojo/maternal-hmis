@@ -42,15 +42,8 @@ class Prescription extends Component
 
         $this->bill = $bill;
         $this->quoteDone = $bill->status == Status::quoted->value;
-        $this->items = $bill->entries->where('tag', 'drug')->map(fn($b) => (object) [
-            'meta' => $b->meta,
-            'description' => $b->description,
-            'amount' => $b->total_price,
-            'id' => $b->id,
-            'available' => $b->meta['available'] ?? false,
-        ]);
 
-        $this->totalAmount = $this->items->sum('amount');
+        $this->getItems();
     }
 
     public function render()
@@ -161,5 +154,24 @@ class Prescription extends Component
         notifyUserSuccess("Quote saved!", auth()->user(), ['mode' => 'in-app']);
         $this->dispatch('quote-saved');
         $this->dispatch('$refresh');
+    }
+
+    public function hydrate()
+    {
+        $this->getItems();
+    }
+
+    public function getItems()
+    {
+        $this->items = $this->bill->entries->where('tag', 'drug')->map(fn($b) => (object) [
+            'meta' => $b->meta,
+            'description' => $b->description,
+            'amount' => $b->total_price,
+            'id' => $b->id,
+            'available' => $b->meta['available'] ?? false,
+            'status' => $b->status,
+        ]);
+
+        $this->totalAmount = $this->items->sum('amount');
     }
 }

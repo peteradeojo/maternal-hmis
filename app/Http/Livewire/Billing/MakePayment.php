@@ -131,4 +131,18 @@ class MakePayment extends Component
             $this->getItems();
         }
     }
+
+    public function reject($id)
+    {
+        BillDetail::where('id', $id)->update(['status' => Status::blocked->value]);
+        $this->hydrate();
+        $this->dispatch('$refresh');
+    }
+
+    public function unreject($id)
+    {
+        BillDetail::where('id', $id)->update(['status' => Status::pending->value]);
+        $this->hydrate();
+        $this->dispatch('$refresh');
+    }
 }

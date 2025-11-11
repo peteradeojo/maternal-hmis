@@ -1,4 +1,4 @@
-<div x-on:quote-saved="window.location.href=''">
+<div x-on:quote-saved="window.location.href=''" wire:poll.2s="getItems">
     @php
         $editable = !$quoteDone;
     @endphp
@@ -27,10 +27,15 @@
                         <td>{{ $t->meta['data']['dosage'] }}</td>
                         <td>{{ $t->meta['data']['frequency'] }}</td>
                         <td>{{ $t->meta['data']['duration'] }}</td>
-                        <td><input type="checkbox" wire:model="items.{{ $i }}.available"
-                                data-id="{{ $t->id }}" class="availability"
-                                @if ($t->available) checked @endif
-                                @unless ($editable) disabled @endunless>
+                        <td>
+                            @if ($t->status == Status::blocked->value)
+                            <i>Do not dispense.</i>
+                            @else
+                                <input type="checkbox" wire:model="items.{{ $i }}.available"
+                                    data-id="{{ $t->id }}" class="availability"
+                                    @if ($t->available) checked @endif
+                                    @unless ($editable) disabled @endunless>
+                            @endif
                         </td>
                         <td>
                             <input type="number" wire:model="items.{{ $i }}.amount" step="0.01"
@@ -43,7 +48,7 @@
             <tfoot>
                 <tr>
                     <td colspan="2">Total</td>
-                    <td>{{ $items->sum('amount') }}</td>
+                    <td>{{ collect($items)->sum('amount') }}</td>
                 </tr>
                 <tr>
                     {{-- @unless ($bill->entries->doesntContain(fn($b) => ($b->meta['available'] ?? false) == false)) --}}

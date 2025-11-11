@@ -20,6 +20,7 @@ class BillDetail extends Model
         'chargeable_id',
         'tag',
         'meta',
+        'status',
         'quoted_at',
         'quoted_by',
     ];
@@ -62,6 +63,8 @@ class BillDetail extends Model
                 $meta = json_decode($attrs['meta']);
                 switch ($attrs['tag']) {
                     case 'drug':
+                        if ($attrs['status'] == Status::blocked->value) return "Blocked";
+
                         if (!empty($attrs['quoted_at'])) {
                             return isset($meta->available) && $meta->available ? "Available" : "Unavailable";
                         } else {
