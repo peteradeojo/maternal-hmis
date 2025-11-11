@@ -1,14 +1,5 @@
 <div class="px-2">
     {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
-    <p class="text-xl bold">Vitals</p>
-    <div class="px-2">
-        <p>Blood pressure: {{ $visit->vitals?->blood_pressure }} mmHg</p>
-        <p>Weight: {{ $visit->vitals?->weight }} kg</p>
-        <p>Temperature: {{ $visit->vitals?->temperature }} &deg;C</p>
-        <p>Pulse: {{ $visit->vitals?->pulse }} bpm</p>
-        <p>Respiration: {{ $visit->vitals?->respiration }} c/m</p>
-    </div>
-
     <div class="py-2">
         <div class="flex gap-x-4 items-center">
             <p class="text-xl bold">Notes</p>

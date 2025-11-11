@@ -53,10 +53,10 @@
             <div id="actions" class="py-1">
                 @if ($visit->type == 'Antenatal')
                     <div class="tab">
-                        @livewire('doctor.anc-visit', ['visit' => $visit])
+                        @livewire('doctor.anc-visit', ['visit' => $visit->visit])
                     </div>
                     <div class="tab">
-                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit" />
+                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
                     </div>
                 @endif
 

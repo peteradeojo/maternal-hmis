@@ -23,7 +23,6 @@ class AncVisit extends Component
     public function mount($visit)
     {
         $this->visit = $visit;
-
         $this->return_visit = Carbon::now()->addWeeks(3)->format('Y-m-d');
     }
 
