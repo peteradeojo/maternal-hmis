@@ -77,12 +77,12 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
                 return;
             }
 
-            $visit->visit->tests()->create([
-                'name' => $test->name,
-                'describable_type' => $test::class,
-                'describable_id' => $test->id,
-                'patient_id' => $visit->patient->id,
-            ]);
+            // $visit->visit->tests()->create([
+            //     'name' => $test->name,
+            //     'describable_type' => $test::class,
+            //     'describable_id' => $test->id,
+            //     'patient_id' => $visit->patient->id,
+            // ]);
         });
     }
 }
