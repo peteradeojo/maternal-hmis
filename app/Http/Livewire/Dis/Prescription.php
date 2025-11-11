@@ -9,6 +9,7 @@ use App\Models\DocumentationPrescription;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Prescription extends Component
@@ -23,23 +24,10 @@ class Prescription extends Component
 
     public $totalAmount = 0;
 
+    public $pendingUpdate = false;
+
     public function mount($bill)
     {
-        // $this->doc = $doc;
-
-        // $this->items = $doc->treatments->map(function ($t) {
-        //     $this->quoteDone = $t->status == Status::quoted->value && $this->quoteDone;
-        //     return (object) [
-        //         'id' => $t->id,
-        //         'name' => $t->name,
-        //         'dosage' => $t->dosage,
-        //         'frequency' => $t->frequency,
-        //         'duration' => $t->duration,
-        //         'amount' => $t->amount,
-        //         'available' => (bool) $t->available,
-        //     ];
-        // })->toArray();
-
         $this->bill = $bill;
         $this->quoteDone = $bill->status == Status::quoted->value;
 
@@ -50,49 +38,6 @@ class Prescription extends Component
     {
         return view('livewire.dis.prescription');
     }
-
-    // public function save()
-    // {
-    //     DB::beginTransaction();
-    //     try {
-    //         foreach ($this->items as $item) {
-    //             $t = $this->doc->treatments()->find($item->id)?->load('prescriptionable');
-
-    //             $update_amt = $t->amount != $item->amount;
-
-    //             $t->amount = $item->amount;
-    //             $t->available = $item->available;
-    //             // if ($this->quoteDone || $item->available && (int) $item->amount > 0) {
-    //             //     $t->status = Status::quoted->value;
-    //             // }
-    //             if (!$item->available) {
-    //                 $t->status = Status::blocked->value;
-    //             } else {
-    //                 if ((int) $item->amount > 0) {
-    //                     $t->status = Status::quoted->value;
-    //                 }
-    //             }
-    //             $t->save();
-
-    //             if ($update_amt) {
-    //                 try {
-    //                     // $t->prescriptionable->save(['amount' => $item->amount]);
-    //                     Product::where('id', $item->id)->update([
-    //                         'amount' => $item->amount,
-    //                     ]);
-    //                 } catch (\Throwable $th) {
-    //                     logger()->emergency("Unable to save price for product: {$item->id}");
-    //                 }
-    //             }
-    //         }
-
-    //         DB::commit();
-    //         notifyUserSuccess('Prescription quote saved successfully.', ['mode' => AppNotifications::$IN_APP]);
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         notifyUserError('An error occurred while saving the prescription quote: ' . $e->getMessage(), ['mode' => AppNotifications::$IN_APP]);
-    //     }
-    // }
 
     public function save()
     {
@@ -159,6 +104,7 @@ class Prescription extends Component
     public function hydrate()
     {
         $this->getItems();
+        $this->dispatch('$refresh');
     }
 
     public function getItems()
@@ -173,5 +119,17 @@ class Prescription extends Component
         ]);
 
         $this->totalAmount = $this->items->sum('amount');
+    }
+
+    public function reload() {
+        $this->getItems();
+        $this->pendingUpdate = false;
+        // $this->dispatch('$refresh');
+    }
+
+    #[On('echo:bill-update.{bill.id},.BillingUpdate')]
+    public function newUpdate() {
+        $this->pendingUpdate = true;
+        $this->dispatch('$refresh');
     }
 }

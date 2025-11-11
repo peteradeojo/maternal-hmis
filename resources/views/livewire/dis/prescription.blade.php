@@ -1,4 +1,4 @@
-<div x-on:quote-saved="window.location.href=''" wire:poll.2s="getItems">
+<div x-on:quote-saved="window.location.href=''">
     @php
         $editable = !$quoteDone;
     @endphp
@@ -29,7 +29,7 @@
                         <td>{{ $t->meta['data']['duration'] }}</td>
                         <td>
                             @if ($t->status == Status::blocked->value)
-                            <i>Do not dispense.</i>
+                                <i>Do not dispense.</i>
                             @else
                                 <input type="checkbox" wire:model="items.{{ $i }}.available"
                                     data-id="{{ $t->id }}" class="availability"
@@ -48,19 +48,24 @@
             <tfoot>
                 <tr>
                     <td colspan="2">Total</td>
-                    <td>{{ collect($items)->sum('amount') }}</td>
+                    <td>{{ collect($items)->where('status', '!=', Status::blocked->value)->sum('amount') }}</td>
                 </tr>
                 <tr>
-                    {{-- @unless ($bill->entries->doesntContain(fn($b) => ($b->meta['available'] ?? false) == false)) --}}
                     <td colspan="2">Are you done with this quote? <input type="checkbox" wire:change="$refresh"
                             wire:model="quoteDone" />
                     </td>
-                    {{-- @endunless --}}
                 </tr>
             </tfoot>
         </table>
 
-        <div class="form-group flex justify-end">
+        <div class="form-group flex justify-end gap-x-2 items-center">
+            @if ($pendingUpdate)
+                <span>
+                    <p class="text-red-500"><i class="fa fa-exclamation-circle"></i> This bill has been updated. Please
+                        refresh.</p>
+                </span>
+                <button type="button" class="btn bg-red-500 text-white" wire:click.prevent="reload">Refresh</button>
+            @endif
             <button class="btn bg-blue-400 hover:bg-green-400 text-white"
                 @if ($bill->status == 6 && $quoteDone) disabled @endif>Save <i class="fa fa-save"></i></button>
         </div>

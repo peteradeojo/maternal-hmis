@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Models\BillDetail;
 use Livewire\Component;
 use App\Models\BillPayment;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Str;
 
 class MakePayment extends Component
@@ -138,6 +139,8 @@ class MakePayment extends Component
         BillDetail::where('id', $id)->update(['status' => Status::blocked->value]);
         $this->hydrate();
         $this->dispatch('$refresh');
+
+        Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
     }
 
     public function unreject($id)
@@ -145,5 +148,6 @@ class MakePayment extends Component
         BillDetail::where('id', $id)->update(['status' => Status::pending->value]);
         $this->hydrate();
         $this->dispatch('$refresh');
+        Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
     }
 }
