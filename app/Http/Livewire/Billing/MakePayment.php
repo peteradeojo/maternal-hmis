@@ -115,7 +115,8 @@ class MakePayment extends Component
                 'saved' => true,
                 'id' => $b->id,
                 'meta' => $b->meta,
-                'status' => $b->view_billable_status
+                'status' => $b->view_billable_status,
+                'status_id' => $b->status
             ];
         })->toArray();
     }

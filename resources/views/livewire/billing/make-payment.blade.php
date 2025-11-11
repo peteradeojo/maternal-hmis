@@ -61,7 +61,8 @@
 
                 <tr class="font-bold">
                     <td>Total</td>
-                    <td>{{ number_format(collect($items)->sum('amount')) }}</td>
+                    <td>{{ number_format(collect($items)->where('status_id', '!=', Status::blocked->value)->sum('amount')) }}
+                    </td>
                 </tr>
                 <tr class="font-bold">
                     <td>Paid</td>
@@ -69,7 +70,9 @@
                 </tr>
                 <tr class="font-bold">
                     <td>Balance</td>
-                    <td>{{ number_format(collect($items)->sum('amount') - $bill->paid) }}</td>
+                    {{-- <td>{{ number_format(collect($items)->where('status', '!=', Status::blocked->value)->sum('amount') - $bill->paid) }}
+                    </td> --}}
+                    <td>{{ number_format($bill->amount - $bill->paid) }}</td>
                 </tr>
             </tbody>
         </table>
