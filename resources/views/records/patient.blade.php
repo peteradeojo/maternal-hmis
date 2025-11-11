@@ -30,7 +30,7 @@
                     <p><b>Religion: </b> {{ $patient->religion }}</p>
                 </div>
 
-                @if (auth()->user()->departmentId == DepartmentsEnum::REC->value)
+                @if (auth()->user()->department_id == DepartmentsEnum::REC->value)
                     <div class="grid grid-cols-2 p-2 gap-2 no-print">
                         <button
                             class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
