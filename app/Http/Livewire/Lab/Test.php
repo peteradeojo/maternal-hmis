@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Lab;
 
 use App\Enums\Status;
+use App\Models\DocumentationTest;
 use App\Traits\ComponentState;
 use Livewire\Component;
 
@@ -19,7 +20,7 @@ class Test extends Component
     {
         $this->test = $test;
         $this->status = $test->status;
-        $this->results = $test->results;
+        $this->results = !empty($test->results) ? $test->results : $test->getSampleResults();
 
         $this->initHash = $this->currentHash = $this->getHash();
     }

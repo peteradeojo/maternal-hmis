@@ -43,8 +43,6 @@ class Vitals extends Component
 
         $this->dispatch('saved');
         $this->dispatch('closeModal');
-        // $this->dispatch('closeModal');
-        // $this->
 
         $this->vitals->reset();
 

@@ -66,4 +66,19 @@ class DocumentationTest extends Model
     {
         return $this->name;
     }
+
+    public function getSampleResults()
+    {
+        $query = static::where('name', $this->name)->where('id', '<', $this->id)->where('results', '!=', NULL)->latest();
+
+        $test = $query->first();
+        if (!$test) return;
+
+        $results = array_map(function ($r) {
+            $r->result = null;
+            return $r;
+        }, $test->results);
+
+        return $results;
+    }
 }
