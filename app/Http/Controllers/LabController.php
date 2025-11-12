@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 
 class LabController extends Controller
 {
+    public static $ancBookingTests = ['URINALYSIS', 'PCV', 'GENOTYPE', 'HIV STATUS', 'BLOOD GROUP', 'VDRL', 'RHESUS', 'Hepatitis'];
+    public static $ancFollowupTests = ['URINALYSIS', 'PCV',];
+
     private function processTests(Request $request, $data, GeneralVisit|AncVisit  $visit)
     {
         foreach ($visit->tests as $i => $test) {
@@ -144,19 +147,25 @@ class LabController extends Controller
 
     public function getAncVisits(Request $request)
     {
-        return $this->dataTable($request, AncVisit::with(['profile'])->whereHas('tests', function ($q) {
-            $q->where('status', '!=', Status::completed->value);
-        })->orWhereHas('profile', function ($q) {
-            $q->whereHas('tests', function ($q) {
-                $q->where('status', '!=', Status::completed->value);
-            });
-        })->latest(), [
-            function ($query, $search) {
-                $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "{$search}%")->orWhere('card_number', 'like', "{$search}%");
-                });
-            },
-        ]);
+        // return $this->dataTable($request, AncVisit::with(['profile'])->whereHas('tests', function ($q) {
+        //     $q->where('status', '!=', Status::completed->value);
+        // })->orWhereHas('profile', function ($q) {
+        //     $q->whereHas('tests', function ($q) {
+        //         $q->where('status', '!=', Status::completed->value);
+        //     });
+        // })->latest(), [
+        //     function ($query, $search) {
+        //         $query->whereHas('patient', function ($q) use ($search) {
+        //             $q->where('name', 'like', "{$search}%")->orWhere('card_number', 'like', "{$search}%");
+        //         });
+        //     },
+        // ]);
+
+        $query = AntenatalProfile::with(['patient'])->whereHas('tests', function ($query) {
+            $query->where('status', '=', Status::pending->value);
+        })->latest();
+
+        return $this->dataTable($request, $query);
     }
 
     public function ancBooking(Request $request, AntenatalProfile $profile)
@@ -179,21 +188,23 @@ class LabController extends Controller
         return redirect()->route('lab.antenatals')->with('success', 'Tests booked successfully');
     }
 
-    public function testAnc(Request $request, AncVisit $visit)
-    {
-        if ($request->method() !== 'POST') {
-            $visit->load(['tests', 'treatments']);
-            $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
-            return view('lab.take-test', compact('tests', 'visit') + ['documentation' => $visit]);
-        }
+    // public function testAnc(Request $request, AncVisit $visit)
+    // {
+    //     if ($request->method() !== 'POST') {
+    //         $visit->load(['tests', 'treatments']);
+    //         $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
+    //         return view('lab.take-test', compact('tests', 'visit') + ['documentation' => $visit]);
+    //     }
 
-        $visit->visit->awaiting_doctor = true;
-        $visit->visit->save();
+    //     $visit->visit->awaiting_doctor = true;
+    //     $visit->visit->save();
 
-        $this->processTests($request, $request->all(), $visit);
+    //     $this->processTests($request, $request->all(), $visit);
 
-        return redirect()->route('dashboard');
-    }
+    //     return redirect()->route('dashboard');
+    // }
+
+    public function antenatalBooking() {}
 
     public function testReport(Request $request, Patient $patient)
     {

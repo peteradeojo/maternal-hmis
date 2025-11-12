@@ -43,7 +43,7 @@ function departmentRoutes()
     $lab = [
         route('lab.history') => ['History', 'fa-clock'],
         route('lab.admissions') => ['Admissions', 'fa-bed'],
-        route('lab.antenatals') => ['Antenatals', 'fa-heart'],
+        route('lab.antenatals') => ['Antenatal Registration', 'fa-heart'],
     ];
 
     $rad = [

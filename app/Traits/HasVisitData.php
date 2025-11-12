@@ -9,6 +9,7 @@ use App\Models\ConsultationNote;
 use App\Models\PatientHistory;
 use App\Models\Visit;
 use App\Models\Vitals;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use stdClass;
 
 trait HasVisitData
@@ -53,12 +54,22 @@ trait HasVisitData
         return $this->morphMany(PatientHistory::class, 'visit');
     }
 
-    public function vitals() {
+    public function vitals()
+    {
         return $this->morphOne(Vitals::class, 'recordable')->latest();
     }
 
     public function svitals()
     {
         return $this->morphMany(Vitals::class, 'recordable')->latest();
+    }
+
+    public function firstVisit(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attrs) {
+                return static::where('patient_id', $attrs['patient_id'])->where('id', '<', $attrs['id'])->count() < 1;
+            }
+        );
     }
 }

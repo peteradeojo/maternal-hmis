@@ -11,9 +11,14 @@ Route::prefix('/lab')->name('lab.')->middleware(['department:' . Department::LAB
         return view('lab.ancs', compact('user'));
     })->name('antenatals');
     // Route::match(['get', 'post'], 'test/{visit}', [LabController::class, 'test'])->name('take-test');
+
     Route::match(['get', 'post'], 'tests/{visit}', [LabController::class, 'viewTests'])->name('view-tests');
     Route::match(['get'], 'report/{patient}', [LabController::class, 'testReport'])->name('report-test');
-    Route::match(['get', 'post'], 'anc-test/{visit}', [LabController::class, 'testAnc'])->name('test-anc');
+
+    Route::match(['get', 'post'], 'anc-test/{profile}', [LabController::class, 'antenatalBooking'])->name('test-anc');
+
+    // Route::match(['get', 'post'], 'anc-test/{visit}', [LabController::class, 'testAnc'])->name('test-anc');
+
     // Route::get('/anc-booking/{profile}', [LabController::class, 'anc'])->name('anc-booking');
     Route::match(['get', 'post'], '/anc-booking/{profile}', [LabController::class, 'ancBooking'])->name('submit-anc-booking');
 

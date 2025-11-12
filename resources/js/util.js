@@ -37,19 +37,6 @@ window.initTab = function (el) {
 window.asyncForm = (form, route, callback = (e, data) => { }) => {
     $(form).on("submit", (e) => {
         e.preventDefault();
-        // fetch(route, {
-        //     method: "POST",
-        //     body: new FormData(e.currentTarget),
-        //     headers: {
-        //         Accept: "application/json",
-        //     },
-        // })
-        //     .then((res) => {
-        //         callback(e.currentTarget, res);
-        //     })
-        //     .catch((err) => {
-        //         console.error(err);
-        //     });
         axios.post(route, new FormData(e.currentTarget), {
             headers: {
                 Accept: "application/json",
