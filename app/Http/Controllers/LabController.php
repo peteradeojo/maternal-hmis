@@ -262,6 +262,9 @@ class LabController extends Controller
         $query = Visit::with(['patient.category', 'visit'])->where(function ($q) {
             $q->has('tests')->orWhereHas('visit', function ($query) {
                 $query->has('tests');
+            })
+            ->orWhereHas('admission', function ($q) {
+                $q->has('tests');
             });
         })->latest();
 
