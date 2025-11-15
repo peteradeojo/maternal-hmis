@@ -163,54 +163,7 @@ class PatientsController extends Controller
 
     public function checkIn(Request $request, Patient $patient)
     {
-        if (!$request->isMethod('POST')) {
-            return view('records.check-in', compact('patient'));
-        }
-
-        if (Visit::where('patient_id', $patient->id)->where('status', Status::active->value)->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Patient already checked-in today',
-            ]);
-        }
-
-        if ($request->input('mode') == 'anc') {
-            $ancProfile = AntenatalProfile::where('patient_id', $patient->id)->where('status', Status::active->value)->latest()->first();
-            if (!$ancProfile) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Patient does not have an active ANC profile',
-                ]);
-            }
-            $subVisit = AncVisit::create([
-                'patient_id' => $patient->id,
-                'antenatal_profile_id' => $ancProfile->id,
-            ]);
-        } else {
-            $subVisit = GeneralVisit::create([
-                'patient_id' => $patient->id,
-            ]);
-        }
-
-        Visit::create([
-            'patient_id' => $patient->id,
-            'visit_type' => $subVisit::class,
-            'visit_id' => $subVisit->id,
-            'awaiting_vitals' => 1,
-            'awaiting_doctor' => 1,
-        ]);
-
-        notifyDepartment(EnumsDepartment::NUR->value, [
-            'title' => 'Patient Checked-In',
-            'message' => "Patient {$patient->name} was just checked in",
-        ], [
-            'mode' => AppNotifications::$BOTH,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Patient Checked-In Successfully',
-        ]);
+        return view('records.check-in', compact('patient'));
     }
 
     public function createAncProfile(Request $request, Patient $patient)
@@ -232,6 +185,8 @@ class PatientsController extends Controller
         ]);
 
         $profile = AntenatalProfile::create($data + ['patient_id' => $patient->id]);
+        $profile->initLabTests();
+
         return redirect()->route('records.patient', ['patient' => $patient->id]);
     }
 

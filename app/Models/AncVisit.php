@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Dto\PrescriptionDto;
+use App\Enums\Department;
 use App\Models\Visit;
 use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
@@ -36,18 +36,20 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
         'fundal_height',
         'fetal_heart_rate',
         'presentation',
-        'lie',
         'presentation_relationship',
+        'edema',
+        'note',
         'return_visit',
+        'lie',
         'complaints',
         'drugs',
-        'note',
         'antenatal_profile_id',
-        'edema',
         'pcv',
         'vdrl',
         'protein',
         'glucose',
+        'tt',
+        'ipt',
     ];
 
     protected $with = ['patient', 'doctor'];
@@ -72,5 +74,18 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
     final public function visit()
     {
         return $this->morphOne(Visit::class, 'visit');
+    }
+
+    protected static function booted()
+    {
+        static::saving(function (Self $visit) {
+            if ($visit->isDirty('ipt') && $visit->ipt == true) {
+                notifyDepartment(Department::NUR->value, "Immunization [IPT] for {{$visit->patient->name}}");
+            } 
+
+            if ($visit->isDirty('tt') && $visit->tt == true) {
+                notifyDepartment(Department::NUR->value, "Immunization [TT] for {{$visit->patient->name}}");
+            }
+        });
     }
 }

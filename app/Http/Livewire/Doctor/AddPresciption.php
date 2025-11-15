@@ -41,7 +41,8 @@ class AddPresciption extends Component
         $this->selections = [];
     }
 
-    public function addTempPrescription($detail) {
+    public function addTempPrescription($detail)
+    {
         $this->selections = Product::where('name', $detail['product'])->first() ?? (object) $detail['product'];
     }
 
@@ -74,6 +75,8 @@ class AddPresciption extends Component
         $this->visit->refresh();
 
         $this->selections = null;
+
+        $this->dispatch('treatments_updated');
     }
 
     public function edit($id)
@@ -108,6 +111,7 @@ class AddPresciption extends Component
     {
         $this->visit->prescriptions()->where('id', $id)->delete();
         $this->visit->refresh();
+        $this->dispatch('treatments_updated');
     }
 
     public function render()

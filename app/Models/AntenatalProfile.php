@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\AncCategory;
+use App\Enums\Status;
+use App\Http\Controllers\LabController;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +33,7 @@ class AntenatalProfile extends Model
         'presentation_relationship',
         'status',
         'risk_assessment',
+        'doctor_id',
 
         // closing
         'closed_on',
@@ -43,7 +46,7 @@ class AntenatalProfile extends Model
         'lmp' => 'datetime',
         'edd' => 'datetime',
         'vitals' => 'array',
-        'risk_assessment',
+        'examination' => 'array',
     ];
 
     protected $with = ['tests'];
@@ -60,7 +63,7 @@ class AntenatalProfile extends Model
 
     public function cardType(): Attribute
     {
-        return Attribute::make(get: fn ($value) => AncCategory::tryFrom($value)->name);
+        return Attribute::make(get: fn($value) => AncCategory::tryFrom($value)->name);
     }
 
     public function tests()
@@ -71,18 +74,6 @@ class AntenatalProfile extends Model
     public function getVitals()
     {
         return $this->vitals;
-    }
-
-    protected static function booted()
-    {
-        // static::retrieved(function (Self $profile) {
-        //     $profile->calculateEddLmp();
-        //     if ($profile->isDirty()) $profile->save();
-        // });
-
-        // static::saving(function (Self $profile) {
-        //     $profile->calculateEddLmp();
-        // });
     }
 
     public function calculateEddLmp($resave = false)
@@ -99,5 +90,65 @@ class AntenatalProfile extends Model
             $this->save();
             $this->refresh();
         }
+    }
+
+    public function initLabTests()
+    {
+        if ($this->tests->count() > 0) {
+            return;
+        }
+
+        $products = Product::whereIn('name', LabController::$ancBookingTests)->get();
+
+        foreach ($products as $p) {
+            $this->tests()->firstOrCreate([
+                'name' => $p->name,
+                'describable_type' => Product::class,
+                'describable_id' => $p->id,
+                'patient_id' => $this->patient->id,
+            ], [
+                'name' => $p->name,
+                'describable_type' => Product::class,
+                'describable_id' => $p->id,
+                'status' => Status::pending->value,
+                'patient_id' => $this->patient->id,
+                'results' => [],
+            ]);
+        }
+    }
+
+    public function ancVisits() {
+        return $this->hasMany(AncVisit::class, 'antenatal_profile_id')->latest();
+    }
+
+    public function getTestResult($name) {
+        $test = $this->tests->where('name', $name)->first();
+        if (empty($test) || empty($test->results)) {
+            return '';
+        }
+
+        return $test->results[0]->result;
+    }
+
+    public function maturity($datetime = null, $short = false)
+    {
+        if ($this->lmp) {
+            $days = ($this->lmp->diffInDays($datetime ?? now()));
+
+            $weeks = intdiv($days, 7);
+            $days = abs($days % 7);
+
+            if ($short) {
+                return "{$weeks}w" . ($days > 0 ? " +$days" : '');
+            }
+
+            return "$weeks week(s) $days day(s)";
+        }
+
+        return "No LMP";
+    }
+
+    public function consultant() {
+        return $this->belongsTo(User::class, 'doctor_id');
     }
 }

@@ -1,22 +1,5 @@
 <div wire:poll.3000ms>
     {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
-    <x-overlay-modal id="admit" title="Admitting: {{ $visit->patient->name }}">
-        <form action="{{ route('doctor.admit', $visit) }}" method="post" id="start-admission-form">
-            @csrf
-            <div class="form-group">
-                <label class="required">Indication for Admission</label>
-                <input type="text" name="indication" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label>Notes/Further Instructions</label>
-                <textarea name="note" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <button class="btn bg-red-500 text-white">Submit</button>
-            </div>
-        </form>
-    </x-overlay-modal>
-
     @foreach ($visit->patient->visits->slice(0, 5) as $i => $visit)
         <div class="py-2">
             <div class="border-2 border-red-300 p-1">

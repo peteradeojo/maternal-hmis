@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
-    public function __construct(private TreatmentService $treatmentService)
-    {
-    }
+    public function __construct(private TreatmentService $treatmentService) {}
 
     public function index(Request $request)
     {
@@ -72,23 +70,29 @@ class PatientsController extends Controller
             'fundal_height' => 'nullable|string',
             'fetal_heart_rate' => 'nullable|string',
             'presentation' => 'nullable|string',
-            'lie' => 'nullable|string',
             'presentation_relationship' => 'nullable|string',
+            'edema' => 'nullable|string',
+            'note' => 'nullable|string',
             'return_visit' => 'nullable|date',
-            // 'complaints' => 'nullable|string',
-            // 'drugs' => 'nullable|string',
+            'ipt' => 'nullable',
+            'tt' => 'nullable'
         ]);
 
         try {
-            $visit->update($request->all());
+            $data['tt'] = intval(strtolower(($data['tt'] ?? '')) == 'on');
+            $data['ipt'] = intval(strtolower(($data['ipt'] ?? '')) == 'on');
+
+            $visit->update($data);
             $visit->visit->awaiting_doctor = false;
-            $visit->visit->status = Status::completed->value;
 
             $visit->visit->save();
-            return redirect()->route('dashboard');
+
+            return response()->json($visit->refresh());
         } catch (\Throwable $th) {
             report($th);
-            return redirect()->route('dashboard')->with('error', $th->getMessage());
+            return response()->json([
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 
@@ -96,14 +100,12 @@ class PatientsController extends Controller
     {
         if ($request->method() !== 'POST') return view('doctors.follow-up', compact('documentation'));
 
-
         $data = $request->except('_token');
         if (count(array_filter($data)) < 1) {
             return back()->withInput()->withErrors(['error' => 'Please fill at least one field']);
         }
 
         $request->mergeIfMissing(['tests' => [], 'admit' => false]);
-
         $visit = $documentation->visit;
 
         try {
@@ -285,21 +287,10 @@ class PatientsController extends Controller
         return view('doctors.visits.show', compact('visit'));
     }
 
-    // public function startAdmission(Request $request, Visit $visit)
-    // {
-    //     $visit->load(['patient']);
-    //     if (!$request->isMethod('POST')) {
-    //         return view('doctors.admissions.start', compact('visit'));
-    //     }
-
-    //     try {
-    //         $this->treatmentService->startAdmission($request->all(), $visit->patient);
-    //         return redirect()->route('dashboard');
-    //     } catch (\Throwable $th) {
-    //         report($th);
-    //         return redirect()->back()->with('error', $th->getMessage());
-    //     }
-    // }
+    public function getAncLog(Request $request, AncVisit $visit) {
+        $profile = $visit->profile;
+        return view('doctors.antenatal.log',compact('visit', 'profile'));
+    }
 
     public function note(Request $request, Visit $visit)
     {

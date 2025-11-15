@@ -145,6 +145,10 @@
     .error {
         @apply text-red-500;
     }
+
+    .flex-center {
+        @apply flex items-center;
+    }
 }
 
 ::root {

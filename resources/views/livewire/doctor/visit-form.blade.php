@@ -1,11 +1,28 @@
 <div>
     {{-- In work, do what you enjoy. --}}
+    <x-overlay-modal id="admit" title="Admitting: {{ $visit->patient->name }}">
+        <form action="{{ route('doctor.admit', $visit) }}" method="post" id="start-admission-form">
+            @csrf
+            <div class="form-group">
+                <label class="required">Indication for Admission</label>
+                <input type="text" name="indication" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label>Notes/Further Instructions</label>
+                <textarea name="note" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-red-500 text-white">Submit</button>
+            </div>
+        </form>
+    </x-overlay-modal>
+
     <div class="p-4 bg-white">
         <div id="nav-tab" data-tablist="#tablist">
             <div id="tablist" class="py-1">
                 <x-patient-profile :patient="$visit->patient"></x-patient-profile>
 
-                @if ($visit->type == 'Antenatal' || strtolower($visit->patient->category->name) == "antenatal")
+                @if ($visit->type == 'Antenatal' || strtolower($visit->patient->category->name) == 'antenatal')
                     <div class="tab py-3 px-2">
                         <p class="text-3xl border-b border-gray-300">Antenatal Booking Details</p>
                         @isset($profile)
@@ -42,7 +59,7 @@
                 @include('components.tabs', [
                     'options' =>
                         $visit->type == 'Antenatal'
-                            ? ['Follow Up', 'First Visit', 'Medical Records']
+                            ? [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
                             : ['Medical Records'],
                 ])
 
@@ -50,21 +67,22 @@
                     History</button>
             </div>
 
-            <div id="actions" class="py-1">
+            <div id="actions" class="p-2">
                 @if ($visit->type == 'Antenatal')
-                    <div class="tab">
-                        @livewire('doctor.anc-visit', ['visit' => $visit->visit])
-                    </div>
-                    <div class="tab">
-                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
-                    </div>
+                    @if ($visit->first_visit)
+                        <div class="tab">
+                            <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
+                        </div>
+                    @else
+                        <div class="tab">
+                            @livewire('doctor.anc-visit', ['visit' => $visit->visit])
+                        </div>
+                    @endif
                 @endif
 
                 <div class="tab">
                     <button class="btn btn-blue btn-sm" @click="$dispatch('open-history-modal')">Presenting
                         Complaints</button>
-                    {{-- <button class="btn btn-blue btn-sm" @click="$dispatch('open-history-poc-modal')">History of
-                        Presenting Complaints</button> --}}
 
                     <button class="btn btn-blue btn-sm" @click="$dispatch('open-notes-modal')">Add Note</button>
                     @if ($visit->examination)
@@ -112,12 +130,6 @@
         </form>
     </x-overlay-modal>
 
-    {{-- <x-overlay-modal id="history-poc-modal" title="History of Presenting Complaints">
-        <form wire:submit.prevent="saveHistoryOfComplaint">
-
-        </form>
-    </x-overlay-modal> --}}
-
     <x-overlay-modal id="exams-modal" title="Patient Examination">
         <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
             @csrf
@@ -132,41 +144,6 @@
     </x-overlay-modal>
 
     <x-overlay-modal id="tests-modal" title="Request Investigations">
-        {{-- <div class="tablist" id="tests-tabs" data-tablist="#investigations">
-            @include('components.tabs', ['options' => ['Lab', 'Radiology']])
-
-            <div id="investigations" class="py-1">
-                <div class="tab">
-                    <div class="form-group">
-                        <label>Select Test</label>
-                        <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail)" @selected_temp="addTest($event.detail)" />
-                    </div>
-                </div>
-                <div class="tab">
-                    <div class="form-group">
-                        <label>Request Scan</label>
-                        <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-        {{-- <x-tabs_v2 :options="['Lab Tests', 'Radiology']" id="tests-tabs" target="investigations">
-            <x-tab :option="'Lab Tests'">
-                <div class="form-group">
-                    <label for="">Select Test</label>
-                    <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)"
-                        @selected_temp="addTest($event.detail)" />
-                </div>
-            </x-tab>
-            <x-tab :option="'Radiology'">
-                <div class="form-group">
-                    <label>Request Scan</label>
-                    <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
-                </div>
-            </x-tab>
-        </x-tabs_v2> --}}
-
         <div class="">
             <p class="text-lg font-semibold">Lab Tests</p>
             <div class="form-group">

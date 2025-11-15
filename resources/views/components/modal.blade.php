@@ -1,8 +1,13 @@
 @props(['id'])
 
-<div class="modal hide" id="{{ $id }}">
+<div class="modal" id="{{ $id }}" x-data="{ open: false }" x-on:open-{{ $id }}.window="open = true"
+    @keyup.escape.window="open = false" :class="open ? '' : 'hide'" {{ $attributes }} @click.self="open=false"
+    x-on:close-{{ $id }}.window="open = false">
 
-    <div class="content p-3 bg-white">
+    <div class="content px-3 bg-white" x-show="open" x-transition>
+        <div class="w-full flex justify-end">
+            <button class="btn text-lg" @click.stop="open = false">&times;</button>
+        </div>
         {{ $slot }}
     </div>
 </div>

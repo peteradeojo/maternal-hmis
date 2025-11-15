@@ -4,8 +4,6 @@ namespace App\Http\Livewire\Doctor;
 
 use App\Livewire\Forms\Doctor\AncFollowup;
 use App\Models\Product;
-use App\Models\Visit;
-use Exception;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 
@@ -20,9 +18,12 @@ class AncVisit extends Component
     public $note;
     public $cancellable = true;
 
+    public $complaint;
+    public $complaint_duration;
+
     public function mount($visit)
     {
-        $this->visit = $visit;
+        $this->visit = $visit->load(['complaints']);
         $this->return_visit = Carbon::now()->addWeeks(3)->format('Y-m-d');
     }
 
@@ -68,7 +69,7 @@ class AncVisit extends Component
         $this->visit->refresh();
     }
 
-    function  addPrescription($id)
+    public function addPrescription($id)
     {
         $pdt = Product::find($id);
         if (!$pdt) return;
@@ -91,11 +92,57 @@ class AncVisit extends Component
         ]);
         $this->note = "";
         $this->visit->refresh();
+
+        $this->dispatch('close-anc-visit-notes-modal');
     }
 
     public function removeScan($id)
     {
         $this->visit->radios()->where('id', $id)->delete();
         $this->visit->refresh();
+    }
+
+    public function takeComplaint()
+    {
+        $this->validate([
+            'complaint' => 'required|string',
+            'complaint_duration' => 'nullable|string'
+        ]);
+
+        $this->visit->complaints()->create([
+            'name' => $this->complaint,
+            'duration' => $this->complaint_duration,
+        ]);
+
+        $this->dispatch('$refresh');
+        $this->reset('complaint', 'complaint_duration');
+    }
+
+    public function removeNote($id)
+    {
+        $this->visit->notes()->where('id', $id)->delete();
+        $this->dispatch('$refresh');
+    }
+
+    public function removeComplaint($id)
+    {
+        $this->visit->complaints()->where('id', $id)->delete();
+        $this->dispatch('$refresh');
+    }
+
+    public function addTreatment($data)
+    {
+        if (!empty($data['id'])) {
+            $product = Product::find($data['id']);
+        } else {
+            $product = (object) $data['product'];
+        }
+        $this->visit->addPrescription($this->visit->patient, $product);
+        $this->dispatch('$refresh');
+    }
+
+    public function addedTreatment() {
+        $this->dispatch('$refresh');
+        // $this->dispatch('close-anc-treatments');
     }
 }

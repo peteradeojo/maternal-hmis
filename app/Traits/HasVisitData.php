@@ -72,4 +72,13 @@ trait HasVisitData
             }
         );
     }
+
+    public function getTestResult($name) {
+        $test = $this->tests->where('name', $name)->first();
+        if (empty($test) || empty($test->results)) {
+            return '';
+        }
+
+        return $test->results[0]->result;
+    }
 }

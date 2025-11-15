@@ -28,6 +28,7 @@ class VisitForm extends Component
     public HistoryForm $historyForm;
     public ExaminationForm $examForm;
 
+
     public function refreshProfile()
     {
         $this->profile->refresh();

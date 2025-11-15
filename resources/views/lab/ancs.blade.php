@@ -32,7 +32,7 @@
                     data: 'patient.name'
                 },
                 {
-                    data: 'profile.card_type'
+                    data: 'card_type'
                 },
                 {
                     data: 'patient.card_number'
@@ -47,7 +47,7 @@
                     })
                 },
                 {
-                    data: (row, type, set) => `<a href="{{ route('lab.test-anc', ':id') }}">Take Test</a>`
+                    data: (row, type, set) => `<a href="{{ route('lab.submit-anc-booking', ':id') }}">Take Test</a>`
                         .replace(':id', row.id)
                 },
             ],

@@ -74,11 +74,10 @@ class PatientCheckIn extends Component
                 notifyUserError("Patient does not have an active antenatal profile. Please create one.", auth()->user(), ['mode' => AppNotifications::$IN_APP]);
                 return;
             }
-
             $subVisit->antenatal_profile_id = $this->patient->anc_profile?->id;
         }
-        $subVisit->save();
 
+        $subVisit->save();
         $visit = new Visit([
             'patient_id' => $this->patient->id,
             'consultant_id' => $this->consultant,

@@ -23,6 +23,10 @@
         <label for="spo2">SPO<sub>2</sub></label>
         <input type="number" name="spo2" class="form " />
     </div>
+    <div class="form-group">
+        <label for="spo2">Fetal Heart Rate (FHR)</label>
+        <input type="number" name="fetal_heart_rate" class="form " />
+    </div>
     @unless (isset($admission))
         <div class="form-group">
             <label for="weight">Weight (kg)</label>

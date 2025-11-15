@@ -1,95 +1,119 @@
 <div class="px-2">
     {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
     <div class="py-2">
-        <div class="flex gap-x-4 items-center">
-            <p class="text-xl bold">Notes</p>
-            <button class="modal-trigger btn btn-sm btn-blue" data-target="#anc-visit-notes-modal">
-                Add Note
-            </button>
-        </div>
+        <x-anc-log :visit="$visit" :profile="$visit->profile" />
+    </div>
 
-        <div class="">
-            @forelse ($visit->notes as $note)
-                <div class="bg-gray-100 p-2">
-                    <p>{{ $note->note }}</p>
-                    <p class="text-xs">Consultant: {{ $note->consultant->name }}</p>
-                    <p class="text-red-700 text-xs">{{ $note->created_at }}</p>
-                </div>
-                <div class="py-3"></div>
-            @empty
-                <p class="py-1">No notes added yet. Add a note to view here</p>
-            @endforelse
+    <div class="py-2 grid grid-cols-3 gap-x-2">
+        {{-- Presentation --}}
+        <div>
+            <div class="flex-center gap-x-4 pb-2">
+                <p class="text-lg font-semibold">Presentation</p>
+                <button @click="$dispatch('open-visit-complaints')" class="px-1 py-0.5 btn-blue text-white"><i
+                        class="fa fa-plus"></i></button>
+            </div>
+
+            <table class="table bordered">
+                <tr>
+                    <th>Presentation</th>
+                    <th>Duration</th>
+                    <td></td>
+                </tr>
+                @forelse ($visit->complaints ?? [] as $complaint)
+                    <tr>
+                        <td>{{ $complaint->name }}</td>
+                        <td>{{ $complaint->duration }}</td>
+                        <td>
+                            <button wire:click="removeComplaint({{ $complaint->id }})"
+                                class="text-red-500 text-sm">Delete</button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3">
+                            No complaints recorded.
+                        </td>
+                    </tr>
+                @endforelse
+            </table>
+        </div>
+        {{-- Notes --}}
+        <div>
+            <div class="flex-center gap-x-4 pb-2">
+                <p class="text-xl bold">Notes</p>
+                <button class="px-1 py-0.5 btn-blue" data-target="#anc-visit-notes-modal"
+                    @click="$dispatch('open-anc-visit-notes-modal')">
+                    <i class="fa fa-notes-medical"></i>
+                </button>
+            </div>
+
+            <div>
+                @forelse ($visit->notes as $note)
+                    <div class="bg-gray-100 p-2">
+                        <p>{{ $note->note }}</p>
+                        <p class="text-xs">Consultant: {{ $note->consultant->name }}</p>
+
+                        <div class="flex-center justify-between text-xs">
+                            <p class="text-red-700">{{ $note->created_at }}</p>
+                            <button wire:click="removeNote({{ $note->id }})" class="text-red-700">Delete</button>
+                        </div>
+                    </div>
+                @empty
+                    <p class="py-1">No notes added yet. Add a note to view here</p>
+                @endforelse
+            </div>
         </div>
     </div>
 
-    <form action="{{ route('doctor.treat-anc', ['visit' => $visit]) }}" method="post" id="follow-up-form"
-        class="grid grid-cols-3 gap-x-2">
-        @csrf
-        <div class="form-group">
-            <label>Height of Fundus</label>
-            <input type="text" name="fundal_height" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Presentation</label>
-            <input type="text" name="presentation" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Lie</label>
-            <input type="text" name="lie" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Relationship of presenting part to pelvis</label>
-            <input type="text" name="presentation_relationship" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Foetal Heart Rate</label>
-            <input type="text" name="fetal_heart_rate" class="form-control" />
-        </div>
-
-        <div class="py-2"></div>
-        <livewire:doctor.add-presciption :visit="$visit" />
-
-        <div class="py-2"></div>
-
-        <div class="col-span-full">
-            <div class="flex justify-between pb-2 items-center">
-                <p class="text-xl bold">Tests</p>
-                <button type="button" class="modal-trigger btn btn-sm btn-blue"
-                    data-target="#anc-visit-tests-modal">Add
-                    Investigation</button>
+    <div class="grid grid-cols-2 gap-x-4 items-start">
+        <div class="p-2 border border-black">
+            <div class="flex-center hover:bg-gray-50 gap-x-4 p-2" @click="$dispatch('open-anc-visit-tests-modal')">
+                <p class="text-lg font-bold">Tests</p>
+                <i class="fa fa-plus"></i>
             </div>
-            @include('doctors.components.test-results', ['tests' => $visit->visit->tests])
-            <div class="flex justify-between pt-2 items-center">
-                <p class="text-xl bold">Scans</p>
-            </div>
-        @empty($visit->radios)
-            <p>No scan requested.</p>
-        @else
-            @foreach ($visit->radios as $scan)
-                <div class="p-2 bg-gray-200">
-                    <p><b>{{ $scan->name }}</b></p>
-                    <p>{{ $scan->comment ?? 'No comment' }}</p>
-                    <p>{{ $scan->path ? '' : 'No result provided' }}</p>
-                    @unless ($scan->comment || $scan->path)
-                        <span class="text-xs cursor-pointer text-red-600 hover:underline"
-                            wire:click="removeScan({{ $scan->id }})">Cancel Request</span>
-                    @endunless
-                </div>
-            @endforeach
-        @endempty
 
-        <div class="form-group">
-            <label>Next Visit Date:</label>
-            <input type="date" wire:model="return_visit" class="input">
+            <div class="p-2">
+                @include('doctors.components.test-results', ['tests' => $visit->tests])
+            </div>
+        </div>
+        <div class="p-2 border border-black" x-data="{ open: true }">
+            <div class="flex-center hover:bg-gray-50 gap-x-4 p-2" @click="$dispatch('open-anc-treatments')">
+                <p class="text-lg font-bold">Treatments</p>
+                <i class="fa fa-plus"></i>
+            </div>
+
+            <div class="p-2">
+                <table class="table bordered">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($visit->treatments as $t)
+                            <tr>
+                                <td>{{ $t }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td>No treatments</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</form>
-<button class="btn btn-blue" form="follow-up-form">Submit</button>
 
-<div class="modal hide" id="anc-visit-tests-modal">
-    <div class="content p-3 bg-white">
+    <div class="p-2">
+        <button @click="$dispatch('open-admit')" class="btn bg-red-500 text-white">Start Admission</button>
+    </div>
+
+    <x-modal id="anc-treatments">
+        <livewire:doctor.add-presciption :visit="$visit" @treatments_updated="addedTreatment" />
+    </x-modal>
+    <x-modal id="anc-visit-tests-modal">
         <p class="bold text-xl">Add Investigation</p>
-
         <div id="anc-visit-tests-2" data-tablist="#anc-visit-tests">
             @include('components.tabs', ['options' => ['Test', 'Investigation']])
 
@@ -108,11 +132,8 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="modal hide" id="anc-visit-notes-modal">
-    <div class="content p-3 bg-white">
+    </x-modal>
+    <x-modal id="anc-visit-notes-modal">
         <p class="text-xl bold">Add Note</p>
         <form wire:submit.prevent="addNote">
             <div class="form-group">
@@ -124,6 +145,31 @@
                 <button class="btn btn-blue">Add Note</button>
             </div>
         </form>
-    </div>
+    </x-modal>
+    <x-modal id="visit-complaints">
+        <p class="font-semibold">Complaints</p>
+
+        <form wire:submit.prevent="takeComplaint">
+            <div class="form-group">
+                <label>Complaint</label>
+                {{-- <input wire:model="complaint" type="text" name="complaint" class="form-control" required /> --}}
+                <x-input-text required wire:model="complaint" class="form-control" name="complaint" />
+            </div>
+            <div class="form-group">
+                <label>Duration</label>
+                <x-input-text wire:model="complaint_duration" name="complaint_duration" class="form-control" />
+            </div>
+            <div class="form-group">
+                <button class="btn bg-green-500 text-white">Submit <i class="fa fa-save"></i></button>
+            </div>
+        </form>
+    </x-modal>
 </div>
-</div>
+
+@script
+    <script>
+        $(document).ready(function() {
+            initTab(document.querySelector('#anc-visit-tests-2'));;
+        })
+    </script>
+@endscript

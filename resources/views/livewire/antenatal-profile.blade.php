@@ -1,7 +1,8 @@
 <div>
     <div class="grid grid-cols-3 gap-x-2 justify-between">
+        {{-- <p>Profile ID: {{ $profile }}</p> --}}
         <p class="col-span-3 py-1">
-            <b>Booking date: </b> {{$profile->created_at->format('Y-m-d')}}
+            <b>Booking date: </b> {{ $profile->created_at->format('Y-m-d') }}
         </p>
         <p>
             <b>LMP: </b>
@@ -27,7 +28,7 @@
 
         <p>
             <b>Maturity Weeks: </b>
-            <span>{{ $profile->lmp ? (int) $profile->lmp->diffInWeeks() . ' weeks' : 'LMP Not Supplied' }}</span>
+            <span>{{ $profile->maturity() }}</span>
         </p>
     </div>
 
@@ -62,12 +63,12 @@
 
     <div class="py-2"></div>
 
-    <div class="py-2">
+    {{-- <div class="py-2">
         <p class="text-xl bold">Special consideration / Risk Assessment</p>
 
         <textarea name="" id="" class="form-control" rows="5" wire:model="obsData.risk_assessment">{{ $profile->risk_assessment }}</textarea>
         <div class="pt-2"></div>
         <button class="btn bg-blue-500 text-white" wire:click="updateObsData">Update Special Consideration</button>
-    </div>
+    </div> --}}
 
 </div>

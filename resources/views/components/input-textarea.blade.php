@@ -1,6 +1,6 @@
-@props(['name'])
+@props(['name', 'value'])
 
-<textarea name="{{ $name }}" {{ $attributes }} class="form-control"></textarea>
+<textarea name="{{ $name }}" {{ $attributes }} class="form-control">{{ $value ?? '' }}</textarea>
 
 <div>
     @error($name)

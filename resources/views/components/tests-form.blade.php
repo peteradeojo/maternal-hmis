@@ -1,14 +1,5 @@
 <h3>Tests</h3>
 <div class="form-group">
-    {{-- <label for="tests">Tests</label> --}}
-    {{-- <datalist id="tests-dl">
-        @foreach ($tests as $testId => $t)
-            <option value="{{ $testId }}">{{ $t }}</option>
-        @endforeach
-    </datalist>
-    <input type="text" id="tests" list="tests-dl" class="input">
-    <button type="button" id="add-test-button" class="btn btn-black">Add</button>
-    <button type="button" id="clear-button" class="btn btn-red">Clear</button> --}}
     <livewire:dynamic-product-search :departmentId=5 />
 </div>
 <div class="flex pl" id="tests-list">

@@ -55,13 +55,8 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-
-
-            // initTab(document.querySelector('#nav-tab'));
             initTab(document.querySelector('#actions-tab'));
             initTab(document.querySelector('#notes-tabs'));
-            // initTab(document.querySelector('#tests-tabs'));
-            initTab(document.querySelector('#anc-visit-tests-2'));
 
             $(() => {
                 $("#note-form").on('submit', (e) => {
