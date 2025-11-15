@@ -35,11 +35,11 @@
     </x-overlay-modal>
 
     <div class="w-1/2 grid gap-y-2">
-        <button class="border border-black px-4 py-2 w-full text-xl font-semibold flex justify-between items-center"
+        {{-- <button class="border border-black px-4 py-2 w-full text-xl font-semibold flex justify-between items-center"
             @click="$dispatch('open-history')">
             <span>Obstetric History</span>
             <i class="fa fa-plus"></i>
-        </button>
+        </button> --}}
         <button class="border border-black px-4 py-2 w-full text-xl font-semibold flex justify-between items-center"
             @click="$dispatch('open-physical')">
             <span>Physical Examination</span>
@@ -61,7 +61,7 @@
         <x-anc-log class="max-w-full overflow-x-auto py-4" :profile="$profile" :visit="$visit" />
     </div>
 
-    <button @click="$dispatch('open-modal')" class="btn">Open</button>
+    <button @click="$dispatch('open-modal')" class="btn bg-green-500 text-white">Open</button>
 
     <x-modal id="modal" x-cloak>
         <div class="w-full border p-2">
