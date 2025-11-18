@@ -104,7 +104,7 @@ class BillDetail extends Model
             $meta_data = $meta['data'];
             if ($tag == 'drug' && isset($meta_data['id'])) {
                 DocumentationPrescription::find($meta_data['id'])?->update([
-                    'available' => isset($meta['available']) ? $meta['available'] : '-',
+                    'available' => isset($meta['available']) ? $meta['available'] : false,
                     // 'amount' => BillDetail::find($id)->
                 ]);
             }
