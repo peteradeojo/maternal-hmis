@@ -81,4 +81,8 @@ class DocumentationTest extends Model
 
         return $results;
     }
+
+    public function getResult($result) {
+        return object_get($this->results, $result, "not available");
+    }
 }

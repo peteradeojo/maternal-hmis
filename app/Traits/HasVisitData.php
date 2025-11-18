@@ -81,4 +81,19 @@ trait HasVisitData
 
         return $test->results[0]->result;
     }
+
+    public function getTestResults($name, $key = null) {
+        $test = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name))->first();
+
+        if (!$test) return "Not requested.";
+
+        if (!empty($key)) {
+            foreach($test->results ?? [] as $o) {
+                if (strtolower(@$o->description) == strtolower($key)) return @$o->result;
+            }
+            return "No result.";
+        }
+
+        return $test->results;
+    }
 }

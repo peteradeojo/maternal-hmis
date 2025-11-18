@@ -77,8 +77,10 @@
                 <th>Fundal Height</th>
                 <th>Presentation</th>
                 <th>Weight (kg)</th>
-                <th>Temp (&deg;C)</th>
                 <th>BP (mmHg)</th>
+                <th>PCV</th>
+                <th>Glucose </th>
+                <th>Protein</th>
                 <th>Next Appt.</th>
             </tr>
         </thead>
@@ -95,8 +97,10 @@
                     <td>{{ $v->fundal_height }}</td>
                     <td>{{ $v->presentation }}</td>
                     <td>{{ $v->visit->vitals?->weight }}</td>
-                    <td>{{ $v->visit->vitals?->temperature }}</td>
                     <td>{{ $v->visit->vitals?->blood_pressure }}</td>
+                    <td>{{ $v->visit->getTestResults('PCV', 'PCV') }}</td>
+                    <td>{{ $v->visit->getTestResults('Urinalysis', 'glucose') }}</td>
+                    <td>{{ $v->visit->getTestResults('Urinalysis', 'protein') }}</td>
                     <td>{{ $v->return_visit }}</td>
                 </tr>
             @endforeach
