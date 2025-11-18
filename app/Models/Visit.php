@@ -151,7 +151,7 @@ class Visit extends Model implements OperationalEvent
                 }
 
                 foreach ($tests as $test) {
-                    if ($visit->tests()->where('name', $test->name)->exist()) continue;
+                    if ($visit->tests()->where('name', $test->name)->exists()) continue;
 
                     $visit->tests()->create([
                         'name' => $test->name,
