@@ -66,8 +66,8 @@
                 @include('components.tabs', [
                     'options' =>
                         $visit->type == 'Antenatal'
-                            ? ['First Visit' ,'Follow Up', 'Medical Records']
-                            // ? [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
+                            // ? ['First Visit', 'Follow Up', 'Medical Records']
+                            ? [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
                             : ['Medical Records'],
                 ])
 
@@ -77,15 +77,15 @@
 
             <div id="actions" class="p-2">
                 @if ($visit->type == 'Antenatal')
-                <div class="tab">
-                    <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
-                </div>
-                <div class="tab">
-                    @livewire('doctor.anc-visit', ['visit' => $visit->visit])
-                </div>
-                    {{-- @if ($visit->first_visit)
+                    @if ($visit->first_visit)
+                        <div class="tab">
+                            <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
+                        </div>
                     @else
-                    @endif --}}
+                        <div class="tab">
+                            @livewire('doctor.anc-visit', ['visit' => $visit->visit])
+                        </div>
+                    @endif
                 @endif
 
                 <div class="tab">
