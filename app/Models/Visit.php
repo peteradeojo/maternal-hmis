@@ -145,12 +145,14 @@ class Visit extends Model implements OperationalEvent
     {
         static::created(function (Self $visit) {
             if ($visit->visit_type == AncVisit::class) {
-                $tests = Product::whereIn('name', LabController::$ancFollowupTests)->get();
-                if ($tests->count() <= 0) {
+                $tests = Product::whereIn('name', LabController::$ancFollowupTests)->orderByDesc('amount')->get()->unique('name');
+                if ($tests->isEmpty()) {
                     return;
                 }
 
                 foreach ($tests as $test) {
+                    if ($visit->tests()->where('name', $test->name)->exist()) continue;
+
                     $visit->tests()->create([
                         'name' => $test->name,
                         'describable_type' => $test::class,
