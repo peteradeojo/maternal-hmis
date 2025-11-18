@@ -109,7 +109,7 @@
             </div>
 
             <div class="p-2">
-                @include('doctors.components.test-results', ['tests' => $visit->tests])
+                @include('doctors.components.test-results', ['tests' => $visit->tests, 'cancellable' => true])
             </div>
         </div>
 
