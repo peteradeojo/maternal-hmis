@@ -83,9 +83,14 @@ trait HasVisitData
     }
 
     public function getTestResults($name, $key = null) {
-        $test = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name))->where('result', '!=', null)->first();
+        $tests = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name));
 
-        if (!$test) return "Not requested.";
+        if ($tests->isEmpty()) return "Not requested.";
+        $test = $tests->where('results', '!=', null)->first();
+
+        if (!$test) {
+            return "No result";
+        }
 
         if (!empty($key)) {
             foreach($test->results ?? [] as $o) {
