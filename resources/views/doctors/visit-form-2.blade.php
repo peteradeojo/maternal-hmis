@@ -55,9 +55,7 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-            initTab(document.querySelector('#actions-tab'));
             initTab(document.querySelector('#notes-tabs'));
-
             $(() => {
                 $("#note-form").on('submit', (e) => {
                     e.preventDefault();

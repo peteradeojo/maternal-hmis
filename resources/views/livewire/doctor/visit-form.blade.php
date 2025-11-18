@@ -1,11 +1,18 @@
 <div>
     {{-- In work, do what you enjoy. --}}
     <x-overlay-modal id="admit" title="Admitting: {{ $visit->patient->name }}">
+
+        <datalist id="patient-diagnoses">
+            @foreach ($visit->diagnoses as $d)
+                <option value="{{ $d->diagnoses }}">{{ $d->diagnoses }}</option>
+            @endforeach
+        </datalist>
+
         <form action="{{ route('doctor.admit', $visit) }}" method="post" id="start-admission-form">
             @csrf
             <div class="form-group">
                 <label class="required">Indication for Admission</label>
-                <input type="text" name="indication" class="form-control" required />
+                <input type="text" name="indication" class="form-control" list="patient-diagnoses" required />
             </div>
             <div class="form-group">
                 <label>Notes/Further Instructions</label>
@@ -54,7 +61,7 @@
     <div class="py-1"></div>
 
     <div class="container card">
-        <div id="actions-tab" data-tablist="#actions">
+        <div wire:ignore.self id="actions-tab" data-tablist="#actions">
             <div class="flex justify-between items-center">
                 @include('components.tabs', [
                     'options' =>
@@ -106,7 +113,7 @@
         </div>
     </div>
 
-    <x-overlay-modal id="history-modal" title="Record History">
+    <x-overlay-modal id="history-modal" title="History/Presentation">
         {{-- Add History --}}
         <form wire:submit.prevent="addHistory">
             <div class="flex gap-x-3">
@@ -171,6 +178,8 @@
 
 @script
     <script>
+        let [tab_, listener] = initTab(document.querySelector('#actions-tab'));
+
         asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
             const {
                 data
@@ -211,6 +220,11 @@
                     })
                 })
             });
+
+            $wire.on('$refresh', (e) => {
+                console.log(e);
+                initTab(document.querySelector("#actions-tab"));
+            })
         });
     </script>
 @endscript

@@ -35,11 +35,6 @@
     </x-overlay-modal>
 
     <div class="w-1/2 grid gap-y-2">
-        {{-- <button class="border border-black px-4 py-2 w-full text-xl font-semibold flex justify-between items-center"
-            @click="$dispatch('open-history')">
-            <span>Obstetric History</span>
-            <i class="fa fa-plus"></i>
-        </button> --}}
         <button class="border border-black px-4 py-2 w-full text-xl font-semibold flex justify-between items-center"
             @click="$dispatch('open-physical')">
             <span>Physical Examination</span>
@@ -53,30 +48,9 @@
     </div>
 
     <div class="py-2">
-        <div class="flex justify-between items-center">
-            <p class="font-semibold text-lg">Visit Logs</p>
-            <button class="px-4 py-2 bg-blue-400 text-white" @click="$dispatch('open-anc-log')"><i
-                    class="fa fa-plus"></i></button>
-        </div>
+        <p class="font-semibold text-lg">Visit Logs</p>
         <x-anc-log class="max-w-full overflow-x-auto py-4" :profile="$profile" :visit="$visit" />
     </div>
 
-    <button @click="$dispatch('open-modal')" class="btn bg-green-500 text-white">Open</button>
-
-    <x-modal id="modal" x-cloak>
-        <div class="w-full border p-2">
-            <p class="font-semibold text-lg">Presenting Complaints</p>
-            <div>
-                <form>
-                    <div class="form-group">
-                        <label>Complaint</label>
-                        <textarea name="complaint" class="form-control"></textarea>
-                    </div>
-                    <div class="form-group">
-
-                    </div>
-                </form>
-            </div>
-        </div>
-    </x-modal>
+    <livewire:doctor.treat :visit="$visit->visit" />
 </div>

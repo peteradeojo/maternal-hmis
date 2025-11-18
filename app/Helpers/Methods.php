@@ -151,6 +151,7 @@ function sendUserMessage($message, User|int $userId, $options = [])
 function notifyDepartment($departmentId, $message, $options = [])
 {
     $options['mode'] ??= 'both';
+    $options['timeout'] ??= 5000;
 
     if (is_string($message)) {
         $message = ['message' => $message];

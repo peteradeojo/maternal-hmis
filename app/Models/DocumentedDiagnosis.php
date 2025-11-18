@@ -11,11 +11,18 @@ class DocumentedDiagnosis extends Model
 
     protected $guarded = null;
 
-    public function diagnosable() {
+    public function diagnosable()
+    {
         return $this->morphTo();
     }
 
-    public function made_by() {
+    public function made_by()
+    {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function consultant()
+    {
+        return $this->made_by();
     }
 }

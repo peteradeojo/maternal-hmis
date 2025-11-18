@@ -9,8 +9,6 @@
                         @if ($i == 0)
                             <a href="#" @click.prevent="$dispatch('open-admit')"
                                 class="btn btn-sm bg-green-500 text-white">Admit</a>
-                            {{-- <a href="{{ route('doctor.admit', ['visit' => $visit]) }}"
-                                class="btn btn-sm bg-green-500 text-white">Admit</a> --}}
                             <button wire:click="close" wire:confirm="Are you done with this patient?"
                                 class="btn btn-sm bg-blue-500 text-white">Close</button>
                         @endif

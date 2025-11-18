@@ -6,14 +6,12 @@ use App\Enums\Department;
 use App\Enums\Status;
 use App\Livewire\Forms\Doctor\ExaminationForm;
 use App\Models\Visit;
-use App\Models\Patient;
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\AncVisit;
-use App\Models\GeneralVisit;
 use App\Models\PatientHistory;
 use App\Livewire\Forms\Doctor\HistoryForm;
 use App\Models\ProductCategory;
+use Livewire\Attributes\On;
 
 class VisitForm extends Component
 {
@@ -27,7 +25,6 @@ class VisitForm extends Component
 
     public HistoryForm $historyForm;
     public ExaminationForm $examForm;
-
 
     public function refreshProfile()
     {

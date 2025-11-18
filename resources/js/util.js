@@ -14,24 +14,28 @@ window.initTab = function (el) {
         i > 0 && e.classList.add("hidden");
     });
 
-    tabList?.forEach((element, i) => {
-        element.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            tabContentList.forEach((elj) => elj.classList.add("hidden"));
+    const listener = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        tabContentList.forEach((elj) => elj.classList.add("hidden"));
 
-            tabList?.forEach((eli, j) => {
-                eli.classList.add("default-tab");
-                eli.classList.remove("active-tab");
-                eli.setAttribute("aria-current", "page");
-            });
-
-            tabList[i]?.classList.remove("default-tab");
-            tabList[i]?.classList.add("active-tab");
-
-            tabContentList[i]?.classList.remove("hidden");
+        tabList?.forEach((eli, j) => {
+            eli.classList.add("default-tab");
+            eli.classList.remove("active-tab");
+            eli.setAttribute("aria-current", "page");
         });
+
+        tabList[i]?.classList.remove("default-tab");
+        tabList[i]?.classList.add("active-tab");
+
+        tabContentList[i]?.classList.remove("hidden");
+    };
+
+    tabList?.forEach((element, i) => {
+        element.addEventListener("click", listener);
     });
+
+    return [el, listener];
 }
 
 window.asyncForm = (form, route, callback = (e, data) => { }) => {
@@ -112,11 +116,11 @@ window.displayNotification = function (data) {
 
     setTimeout(() => {
         el.classList.add("fade-out");
-    }, 3000);
+    }, Math.max(data.options.timeout, 5000));
 
     setTimeout(() => {
         el.remove();
-    }, 3300);
+    }, Math.max(data.options.timeout, 5300));
 }
 
 window.notifyError = function (message) {

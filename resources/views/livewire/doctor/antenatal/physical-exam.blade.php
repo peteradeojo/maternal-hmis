@@ -2,6 +2,7 @@
     {{-- The whole world belongs to you. --}}
     <p class="font-semibold text-lg">Physical Examination</p>
     <div>
+        <p>Last updated: {{ $profile->updated_at?->format('Y-m-d h:i A') }}</p>
         <form wire:submit.prevent="save">
             <p class="font-semibold py-2">General Condition</p>
             <div class="flex gap-x-2 items-center justify-center">

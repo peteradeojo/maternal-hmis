@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\Department;
 use App\Enums\Status;
+use App\Http\Controllers\LabController;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
@@ -143,17 +145,21 @@ class Visit extends Model implements OperationalEvent
     {
         static::created(function (Self $visit) {
             if ($visit->visit_type == AncVisit::class) {
-                $test = Product::where('name', 'like',  '%ROUTINE ANTENATAL %')->first();
-                if (!$test) {
+                $tests = Product::whereIn('name', LabController::$ancFollowupTests)->get();
+                if ($tests->count() <= 0) {
                     return;
                 }
 
-                $visit->tests()->create([
-                    'name' => $test->name,
-                    'describable_type' => $test::class,
-                    'describable_id' => $test->id,
-                    'patient_id' => $visit->patient->id,
-                ]);
+                foreach ($tests as $test) {
+                    $visit->tests()->create([
+                        'name' => $test->name,
+                        'describable_type' => $test::class,
+                        'describable_id' => $test->id,
+                        'patient_id' => $visit->patient->id,
+                    ]);
+                }
+
+                notifyDepartment(Department::LAB->value, "Antenatal visit started for {$visit->patient->name}", ['timeout' => 10000]);
             }
         });
     }
