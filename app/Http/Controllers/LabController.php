@@ -254,12 +254,6 @@ class LabController extends Controller
             'status' => 'integer|nullable',
         ]);
 
-        $results = array_map(function ($res) {
-            return [
-                'description' => ''
-            ];
-        }, $request->input('results'));
-
         $test->results = $request->input('results');
         $test->status = $request->input('status'); // == true ? Status::completed->value : Status::pending->value;
         $test->tested_by = auth()->user()->id;

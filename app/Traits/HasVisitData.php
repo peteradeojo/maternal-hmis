@@ -76,14 +76,14 @@ trait HasVisitData
     public function getTestResult($name) {
         $test = $this->tests->where('name', $name)->first();
         if (empty($test) || empty($test->results)) {
-            return '';
+            return null;
         }
 
         return $test->results[0]->result;
     }
 
     public function getTestResults($name, $key = null) {
-        $test = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name))->first();
+        $test = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name))->where('result', '!=', null)->first();
 
         if (!$test) return "Not requested.";
 

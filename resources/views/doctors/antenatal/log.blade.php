@@ -28,7 +28,7 @@
         <div class="grid gap-y-2">
             <p class="font-semibold pt-2 text-lg">Tests</p>
             <p><b>PCV:
-                    {{ $visit->visit->getTestResult('PCV') ?? ($visit->first_visit ? $visit->visit->profile->getTestResult('PCV') : 'No result') }}
+                    {{ $visit->visit->getTestResults('PCV', 'PCV') ?? ($visit->first_visit ? $visit->visit->profile->getTestResult('PCV', 'PCV') : 'No result') }}
                 </b></p>
             <p><b>Urinalysis: </b></p>
         </div>
