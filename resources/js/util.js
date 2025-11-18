@@ -14,28 +14,28 @@ window.initTab = function (el) {
         i > 0 && e.classList.add("hidden");
     });
 
-    const listener = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        tabContentList.forEach((elj) => elj.classList.add("hidden"));
+    const listener = (i) => {
+        return (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            tabContentList.forEach((elj) => elj.classList.add("hidden"));
 
-        tabList?.forEach((eli, j) => {
-            eli.classList.add("default-tab");
-            eli.classList.remove("active-tab");
-            eli.setAttribute("aria-current", "page");
-        });
+            tabList?.forEach((eli, j) => {
+                eli.classList.add("default-tab");
+                eli.classList.remove("active-tab");
+                eli.setAttribute("aria-current", "page");
+            });
 
-        tabList[i]?.classList.remove("default-tab");
-        tabList[i]?.classList.add("active-tab");
+            tabList[i]?.classList.remove("default-tab");
+            tabList[i]?.classList.add("active-tab");
 
-        tabContentList[i]?.classList.remove("hidden");
+            tabContentList[i]?.classList.remove("hidden");
+        };
     };
 
     tabList?.forEach((element, i) => {
-        element.addEventListener("click", listener);
+        element.addEventListener("click", listener(i));
     });
-
-    return [el, listener];
 }
 
 window.asyncForm = (form, route, callback = (e, data) => { }) => {

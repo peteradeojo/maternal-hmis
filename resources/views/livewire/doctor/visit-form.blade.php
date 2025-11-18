@@ -66,7 +66,8 @@
                 @include('components.tabs', [
                     'options' =>
                         $visit->type == 'Antenatal'
-                            ? [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
+                            ? ['First Visit' ,'Follow Up', 'Medical Records']
+                            // ? [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
                             : ['Medical Records'],
                 ])
 
@@ -76,15 +77,15 @@
 
             <div id="actions" class="p-2">
                 @if ($visit->type == 'Antenatal')
-                    @if ($visit->first_visit)
-                        <div class="tab">
-                            <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
-                        </div>
+                <div class="tab">
+                    <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
+                </div>
+                <div class="tab">
+                    @livewire('doctor.anc-visit', ['visit' => $visit->visit])
+                </div>
+                    {{-- @if ($visit->first_visit)
                     @else
-                        <div class="tab">
-                            @livewire('doctor.anc-visit', ['visit' => $visit->visit])
-                        </div>
-                    @endif
+                    @endif --}}
                 @endif
 
                 <div class="tab">
@@ -178,7 +179,7 @@
 
 @script
     <script>
-        let [tab_, listener] = initTab(document.querySelector('#actions-tab'));
+        initTab(document.querySelector('#actions-tab'));
 
         asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
             const {
@@ -220,11 +221,6 @@
                     })
                 })
             });
-
-            $wire.on('$refresh', (e) => {
-                console.log(e);
-                initTab(document.querySelector("#actions-tab"));
-            })
         });
     </script>
 @endscript
