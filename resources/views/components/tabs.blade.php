@@ -19,7 +19,8 @@
         <div class="border-b border-gray-300">
             <nav class="-mb-px flex gap-6" aria-label="Tabs">
                 @foreach ($options ?? [] as $i => $option)
-                    @if ($i == 0)
+                    @if ($i === (@$active ?? 0))
+                        {{-- @dump($option) --}}
                         <a href="#" class="shrink-0 border-b-2 px-1 py-2 text-sm font-medium active-tab"
                             aria-current="page">
                             {{ $option }}
@@ -30,7 +31,6 @@
                         </a>
                     @endif
                 @endforeach
-
             </nav>
         </div>
     </div>

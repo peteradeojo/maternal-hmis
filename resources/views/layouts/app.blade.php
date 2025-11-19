@@ -113,7 +113,7 @@
             <h2 class="text-lg font-semibold modal-title" id="global-modal-title">Modal Title</h2>
             <button id="closeGlobalModal" class="text-gray-600">&times;</button>
         </div>
-        <div class="px-4 pt-2 h-fit modal-body" id="global-modal-content">
+        <div class="px-4 pt-2 h-fit modal-body container" id="global-modal-content">
             <p>Modal content goes here.</p>
         </div>
     </div>

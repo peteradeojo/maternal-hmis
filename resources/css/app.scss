@@ -86,14 +86,6 @@
         }
     }
 
-    .active-tab {
-        @apply border-sky-500 text-sky-600;
-    }
-
-    .default-tab {
-        @apply border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700;
-    }
-
     .card {
         @apply px-1 py-2 mb-4;
     }
@@ -132,6 +124,7 @@
     @import "components/forms";
     @import "components/buttons";
     @import "components/modals";
+    @import "components/_tabs";
     // @import "components/spacings";
 
     .app-notification {

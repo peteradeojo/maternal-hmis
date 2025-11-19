@@ -21,7 +21,7 @@
             </h2>
             <button @click="open = false" class="text-gray-600 text-2xl">&times;</button>
         </div>
-        <div class="px-4 py-8" id="modal-body-{{ $id }}">
+        <div class="px-4 pt-4 pb-8 container" id="modal-body-{{ $id }}">
             {{ $slot }}
         </div>
     </div>

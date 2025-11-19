@@ -9,7 +9,12 @@
 
     <div class="bg-white p-3">
         <div class="pb-3">
-            <x-patient-profile :patient="$data->patient" />
+            <x-patient-profile :patient="$data->patient">
+                <div class="grid grid-cols-2">
+                    <p><b>Age: </b> {{ floor($data->patient->dob?->diffInYears()) }} years</p>
+                    <p><b>Ward: </b> {{ $data->ward?->name }}</p>
+                </div>
+            </x-patient-profile>
         </div>
         <div class="p-3">
             <table class="table">
@@ -78,21 +83,11 @@
             </table>
 
             <button class="review-btn btn my-2 bg-blue-400 text-white">Review</button>
-            {{-- <x-overlay-modal id="review-note" title="Review Note">
-                <x-patient-profile :patient="$data->patient" />
-
-                    <form action="" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label>Add Note</label>
-                            <textarea name="note" rows="10" class="form-control"></textarea>
-                        </div>
-                    </form>
-            </x-overlay-modal> --}}
         </div>
 
         <div class="p-3">
-            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart']">
+            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart', 'Operation Notes']" :active="1">
+                {{-- Vitals --}}
                 <div class="tab p-2">
                     <p class="text-lg font-semibold">Vitals</p>
 
@@ -112,7 +107,8 @@
                             @forelse ($data->svitals as $v)
                                 <tr>
                                     <td></td>
-                                    <td>{{ ($v->recorded_date ?? $v->created_at)?->format('Y-m-d h:i A') }}</td>
+                                    <td>{{ $v->recorded_date ? $v->recorded_date->format('Y-m-d h:i A') : $v->created_at->format('Y-m-d h:i A') }}
+                                    </td>
                                     <td>{{ $v->temperature }}</td>
                                     <td>{{ $v->blood_pressure }}</td>
                                     <td>{{ $v->pulse }}</td>
@@ -159,9 +155,95 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Operation note --}}
+                <div class="tab p-2">
+                    <button @click="$dispatch('open-op-note-form')" class="btn bg-green-500 text-white">Create Operation
+                        note.</button>
+
+                    <div class="py-2 grid gap-y-2">
+                        @forelse ($data->operation_notes as $opnote)
+                            <div data-id="{{ $opnote->id }}" class="p-2 border rounded cursor-pointer opnote">
+                                <p><b>Procedure:</b> {{ $opnote->procedure }}</p>
+                                <p><b>Surgeons:</b> {{ $opnote->surgeons }}</p>
+                                <p><small><b>Date: </b>{{ $opnote->created_at->format('Y-m-d h:i A') }}</small></p>
+                            </div>
+                        @empty
+                            <p>No operation note created.</p>
+                        @endforelse
+                    </div>
+                </div>
             </x-tabs_v2>
         </div>
     </div>
+
+    <x-overlay-modal id="op-note-form" title="New Operation Note">
+        <form id="op-note" method="post">
+            <div class="grid gap-x-2 grid-cols-2">
+                <div class="form-group">
+                    <label>Unit</label>
+                    <input type="text" name="unit" id="" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Consultant</label>
+                    <input type="text" name="consultant" value="{{ auth()->user()->name }}" id=""
+                        class="form-control">
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-x-2 mt-5">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="operation_date" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Surgeon(s)</label>
+                    <input type="text" name="surgeons" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Assistant(s)</label>
+                    <input type="text" name="assistants" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Scrub Nurse</label>
+                    <input type="text" name="scrub_nurse" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Circulating Nurse</label>
+                    <input type="text" name="circulating_nurse" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Indications for Operation</label>
+                    <textarea name="indication" required class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Anaesthesist(s)</label>
+                    <input type="text" name="anaesthesists" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Type of Anaesthesia</label>
+                    <input type="text" name="anaesthesia_type" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Incision</label>
+                <input type="text" name="incision" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Findings</label>
+                <textarea name="findings" rows="5" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Procedure</label>
+                <textarea name="procedure" rows="15" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-blue-400 text-white">Submit</button>
+            </div>
+        </form>
+    </x-overlay-modal>
 @endsection
 
 @push('scripts')
@@ -172,12 +254,40 @@
             $(document).on('click', '.review-btn', (e) => {
                 useGlobalModal((a) => {
                     a.find(MODAL_TITLE).text("Review")
-
-                    axios.get("{{route('doctor.admissions.review', $data)}}").then((res) => {
+                    axios.get("{{ route('doctor.admissions.review', $data) }}").then((res) => {
                         a.find(MODAL_BODY).html(res.data);
                     }).catch((err) => {
                         a.find(MODAL_BODY).html(err.response.data);
                     });
+                });
+            });
+
+            asyncForm("#op-note", "{{ route('api.doctor.save-op-note', $data) }}", (e, data) => {
+                // console.log(data);
+                window.location.reload()
+            });
+
+            $(document).on('click', '.opnote', (e) => {
+                const {
+                    id
+                } = $(e.currentTarget).data();
+
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text('Operation Note');
+                    a.find(MODAL_BODY).html(`@include('components.spinner')`);
+                    axios.get("{{ route('doctor.admission.op-note', ':op') }}".replace(':op', id))
+                        .then((res) => {
+                            a.find(MODAL_BODY).html(res.data);
+                        })
+                        .catch(err => {
+                            displayNotification({
+                                message: "An error occurred",
+                                bg: ['bg-red-500', 'text-white'],
+                                options: {
+                                    mode: 'in-app',
+                                }
+                            })
+                        });
                 });
             });
         });

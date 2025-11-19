@@ -49,6 +49,13 @@ window.asyncForm = (form, route, callback = (e, data) => { }) => {
             callback(e.currentTarget, res);
         }).catch((err) => {
             console.error(err.message);
+            displayNotification({
+                message: err.message,
+                bg: ['bg-red-500', 'text-white'],
+                options: {
+                    mode: ['in-app']
+                },
+            });
         });
     });
 }
@@ -77,12 +84,14 @@ $('#closeGlobalModal, #global-overlay').on('click', function () {
  * @param {{message: string; bg: string; [key: string]: any}} data
  */
 window.displayNotification = function (data) {
-    if (Notification.permission === 'granted' && ['both', 'desktop'].includes(data.options.mode)) {
+    const { options, message, bg, meta } = data;
+
+    if (Notification.permission === 'granted' && ['both', 'desktop'].includes(options.mode)) {
         const n = new Notification(data.title || 'New Notification', {
-            body: data.message,
+            body: message,
             icon: '/favicon.ico',
-            requireInteraction: (data.options?.priority || 0) >= 3,
-            data: data.meta,
+            requireInteraction: (options?.priority || 0) >= 3,
+            data: meta,
         });
 
         n.addEventListener('click', function (e) {
@@ -100,27 +109,27 @@ window.displayNotification = function (data) {
         setTimeout(() => n.close(), 30000);
     }
 
-    if (!['both', 'in-app'].includes(data.options.mode)) {
+    if (!['both', 'in-app'].includes(options.mode)) {
         return;
     }
 
     const el = document.createElement(`div`);
-    el.textContent = data.message;
-    el.classList.add(...(data.bg || ['bg-green-400', 'text-white']), 'app-notification');
+    el.textContent = message;
+    el.classList.add(...(bg || ['bg-green-400', 'text-white']), 'app-notification');
 
     document.querySelector("#notifications").appendChild(el);
 
-    if (data.options.close_modal) {
+    if (options.close_modal) {
         removeGlobalModal();
     }
 
     setTimeout(() => {
         el.classList.add("fade-out");
-    }, Math.max(data.options.timeout, 5000));
+    }, Math.max(options.timeout, 5000));
 
     setTimeout(() => {
         el.remove();
-    }, Math.max(data.options.timeout, 5300));
+    }, Math.max(options.timeout, 5300));
 }
 
 window.notifyError = function (message) {

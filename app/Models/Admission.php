@@ -21,7 +21,8 @@ class Admission extends Model implements OperationalEvent
 
     protected $appends = ['in_ward'];
 
-    public function visit() {
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id');
     }
 
@@ -37,7 +38,7 @@ class Admission extends Model implements OperationalEvent
 
     public function inWard(): Attribute
     {
-        return Attribute::make(get: fn () => isset($this->ward_id));
+        return Attribute::make(get: fn() => isset($this->ward_id));
     }
 
     public function admittable()
@@ -62,5 +63,15 @@ class Admission extends Model implements OperationalEvent
     public function plan()
     {
         return $this->hasOne(AdmissionPlan::class)->latest();
+    }
+
+    public function reviews()
+    {
+        return $this->notes();
+    }
+
+    public function operation_notes()
+    {
+        return $this->hasMany(OperationNote::class, 'admission_id')->latest();
     }
 }

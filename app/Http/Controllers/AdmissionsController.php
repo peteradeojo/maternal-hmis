@@ -7,6 +7,7 @@ use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionTreatments;
+use App\Models\OperationNote;
 use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
@@ -258,7 +259,52 @@ class AdmissionsController extends Controller
         return redirect()->route('nurses.admissions.get');
     }
 
-    public function reviewNote(Request $request, Admission $admission) {
+    public function reviewNote(Request $request, Admission $admission)
+    {
         return view('doctors.admissions.review', compact('admission'));
+    }
+
+    public function saveOperationNote(Request $request, Admission $admission)
+    {
+        $admission->load(['patient']);
+        $data = $request->validate([
+            'unit' => 'required|string',
+            'consultant' => 'required|string',
+            'operation_date' => 'required|string',
+            'surgeons' => 'required|string',
+            'assistants' => 'required|string',
+            'scrub_nurse' => 'required|string',
+            'circulating_nurse' => 'nullable|string',
+            'anaesthesists' => 'nullable|string',
+            'anaesthesia_type' => 'nullable|string',
+            'indication' => 'required|string',
+            'incision' => 'nullable|string',
+            'findings' => 'required|string',
+            'procedure' => 'required|string',
+        ]);
+
+        try {
+            //code...
+            $note = OperationNote::create([
+                'admission_id' => $admission->id,
+                'patient_id' => $admission->patient->id,
+                'user_id' => auth()->user()->id,
+                ...$data,
+            ]);
+            return response()->json(['op_note' => $note, 'message' => 'Success']);
+        } catch (\Throwable $th) {
+            report($th);
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function saveDeliveryNote(Request $request, Admission $admission) {}
+
+    public function getOpNote(Request $request, OperationNote $opnote)
+    {
+        $opnote->load(['user', 'patient']);
+        return view('doctors.admissions.opnote', compact('opnote'));
     }
 }

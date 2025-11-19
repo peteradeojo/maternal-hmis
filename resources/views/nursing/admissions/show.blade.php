@@ -15,7 +15,6 @@
                     'options' => ['Admission Plan', 'Vitals Chart', 'Operation Note', 'Discharge'],
                 ])
 
-
                 <div id="list">
                     {{-- Plan --}}
                     <div id="admission-plan" class="tab p-1">
