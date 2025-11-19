@@ -168,6 +168,8 @@
                         </div>
                     </div>
 
+                    <div class="tab p-1"></div>
+
                     <div class="tab p-1">
                         <h2>Discharge</h2>
 
