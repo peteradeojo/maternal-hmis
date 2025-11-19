@@ -91,7 +91,7 @@
                 <div class="tab p-2">
                     <p class="text-lg font-semibold">Vitals</p>
 
-                    <table class="table">
+                    {{-- <table class="table">
                         <thead>
                             <tr>
                                 <th></th>
@@ -125,7 +125,9 @@
                                 </tr>
                             @endforelse
                         </tbody>
-                    </table>
+                    </table> --}}
+
+                    <livewire:nurses.vitals :event="$data" :form=false />
                 </div>
 
                 {{-- Treatments --}}

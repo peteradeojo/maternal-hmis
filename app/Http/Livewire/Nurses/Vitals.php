@@ -12,6 +12,7 @@ use Livewire\Component;
 class Vitals extends Component
 {
     public $evt;
+    public $form = true;
 
     public VitalsForm $vitals;
 
@@ -30,7 +31,6 @@ class Vitals extends Component
         $data = $this->vitals->validate();
 
         $data = array_filter($data);
-
         if (count($data) < 1) return;
 
         ModelsVitals::create([
@@ -45,8 +45,7 @@ class Vitals extends Component
         $this->dispatch('closeModal');
 
         $this->vitals->reset();
-
-        $this->vitals->resetErrorBag(['recorded_date']);
+        $this->vitals->resetErrorBag('recorded_date');
     }
 
     public function deleteVitals($id)
