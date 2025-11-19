@@ -162,7 +162,6 @@ window.notifyAction = function (message) {
     })
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
     document
         .querySelectorAll(".foldable .foldable-header")

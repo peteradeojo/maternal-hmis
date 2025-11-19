@@ -12,7 +12,14 @@
         <div class="body py">
             <div id="actions-tab" data-tablist="#list">
                 @include('components.tabs', [
-                    'options' => ['Admission Plan', 'Vitals Chart', 'Operation Note', 'Discharge'],
+                    'options' => [
+                        'Admission Plan',
+                        'Vitals Chart',
+                        'Reviews',
+                        'Operation Notes',
+                        'Delivery Note',
+                        'Discharge',
+                    ],
                 ])
 
                 <div id="list">
@@ -130,7 +137,35 @@
                     </div>
 
                     <div class="tab p-1">
-                        <h2 class="header">Operation Note</h2>
+                        <h2 class="header">Reviews</h2>
+
+                        <div class="grid gap-y-2">
+                            @forelse ($admission->reviews as $review)
+                                <div class="p-2 bg-gray-50">
+                                    <p>{{ $review->note }}</p>
+                                    <p><small><b>Dr. {{ $review->consultant->name }}</b></small></p>
+                                    <p><small><b>Date:</b> {{ $review->created_at->format('Y-m-d h:i A') }}</small></p>
+                                </div>
+                            @empty
+                                <p>No reviews posted for this admission.</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="tab p-1">
+                        <h2 class="header">Operation Notes</h2>
+
+                        <div class="grid gap-y-2">
+                            @forelse ($admission->operation_notes as $note)
+                                <div data-id="{{ $note->id }}" class="p-2 rounded border hover:bg-gray-100 opnote">
+                                    <p><b>Procedure: </b> {{ $note->procedure }}</p>
+                                    <p><b>Operation Date: </b> {{ $note->operation_date }}</p>
+                                    <p class="text-sm"><b>Date: </b> {{ $note->created_at->format('Y-m-d h:i A') }}</p>
+                                </div>
+                            @empty
+                                <p>No operation notes have been added.</p>
+                            @endforelse
+                        </div>
                     </div>
 
                     <div class="tab p-1">
@@ -170,6 +205,22 @@
     <script>
         $(document).ready(function() {
             initTab(document.querySelector('#actions-tab'));
+
+            $(document).on('click', '.opnote', (e) => {
+                const {
+                    id
+                } = $(e.currentTarget).data();
+
+                axios.get("{{ route('doctor.admission.op-note', ':id') }}".replace(':id', id)).then((
+                    res) => {
+                    useGlobalModal((a) => {
+                        a.find(MODAL_TITLE).text('Operation Note');
+                        a.find(MODAL_BODY).html(res.data);
+                    });
+                }).catch((err) => {
+                    notifyError(err.message);
+                })
+            });
         });
     </script>
 @endpush
