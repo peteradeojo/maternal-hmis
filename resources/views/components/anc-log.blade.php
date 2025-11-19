@@ -86,6 +86,7 @@
         </thead>
         <tbody>
             @foreach ($profile->ancVisits as $v)
+                @continue(empty($v->visit))
                 <tr>
                     <td class="text-center">
                         <button data-id="{{ $v->id }}" class="btn expand-i">
