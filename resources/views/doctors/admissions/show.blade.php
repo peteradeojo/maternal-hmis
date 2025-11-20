@@ -142,12 +142,12 @@
                 <div class="tab p-2" x-data="{ editing: false, data: @js($data) }">
                     <h2 class="header">Delivery Note</h2>
 
-                    <template x-if="data.delivery_note != undefined">
+                    <template x-cloak x-if="data.delivery_note != undefined">
                         <div class="grid items-center gap-y-2">
                             <div class="border p-2 w-full">
-                                <p>{{ $data->delivery_note->note }}</p>
-                                <p><b>Taken: </b> {{ $data->delivery_note->consultant?->name }}</p>
-                                <p>{{ $data->delivery_note->created_at->format('Y-m-d h:i A') }}</p>
+                                <p>{{ $data->delivery_note?->note }}</p>
+                                <p><b>Taken: </b> {{ $data->delivery_note?->consultant?->name }}</p>
+                                <p>{{ $data->delivery_note?->created_at->format('Y-m-d h:i A') }}</p>
                             </div>
 
                             <button @click.stop="editing = true" class="btn bg-red-400 text-white btn-sm">Edit</button>
