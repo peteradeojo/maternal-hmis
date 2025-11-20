@@ -61,7 +61,6 @@ class LabController extends Controller
     // public function test(Request $request, $visit)
     // {
     //     if ($request->method() !== 'POST') {
-    //         dd($visit);
     //         return view('lab.take-test', ['documentation' => $test->testable]);
     //     }
 

@@ -2,7 +2,6 @@
 @section('title', 'Portal')
 
 @section('content')
-    {{-- @dd($admission) --}}
     <div class="card py px">
         <div class="header">
             <x-patient-profile :patient="$admission->patient">

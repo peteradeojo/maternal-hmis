@@ -82,8 +82,6 @@ class AdmissionsController extends Controller
         if (!$request->isMethod('POST')) {
             return view('doctors.admissions.edit', compact('admission'));
         }
-
-        dd($request->all());
     }
 
     public function showPlan(Request $request, Admission $admission)

@@ -10,7 +10,6 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
-        // dd(Visit::with(['patient'])->get());
         return view('records.history');
     }
 

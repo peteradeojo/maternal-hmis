@@ -149,8 +149,6 @@ class PatientsController extends Controller
             'next_visit' => 'nullable|date',
         ]);
 
-        // dd($request->all());
-
         $user = $request->user();
         DB::beginTransaction();
 
