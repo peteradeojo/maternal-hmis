@@ -17,7 +17,7 @@ class Review extends Component
     }
 
     public function save() {
-        $this->admission->notes()->create([
+        $this->admission->reviews()->create([
             'note' => $this->note,
             'consultant_id' => auth()->user()->id,
             'patient_id' => $this->admission->patient_id,
@@ -28,7 +28,7 @@ class Review extends Component
     }
 
     public function deleteNote($id) {
-        $this->admission->notes()->where('id', $id)->delete();
+        $this->admission->reviews()->where('id', $id)->delete();
         $this->dispatch('$refresh');
     }
 }

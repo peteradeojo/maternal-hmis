@@ -68,7 +68,11 @@ class Admission extends Model implements OperationalEvent
 
     public function reviews()
     {
-        return $this->notes();
+        $query = $this->notes()->where(function ($q) {
+            $q->where('code', '=', NoteCodes::AdmissionReview)->orWhereNull('code');
+        });
+
+        return $query;
     }
 
     public function operation_notes()

@@ -135,6 +135,7 @@
                         </table> --}}
                     </div>
 
+                    {{-- Reviews --}}
                     <div class="tab p-1">
                         <h2 class="header">Reviews</h2>
 

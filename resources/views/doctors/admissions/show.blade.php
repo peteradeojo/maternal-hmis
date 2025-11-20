@@ -3,10 +3,6 @@
 @section('content')
     <x-back-link />
 
-    <x-overlay-modal id="tests">
-
-    </x-overlay-modal>
-
     <div class="bg-white p-3">
         <div class="pb-3">
             <x-patient-profile :patient="$data->patient">
@@ -139,6 +135,7 @@
                     </div>
                 </div>
 
+                {{-- Delivery note --}}
                 <div class="tab p-2" x-data="{ editing: false, data: @js($data) }">
                     <h2 class="header">Delivery Note</h2>
 
