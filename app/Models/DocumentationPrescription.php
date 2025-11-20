@@ -44,9 +44,4 @@ class DocumentationPrescription extends Model
             get: fn($value, $attributes) => EventLookup::tryFrom($attributes['event_type'])?->name ?? 'unknown_event', //"{$attributes['event_type']} #{$attributes['event_id']}"
         );
     }
-
-    protected static function booted()
-    {
-        static::created(function (Self $self) {});
-    }
 }

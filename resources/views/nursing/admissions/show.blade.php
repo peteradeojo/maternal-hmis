@@ -167,7 +167,22 @@
                         </div>
                     </div>
 
-                    <div class="tab p-1"></div>
+                    {{-- Delivery note --}}
+                    <div class="tab p-2">
+                        <h2 class="header">Delivery note</h2>
+
+                        @if ($admission->patient->anc_profile)
+                            @unless ($admission->delivery_note)
+                                <livewire:admission.delivery-note :admission="$admission" />
+                            @else
+                                <div class="border p-2">
+                                    <p>{{ $admission->delivery_note->note }}</p>
+                                    <p><b>Taken: </b> {{ $admission->delivery_note->consultant?->name }}</p>
+                                    <p>{{ $admission->delivery_note->created_at->format('Y-m-d h:i A') }}</p>
+                                </div>
+                            @endunless
+                        @endif
+                    </div>
 
                     <div class="tab p-1">
                         <h2>Discharge</h2>

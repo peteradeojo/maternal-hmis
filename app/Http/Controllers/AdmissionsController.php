@@ -64,7 +64,7 @@ class AdmissionsController extends Controller
             }
         }
 
-        $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'tests', 'plan.treatments']);
+        $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'tests', 'plan.treatments', 'delivery_note']);
 
         if (request()->user()->department_id == Department::DOC->value) {
             return view('doctors.admissions.show', ['data' => $admission]);

@@ -25,7 +25,8 @@
                                 wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }}</td>
                                 <td>
-                                    <input type="text" autofocus wire:model="requestForm.dosage" name="dosage"
+                                    <input type="text" autofocus name="dosage" wire:model="requestForm.dosage"
+                                    wire:keyup.enter.prevent="saveRequest" name="dosage"
                                         value="1" />
                                     <div>
                                         @error('requestForm.dosage')
@@ -50,8 +51,10 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" wire:model="requestForm.duration" name="duration"
-                                        value="1" autocomplete="off" />
+                                    <input type="number"
+                                    wire:model="requestForm.duration" name="duration"
+                                    wire:keyup.enter.prevent="saveRequest"
+                                        value="1" />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -99,7 +102,7 @@
                                 </td>
                                 <td>
                                     <input type="number" wire:model="requestForm.duration" name="duration"
-                                        value="1" autocomplete="off" />
+                                        value="1" />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NoteCodes;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
@@ -73,5 +74,9 @@ class Admission extends Model implements OperationalEvent
     public function operation_notes()
     {
         return $this->hasMany(OperationNote::class, 'admission_id')->latest();
+    }
+
+    public function delivery_note() {
+        return $this->morphOne(ConsultationNote::class, 'visit')->latest()->where('code', NoteCodes::Delivery);
     }
 }

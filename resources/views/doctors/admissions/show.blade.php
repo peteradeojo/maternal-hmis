@@ -86,47 +86,10 @@
         </div>
 
         <div class="p-3">
-            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart', 'Operation Notes']" :active="1">
+            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart', 'Operation Notes', 'Delivery Note']" :active="1">
                 {{-- Vitals --}}
                 <div class="tab p-2">
                     <p class="text-lg font-semibold">Vitals</p>
-
-                    {{-- <table class="table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Date</th>
-                                <th>Temperature</th>
-                                <th>Blood pressure</th>
-                                <th>Pulse</th>
-                                <th>Respiration</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($data->svitals as $v)
-                                <tr>
-                                    <td></td>
-                                    <td>{{ $v->recorded_date ? $v->recorded_date->format('Y-m-d h:i A') : $v->created_at->format('Y-m-d h:i A') }}
-                                    </td>
-                                    <td>{{ $v->temperature }}</td>
-                                    <td>{{ $v->blood_pressure }}</td>
-                                    <td>{{ $v->pulse }}</td>
-                                    <td>{{ $v->respiration }}</td>
-                                    <td>
-                                        @if ($v->recorder)
-                                            {{ $v->recorder?->firstname[0] }}. {{ $v->recorder?->lastname }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7">No vitals recorded.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table> --}}
-
                     <livewire:nurses.vitals :event="$data" :form=false />
                 </div>
 
@@ -174,6 +137,31 @@
                             <p>No operation note created.</p>
                         @endforelse
                     </div>
+                </div>
+
+                <div class="tab p-2" x-data="{ editing: false, data: @js($data) }">
+                    <h2 class="header">Delivery Note</h2>
+
+                    <template x-if="data.delivery_note != undefined">
+                        <div class="grid items-center gap-y-2">
+                            <div class="border p-2 w-full">
+                                <p>{{ $data->delivery_note->note }}</p>
+                                <p><b>Taken: </b> {{ $data->delivery_note->consultant?->name }}</p>
+                                <p>{{ $data->delivery_note->created_at->format('Y-m-d h:i A') }}</p>
+                            </div>
+
+                            <button @click.stop="editing = true" class="btn bg-red-400 text-white btn-sm">Edit</button>
+                        </div>
+
+                    </template>
+
+                    <template x-if="editing == true || data.delivery_note == undefined">
+                        <livewire:admission.delivery-note :admission="$data" />
+                    </template>
+                    {{-- @if ($data->delivery_note)
+                    @else
+                        <livewire:admission.delivery-note :admission="$data" />
+                    @endif --}}
                 </div>
             </x-tabs_v2>
         </div>
@@ -265,7 +253,6 @@
             });
 
             asyncForm("#op-note", "{{ route('api.doctor.save-op-note', $data) }}", (e, data) => {
-                // console.log(data);
                 window.location.reload()
             });
 

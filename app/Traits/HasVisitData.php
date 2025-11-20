@@ -24,7 +24,7 @@ trait HasVisitData
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function addPrescription(Patient $patient, $product, mixed $data, OperationalEvent $event)
+    public function addPrescription(Patient $patient, $product, mixed $data)
     {
         if ($product instanceof stdClass) { // product was newly created triggers this behavior
             $product = new Product((array) $product);
