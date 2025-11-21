@@ -36,7 +36,7 @@
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
-    <div class="sticky top-0 w-full z-[1000] sm:hidden">
+    <div class="sticky top-0 w-full z-[50] sm:hidden">
         <div class="px-2 py-4 bg-green-400 flex w-full items-center justify-between">
             <div>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-x-3 hover:text-blue-600">

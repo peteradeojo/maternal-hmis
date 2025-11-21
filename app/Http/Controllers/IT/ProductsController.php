@@ -50,7 +50,6 @@ class ProductsController extends Controller
         $path = $file?->store('products');
 
         if ($path) {
-
             Artisan::queue('app:load-products', [
                 'category' => $category,
                 'path' => storage_path("app/$path"),
@@ -68,5 +67,26 @@ class ProductsController extends Controller
         ]);
 
         return back();
+    }
+
+    public function show(Request $request, Product $product)
+    {
+        if ($request->isMethod('POST')) {
+            $data = $request->validate([
+                'name' => 'required|string',
+                'description' => 'required|string',
+                'product_category_id' => 'required|exists:product_categories,id',
+                'amount' => 'required|numeric',
+                'is_visible' => 'nullable'
+            ]);
+
+            $data['is_visible'] = @$data['is_visible'] == 'on' ? 1 : 0;
+
+            $product->update($data);
+            return redirect()->route('it.products');
+        }
+
+        $categories = ProductCategory::all();
+        return view('it.products.show', compact('product', 'categories'));
     }
 }

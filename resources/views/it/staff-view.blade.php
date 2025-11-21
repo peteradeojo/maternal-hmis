@@ -11,7 +11,6 @@
                 <div class="col-6">
                     <p><strong>Department:</strong> {{ $user->department->name }}</p>
                     <p><strong>Phone:</strong> {{ $user->phone }}</p>
-                    {{-- <p><strong>Email:</strong> {{ $user->email }}</p> --}}
                 </div>
                 <div class="col-6">
                     <p><strong>Created:</strong> {{ $user->created_at->format('Y-m-d') }}</p>
@@ -22,7 +21,16 @@
             <form action="" method="post" class="mt-2">
                 @csrf
                 <div class="form-group">
-                    <input type="password" name="password" required class="form-control" placeholder="Change Password" />
+                    <label>Department</label>
+                    <select name="department_id" class="form-control">
+                        @foreach ($departments as $option)
+                            <option value="{{ $option->id }}" @match($option->id, $user->department_id) selected="true" @endmatch>{{ $option->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="Change Password" />
                 </div>
                 <button type="submit" class="btn btn-blue">Submit</button>
             </form>

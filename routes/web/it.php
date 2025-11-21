@@ -25,6 +25,7 @@ Route::name('it.')->middleware(['department:' . Department::IT->value])->group(f
         Route::get('/', [ProductsController::class, 'index'])->name('products');
         Route::post('/', [ProductsController::class, 'addProducts']);
         Route::get('/get-products', [ProductsController::class, 'fetchProducts'])->middleware(['api', 'auth'])->name('get-products');
+        Route::match(['GET','POST'], '/get-products/{product}', [ProductsController::class, 'show'])->name('show-product');
     });
 
     Route::prefix('/crm')->group(function () {

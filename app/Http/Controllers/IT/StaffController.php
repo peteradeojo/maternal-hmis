@@ -38,18 +38,32 @@ class StaffController extends Controller
         return view('it.staff', compact('users', 'departments'));
     }
 
-    public function show(Request $request, User $user) {
+    public function show(Request $request, User $user)
+    {
         if ($request->method() == 'POST') {
-            $user->password = Hash::make($request->password);
-            $user->save();
+            $request->validate([
+                'department_id' => 'integer|required',
+                'password' => 'nullable|string',
+            ]);
+
+            if ($request->has('password') && !empty($request->password)) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->department_id = $request->input('department_id');
+
+            if ($user->isDirty()) {
+                $user->save();
+            }
 
             return redirect()->route('it.staff.view', $user)->with('success', 'Password updated successfully');
         }
 
-        return view('it.staff-view', compact('user'));
+        $departments = Department::all();
+        return view('it.staff-view', compact('user', 'departments'));
     }
 
-    public function department(Request $request, Department $dep) {
+    public function department(Request $request, Department $dep)
+    {
         $dep->load('members');
         return view('it.show-department', compact('dep'));
     }
