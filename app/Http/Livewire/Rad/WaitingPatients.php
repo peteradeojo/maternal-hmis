@@ -22,10 +22,10 @@ class WaitingPatients extends Component
 
     protected function load()
     {
-        $this->waitlist = Visit::whereHas('visit', function ($query) {
+        $this->waitlist = Visit::with(['patient'])->whereHas('visit', function ($query) {
             $query->whereHas('radios', function ($query) {
                 $query->where('path', null);
-            });
-        })->get();
+            })->latest();
+        })->latest()->get();
     }
 }
