@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Records;
 use App\Enums\Department;
 use App\Models\Bill;
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
 use App\Models\Product;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
@@ -31,36 +32,44 @@ class BillReport extends Component
     {
         $this->visit = $visit;
 
-        $tests = $this->visit->valid_tests->load('describable');
+        $this->drugs = $this->tests = $this->scans = [];
 
-        if ($visit->type == "Antenatal") {
-            $tests = $tests->merge($visit->visit->tests->load('describable'));
-        }
+        $this->loadBillData($this->visit->admission);
+        $this->loadBillData($this->visit->admission?->plan);
+        $this->loadBillData($this->visit->visit);
+        $this->loadBillData($this->visit);
 
-        $this->tests = $tests->map(fn($test) => [
-            'saved' => true,
-            'product' => $test->describable->toArray(),
-            'data' => $test->toArray()
-        ])->toArray();
+        $this->others = [];
+    }
 
-        $drugs = $this->visit->treatments->load('prescriptionable');
-        if ($visit->type == "Antenatal") {
-            $drugs = $drugs->merge($this->visit->visit->treatments->load('prescriptionable'));
-        }
+    public function loadBillData(OperationalEvent $evt) {
+        if (empty($evt)) return;
 
-        $this->drugs = $drugs->map(fn($item) => [
+        $drugs = $evt->treatments;
+        $tests = $evt->valid_tests;
+        $scans = $evt->radios;
+
+        $drugs = $drugs->map(fn($item) => [
             'saved' => true,
             'product' => $item->prescriptionable->toArray(),
             'data' => $item->toArray(),
         ])->toArray();
 
-        $this->scans = $this->visit->imagings->load('describable')->map(fn($item) => [
+        $tests = $tests->map(fn($test) => [
+            'saved' => true,
+            'product' => $test->describable->toArray(),
+            'data' => $test->toArray()
+        ])->toArray();
+
+        $scans = $this->visit->imagings->load('describable')->map(fn($item) => [
             'saved' => true,
             'product' => $item->describable->toArray(),
             'data' => $item->toArray(),
         ])->toArray();
 
-        $this->others = [];
+        $this->drugs = array_merge($this->drugs, $drugs);
+        $this->scans = array_merge($this->scans, $scans);
+        $this->tests = array_merge($this->tests, $tests);
     }
 
     public function render()

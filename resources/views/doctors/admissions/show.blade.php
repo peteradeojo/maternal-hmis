@@ -15,6 +15,10 @@
         <div class="p-3">
             <table class="table">
                 <tbody>
+                    {{-- <tr>
+                        <td></td>
+                        <td>{{ $data->visit->id }}</td>
+                    </tr> --}}
                     <tr>
                         <td>Ward</td>
                         <td>{{ $data->ward?->name ?? 'Unassigned' }}</td>
@@ -77,12 +81,10 @@
                     </tr>
                 </tbody>
             </table>
-
-            <button class="review-btn btn my-2 bg-blue-400 text-white">Review</button>
         </div>
 
         <div class="p-3">
-            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart', 'Operation Notes', 'Delivery Note']" :active="1">
+            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart', 'Continuation notes', 'Operation Notes', 'Delivery Note']" :active="1">
                 {{-- Vitals --}}
                 <div class="tab p-2">
                     <p class="text-lg font-semibold">Vitals</p>
@@ -115,6 +117,26 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Reviews/Continuations --}}
+                <div class="tab p-2">
+                    <div class="flex-center justify-between">
+                        <h2 class="header">Reviews</h2>
+                        <button class="review-btn btn my-2 bg-blue-400 text-white">Review</button>
+                    </div>
+
+                    @forelse ($data->reviews as $note)
+                        <div class="bg-gray-100 p-2">
+                            {{-- <button class="px-1 bg-red-500 text-white float-end"
+                                wire:click="deleteNote({{ $note->id }})">&times;</button> --}}
+                            <p>{{ $note->note }}</p>
+                            <p><b>Attending:</b> {{ $note->consultant?->name }}</p>
+                            <p><small>{{ $note->created_at->format('Y-m-d h:i A') }}</small></p>
+                        </div>
+                    @empty
+                        <div class="bg-gray-200 p-1 text-center">No review notes</div>
+                    @endforelse
                 </div>
 
                 {{-- Operation note --}}

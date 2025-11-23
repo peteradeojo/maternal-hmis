@@ -128,7 +128,7 @@ class Visit extends Model implements OperationalEvent
 
     public function bills()
     {
-        return $this->morphMany(Bill::class, 'billable');
+        return $this->morphMany(Bill::class, 'billable')->latest();
     }
 
     public function admission()
