@@ -25,13 +25,8 @@ class RadiologyController extends Controller
 
     public function getScans(Request $request)
     {
-        // $query = DB::table('patient_imagings', 'pi')->selectRaw("GROUP_CONCAT(pi.name SEPARATOR ',') scans, d.created_at, d.id, p.name")
-        //     ->leftJoin(DB::raw("documentations d"), "d.id", "=", 'pi.documentation_id')
-        //     ->leftJoin(DB::raw("patients p"), "p.id", "=", "d.patient_id")
-        //     ->groupBy('d.created_at', 'd.id');
-
         $visitId = $request->query('patient_id');
-        $query = PatientImaging::query()->with(['patient', 'requester'])->where('path', null);
+        $query = PatientImaging::query()->with(['patient', 'requester'])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) use ($visitId) {
@@ -74,25 +69,11 @@ class RadiologyController extends Controller
 
     public function storeResult(Request $request, PatientImaging $scan)
     {
-        $request->validate([
-            'result_file' => 'nullable|file|mimes:png,jpg,pdf,docx',
-            'comment' => 'nullable|string|required_without:result_file',
-        ]);
-
-        $file = $request->file('result_file');
-
-        if ($file) {
-            $filepath = $file->store('radiology');
-            $scan->path = $filepath;
-
-            dispatch(new UploadPatientScans($scan))->delay(30);
-        }
-
-        $scan->comment ??= $request->comment;
-        $scan->uploaded_by = auth()->user()->id;
+        $scan->results = $request->except('_token');
+        $scan->uploaded_by = $request->user()->id;
         $scan->save();
 
-        return back();
+        return response()->json($scan->refresh());
     }
 
     public function scanResult(Request $request, PatientImaging $scan)

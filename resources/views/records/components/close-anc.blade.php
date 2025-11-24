@@ -9,12 +9,12 @@
             @csrf
 
             <div class="form-group">
-                <label>Patient: </label>
+                <label>Patient </label>
                 <input type="text" class="form-control" readonly="readonly" value="{{ $profile->patient->name }}" />
             </div>
             <div class="form-group">
-                <label>Date closed:</label>
-                <input type="datetime-local" name="closed_on" class="form-control" required />
+                <label>Date closed</label>
+                <x-input-datetime name="closed_on" class="form-control" required />
             </div>
             <div class="form-group">
                 <label>Reason</label>

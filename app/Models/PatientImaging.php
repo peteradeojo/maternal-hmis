@@ -5,12 +5,36 @@ namespace App\Models;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PatientImaging extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'patient_id',
+        'documentation_id',
+        'name',
+        'type',
+        'path',
+        'comment',
+        'status',
+        'requested_by',
+        'uploaded_by',
+        'uploaded_at',
+        'created_at',
+        'updated_at',
+        'documentable_type',
+        'documentable_id',
+        'describable_type',
+        'describable_id',
+        'results',
+        'deleted_at',
+    ];
+
+    protected $casts = [
+        'results' => 'object',
+    ];
 
     public function patient()
     {

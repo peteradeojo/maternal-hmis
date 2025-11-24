@@ -6,6 +6,8 @@ use App\Enums\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
+const T1 = 0.3;
+
 function departmentRoutes()
 {
     $base = [

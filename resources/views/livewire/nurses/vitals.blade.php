@@ -6,7 +6,8 @@
             <div class="grid gap-x-3 grid-cols-3">
                 <div class="form-group">
                     <label>Date *</label>
-                    <input type="datetime-local" x-model="vitals.recorded_date" required class="form-control" />
+
+                    <x-input-datetime x-model="vitals.recorded_date" class="form-control" required />
                     @error('vitals.recorded_date')
                         <p class="text-red-500">{{ $message }}</p>
                     @enderror

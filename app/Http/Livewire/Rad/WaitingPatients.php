@@ -24,8 +24,8 @@ class WaitingPatients extends Component
     {
         $this->waitlist = Visit::with(['patient'])->whereHas('visit', function ($query) {
             $query->whereHas('radios', function ($query) {
-                $query->where('path', null);
-            })->latest();
+                $query->where('results', null);
+            });
         })->latest()->get();
     }
 }
