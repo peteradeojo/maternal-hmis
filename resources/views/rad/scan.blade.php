@@ -5,7 +5,6 @@
         <x-patient-profile :patient="$doc->patient" />
         <hr class="py-2">
 
-        {{-- @dump($doc->results) --}}
         <div class="body">
             <p><b>Requested by: </b> {{ $doc->requester->name }} </p>
             <p><b>Time: </b> {{ $doc->created_at->format('Y-m-d h:i A') }}</p>
@@ -13,10 +12,9 @@
 
             <div class="py-3"></div>
 
-            <form id="scan-form" x-data="{ form: 'obstetric' }">
-                <select class="form-control float-end sm:w-1/3" name="report_type" @change="form = $event.target.value">
-                    <option selected="selected" value="obstetric">Obstetric Report</option>
-                    {{-- <option value="pelvic">Pelvic Report</option> --}}
+            <form id="scan-form" x-data="{ form: @js(@$doc->results?->report_type ?? 'obstetric') }">
+                <select x-model="form" class="form-control float-end sm:w-1/3" name="report_type">
+                    <option value="obstetric">Obstetric Report</option>
                     <option value="general">General</option>
                     <option value="echo">Echocardiographic</option>
                 </select>
@@ -24,19 +22,19 @@
                 @csrf
                 <div class="form-group sm:w-1/3">
                     <label>Date</label>
-                    <x-input-datetime class="form-control" value="{{ $doc->results?->date }}" name="date" />
+                    <x-input-datetime class="form-control" value="{{ @$doc->results?->date }}" name="date" />
                 </div>
                 <div class="form-group sm:w-1/3">
                     <label>Clinician / Referred by</label>
                     <x-input-text class="form-control" name="clinician"
-                        value="{{ $doc->results?->clinician ?? $doc->requester->name }}" />
+                        value="{{ @$doc->results?->clinician ?? $doc->requester->name }}" />
                 </div>
 
                 <p class="font-semibold text-lg">Personal Information</p>
                 <div class="form-group sm:w-1/4">
                     <label>Age</label>
                     <x-input-number name="age" class="form-control"
-                        value="{{ $doc->results?->age ?? (int) $doc->patient->dob?->diffInYears() }}" />
+                        value="{{ @$doc->results?->age ?? (int) $doc->patient->dob?->diffInYears() }}" />
                 </div>
 
                 <template x-if="form != 'echo'">
@@ -48,11 +46,11 @@
                         </div>
                         <div class="form-group">
                             <label>Gravidity</label>
-                            <x-input-text name="gravidity" value="{{ $doc->results?->gravidity }}" class="form-control" />
+                            <x-input-text name="gravidity" value="{{ @$doc->results?->gravidity }}" class="form-control" />
                         </div>
                         <div class="form-group">
                             <label>Parity</label>
-                            <x-input-text name="parity" class="form-control" value="{{ $doc->results?->parity }}" />
+                            <x-input-text name="parity" class="form-control" value="{{ @$doc->results?->parity }}" />
                         </div>
                     </div>
                 </template>
@@ -69,15 +67,15 @@
                             </div>
                             <div class="form-group">
                                 <label>Weight (kg)</label>
-                                <x-input-number name="weight" class="form-control" step="0.1" />
+                                <x-input-number name="weight" value="{{ @$doc->results?->weight }}" class="form-control"
+                                    step="0.1" />
                             </div>
                             <div class="form-group">
                                 <label>Height (m)</label>
-                                <x-input-number name="height" class="form-control" step="0.1" />
+                                <x-input-number name="height" value="{{ @$doc->results?->height }}" class="form-control"
+                                    step="0.1" />
                             </div>
                         </div>
-
-                        <h2 class="header">Echocardiogram Report</h2>
                     </div>
                 </template>
 
@@ -90,104 +88,97 @@
                                 <div class="form-group">
                                     <label>Number of Fetuses</label>
                                     <x-input-text name="number_of_fetuses" class="form-control"
-                                        value="{{ $doc->results?->number_of_fetuses }}" />
+                                        value="{{ @$doc->results?->number_of_fetuses }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Viability</label>
                                     <x-input-text name="viability" class="form-control"
-                                        value="{{ $doc->results?->viability }}" />
+                                        value="{{ @$doc->results?->viability }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Gestational Sac Diameter</label>
                                     <x-input-text name="gestational_sac_diameter"
-                                        value="{{ $doc->results?->gestational_sac_diameter }}" class="form-control" />
+                                        value="{{ @$doc->results?->gestational_sac_diameter }}" class="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <label>Crown Rump Length (CRL)</label>
-                                    <x-input-text name="crown_rump_length" value="{{ $doc->results?->crown_rump_length }}"
+                                    <x-input-text name="crown_rump_length" value="{{ @$doc->results?->crown_rump_length }}"
                                         class="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <label>Biparietal Diameter</label>
                                     <x-input-text name="biparietal_diameter" class="form-control"
-                                        value="{{ $doc->results?->biparietal_diameter }}" />
+                                        value="{{ @$doc->results?->biparietal_diameter }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Head Circumference</label>
                                     <x-input-text name="head_circumference"
-                                        value="{{ $doc->results?->head_circumference }}" class="form-control" />
+                                        value="{{ @$doc->results?->head_circumference }}" class="form-control" />
                                 </div>
                                 <div class="form-group">
                                     <label>Abdominal Circumference</label>
                                     <x-input-text class="form-control"
-                                        value="{{ $doc->results?->abdominal_circumference }}"
+                                        value="{{ @$doc->results?->abdominal_circumference }}"
                                         name="abdominal_circumference" />
                                 </div>
                                 <div class="form-group">
                                     <label>Femur Length</label>
-                                    <x-input-text class="form-control" value="{{ $doc->results?->femur_length }}"
+                                    <x-input-text class="form-control" value="{{ @$doc->results?->femur_length }}"
                                         name="femur_length" />
                                 </div>
                                 <div class="form-group">
                                     <label>Estimated Gestational Age (EGA)</label>
                                     <x-input-text class="form-control"
-                                        value="{{ $doc->results?->estimated_gestational_age }}"
+                                        value="{{ @$doc->results?->estimated_gestational_age }}"
                                         name="estimated_gestational_age" />
                                 </div>
                                 <div class="form-group">
                                     <label>Estimated Date of Delivery (EDD)</label>
                                     {{-- <x-input-text class="form-control" name="estimated_date_of_delivery" /> --}}
                                     <x-input-date class="form-control" name="estimated_date_of_delivery"
-                                        value="{{ $doc->results?->estimated_date_of_delivery }}" />
+                                        value="{{ @$doc->results?->estimated_date_of_delivery }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Estimated Fetal Weight</label>
                                     <x-input-text class="form-control" name="estimated_fetal_weight"
-                                        value="{{ $doc->results?->estimated_fetal_weight }}" />
+                                        value="{{ @$doc->results?->estimated_fetal_weight }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Placental Location</label>
                                     <x-input-text class="form-control" name="placental_location"
-                                        value="{{ $doc->results?->placental_location }}" />
+                                        value="{{ @$doc->results?->placental_location }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Placental Maturity</label>
                                     <x-input-text class="form-control" name="placental_maturity"
-                                        value="{{ $doc->results?->placental_maturity }}" />
+                                        value="{{ @$doc->results?->placental_maturity }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Amniotic Fluid Volume</label>
                                     <x-input-text class="form-control" name="amniotic_fluid_volume"
-                                        value="{{ $doc->results?->amniotic_fluid_volume }}" />
+                                        value="{{ @$doc->results?->amniotic_fluid_volume }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Fetal Presentation</label>
                                     <x-input-text name="fetal_presentation" class="form-control"
-                                        value="{{ $doc->results?->fetal_presentation }}" />
+                                        value="{{ @$doc->results?->fetal_presentation }}" />
                                 </div>
                                 <div class="form-group">
                                     <label>Fetal Lie</label>
                                     <x-input-text name="fetal_lie" class="form-control"
-                                        value="{{ $doc->results?->fetal_lie }}" />
+                                        value="{{ @$doc->results?->fetal_lie }}" />
                                 </div>
                                 <div class="form-group col-span-2">
                                     <label>Other Findings</label>
                                     <x-input-textarea name="other_findings" class="form-control"
-                                        value="{{ $doc->results?->other_findings }}" />
+                                        value="{{ @$doc->results?->other_findings }}" />
                                 </div>
                                 <div class="form-group col-span-2">
                                     <label>Conclusion</label>
                                     <x-input-textarea name="conclusion" class="form-control"
-                                        value="{{ $doc->results?->conclusion }}" />
+                                        value="{{ @$doc->results?->conclusion }}" />
                                 </div>
                             </div>
-                        </div>
-                    </template>
-
-                    <template x-if="form == 'pelvic'">
-                        <div>
-                            <h2 class="header">Pelvic Scan Report</h2>
-
                         </div>
                     </template>
 
@@ -196,8 +187,15 @@
                             <h2 class="header">General Radiology Report</h2>
                             <div class="form-group">
                                 <label>Report</label>
-                                <x-input-textarea name="report" class="form-control" required />
+                                <x-input-textarea name="report" value="{{ @$doc->results?->report }}"
+                                    class="form-control" required />
                             </div>
+                        </div>
+                    </template>
+
+                    <template x-if="form=='echo'">
+                        <div>
+                            <h2 class="header">Echocardiogram Report</h2>
                         </div>
                     </template>
                 </div>

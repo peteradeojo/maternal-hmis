@@ -83,7 +83,6 @@ function departmentRoutes()
     ];
 }
 
-
 function ancCardType(int $value)
 {
     return (AncCategory::tryFrom($value))?->name ?? 'Unknown';

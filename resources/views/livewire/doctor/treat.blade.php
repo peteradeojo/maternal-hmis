@@ -73,8 +73,8 @@
                 <form wire:submit.prevent="addDiagnosis">
                     <div class="form-group">
                         <label>Add Diagnosis</label>
-                        <input type="text" name="diagnosis" class="form-control" list="histories"
-                            required="required" wire:model="diagnoses" placeholder="Press enter to submit" />
+                        <input type="text" name="diagnosis" class="form-control" list="histories" required="required"
+                            wire:model="diagnoses" placeholder="Press enter to submit" />
                     </div>
                     {{-- <div class="form-group">
                         <button class="btn bg-blue-600 text-white">Submit</button>
@@ -90,7 +90,8 @@
 
                         <div class="flex-center justify-between text-xs">
                             <p class="text-red-700">{{ $note->created_at }}</p>
-                            <button wire:click="removeDiagnosis({{ $note->id }})" class="text-red-700">Delete</button>
+                            <button wire:click="removeDiagnosis({{ $note->id }})"
+                                class="text-red-700">Delete</button>
                         </div>
                     </div>
                 @empty
@@ -100,7 +101,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-x-4 items-start">
+    <div class="grid grid-cols-2 gap-4 items-start">
         {{-- Tests --}}
         <div class="p-2 border border-black">
             <div class="flex-center hover:bg-gray-50 gap-x-4 p-2" @click="$dispatch('open-t-tests-modal')">
@@ -109,7 +110,10 @@
             </div>
 
             <div class="p-2">
-                @include('doctors.components.test-results', ['tests' => $visit->tests, 'cancellable' => true])
+                @include('doctors.components.test-results', [
+                    'tests' => $visit->tests,
+                    'cancellable' => true,
+                ])
             </div>
         </div>
 
@@ -141,75 +145,120 @@
                 </table>
             </div>
         </div>
+
+        {{-- Scans --}}
+        <div class="p-2 border border-black">
+            <div class="flex-center hover:bg-gray-50 p-2 gap-4">
+                <p class="text-lg font-bold">Scans</p>
+                <i class="fa fa-plus"></i>
+            </div>
+
+            <div class="p-2">
+                <table class="table bordered">
+                    <tbody>
+                        @forelse ($visit->radios->merge($visit->visit->radios) as $radio)
+                            <tr>
+                                <td>{{ $radio->name }}</td>
+                                <td>
+                                @empty($radio->results)
+                                    No result added.
+                                @else
+                                    <a href="#" class="view-scan link" data-scanid="{{ $radio->id }}">View
+                                        Result</a>
+                                @endempty
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td>No scan</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 
-    <div class="py-2">
-        <button @click="$dispatch('open-admit')" class="btn bg-green-700 text-white">Admit <i
-                class="fa fa-bed"></i></button>
-    </div>
+<div class="py-2">
+    <button @click="$dispatch('open-admit')" class="btn bg-green-700 text-white">Admit <i
+            class="fa fa-bed"></i></button>
+</div>
 
-    <x-modal id="t-prescriptions">
-        <livewire:doctor.add-presciption :visit="$visit" @treatments_updated="addedTreatment" />
-    </x-modal>
+<x-modal id="t-prescriptions">
+    <livewire:doctor.add-presciption :visit="$visit" @treatments_updated="addedTreatment" />
+</x-modal>
+<x-modal id="t-tests-modal">
+    <p class="bold text-xl">Add Investigation</p>
+    <div id="anc-visit-tests-2" data-tablist="#anc-visit-tests">
+        @include('components.tabs', ['options' => ['Test', 'Investigation']])
 
-    <x-modal id="t-tests-modal">
-        <p class="bold text-xl">Add Investigation</p>
-        <div id="anc-visit-tests-2" data-tablist="#anc-visit-tests">
-            @include('components.tabs', ['options' => ['Test', 'Investigation']])
-
-            <div id="anc-visit-tests">
-                <div class="tab">
-                    <div class="py-1 w-1/2">
-                        <p>Search here to add a test</p>
-                        <livewire:dynamic-product-search @selected='addTest($event.detail.id)' departmentId='5' />
-                    </div>
+        <div id="anc-visit-tests">
+            <div class="tab">
+                <div class="py-1 w-1/2">
+                    <p>Search here to add a test</p>
+                    <livewire:dynamic-product-search @selected='addTest($event.detail.id)' departmentId='5' />
                 </div>
-                <div class="tab">
-                    <div class="py-1 w-1/2">
-                        <p>Search here to add a scan</p>
-                        <livewire:dynamic-product-search @selected='addScan($event.detail.id)' departmentId='7' />
-                    </div>
+            </div>
+            <div class="tab">
+                <div class="py-1 w-1/2">
+                    <p>Search here to add a scan</p>
+                    <livewire:dynamic-product-search @selected='addScan($event.detail.id)' departmentId='7' />
                 </div>
             </div>
         </div>
-    </x-modal>
-    <x-modal id="t-notes-modal">
-        <p class="text-xl bold">Add Note</p>
-        <form wire:submit.prevent="addNote">
-            <div class="form-group">
-                <label for="">Add Note</label>
-                <textarea wire:model.debounce.500ms="note" id="" class="form-control" rows="5" required="required"
-                    @click.stop></textarea>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-blue">Add Note</button>
-            </div>
-        </form>
-    </x-modal>
-    <x-modal id="t-complaints-modal">
-        <p class="font-semibold">Complaints</p>
+    </div>
+</x-modal>
+<x-modal id="t-notes-modal">
+    <p class="text-xl bold">Add Note</p>
+    <form wire:submit.prevent="addNote">
+        <div class="form-group">
+            <label for="">Add Note</label>
+            <textarea wire:model.debounce.500ms="note" id="" class="form-control" rows="5" required="required"
+                @click.stop></textarea>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-blue">Add Note</button>
+        </div>
+    </form>
+</x-modal>
+<x-modal id="t-complaints-modal">
+    <p class="font-semibold">Complaints</p>
 
-        <form wire:submit.prevent="takeComplaint">
-            <div class="form-group">
-                <label>Complaint</label>
-                {{-- <input wire:model="complaint" type="text" name="complaint" class="form-control" required /> --}}
-                <x-input-text required wire:model="complaint" class="form-control" name="complaint" />
-            </div>
-            <div class="form-group">
-                <label>Duration</label>
-                <x-input-text wire:model="complaint_duration" name="complaint_duration" class="form-control" />
-            </div>
-            <div class="form-group">
-                <button class="btn bg-green-500 text-white">Submit <i class="fa fa-save"></i></button>
-            </div>
-        </form>
-    </x-modal>
+    <form wire:submit.prevent="takeComplaint">
+        <div class="form-group">
+            <label>Complaint</label>
+            {{-- <input wire:model="complaint" type="text" name="complaint" class="form-control" required /> --}}
+            <x-input-text required wire:model="complaint" class="form-control" name="complaint" />
+        </div>
+        <div class="form-group">
+            <label>Duration</label>
+            <x-input-text wire:model="complaint_duration" name="complaint_duration" class="form-control" />
+        </div>
+        <div class="form-group">
+            <button class="btn bg-green-500 text-white">Submit <i class="fa fa-save"></i></button>
+        </div>
+    </form>
+</x-modal>
 </div>
 
 @script
-    <script>
-        $(document).ready(function() {
-            initTab(document.querySelector('#anc-visit-tests-2'));;
-        })
-    </script>
+<script>
+    $(document).ready(function() {
+        initTab(document.querySelector('#anc-visit-tests-2'));
+
+        $(document).on('click', '.view-scan', function (e) {
+            e.preventDefault();
+            const {scanid} = $(e.currentTarget).data();
+            axios.get("{{route('rad.scan-results', ':id')}}".replace(':id', scanid)).then((res) => {
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text('Scan Result');
+                    a.find(MODAL_BODY).html(res.data);
+                });
+            }).catch((err) => {
+                console.error(err);
+                notifyError(err.message);
+            });
+        });
+    })
+</script>
 @endscript

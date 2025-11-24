@@ -24,7 +24,7 @@
                         <th></th>
                     </tr>
 
-                    @forelse ($visit->histories as $h)
+                    @forelse ($visit->histories->merge($visit->visit->histories) as $h)
                         <tr>
                             <td>{{ $h->presentation }}</td>
                             <td>{{ $h->duration }}</td>

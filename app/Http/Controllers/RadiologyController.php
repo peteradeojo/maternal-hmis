@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
+use App\Enums\Status;
 use App\Jobs\UploadPatientScans;
 use App\Models\PatientImaging;
 use App\Models\Visit;
@@ -71,6 +72,9 @@ class RadiologyController extends Controller
     {
         $scan->results = $request->except('_token');
         $scan->uploaded_by = $request->user()->id;
+        $scan->uploaded_at = now();
+
+        $scan->status = Status::completed->value;
         $scan->save();
 
         return response()->json($scan->refresh());
@@ -94,5 +98,24 @@ class RadiologyController extends Controller
     public function getScansHistory(Request $request)
     {
         return $this->dataTable($request, PatientImaging::with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
+    }
+
+    public function getScanResult(Request $request, PatientImaging $scan)
+    {
+        $results = $scan->results;
+
+        if (!$results) {
+            return response()->json()->status(404);
+        }
+
+        if ($results->report_type == 'obstetric') {
+            return view('rad.results.obstetric', compact('scan'));
+        }
+        if ($results->report_type == 'general') {
+            return view('rad.results.general', compact('scan'));
+        }
+        if ($results->report_type == 'echo') {
+            return view('rad.results.echo', compact('scan'));
+        }
     }
 }
