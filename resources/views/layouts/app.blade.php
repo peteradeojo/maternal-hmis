@@ -66,7 +66,7 @@
 
     {{-- Large Nav --}}
     <aside class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800" x-cloak
-        x-bind:class="aside ? 'w-[16%]' : 'w-[5%]'" x-transition>
+        :class="{ 'w-[16%]': aside, 'w-[5%]': !aside }" x-transition>
         <div class="sticky top-0">
             <div class="bg-white p-2 flex" :class="aside ? 'justify-end' : 'justify-center'">
                 <button x-show="!aside" x-on:click="aside = true;localStorage.setItem('aside', aside)"

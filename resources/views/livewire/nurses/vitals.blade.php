@@ -7,10 +7,11 @@
                 <div class="form-group">
                     <label>Date *</label>
 
-                    <x-input-datetime x-model="vitals.recorded_date" class="form-control" required />
-                    @error('vitals.recorded_date')
+                    <x-input-datetime name="vitals.recorded_date" x-model="vitals.recorded_date" class="form-control"
+                        required />
+                    {{-- @error('vitals.recorded_date')
                         <p class="text-red-500">{{ $message }}</p>
-                    @enderror
+                    @enderror --}}
 
                 </div>
                 <div class="form-group">

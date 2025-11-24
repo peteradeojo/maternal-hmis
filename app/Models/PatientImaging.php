@@ -71,4 +71,20 @@ class PatientImaging extends Model
     {
         return $this->name;
     }
+
+    public function getResults() {
+        if (empty($this->results)) {
+            return;
+        }
+
+        if ($this->results->report_type == 'obstetric') {
+            return view('rad.results.obstetric', ['scan' => $this]);
+        }
+        if ($this->results->report_type == 'general') {
+            return view('rad.results.general', ['scan' => $this]);
+        }
+        if ($this->results->report_type == 'echo') {
+            return view('rad.results.echo', ['scan' => $this]);
+        }       
+    }
 }
