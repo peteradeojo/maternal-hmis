@@ -1,3 +1,4 @@
+import axios from 'axios';
 import './app';
 
 window.initTab = function (el) {
@@ -57,6 +58,20 @@ window.asyncForm = (form, route, callback = (e, data) => { }) => {
                 },
             });
         });
+    });
+}
+window.submitForm = (el, route, callback = (e, data) => {}) => {
+    const formData = new FormData(el);
+
+    axios.post(route, formData, {
+        headers: {
+            "Content-Type":'multipart/form-data',
+            Accept: 'application/json',
+        },
+    }).then((res) => callback(el, res))
+    .catch(err => {
+        console.error(err.message);
+        notifyError(err.message);
     });
 }
 
@@ -125,11 +140,11 @@ window.displayNotification = function (data) {
 
     setTimeout(() => {
         el.classList.add("fade-out");
-    }, Math.max(options.timeout, 5000));
+    }, Math.max(options.timeout || 5000));
 
     setTimeout(() => {
         el.remove();
-    }, Math.max(options.timeout, 5300));
+    }, Math.max(options.timeout || 5300));
 }
 
 window.notifyError = function (message) {
