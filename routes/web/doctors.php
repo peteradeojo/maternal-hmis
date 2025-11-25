@@ -20,13 +20,22 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value, 'dat
 
     Route::prefix('med')->group(function () {
         Route::post('/notes/{visit}', [PatientsController::class, 'note'])->whereNumber('visit')->name('visit-note');
+
         Route::get('/patients', [PatientsController::class, 'index'])->name('patients');
+
         Route::get('/patients/{patient}', [PatientsController::class, 'show'])->name('patient');
+
         Route::get('/anc-bookings', [PatientsController::class, 'pendingAncBookings'])->name('anc-bookings');
+
         Route::match(['get', 'post'], '/anc-bookings/{profile}', [PatientsController::class, 'submitAncBooking'])->name('submit-anc-booking');
+
         Route::prefix('admissions')->group(function () {
             Route::match(['get', 'post'], '/start/{visit}', [PatientsController::class, 'startAdmission'])->name('start-admission');
         });
+    });
+
+    Route::prefix('antenatal')->group(function () {
+        Route::get('/profile/{patient}', [PatientsController::class, 'viewAncProfile'])->name('anc-profile');
     });
 
     Route::prefix('admissions')->group(function () {

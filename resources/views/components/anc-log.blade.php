@@ -120,16 +120,18 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-            asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
-                data) => {
-                displayNotification({
-                    message: 'Saved',
-                    bg: ['bg-blue-400', 'text-white'],
-                    options: {
-                        mode: 'in-app',
-                    }
+            @if ($visit)
+                asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
+                    data) => {
+                    displayNotification({
+                        message: 'Saved',
+                        bg: ['bg-blue-400', 'text-white'],
+                        options: {
+                            mode: 'in-app',
+                        }
+                    });
                 });
-            });
+            @endif
 
             $(document).on("click", ".expand-i", function(e) {
                 const id = $(e.currentTarget).data().id;

@@ -244,25 +244,26 @@ class PatientsController extends Controller
         return response()->json($profile);
     }
 
-    public function getVisits(Request $request) {
+    public function getVisits(Request $request)
+    {
         $query = Visit::with(['patient.insurance'])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
-                    ->orWhere('card_number', 'like', "$search%")
-                    ->orWhere('phone', 'like', "$search%")
-                    ->orWhereHas('insurance', function ($q) use ($search) {
-                        $q->where('hmo_name', 'like', "$search%");
-                    });
+                        ->orWhere('card_number', 'like', "$search%")
+                        ->orWhere('phone', 'like', "$search%")
+                        ->orWhereHas('insurance', function ($q) use ($search) {
+                            $q->where('hmo_name', 'like', "$search%");
+                        });
                 });
             },
         ], function (array $data, $orders) {
             if (empty($orders)) return $data;
             logger()->info($orders);
 
-            $name = array_filter($orders, fn ($o) => $o['name'] == 'insurance');
+            $name = array_filter($orders, fn($o) => $o['name'] == 'insurance');
 
             if (!empty($name)) {
                 usort($data, function ($a, $b) {

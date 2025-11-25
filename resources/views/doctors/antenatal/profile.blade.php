@@ -23,7 +23,7 @@
 
         <div class="py-4">
             <p class="text-lg font-semibold">Antenatal Visits</p>
-            <x-anc-log :profile="$profile" :viewing="true" />
+            <x-anc-log :visit="null" :profile="$profile" :viewing="true" />
             {{-- @foreach ($profile->ancVisits as $visit)
             @endforeach --}}
         </div>
