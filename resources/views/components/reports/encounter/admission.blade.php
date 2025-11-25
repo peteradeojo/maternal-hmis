@@ -22,6 +22,12 @@
                 <strong>Admission Plan:</strong>
                 <p>{{ $visit->admission->plan->note ?? 'N/A' }}</p>
             </div>
+            @if ($visit->admission->discharge_summary)
+                <div class="mt-2 border-t pt-2">
+                    <strong>Discharge Summary:</strong>
+                    <p>{{ $visit->admission->discharge_summary }}</p>
+                </div>
+            @endif
         </div>
 
         <x-reports.encounter.notes-list :notes="$visit->admission->reviews" title="Review Notes" />
