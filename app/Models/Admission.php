@@ -14,13 +14,17 @@ use Override;
 
 class Admission extends Model implements OperationalEvent
 {
-    use HasFactory, Documentable, HasVisitData; //, SoftDeletes;
+    use HasFactory, Documentable, HasVisitData, SoftDeletes;
 
     protected $guarded = [];
 
     protected $with = ['patient', 'plan'];
 
     protected $appends = ['in_ward'];
+
+    protected $casts = [
+        'discharged_on' => 'datetime',
+    ];
 
     public function visit()
     {

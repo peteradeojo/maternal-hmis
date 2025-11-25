@@ -8,11 +8,11 @@
                     <strong>Ward:</strong> {{ $visit->admission->ward->name ?? 'N/A' }}
                 </div>
                 <div>
-                    <strong>Date Admitted:</strong> {{ $visit->admission->created_at->format('d M Y H:i') }}
+                    <strong>Date Admitted:</strong> {{ $visit->admission->created_at->format('d M Y h:i A') }}
                 </div>
                 <div>
                     <strong>Discharge Date:</strong>
-                    {{ $visit->admission->discharged_on?->format('d M Y H:i') ?? 'Not Discharged' }}
+                    {{ $visit->admission->discharged_on?->format('d M Y h:i A') ?? 'Not Discharged' }}
                 </div>
                 <div>
                     <strong>Indication:</strong> {{ $visit->admission->plan->indication ?? 'N/A' }}
@@ -53,7 +53,7 @@
                     <p>{{ $visit->admission->delivery_note->note }}</p>
                     <small class="text-gray-600">
                         By: {{ $visit->admission->delivery_note->consultant?->name ?? 'Unknown' }}
-                        at {{ $visit->admission->delivery_note->created_at->format('d M Y H:i') }}
+                        at {{ $visit->admission->delivery_note->created_at->format('d M Y h:i A') }}
                     </small>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                                     <td>{{ $admin->treatments?->name ?? 'Unknown Drug' }}</td>
                                     <td>{{ $admin->treatments?->dosage ?? '-' }}</td>
                                     <td>{{ $admin->treatments?->route ?? '-' }}</td>
-                                    <td>{{ $admin->created_at->format('d M Y H:i') }}</td>
+                                    <td>{{ $admin->created_at->format('d M Y h:i A') }}</td>
                                     <td>{{ $admin->minister?->name ?? 'Unknown' }}</td>
                                     <td>{{ $admin->status ?? 'Administered' }}</td>
                                 </tr>
