@@ -12,7 +12,11 @@
 
         {{-- @include('doctors.components.history-report', ['visit' => $visit->visit]) --}}
 
+        <x-reports.encounter.vitals :visit="$visit" />
+        <x-reports.encounter.examinations :visit="$visit" />
+        <x-reports.encounter.notes :visit="$visit" />
         <x-reports.encounter.complaints :visit="$visit" />
+        <x-reports.encounter.diagnoses :visit="$visit" />
         <x-reports.encounter.tests :visit="$visit" />
         <x-reports.encounter.scans :visit="$visit" />
         <x-reports.encounter.prescriptions :visit="$visit" />
