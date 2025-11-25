@@ -9,8 +9,7 @@
             <div class="py-2"></div>
         </div>
         <p>Visit id: {{ $visit->id }}</p>
-
-        {{-- @include('doctors.components.history-report', ['visit' => $visit->visit]) --}}
+        <p>Patient id: {{ $visit->patient->id }}</p>
 
         <x-reports.encounter.vitals :visit="$visit" />
         <x-reports.encounter.examinations :visit="$visit" />
