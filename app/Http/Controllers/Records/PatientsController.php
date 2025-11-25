@@ -287,4 +287,21 @@ class PatientsController extends Controller
             return $data;
         });
     }
+
+    public function getAntenatalAppointments(Request $request)
+    {
+        $query = AncVisit::with(['patient', 'visit'])->where('return_visit', '>=', now()->subDays(7))->select([
+            'patient_id',
+            'return_visit',
+            'id',
+        ])->orderBy('return_visit', 'desc');
+
+        return $this->dataTable($request, $query, [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%")->orWhere('phone', 'like', "$search%");
+                });
+            },
+        ]);
+    }
 }

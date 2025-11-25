@@ -1,73 +1,81 @@
-<x-overlay-modal id="anc-log" title="Log Visit">
-    <form id="anc-log-form">
-        @csrf
-        <div class="grid grid-cols-3 gap-x-4 items-center">
-            <div class="form-group">
-                <label>Follow up date</label>
-                <input type="text" class="form-control" readonly value="{{ $visit->created_at->format('Y-m-d') }}" />
-            </div>
-            <div class="form-group">
-                <p><b>EGA:</b> {{ $profile->maturity($visit->created_at, true) }}</p>
-            </div>
+@props(['viewing' => false, 'visit' => null, 'profile'])
 
-            <span></span>
-
-            <div class="form-group">
-                <label>Height of Fundus</label>
-                <x-input-text name="fundal_height" placeholder="Height of Fundus" class="form-control"
-                    value="{{ $visit->fundal_height }}" />
-            </div>
-            <div class="form-group">
-                <label>Presentation</label>
-                <x-input-text name="presentation" placeholder="Presentation" class="form-control"
-                    value="{{ $visit->presentation }}" />
-            </div>
-            <div class="form-group">
-                <label>Relationship of presenting part to birth</label>
-                <x-input-text name="presentation_relationship" placeholder="Relation" class="form-control"
-                    value="{{ $visit->presentation_relationship }}" />
-            </div>
-
-            <div class="form-group">
-                <label>FHR</label>
-                <x-input-text name="fetal_heart_rate" placeholder="FHR" class="form-control"
-                    value="{{ $visit->fetal_heart_rate }}" />
-            </div>
-            <div class="form-group">
-                <label for="">Oedema</label>
-                <x-input-text name="edema" class="form-control" placeholder="Oedema" value="{{ $visit->edema }}" />
-            </div>
-            <div class="grid grid-cols-2">
+@if ($visit)
+    <x-overlay-modal id="anc-log" title="Log Visit">
+        <form id="anc-log-form">
+            @csrf
+            <div class="grid grid-cols-3 gap-x-4 items-center">
                 <div class="form-group">
-                    <label>IPT <input type="checkbox" @if ($visit->ipt) checked @endif
-                            name="ipt" /></label>
+                    <label>Follow up date</label>
+                    <input type="text" class="form-control" readonly
+                        value="{{ $visit?->created_at?->format('Y-m-d') }}" />
                 </div>
                 <div class="form-group">
-                    <label>TT <input type="checkbox" checked="{{ $visit->tt ? 'checked' : false }}"
-                            name="tt" /></label>
+                    <p><b>EGA:</b> {{ $profile->maturity($visit?->created_at, true) }}</p>
+                </div>
+
+                <span></span>
+
+                <div class="form-group">
+                    <label>Height of Fundus</label>
+                    <x-input-text name="fundal_height" placeholder="Height of Fundus" class="form-control"
+                        value="{{ $visit?->fundal_height }}" />
+                </div>
+                <div class="form-group">
+                    <label>Presentation</label>
+                    <x-input-text name="presentation" placeholder="Presentation" class="form-control"
+                        value="{{ $visit?->presentation }}" />
+                </div>
+                <div class="form-group">
+                    <label>Relationship of presenting part to birth</label>
+                    <x-input-text name="presentation_relationship" placeholder="Relation" class="form-control"
+                        value="{{ $visit?->presentation_relationship }}" />
+                </div>
+
+                <div class="form-group">
+                    <label>FHR</label>
+                    <x-input-text name="fetal_heart_rate" placeholder="FHR" class="form-control"
+                        value="{{ $visit?->fetal_heart_rate }}" />
+                </div>
+                <div class="form-group">
+                    <label for="">Oedema</label>
+                    <x-input-text name="edema" class="form-control" placeholder="Oedema"
+                        value="{{ $visit?->edema }}" />
+                </div>
+                <div class="grid grid-cols-2">
+                    <div class="form-group">
+                        <label>IPT <input type="checkbox" @if ($visit?->ipt) checked @endif
+                                name="ipt" /></label>
+                    </div>
+                    <div class="form-group">
+                        <label>TT <input type="checkbox" checked="{{ $visit?->tt ? 'checked' : false }}"
+                                name="tt" /></label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="">Note</label>
-            <x-input-textarea name="note" class="form-control" value="{{ $visit->note }}" />
-        </div>
-        <div class="form-group">
-            <label for="">Next appointment</label>
-            <input type="date" name="return_visit" class="form-control"
-                value="{{ date('Y-m-d', strtotime('+2 weeks')) }}" required />
-        </div>
-        <div class="form-group">
-            <button class="float-end px-2 py-1 bg-green-400">Save <i class="fa fa-save"></i></button>
-        </div>
-    </form>
-</x-overlay-modal>
+            <div class="form-group">
+                <label for="">Note</label>
+                <x-input-textarea name="note" class="form-control" value="{{ $visit?->note }}" />
+            </div>
+            <div class="form-group">
+                <label for="">Next appointment</label>
+                <input type="date" name="return_visit" class="form-control"
+                    value="{{ date('Y-m-d', strtotime('+2 weeks')) }}" required />
+            </div>
+            <div class="form-group">
+                <button class="float-end px-2 py-1 bg-green-400">Save <i class="fa fa-save"></i></button>
+            </div>
+        </form>
+    </x-overlay-modal>
+@endif
 
 <div>
-    <div class="flex justify-between items-center py-2">
-        <button class="btn bg-blue-400 text-white" @click="$dispatch('open-anc-log')">Log visit<i
-                class="fa fa-plus"></i></button>
-    </div>
+    @if ($visit)
+        <button class="btn bg-blue-400 text-white" @click="$dispatch('open-anc-log')">
+            Log visit<i class="fa fa-plus"></i>
+        </button>
+    @endif
+
     <table class="table" id="table">
         <thead>
             <tr>
@@ -112,16 +120,18 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-            asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
-                data) => {
-                displayNotification({
-                    message: 'Saved',
-                    bg: ['bg-blue-400', 'text-white'],
-                    options: {
-                        mode: 'in-app',
-                    }
+            @if ($visit)
+                asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
+                    data) => {
+                    displayNotification({
+                        message: 'Saved',
+                        bg: ['bg-blue-400', 'text-white'],
+                        options: {
+                            mode: 'in-app',
+                        }
+                    });
                 });
-            });
+            @endif
 
             $(document).on("click", ".expand-i", function(e) {
                 const id = $(e.currentTarget).data().id;

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class Patient extends Model
 {
@@ -80,6 +81,13 @@ class Patient extends Model
         );
     }
 
+    protected function age(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, $attributes) => !empty($attributes['dob']) ? (int) Carbon::parse($attributes['dob'])->diffInYears(Carbon::now()) : null,
+        );
+    }
+
     public static function generateCardNumber($category)
     {
         $prefix = Patient::where('category_id', $category)->count();
@@ -99,7 +107,7 @@ class Patient extends Model
 
     public function antenatalProfiles()
     {
-        return $this->hasMany(AntenatalProfile::class, 'patient_id')->latest();
+        return $this->hasMany(AntenatalProfile::class, 'patient_id')->where('status', Status::active->value)->latest();
     }
 
     public function tests()
@@ -140,7 +148,8 @@ class Patient extends Model
         $this->insurance()->where('status', Status::active);
     }
 
-    public function bills() {
+    public function bills()
+    {
         return $this->hasMany(Bill::class, 'patient_id');
     }
 }

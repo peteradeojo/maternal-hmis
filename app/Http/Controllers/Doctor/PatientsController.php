@@ -286,9 +286,10 @@ class PatientsController extends Controller
         return view('doctors.visits.show', compact('visit'));
     }
 
-    public function getAncLog(Request $request, AncVisit $visit) {
+    public function getAncLog(Request $request, AncVisit $visit)
+    {
         $profile = $visit->profile;
-        return view('doctors.antenatal.log',compact('visit', 'profile'));
+        return view('doctors.antenatal.log', compact('visit', 'profile'));
     }
 
     public function note(Request $request, Visit $visit)
@@ -351,5 +352,11 @@ class PatientsController extends Controller
         }
 
         return json_encode(compact('physical',  'other'));
+    }
+
+    public function viewAncProfile(Request $request, Patient $patient)
+    {
+        $profile = $patient->ancProfile;
+        return view('doctors.antenatal.profile', compact('profile', 'patient'));
     }
 }

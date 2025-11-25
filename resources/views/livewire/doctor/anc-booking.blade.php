@@ -1,9 +1,11 @@
 <div>
     <x-overlay-modal id="history" title="History of Present Pregnancy">
     </x-overlay-modal>
+
     <x-overlay-modal id="physical">
         <livewire:doctor.antenatal.physical-exam :profile="$profile" />
     </x-overlay-modal>
+
     <x-overlay-modal id="tests">
         <div>
             <p class="font-semibold text-lg">Lab Tests</p>

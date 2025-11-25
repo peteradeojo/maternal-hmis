@@ -1,5 +1,5 @@
 <div>
-    <div class="grid grid-cols-3 gap-x-2 justify-between">
+    <div class="grid grid-cols-3 gap-x-2">
         {{-- <p>Profile ID: {{ $profile }}</p> --}}
         <p class="col-span-3 py-1">
             <b>Booking date: </b> {{ $profile->created_at->format('Y-m-d') }}
@@ -32,10 +32,11 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-3 gap-y-0">
+    <div class="grid grid-cols-3 gap-x-2 gap-y-0">
         @unless ($obsEdit)
             <p><b>Gravida: </b> {{ $profile->gravida }}</p>
             <p><b>Parity: </b> {{ $profile->parity }}</p>
+            <p><b>Special consideration: </b> {{ $profile->risk_assessment }}</p>
 
             <div class="col-span-3">
                 <a href="#" wire:click.prevent="toggleEditObsData" class="link underline">Edit Obstetric Data</a>
@@ -43,6 +44,8 @@
         @else
             <p><b>Gravida: </b> <input type="text" wire:model="obsData.gravida" id=""></p>
             <p><b>Parity: </b> <input type="text" wire:model="obsData.parity" id=""></p>
+            <p><b>Special consideration / Risk Assessment: </b> <x-input-textarea wire:model="obsData.risk_assessment"
+                    name="obsData.risk_assessment" /></p>
 
             <div class="col-span-3">
                 <a href="#" wire:click.prevent="updateObsData" class="link underline">Update</a>
