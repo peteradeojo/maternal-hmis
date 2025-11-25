@@ -7,6 +7,7 @@ use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionTreatments;
+use App\Models\ConsultationNote;
 use App\Models\OperationNote;
 use App\Models\Visit;
 use App\Models\Ward;
@@ -304,5 +305,16 @@ class AdmissionsController extends Controller
     {
         $opnote->load(['user', 'patient']);
         return view('doctors.admissions.opnote', compact('opnote'));
+    }
+
+    public function updateNote(Request $request, ConsultationNote $note)
+    {
+        $note->update($request->validate([
+            'note' => 'required|string',
+        ]));
+
+        return response()->json([
+            'message' => 'Success',
+        ]);
     }
 }

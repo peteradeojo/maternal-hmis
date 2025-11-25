@@ -136,6 +136,18 @@
     @livewireScripts
 
     <script>
+        window.updateNote = function(id, note) {
+            return axios.put("{{ route('doctor.admissions.update-note', ':id') }}".replace(':id', id), {
+                note,
+            }).then((res) => {
+                notifySuccess("Note saved!");
+            }).catch((err) => {
+                notifyError(err.response.data.message);
+            });
+        }
+    </script>
+
+    <script>
         $(document).ready(() => {
             Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
                 displayNotification(e);

@@ -45,6 +45,8 @@ Route::name('doctor.')->middleware(['department:' . Department::DOC->value, 'dat
         Route::get('/{admission}/edit', [AdmissionsController::class, 'edit'])->name('show-admission-plan');
         Route::get('/{admission}/review', [AdmissionsController::class, 'reviewNote'])->name('admissions.review');
     });
+
+    Route::put('/notes/{note}', [AdmissionsController::class, 'updateNote'])->name('admissions.update-note');
 });
 
 Route::name('doctor.')->middleware(['auth', 'datalog'])->group(function () {

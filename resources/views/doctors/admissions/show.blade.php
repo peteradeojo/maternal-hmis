@@ -127,13 +127,7 @@
                     </div>
 
                     @forelse ($data->reviews as $note)
-                        <div class="bg-gray-100 p-2">
-                            {{-- <button class="px-1 bg-red-500 text-white float-end"
-                                wire:click="deleteNote({{ $note->id }})">&times;</button> --}}
-                            <p>{{ $note->note }}</p>
-                            <p><b>Attending:</b> {{ $note->consultant?->name }}</p>
-                            <p><small>{{ $note->created_at->format('Y-m-d h:i A') }}</small></p>
-                        </div>
+                        <x-editable-note :note="$note" />
                     @empty
                         <div class="bg-gray-200 p-1 text-center">No review notes</div>
                     @endforelse
