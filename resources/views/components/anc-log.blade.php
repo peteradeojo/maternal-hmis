@@ -1,4 +1,4 @@
-@props(['viewing' => false, 'visit' => null, 'profile'])
+@props(['viewing' => false, 'visit', 'profile'])
 
 @if ($visit)
     <x-overlay-modal id="anc-log" title="Log Visit">
@@ -120,18 +120,16 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-            @if ($visit)
-                asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
-                    data) => {
-                    displayNotification({
-                        message: 'Saved',
-                        bg: ['bg-blue-400', 'text-white'],
-                        options: {
-                            mode: 'in-app',
-                        }
-                    });
+            asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
+                data) => {
+                displayNotification({
+                    message: 'Saved',
+                    bg: ['bg-blue-400', 'text-white'],
+                    options: {
+                        mode: 'in-app',
+                    }
                 });
-            @endif
+            });
 
             $(document).on("click", ".expand-i", function(e) {
                 const id = $(e.currentTarget).data().id;
