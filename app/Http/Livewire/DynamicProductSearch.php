@@ -63,11 +63,11 @@ class DynamicProductSearch extends Component
                 'amount'  => 0,
             ]);
 
-            $this->reset('queryString', 'results');
-
             $this->dispatch('selected_temp', product: $product, name: $product->name, id: null);
             return;
         }
+
+        $this->reset('queryString', 'results');
 
         $this->dispatch('selected', id: $id, name: $product['name'], product: $product);
     }
