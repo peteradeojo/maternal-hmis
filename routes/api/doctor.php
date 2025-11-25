@@ -6,7 +6,7 @@ use App\Http\Controllers\LabController;
 use App\Http\Controllers\RadiologyController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('doctor')->name('api.doctor.')->group(function () {
+Route::prefix('doctor')->name('api.doctor.')->middleware(['datalog'])->group(function () {
     Route::get('list-patients', [PatientsController::class, 'fetchPatients'])->name('fetch-patients');
     Route::get('visits', [PatientsController::class, 'getVisitsHistory'])->name('visits');
 

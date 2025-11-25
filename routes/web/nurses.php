@@ -7,7 +7,7 @@ use App\Http\Controllers\Nursing\PatientsController;
 use App\Http\Controllers\VitalsController;
 use Illuminate\Support\Facades\Route;
 
-Route::name('nurses.')->middleware(['department:' . Department::NUR->value])->group(function () {
+Route::name('nurses.')->middleware(['department:' . Department::NUR->value, 'datalog'])->group(function () {
     Route::get('/vitals', [VitalsController::class, 'index'])->name('vitals');
     Route::match(['post', 'get'], '/vitals/{visit}', [VitalsController::class, 'takeVitals'])->name('patient-vitals')->middleware(['datalog']);
     Route::get('anc-bookings', [PatientsController::class, 'ancBookings'])->name('anc-bookings');
