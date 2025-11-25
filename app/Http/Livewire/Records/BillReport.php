@@ -42,7 +42,8 @@ class BillReport extends Component
         $this->others = [];
     }
 
-    public function loadBillData(?OperationalEvent $evt) {
+    public function loadBillData(?OperationalEvent $evt)
+    {
         if (empty($evt)) return;
 
         $drugs = $evt->treatments;
@@ -91,6 +92,10 @@ class BillReport extends Component
             'name' => $name,
             'amount' => 0,
             'id' => null,
+            'product' => [
+                'amount' => 0,
+                'name' => $name,
+            ],
             'saved' => false,
         ];
 
