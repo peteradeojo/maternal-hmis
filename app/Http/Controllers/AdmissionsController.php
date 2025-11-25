@@ -245,7 +245,7 @@ class AdmissionsController extends Controller
 
         $admission->discharged_on = $request->input('discharged_on');
         $admission->status = Status::closed->value;
-        $admission->deleted_at = now();
+        // $admission->deleted_at = now();
         $admission->save();
 
         $ward = $admission->ward;
