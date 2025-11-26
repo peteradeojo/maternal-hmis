@@ -18,7 +18,7 @@ class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        $admissions = Admission::whereNull('discharged_on')->latest('updated_at')->limit(10)->get();
+        $admissions = Admission::active()->latest('updated_at')->limit(10)->get();
         if (request()->user()->department_id == Department::DOC->value) {
             return view('doctors.admissions.index', ['admissions' => $admissions]);
         }
@@ -244,9 +244,9 @@ class AdmissionsController extends Controller
             'discharged_on' => 'required',
         ]);
 
-        $admission->discharged_on = $request->input('discharged_on');
+        $admission->discharged_on ??= $request->input('discharged_on');
         $admission->status = Status::closed->value;
-        $admission->discharge_summary = $request->input('discharge_summary');
+        $admission->discharge_summary ??= $request->input('discharge_summary');
         $admission->save();
 
         $ward = $admission->ward;
@@ -315,6 +315,29 @@ class AdmissionsController extends Controller
 
         return response()->json([
             'message' => 'Success',
+        ]);
+    }
+
+    public function setForDischarge(Request $request, Admission $admission)
+    {
+        $request->validate([
+            'discharged_on' => 'required|string',
+            'discharge_summary' => 'nullable|string',
+        ]);
+
+        if ($request->input('discharge_summary')) {
+            $admission->status = Status::closed->value;
+            $admission->discharge_summary = $request->input('discharge_summary');
+        } else {
+            $admission->status = Status::ejected->value;
+        }
+
+        $admission->discharged_on = $request->input('discharged_on');
+        $admission->save();
+
+        return response()->json([
+            'message' => 'Success',
+            'data' => $admission,
         ]);
     }
 }

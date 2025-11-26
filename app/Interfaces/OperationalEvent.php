@@ -2,6 +2,7 @@
 
 namespace App\Interfaces;
 
-interface OperationalEvent {
-
+interface OperationalEvent
+{
+    public function scopeActive($query);
 }

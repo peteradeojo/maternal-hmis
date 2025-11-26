@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Interfaces\Visitation;
 use App\Traits\Documentable as TraitsDocumentable;
@@ -10,7 +11,7 @@ use App\Traits\Visit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GeneralVisit extends Model implements Visitation, OperationalEvent //, Documentable
+class GeneralVisit extends Model implements Visitation, OperationalEvent
 {
     use HasFactory, Visit, TraitsDocumentable, HasVisitData;
 

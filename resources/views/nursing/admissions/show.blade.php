@@ -192,14 +192,16 @@
                             @csrf
                             <div class="form-group">
                                 <label>Discharge Date</label>
-                                <input type="datetime-local" name="discharged_on" class="form-control" required />
+                                <x-input-datetime name="discharged_on" class="form-control"
+                                    value="{{ $admission->discharged_on }}" />
                             </div>
                             <div class="form-group">
                                 <label>Discharge summary</label>
-                                <textarea name="discharge_summary" rows="5" class="form-control"></textarea>
+                                <x-input-textarea name="discharge_summary" rows="5" class="form-control"
+                                    value="{{ $admission->discharge_summary }}" />
                             </div>
                             <div class="form-group flex justify-end">
-                                <button class="btn bg-blue-400 text-white">Discharge <i
+                                <button type="submit" class="btn bg-blue-400 text-white">Discharge <i
                                         class="fa fa-wheelchair-move"></i></button>
                             </div>
                         </form>

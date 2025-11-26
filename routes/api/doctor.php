@@ -20,4 +20,6 @@ Route::prefix('doctor')->name('api.doctor.')->middleware(['datalog'])->group(fun
 
     Route::post('/admission/{admission}/operation-note', [AdmissionsController::class, 'saveOperationNote'])->name('save-op-note');
     Route::post('/admission/{admission}/delivery-note', [AdmissionsController::class, 'saveDeliveryNote'])->name('save-delivery-note');
+
+    Route::post('/admission/{admission}/discharge', [AdmissionsController::class, 'setForDischarge'])->name('discharge');
 });

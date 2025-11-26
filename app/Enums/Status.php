@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum Status: int {
+enum Status: int
+{
     case closed = 0;
     case active = 1;
     case blocked = 2;

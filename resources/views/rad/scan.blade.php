@@ -260,7 +260,7 @@
                 const formData = new FormData(e.currentTarget);
 
                 // console.log("Form submitted.");
-                submitForm(document.querySelector("#scan-form"), "{{ route('rad.scan', $doc) }}", (e,
+                submitForm(document.querySelector("#scan-form"), "{{ route('rad.scan', $doc) }}").then((
                     res) => {
                     const {
                         data

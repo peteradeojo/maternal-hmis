@@ -78,6 +78,9 @@
                         <td>
                             <a href="{{ route('doctor.show-admission-plan', $data) }}" class="link">View Plan</a>
                         </td>
+                        <td>
+                            <a href="#" @click="$dispatch('open-discharge-form')" class="link">Discharge</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -247,10 +250,46 @@
             </div>
         </form>
     </x-overlay-modal>
+
+    <x-modal id="discharge-form" title="Discharge Patient">
+        <form
+            @submit.prevent="submitForm($event.target, '{{ route('api.doctor.discharge', $data) }}').then((res) => {notifySuccess('Patient discharged successfully.');})">
+            <div class="form-group">
+                <label>Discharge Date</label>
+                <x-input-datetime name="discharged_on" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Discharge Note</label>
+                <x-input-textarea name="discharge_summary" class="form-control" rows="5" />
+            </div>
+            <div class="form-group">
+                <button class="btn bg-blue-400 text-white">Submit</button>
+            </div>
+        </form>
+    </x-modal>
 @endsection
 
 @push('scripts')
     <script>
+        async function setForDischarge(e) {
+            const form = new FormData(e.currentTarget);
+            try {
+                const res = await axios.delete("{{ route('api.doctor.discharge', $data) }}", {
+                    data: form,
+                    headers: {
+                        'Content-type': 'multipart/form-data'
+                    }
+                });
+
+                if (res.data.success) {
+                    notifySuccess("Patient set for discharge successful.");
+                }
+            } catch (error) {
+                console.error(error);
+                notifyError(error.message);
+            }
+        }
+
         $(document).ready(() => {
             initTab(document.querySelector("#tablist"));
 

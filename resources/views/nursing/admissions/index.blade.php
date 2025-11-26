@@ -12,7 +12,9 @@
                     <tr>
                         <th>Patient</th>
                         <th>Ward</th>
+                        <th>Status</th>
                         <th>Admitted On</th>
+                        <th>Discharged On</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -21,7 +23,9 @@
                         <tr>
                             <td><a href="{{ route('nurses.admissions.show', $a) }}">{{ $a->patient?->name }}</a></td>
                             <td>{{ $a->ward?->name }}</td>
+                            <td>{{ Status::tryFrom($a->status)?->name }}</td>
                             <td>{{ $a->created_at->format('Y-m-d h:i A') }}</td>
+                            <td>{{ $a->discharged_on?->format('Y-m-d h:i A') }}</td>
                             <td>
                                 @unless ($a->ward)
                                     <a href="{{ route('nurses.admissions.assign-ward', $a) }}" class="link">Assign To Ward</a>

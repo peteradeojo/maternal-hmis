@@ -61,15 +61,14 @@ window.asyncForm = (form, route, callback = (e, data) => { }) => {
     });
 }
 
-window.submitForm = (el, route, callback = (e, data) => { }) => {
+window.submitForm = async (el, route) => {
     const formData = new FormData(el);
-
-    axios.post(route, formData, {
+    return axios.post(route, formData, {
         headers: {
             "Content-Type": 'multipart/form-data',
             Accept: 'application/json',
         },
-    }).then((res) => callback(el, res))
+    }).then((res) => res)
         .catch(err => {
             console.error(err.message);
             notifyError(err.message);

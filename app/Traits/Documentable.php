@@ -37,7 +37,7 @@ trait Documentable
 
     public function allPrescriptionsAvailable(): Attribute
     {
-        return Attribute::make(get: fn () => $this->treatments->every(fn ($t) => $t->status == Status::quoted->value));
+        return Attribute::make(get: fn() => $this->treatments->every(fn($t) => $t->status == Status::quoted->value));
     }
 
     public  function examination(): MorphOne
@@ -55,12 +55,18 @@ trait Documentable
         return $this->imagings();
     }
 
-    public function prescriptions() {
+    public function prescriptions()
+    {
         return $this->treatments();
     }
 
     public function treatments()
     {
         return $this->morphMany(DocumentationPrescription::class, 'event');
+    }
+
+    public function scopeActive($query)
+    {
+        throw new \Exception("Not implemented");
     }
 }

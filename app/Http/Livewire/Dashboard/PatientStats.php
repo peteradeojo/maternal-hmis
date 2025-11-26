@@ -32,7 +32,7 @@ class PatientStats extends Component
         $this->patients = Patient::count();
         $this->patientsToday = Patient::whereDate('created_at', today())->count();
 
-        $this->currentAdmissions = Admission::where('status', Status::active->value)->count();
+        $this->currentAdmissions = Admission::active()->count();
 
         $this->stats['pendingBills'] = Bill::where('status', Status::pending->value)->count();
 
