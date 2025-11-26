@@ -145,7 +145,8 @@ class PatientsController extends Controller
     public function edit(Request $request, Patient $patient)
     {
         if (!$request->isMethod('POST')) {
-            return view('records.edit-patient', ['patient' => $patient]);
+            $categories = PatientCategory::all();
+            return view('records.edit-patient', compact('patient', 'categories'));
         }
 
         $data = $request->except('_token');

@@ -12,9 +12,19 @@
     @endisset class="form-control" />
 </div>
 <div class="form-group">
+    <label>Category</label>
+    <x-input-select name="category_id">
+        @foreach ($categories as $category)
+            <option value="{{ $category->id }}" @if ($category->id == $patient?->category_id) selected @endif>{{ $category->name }}
+            </option>
+        @endforeach
+    </x-input-select>
+</div>
+
+<div class="form-group">
     <label for="name">Name *</label>
-    <input type="text" name="name" id="name" class="form-control" value="{{ old('name') ?? $patient?->name }}"
-        required />
+    <input type="text" name="name" id="name" class="form-control"
+        value="{{ old('name') ?? $patient?->name }}" required />
 </div>
 <div class="form-group">
     <label for="gender">Gender</label>
