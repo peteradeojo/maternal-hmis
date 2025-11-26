@@ -9,5 +9,9 @@
         <span>{{ $patient->insurance[0]->hmo_name ?? 'No insurance' }}</span>
         {{-- <b>{{ isset($patient->insurance[0]) ? strtoupper("({$patient->insurance[0]->status})") : '' }}</b> --}}
     </p>
+    <p>
+        <b>Insurance number:</b>
+        <span>{{ $patient->insurance[0]->hmo_id_no ?? 'No insurance' }}</span>
+    </p>
 </div>
 {{ $slot }}

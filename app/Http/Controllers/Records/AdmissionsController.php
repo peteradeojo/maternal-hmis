@@ -10,7 +10,7 @@ class AdmissionsController extends Controller
 {
     public function index()
     {
-        $admissions = Admission::all();
+        $admissions = Admission::valid()->latest()->get();
         return view('records.admissions', compact('admissions'));
     }
 }
