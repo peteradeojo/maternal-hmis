@@ -145,6 +145,7 @@ class AdmissionsController extends Controller
         $ward->save();
 
         $admission->ward_id = $ward->id;
+        $admission->status = Status::active->value;
         $admission->save();
 
         return redirect()->route('nurses.admissions.get');
