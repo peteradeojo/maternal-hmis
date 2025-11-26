@@ -1,5 +1,5 @@
-<div>
-    <table class="table">
+<div class="overflow-x-auto">
+    <table class="table min-w-fit">
         <thead>
             <tr>
                 <th></th>

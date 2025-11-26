@@ -1,4 +1,4 @@
-<div @closeModal="removeGlobalModal">
+<div @closeModal="removeGlobalModal" class="overflow-x-auto">
     @unless ($form == false)
         <form wire:submit.prevent="save" x-data="{
             vitals: @entangle('vitals')
@@ -80,7 +80,7 @@
     @endunless
 
 
-    <div class="py-1">
+    <div class="py-1 overflow-x-auto">
         <table class="table-list">
             <thead>
                 <tr>

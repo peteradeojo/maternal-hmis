@@ -28,7 +28,7 @@
         @apply border border-[#ccc] border-collapse w-full;
 
         thead th {
-            @apply w-fit;
+            @apply min-w-[100px] sm:min-w-fit;
         }
 
         thead th:not(:last-of-type) {
@@ -161,16 +161,17 @@
     }
 
     .foldable-header {
+
         h1::after,
         h2::after,
         h3::after,
         h4::after,
         h5::after,
-        p::after
-         {
+        p::after {
             content: " (Click to view)";
             font-size: small;
         }
+
         // vertical-align: middle;
     }
 

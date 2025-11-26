@@ -4,6 +4,7 @@ import './app';
 window.initTab = function (el) {
     if (!el) return;
     const tabNav = el.querySelector("nav");
+    const tabSelect = el.querySelector("select");
 
     const tabList = tabNav.querySelectorAll("a");
 
@@ -34,13 +35,17 @@ window.initTab = function (el) {
         };
     };
 
+    tabSelect.addEventListener("change", (e) => {
+        // console.log(e.target.options.selectedIndex);
+        listener(e.target.options.selectedIndex)(e);
+    });
     tabList?.forEach((element, i) => {
         element.addEventListener("click", listener(i));
     });
 }
 
 window.asyncForm = (form, route, callback = (e, data) => { }) => {
-    if(!form) return;
+    if (!form) return;
 
     $(form).on("submit", (e) => {
         e.preventDefault();
