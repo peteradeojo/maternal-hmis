@@ -2,12 +2,15 @@
 @section('title', 'Portal')
 
 @section('content')
-    <div class="card py px">
+    <div class="container bg-white p-4 mb-2">
         <div class="header">
             <x-patient-profile :patient="$admission->patient">
-                <p>Admitted: {{ $admission->created_at->format('Y-m-d') }}</p>
+                <p><b>Admitted:</b> {{ $admission->created_at->format('Y-m-d h:i A') }}</p>
             </x-patient-profile>
         </div>
+    </div>
+
+    <div class="container bg-white p-4">
         <div class="body py">
             <div id="actions-tab" data-tablist="#list">
                 @include('components.tabs', [
@@ -22,14 +25,13 @@
                 ])
 
                 <div id="list">
+                    <p class="p-1"><b>Indication for admission:</b> {{ $admission->plan->indication }}</p>
                     {{-- Plan --}}
                     <div id="admission-plan" class="tab p-1">
                         <h2>Admission Plan</h2>
-                        <div class="pb-1"></div>
-                        <div>
-                            <h3>Drugs</h3>
-                            <div class="pt-1"></div>
-                            <p><b>Tick boxes to submit administration</b></p>
+                        <div class="py-2">
+                            <h2 class="header">Drugs</h2>
+                            <p><i><b>NB:</b> Tick boxes to submit administration</i></p>
                             <form action="?submit=treatment-log" method="post">
                                 @csrf
                                 <table class="table-list">
@@ -66,33 +68,9 @@
                                 @endif
                             </form>
                         </div>
-                        <div class="pb-1"></div>
 
-                        <h3>History</h3>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Treatments</th>
-                                    <th>Time</th>
-                                    <th>Administered By</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($admission->administrations->groupBy(fn($item, $key) => $item->created_at->format('Y-m-d')) as $dt => $adms)
-                                    <tr>
-                                        <td colspan="4" class="text-center font-semibold">{{ $dt }}</td>
-                                    </tr>
-
-                                    @foreach ($adms as $adm)
-                                        <tr>
-                                            <td>{{ $adm->treatments }}</td>
-                                            <td>{{ $adm->created_at?->format('h:i A') }}</td>
-                                            <td>{{ $adm->minister->name }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endforeach
-                            </tbody>
-                        </table>
+                        <h2 class="header">History</h2>
+                        @include('nursing.components.admission-treatments', ['admission' => $admission])
                     </div>
 
                     {{-- Vitals --}}

@@ -40,6 +40,8 @@ window.initTab = function (el) {
 }
 
 window.asyncForm = (form, route, callback = (e, data) => { }) => {
+    if(!form) return;
+
     $(form).on("submit", (e) => {
         e.preventDefault();
         axios.post(route, new FormData(e.currentTarget), {

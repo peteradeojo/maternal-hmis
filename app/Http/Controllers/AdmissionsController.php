@@ -18,7 +18,7 @@ class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        $admissions = Admission::active()->latest('updated_at')->limit(10)->get();
+        $admissions = Admission::active()->latest()->get();
         if (request()->user()->department_id == Department::DOC->value) {
             return view('doctors.admissions.index', ['admissions' => $admissions]);
         }

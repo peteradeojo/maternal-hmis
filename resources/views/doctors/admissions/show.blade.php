@@ -96,30 +96,9 @@
 
                 {{-- Treatments --}}
                 <div class="tab p-2">
-                    <p class="text-lg font-bold">Drugs</p>
+                    <p class="text-lg font-bold">Drug delivery chart</p>
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($data->administrations as $a)
-                                <tr>
-                                    <td>{{ $a->treatments }}</td>
-                                    <td>{{ $a->created_at?->format('Y-m-d h:i A') }}</td>
-                                    <td>{{ $a->minister->name }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3">No administrations have been recorded.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                    @include('nursing.components.admission-treatments', ['admission' => $data])
                 </div>
 
                 {{-- Reviews/Continuations --}}

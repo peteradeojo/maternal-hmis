@@ -45,6 +45,7 @@
         $(() => {
             $("#admissions").DataTable({
                 responsive: true,
+                ordering: false,
             });
         });
     </script>
