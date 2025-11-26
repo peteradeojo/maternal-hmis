@@ -2,7 +2,7 @@
 @section('title', 'Portal')
 
 @section('content')
-    <div class="container bg-white p-4 mb-2">
+    <div class="container bg-white p-2 sm:p-4 mb-2">
         <div class="header">
             <x-patient-profile :patient="$admission->patient">
                 <p><b>Admitted:</b> {{ $admission->created_at->format('Y-m-d h:i A') }}</p>

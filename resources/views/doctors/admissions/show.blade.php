@@ -3,7 +3,7 @@
 @section('content')
     <x-back-link />
 
-    <div class="bg-white p-3">
+    <div class="container bg-white p-1 sm:p-3">
         <div class="pb-3">
             <x-patient-profile :patient="$data->patient">
                 <div class="grid grid-cols-2">
