@@ -67,24 +67,29 @@
                             </form>
                         </div>
                         <div class="pb-1"></div>
+
                         <h3>History</h3>
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>Treatments</th>
-                                    <th>Date</th>
                                     <th>Time</th>
                                     <th>Administered By</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($admission->administrations as $adm)
+                                @foreach ($admission->administrations->groupBy(fn($item, $key) => $item->created_at->format('Y-m-d')) as $dt => $adms)
                                     <tr>
-                                        <td>{{ $adm->treatments }}</td>
-                                        <td>{{ $adm->created_at?->format('Y-m-d') }}</td>
-                                        <td>{{ $adm->created_at?->format('h:i A') }}</td>
-                                        <td>{{ $adm->minister->name }}</td>
+                                        <td colspan="4" class="text-center font-semibold">{{ $dt }}</td>
                                     </tr>
+
+                                    @foreach ($adms as $adm)
+                                        <tr>
+                                            <td>{{ $adm->treatments }}</td>
+                                            <td>{{ $adm->created_at?->format('h:i A') }}</td>
+                                            <td>{{ $adm->minister->name }}</td>
+                                        </tr>
+                                    @endforeach
                                 @endforeach
                             </tbody>
                         </table>

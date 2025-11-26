@@ -15,9 +15,9 @@
                 @foreach ($admissions as $a)
                     <tr>
                         <td>{{ $a->patient->name }}</td>
-                        <td>{{ $a->ward->name }}</td>
+                        <td>{{ $a->ward?->name }}</td>
                         <td>{{ $a->created_at }}</td>
-                        <td>{{ $a->discharged_on ?? "Not yet discharged" }}</td>
+                        <td>{{ $a->discharged_on ?? 'Not yet discharged' }}</td>
                     </tr>
                 @endforeach
             </tbody>

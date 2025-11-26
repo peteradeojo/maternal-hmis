@@ -58,7 +58,7 @@ class Admission extends Model implements OperationalEvent
 
     public function administrations()
     {
-        return  $this->hasMany(AdmissionTreatments::class)->latest();
+        return $this->hasMany(AdmissionTreatments::class)->latest();
     }
 
     public function plans()
