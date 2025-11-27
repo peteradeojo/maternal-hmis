@@ -10,7 +10,7 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($visit->treatments->merge($visit->visit->treatments) as $treatment)
+            @forelse ($visit->treatments->merge($visit->visit?->treatments ?? []) as $treatment)
                 <tr>
                     <td>{{ $treatment->name }}</td>
                     <td>{{ $treatment->dosage }}</td>

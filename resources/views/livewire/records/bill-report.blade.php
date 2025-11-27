@@ -137,7 +137,8 @@
                 @foreach ($drugs as $i => $img)
                     {{-- @dump($img) --}}
                     <tr>
-                        <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }} (days)
+                        <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }}
+                            (days)
                         </td>
                         <td class="flex items-center justify-between">
                             <span>{{ $img['data']['amount'] ?? 0 }}</span>
@@ -197,7 +198,7 @@
                             @else
                                 <input type="number"
                                     wire:keyup.enter.prevent="saveItem({{ $i }}, 'others')"
-                                    wire:blur="saveItem({{$i}}, 'others')"
+                                    wire:blur="saveItem({{ $i }}, 'others')"
                                     wire:model="others.{{ $i }}.product.amount" class="form-control"
                                     value="{{ $item['product']['amount'] }}" step="1" required />
                                 <button wire:click.prevent="saveItem({{ $i }}, 'others')" href="#"

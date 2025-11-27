@@ -1,79 +1,15 @@
-<div>
+<div class="pb-8">
     <x-patient-profile :patient="$visit->patient" />
 
     <p class="text-lg font-semibold">Encounter Details</p>
-    <p>Date: {{ $visit->created_at }}</p>
+    <p>Date: {{ $visit->created_at->format('Y-m-d h:i A') }}</p>
 
-    <div>
-        <p class="py-2 font-semibold">Presentation: </p>
-        <table class="table">
-            @forelse ($visit->histories as $complaint)
-                <tr>
-                    <td>{{ $complaint->presentation }}</td>
-                    <td>{{ $complaint->duration }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="2">No complaints</td>
-                </tr>
-            @endforelse
-        </table>
-    </div>
-
-    <div>
-        <p class="py-2 font-semibold">Investigations</p>
-
-        <table class="table">
-            <tr>
-                <th>Tests</th>
-            </tr>
-            @forelse ($visit->tests as $test)
-                <tr>
-                    <td>{{ $test->name }}</td>
-                    <td>{{ $test->describable->amount }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td>No test</td>
-                </tr>
-            @endforelse
-
-            <tr>
-                <th>Imaging</th>
-            </tr>
-            @forelse ($visit->imagings as $img)
-                <tr>
-                    <td>{{ $img->name }}</td>
-                    <td>{{ $img->describable->amount }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td>No scans requested</td>
-                </tr>
-            @endforelse
-        </table>
-    </div>
-
-    <div>
-        <p class="py-2 font-semibold">Diagnoses</p>
-        @forelse ($visit->diagnoses as $dg)
-            <div class="bg-green-100 p-1">
-                <p>{{ $dg->diagnoses }}</p>
-                <p><b>Consultant:</b> {{ $dg->made_by }}</p>
-            </div>
-        @empty
-            <p>No diagnosis.</p>
-        @endforelse
-    </div>
-
-    <div>
-        <p class="py-2 font-semibold">Treatments</p>
-        @forelse ($visit->treatments as $p)
-            <div>
-                {{ $p }}
-            </div>
-        @empty
-            <p>No treatments</p>
-        @endforelse
-    </div>
+    <x-reports.encounter.complaints :visit="$visit" />
+    <x-reports.encounter.examinations :visit="$visit" />
+    <x-reports.encounter.notes :visit="$visit" />
+    <x-reports.encounter.diagnoses :visit="$visit" />
+    <x-reports.encounter.tests :visit="$visit" />
+    <x-reports.encounter.scans :visit="$visit" />
+    <x-reports.encounter.prescriptions :visit="$visit" />
+    <x-reports.encounter.admission :visit="$visit" />
 </div>

@@ -70,38 +70,13 @@
         @if ($visit->admission->administrations->isNotEmpty())
             <div class="py-2">
                 <p class="text-lg font-semibold">Treatment Administration Chart</p>
-                <div class="overflow-x-auto">
-                    <table class="table w-full">
-                        <thead>
-                            <tr>
-                                <th>Drug Name</th>
-                                <th>Dosage</th>
-                                <th>Route</th>
-                                <th>Time Administered</th>
-                                <th>Administered By</th>
-                                <th>Status/Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($visit->admission->administrations as $admin)
-                                <tr>
-                                    <td>{{ $admin->treatments?->name ?? 'Unknown Drug' }}</td>
-                                    <td>{{ $admin->treatments?->dosage ?? '-' }}</td>
-                                    <td>{{ $admin->treatments?->route ?? '-' }}</td>
-                                    <td>{{ $admin->created_at->format('d M Y h:i A') }}</td>
-                                    <td>{{ $admin->minister?->name ?? 'Unknown' }}</td>
-                                    <td>{{ $admin->status ?? 'Administered' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @include('nursing.components.admission-treatments', ['admission' => $visit->admission])
             </div>
         @endif
 
-        <x-reports.encounter.tests :visit="$visit->admission" />
+        <x-reports.encounter.tests :visit="$visit->admission->plan" />
         <x-reports.encounter.scans :visit="$visit->admission" />
-        <x-reports.encounter.prescriptions :visit="$visit->admission" />
+        <x-reports.encounter.prescriptions :visit="$visit->admission->plan" />
         <x-reports.encounter.notes-list :notes="$visit->admission->notes" title="All Notes" />
     </div>
 @endif
