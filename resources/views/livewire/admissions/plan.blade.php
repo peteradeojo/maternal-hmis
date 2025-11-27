@@ -4,40 +4,11 @@
 
     <div class="py-2 px-2 bg-gray-200 grid gap-y-4">
         <p class="bold">Indication for Admission</p>
-        <input type="text" name="indication" id="" placeholder="Indication for Admission" wire:model="indication"
-            value="{{ $admission?->plan->indication }}">
+        <x-input-text name="indication" wire:model="indication" placeholder="Indication for Admission"
+            class="form-control" />
 
-        <livewire:doctor.add-presciption :visit="$visit" :dispatch="true"
-            @prescription_selected="addPrescription($event.detail.product)" :title="'Add Treatment Plan'" />
-
-        <p class="text-lg bold">Added Plans</p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Dosage</th>
-                    <th>Duration</th>
-                    <th>Frequency</th>
-                    <th></th>
-                </tr>
-            </thead>
-            @forelse ($this->plans as $i => $plan)
-                <tr>
-                    <td>{{ $plan['name'] }}</td>
-                    <td>{{ $plan['dosage'] }}</td>
-                    <td>{{ $plan['duration'] }}</td>
-                    <td>{{ $plan['frequency'] }}</td>
-                    <td>
-                        <button wire:click="removePlanItem({{ $i }}, {{ $plan['id'] ?? null }})"
-                            class="btn btn-sm btn-red text-white">&times;</button>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="text-center">You haven't added any plans</td>
-                </tr>
-            @endforelse
-        </table>
+        <livewire:doctor.add-presciption :visit="$admission->plan" :dispatch="true"
+            @prescription_selected="addPrescription($event.detail.product)" :display="true" />
 
         <div class="grid grid-cols-2 gap-x-4">
             <div>
@@ -83,9 +54,8 @@
         {{-- <p class="bold">Operation Note</p>
         <textarea rows="3" class="form-control" wire:model="operationNote"></textarea> --}}
 
-        <div class="py-1"></div>
-        <p>Admission Note / More </p>
-        <textarea rows="3" wire:model="admissionNote" class="form-control"></textarea>
+        <p>Admission Note / More</p>
+        <x-input-textarea wire:model="admissionNote" class="form-control" row="3" name="admissionNote" />
 
         <button class="btn btn-secondary w-1/3" wire:click="savePlan">Submit</button>
         <div class="pb-4"></div>

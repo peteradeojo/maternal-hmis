@@ -15,10 +15,6 @@
         <div class="p-3">
             <table class="table">
                 <tbody>
-                    {{-- <tr>
-                        <td></td>
-                        <td>{{ $data->visit->id }}</td>
-                    </tr> --}}
                     <tr>
                         <td>Ward</td>
                         <td>{{ $data->ward?->name ?? 'Unassigned' }}</td>
@@ -29,7 +25,7 @@
                     </tr>
                     <tr>
                         <td>Admitted on:</td>
-                        <td>{{ $data->created_at->format('Y-m-d') }}</td>
+                        <td>{{ $data->created_at->format('Y-m-d h:i A') }}</td>
                     </tr>
                     <tr>
                         <td>Indication</td>
