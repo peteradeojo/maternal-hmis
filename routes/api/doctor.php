@@ -5,6 +5,7 @@ use App\Http\Controllers\Doctor\PatientsController;
 use App\Http\Controllers\LabController;
 use App\Http\Controllers\RadiologyController;
 use App\Http\Controllers\Records\PatientsController as RecordsPatientsController;
+use App\Http\Controllers\VisitsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('doctor')->name('api.doctor.')->middleware(['datalog'])->group(function () {
@@ -22,4 +23,6 @@ Route::prefix('doctor')->name('api.doctor.')->middleware(['datalog'])->group(fun
     Route::post('/admission/{admission}/delivery-note', [AdmissionsController::class, 'saveDeliveryNote'])->name('save-delivery-note');
 
     Route::post('/admission/{admission}/discharge', [AdmissionsController::class, 'setForDischarge'])->name('discharge');
+
+    Route::get('/consultations', [VisitsController::class, 'index'])->name('consultations');
 });

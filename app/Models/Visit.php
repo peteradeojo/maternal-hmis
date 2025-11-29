@@ -35,7 +35,7 @@ class Visit extends Model implements OperationalEvent
 
     protected $with = ['visit'];
 
-    protected $appends = ['can_check_out'];
+    protected $appends = ['can_check_out', 'type'];
 
     protected $casts = [];
 

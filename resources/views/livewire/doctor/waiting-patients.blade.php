@@ -44,8 +44,15 @@
     <script>
         new DataTable('#patients', {
             // ordering: false,
-            order: [
-                [4, 'desc']
+            serverSide: true,
+            ajax: "{{ route('api.doctor.consultations') }}",
+            columns: [
+                { data: 'patient.name', name: 'patient.name' },
+                { data: 'patient.card_number', name: 'patient.card_number' },
+                { data: 'patient.category.name', name: 'patient.category.name' },
+                { data: 'type', name: 'type' },
+                { data: (row) => new Date(row.created_at).toLocaleString('en-CA'), name: 'created_at' },
+                { data: (row) => `<a href="{{ route('doctor.treat', ':id') }}" class="link">Start Visit</a>` .replace(':id', row.id)}
             ],
             responsive: true,
         });
