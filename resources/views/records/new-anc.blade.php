@@ -14,7 +14,7 @@
                             <option value="{{ $ancCategory->id }}" selected>Antenatal</option>
                         </select>
                     </div>
-                    @include('records.components.patient-form-basic')
+                    @include('records.components.patient-form-basic', ['mode' => $mode, 'categories' => $categories])
                 </div>
                 <div class="form-group">
                     <label for="cardType">Card Type</label>
