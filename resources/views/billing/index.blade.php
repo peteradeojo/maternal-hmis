@@ -10,6 +10,7 @@
                     <th>Patient</th>
                     <th>Card number</th>
                     <th>Date</th>
+                    <th>Return Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,6 +39,9 @@
                             hour: '2-digit',
                         })
                     },
+                    {
+                        data: (row) => row.visit.visit.return_date || '',
+                    }
                 ],
                 ordering: false,
             });

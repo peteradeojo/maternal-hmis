@@ -17,7 +17,7 @@ class BillingController extends Controller
 
     public function getPendingBills(Request $request)
     {
-        return $this->dataTable($request, Visit::with(['patient'])->whereIn('status', [Status::active, Status::completed])->latest(), [
+        return $this->dataTable($request, Visit::with(['patient', 'visit'])->whereIn('status', [Status::active, Status::completed])->latest(), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
