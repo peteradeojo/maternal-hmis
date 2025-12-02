@@ -35,11 +35,13 @@ class PatientsController extends Controller
         $ancCategory = $categories->where('name', 'Antenatal')->first();
 
         if ($request->method() !== 'POST') {
+            $mode = $request->query('mode');
             return match ($request->query('mode')) {
                 null => view('records.new-patient', [
                     'categories' => $categories->where('name', '!=', 'Antenatal'),
+                    'mode' => null,
                 ]),
-                'anc' => view('records.new-anc', compact('ancCategory')),
+                'anc' => view('records.new-anc', compact('ancCategory', 'mode', 'categories')),
             };
         }
 
