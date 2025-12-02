@@ -12,16 +12,17 @@
     @endisset class="form-control" />
 </div>
 
-@if ($mode && $mode !== "Antenatal")
-<div class="form-group">
-    <label>Category</label>
-    <x-input-select name="category_id">
-        @foreach ($categories as $category)
-            <option value="{{ $category->id }}" @if ($category->id == $patient?->category_id) selected @endif>{{ $category->name }}
-            </option>
-        @endforeach
-    </x-input-select>
-</div>
+@if (isset($mode) && $mode !== 'anc')
+    <div class="form-group">
+        <label>Category</label>
+        <x-input-select name="category_id">
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" @if ($category->id == $patient?->category_id) selected @endif>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </x-input-select>
+    </div>
 @endif
 
 <div class="form-group">
