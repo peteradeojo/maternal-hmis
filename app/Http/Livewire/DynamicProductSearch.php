@@ -49,7 +49,7 @@ class DynamicProductSearch extends Component
         $this->display = true;
     }
 
-    public function select(Product $product)
+    public function select(?Product $product)
     {
         $this->resetResults();
 

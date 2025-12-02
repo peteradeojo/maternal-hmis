@@ -23,7 +23,7 @@
         $(document).ready(function() {
             $("#table").DataTable({
                 serverSide: true,
-                ajax: "{{ route('api.nhi.visits') }}",
+                ajax: "{{ route('api.nhi.visits') }}?insured",
                 columns: [{
                         data: ({
                                 id,

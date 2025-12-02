@@ -249,6 +249,12 @@ class PatientsController extends Controller
     {
         $query = Visit::with(['patient.insurance'])->latest();
 
+        if ($request->has('insured')) {
+            $query = $query->whereHas('patient', function ($q) {
+                $q->has('insurance');
+            });
+        }
+
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {

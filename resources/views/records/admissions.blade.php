@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="bg-white p-4">
-        <table class="table">
+        <table class="table" id="table">
             <thead>
                 <tr>
                     <th>Patient</th>
@@ -14,7 +14,7 @@
             <tbody>
                 @foreach ($admissions as $a)
                     <tr>
-                        <td>{{ $a->patient->name }}</td>
+                        <td><a href="{{route('doctor.visit', $a->visit)}}" class="link">{{ $a->patient->name }}</a></td>
                         <td>{{ $a->ward?->name }}</td>
                         <td>{{ $a->created_at }}</td>
                         <td>{{ $a->discharged_on ?? 'Not yet discharged' }}</td>

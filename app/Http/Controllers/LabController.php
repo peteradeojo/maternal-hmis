@@ -273,9 +273,9 @@ class LabController extends Controller
             $q->has('tests')->orWhereHas('visit', function ($query) {
                 $query->has('tests');
             })
-            ->orWhereHas('admission', function ($q) {
-                $q->has('tests');
-            });
+                ->orWhereHas('admission', function ($q) {
+                    $q->has('tests');
+                });
         })->latest();
 
         return $this->dataTable($request, $query, [

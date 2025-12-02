@@ -64,6 +64,8 @@ function departmentRoutes()
     $nhi = [
         route('nhi.index') => ['Patients', 'fa-person'],
         route('nhi.encounters') => ['Encounters', 'fa-walk'],
+        route('billing.index') => ['Billing', 'fa-money-bill-wave'],
+        route('records.admissions') => ['Admissions', 'fa-bed'],
     ];
 
     $dashboard = [
