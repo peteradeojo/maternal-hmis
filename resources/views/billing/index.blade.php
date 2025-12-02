@@ -9,6 +9,7 @@
                 <tr>
                     <th>Patient</th>
                     <th>Card number</th>
+                    <th>Category</th>
                     <th>Date</th>
                     <th>Return Date</th>
                 </tr>
@@ -32,6 +33,9 @@
                     },
                     {
                         data: 'patient.card_number'
+                    },
+                    {
+                        data: 'patient.category.name'
                     },
                     {
                         data: (row) => new Date(row.created_at).toLocaleDateString('en-CA', {
