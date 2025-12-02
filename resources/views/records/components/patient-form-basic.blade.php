@@ -12,7 +12,7 @@
     @endisset class="form-control" />
 </div>
 
-@if ($patient->category->name !== "Antenatal")
+@if ($patient?->category->name !== "Antenatal")
 <div class="form-group">
     <label>Category</label>
     <x-input-select name="category_id">
