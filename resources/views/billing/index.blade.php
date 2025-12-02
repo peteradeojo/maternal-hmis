@@ -40,7 +40,7 @@
                         })
                     },
                     {
-                        data: (row) => row.visit.visit.return_date || '',
+                        data: (row) => row.visit.return_visit || '',
                     }
                 ],
                 ordering: false,
