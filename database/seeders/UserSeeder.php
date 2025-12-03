@@ -43,7 +43,42 @@ class UserSeeder extends Seeder
                 'department_id' => Department::IT->value,
                 'phone' => 'ict',
                 'password' => Hash::make('password')
-            ]
+            ],
+            [
+                'firstname' => 'Boluwatife',
+                'lastname' => 'Ade-Ojo',
+                'department_id' => Department::NHI->value,
+                'phone' => 'nhs',
+                'password' => Hash::make('password')
+            ],
+            [
+                'firstname' => 'Boluwatife',
+                'lastname' => 'Ade-Ojo',
+                'department_id' => Department::RAD->value,
+                'phone' => 'radio',
+                'password' => Hash::make('password')
+            ],
+            [
+                'firstname' => 'Boluwatife',
+                'lastname' => 'Ade-Ojo',
+                'department_id' => Department::DIS->value,
+                'phone' => 'dis',
+                'password' => Hash::make('password')
+            ],
+            [
+                'firstname' => 'Boluwatife',
+                'lastname' => 'Ade-Ojo',
+                'department_id' => Department::PHA->value,
+                'phone' => 'phm',
+                'password' => Hash::make('password')
+            ],
+            [
+                'firstname' => 'Boluwatife',
+                'lastname' => 'Ade-Ojo',
+                'department_id' => Department::LAB->value,
+                'phone' => 'lab',
+                'password' => Hash::make('password')
+            ],
         ];
 
         foreach ($staff as $st) {
