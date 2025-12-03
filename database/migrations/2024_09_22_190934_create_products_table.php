@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 60);
             $table->string('description', 256)->nullable();
-            $table->decimal('amount', places: 2,  unsigned: true);
+            $table->decimal('amount', places: 2)->unsigned();
             $table->tinyInteger('is_visible')->default(1);
             $table->foreignId('product_category_id')->nullable()->constrained('product_categories');
             $table->timestamps();

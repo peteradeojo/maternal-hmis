@@ -12,7 +12,7 @@
     @endisset class="form-control" />
 </div>
 
-@if (isset($mode) && $mode !== 'anc')
+@if (!isset($mode) || $mode !== 'anc')
     <div class="form-group">
         <label>Category</label>
         <x-input-select name="category_id">

@@ -20,7 +20,7 @@
                     <p><b>Category:</b> {{ $patient->category->name }}</p>
                     <p><b>Card Number:</b> {{ $patient->card_number }}</p>
                     <p><b>Registration Date:</b> {{ $patient->created_at?->format('Y-m-d') }}</p>
-                    <p><b>Age: </b> {{ $patient->dob?->diffInYears() }} ({{ $patient->dob?->format('Y-m-d') }})</p>
+                    <p><b>Age: </b> {{ floor($patient->dob?->diffInYears()) }} ({{ $patient->dob?->format('Y-m-d') }})</p>
                     <p><b>Gender:</b> {{ $patient->gender_value }}</p>
                     <p><b>Phone number: </b> {{ $patient->phone }}</p>
                     <p><b>E-mail address: </b> {{ $patient->email }}</p>
