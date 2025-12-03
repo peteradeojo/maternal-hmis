@@ -43,7 +43,6 @@
 @push('scripts')
     <script>
         new DataTable('#patients', {
-            // ordering: false,
             serverSide: true,
             ajax: "{{ route('api.doctor.consultations') }}",
             columns: [

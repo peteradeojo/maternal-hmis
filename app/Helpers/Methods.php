@@ -46,6 +46,7 @@ function departmentRoutes()
         route('lab.history') => ['History', 'fa-clock'],
         route('lab.admissions') => ['Admissions', 'fa-bed'],
         route('lab.antenatals') => ['Antenatal Registration', 'fa-heart'],
+        route('lab.outpatient_test') => ['Out Patients', 'fa-walking'],
     ];
 
     $rad = [

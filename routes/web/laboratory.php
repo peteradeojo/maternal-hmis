@@ -23,4 +23,6 @@ Route::prefix('/lab')->name('lab.')->middleware(['department:' . Department::LAB
     Route::match(['get', 'post'], '/anc-booking/{profile}', [LabController::class, 'ancBooking'])->name('submit-anc-booking');
 
     Route::get('/admissions', [LabController::class, 'admissions'])->name('admissions');
+
+    Route::match(['GET', 'POST'], '/outpatient', [LabController::class, 'outpatientTest'])->name('outpatient_test');
 });

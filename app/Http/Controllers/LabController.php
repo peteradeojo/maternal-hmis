@@ -10,7 +10,9 @@ use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
 use App\Models\DocumentationTest;
 use App\Models\GeneralVisit;
+use App\Models\OutPatient;
 use App\Models\Patient;
+use App\Models\Product;
 use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -287,5 +289,62 @@ class LabController extends Controller
                 });
             }
         ]);
+    }
+
+    public function outPatientTest(Request $request)
+    {
+        if (!$request->isMethod('POST')) {
+            return view('lab.outpatient_test');
+        }
+
+        $request->validate([
+            'name' => 'required|string',
+            'gender' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|string',
+            'address' => 'nullable|string',
+            'tests' => 'required|array',
+            'tests.*' => 'required|integer',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $op = OutPatient::create([
+                'name' => $request->name,
+                'gender' => $request->gender,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'address' => $request->address,
+                'tests' => $request->tests,
+                'user_id' => auth()->user()->id,
+            ]);
+
+            foreach ($request->tests as $test) {
+                $pd = Product::find((int) $test);
+
+                DocumentationTest::create([
+                    'name' => $pd->name,
+                    'user_id' => auth()->user()->id,
+                    'testable_type' => OutPatient::class,
+                    'testable_id' => $op->id,
+                    'describable_type' => Product::class,
+                    'describable_id' => $pd->id,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'ok' => true,
+                'data' => $op,
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            report($th);
+            return response()->json([
+                'ok' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 }
