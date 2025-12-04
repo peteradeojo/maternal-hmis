@@ -7,7 +7,7 @@
         <x-input-text name="indication" wire:model="indication" placeholder="Indication for Admission"
             class="form-control" />
 
-        <livewire:doctor.add-presciption :visit="$admission->plan" :dispatch="true"
+        <livewire:doctor.add-prescription :visit="$admission->plan" :dispatch="true"
             @prescription_selected="addPrescription($event.detail.product)" :display="true" />
 
         <div class="grid grid-cols-2 gap-x-4">

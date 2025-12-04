@@ -1,6 +1,6 @@
 <div x-data="{
     bill: @entangle('bill'),
-}" wire:poll.5s>
+}">
     <p>Bill No: {{ $bill->bill_number }}</p>
     <p>Patient: {{ $bill->patient->name }} ({{ $bill->patient->card_number }})</p>
 
@@ -22,19 +22,18 @@
 
                         <td class="flex justify-between items-center gap-x-4">
                             @if ($entry['saved'])
-                                <span>{{ number_format($entry['amount']) }}
-                                    @if ($entry['tag'] == 'drug')
-                                        <small>({{ $entry['total_price'] }})</small>
-                                    @endif
-                                </span>
+                                <span>{{ number_format($entry['total_price']) }}</span>
                                 <span>
-                                    <button title="Edit" wire:click="edit({{ $i }})"
-                                        class="btn btn-sm bg-green-500 text-white"><i class="fa fa-pencil"></i></button>
+                                    @if ($entry['tag'] !== 'drug')
+                                        <button title="Edit" wire:click="edit({{ $i }})"
+                                            class="btn btn-sm bg-green-500 text-white"><i
+                                                class="fa fa-pencil"></i></button>
+                                    @endif
 
-                                    @if ($entry['status'] != 'Blocked')
+                                    @if ($entry['status_id'] != Status::blocked->value)
                                         <button title="Reject" wire:click="reject({{ $entry['id'] }})"
-                                            class="btn btn-sm bg-red-500 text-white"><i
-                                                class="fa fa-cancel"></i></button>
+                                            class="btn btn-sm bg-red-300"><i
+                                                class="fa fa-trash"></i></button>
                                     @else
                                         <button title="Reject" wire:click="unreject({{ $entry['id'] }})"
                                             class="btn btn-sm bg-blue-400 text-white"><i
@@ -52,7 +51,7 @@
 
                 <tr>
                     <td></td>
-                    <td class="flex justify-end">
+                    <td class="flex justify-end py-1">
                         <button wire:click="updateBillDetailsAmt" class="btn bg-blue-400 text-white"
                             @if ($currentHash == $initHash) disabled="disabled" @endif><i class="fa fa-save"></i>
                             Save</button>
@@ -76,6 +75,28 @@
                 </tr>
             </tbody>
         </table>
+
+        <p class="font-semibold mt-4">Add</p>
+        <livewire:dynamic-product-search category="MISCELLANEOUS" @selected="addItem($event.detail)"
+            @selected_temp="addItem($event.detail)" />
+
+        @if ($adding)
+            <form wire:submit.prevent="saveAddItem">
+                <div class="grid grid-cols-2 gap-x-4">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" readonly wire:model="adding.name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" step="0.01" wire:model="adding.amount" class="form-control" required />
+                    </div>
+                    <div>
+                        <button class="btn bg-blue-400 text-white">Save <i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+            </form>
+        @endif
     </div>
 
     @if ($bill->balance > 0)

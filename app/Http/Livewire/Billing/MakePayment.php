@@ -2,11 +2,15 @@
 
 namespace App\Http\Livewire\Billing;
 
+use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\BillDetail;
 use Livewire\Component;
 use App\Models\BillPayment;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class MakePayment extends Component
@@ -22,9 +26,12 @@ class MakePayment extends Component
 
     public $editing;
 
+    public $adding;
+
     public function mount($bill)
     {
         $this->bill = $bill;
+        dump($bill->entries);
         $this->resetHash();
     }
 
@@ -136,18 +143,68 @@ class MakePayment extends Component
 
     public function reject($id)
     {
-        BillDetail::where('id', $id)->update(['status' => Status::blocked->value]);
+        $bd = BillDetail::where('id', $id)->first();
+        $bd->update(['status' => Status::blocked->value]);
+
+        try {
+            $bd->chargeable?->update(['status' => Status::blocked]);
+        } catch (\Exception $e) {}
+
         $this->hydrate();
         $this->dispatch('$refresh');
 
-        Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
+        // Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
     }
 
     public function unreject($id)
     {
-        BillDetail::where('id', $id)->update(['status' => Status::pending->value]);
+        $bd = BillDetail::find($id);
+        $bd->update(['status' => Status::active->value]);
+        $bd->chargeable?->update(['status' => Status::active]);
+
         $this->hydrate();
         $this->dispatch('$refresh');
-        Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
+        // Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
+    }
+
+    public function addItem($data)
+    {
+        $this->adding = $data;
+        $this->adding['amount'] = $data['product']['amount'];
+    }
+
+    public function saveAddItem()
+    {
+        DB::beginTransaction();
+
+        try {
+            if (empty($this->adding['id'])) {
+                $product = Product::create([
+                    'product_category_id' => ProductCategory::firstOrCreate(['name' => 'MISCELLANEOUS'], ['department_id' => Department::REC->value])->id,
+                    'name' => $this->adding['name'],
+                    'amount' => $this->adding['amount'],
+                ]);
+            } else {
+                $product = Product::findOrFail($this->adding['id']);
+            }
+
+            $this->bill->entries()->create([
+                'chargeable_type' => Product::class,
+                'chargeable_id' => $product->id,
+                'unit_price' => $this->adding['amount'],
+                'total_price' => $this->adding['amount'],
+                'tag' => 'miscellaneous',
+                'description' => $product->name,
+                'status' => Status::active->value,
+                'user_id' => auth()->user()->id,
+            ]);
+
+            DB::commit();
+
+            $this->reset('adding');
+        } catch (\Throwable $th) {
+            dump($th);
+            DB::rollBack();
+        }
     }
 }

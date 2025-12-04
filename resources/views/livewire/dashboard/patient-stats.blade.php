@@ -1,7 +1,7 @@
 <div>
     {{-- <div class="flex-col md:flex-row flex gap-y-2 justify-between gap-x-3 pb-3"> --}}
     <div class="grid md:grid-cols-3 gap-y-2 gap-x-3">
-        <div class="card">
+        <div class="card bg-white">
             <div class="header card-header">
                 {{ $patients }}
             </div>
@@ -9,7 +9,7 @@
                 Patients
             </div>
         </div>
-        <div class="card">
+        <div class="card bg-white">
             <div class="header card-header">
                 {{ $patientsToday }}
             </div>
@@ -17,7 +17,7 @@
                 Patients Today
             </div>
         </div>
-        <div class="card">
+        <div class="card bg-white">
             <div class="header card-header">
                 {{ $currentAdmissions }}
             </div>

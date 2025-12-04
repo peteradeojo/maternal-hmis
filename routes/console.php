@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,4 +23,8 @@ Artisan::command('send:error {message}', function () {
     laas()->emergency($this->argument('message'), [
         'source' => 'pull.sh',
     ]);
+});
+
+Artisan::command('rebuild-inventory', function () {
+    DB::statement("SELECT rebuild_inventory_balances()");
 });

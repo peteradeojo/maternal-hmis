@@ -13,6 +13,7 @@ use App\Interfaces\Documentable;
 use App\Models\Admission;
 use App\Models\AncVisit;
 use App\Models\Patient;
+use App\Models\StockItemPrice;
 use App\Models\User;
 
 class TreatmentService
@@ -219,5 +220,91 @@ class TreatmentService
         ]);
 
         return $ancVisit;
+    }
+
+    public static function getCount($item, $data, $options = ['exact' => false])
+    {
+        if (empty($item)) return;
+        try {
+            if (!$item['weight']) {
+                return is_numeric($data->dosage) ? $data->dosage : 0;
+            }
+
+            $freq = $data->frequency;
+            $dosage = $data->dosage;
+            $days = $data->duration ?? 1;
+
+            if (!is_numeric($dosage)) {
+                $dosage = self::translateDosage($item['si_unit'], $data->dosage);
+                $delta = round($dosage / $item['weight'], 5);
+            } else {
+                $delta = $dosage;
+            }
+
+            $freq = self::analyzeFreqeuency($freq);
+            $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
+
+            if ($options['exact']) return $count;
+
+            return ceil($count);
+        } catch (\Throwable $th) {
+            report($th);
+            return 0;
+        }
+    }
+
+    private static function translateDosage($si_unit, $dosage)
+    {
+        $si_unit = strtolower($si_unit);
+        $matches = null;
+        preg_match("/^((\d+)(\.(\d+))?)([a-zA-Z]+)?/", $dosage, $matches);
+
+        $count = floatval($matches[1]);
+        $si = isset($matches[5]) ? strtolower($matches[5]) : null;
+
+        if ($si == null || $si == $si_unit) {
+            return $count;
+        }
+
+        if ($si_unit == "m{$si}") {
+            return $count * 1000;
+        }
+        if ($si == "m{$si_unit}") {
+            return $count / 1000;
+        }
+
+        if ($si_unit == "k{$si}") {
+            return $count / 1000;
+        }
+        if ($si == "k{$si_unit}") {
+            return $count * 1000;
+        }
+
+        return $count;
+    }
+
+    private static function analyzeFreqeuency($freq)
+    {
+        return match ($freq) {
+            'stat' => 1,
+            'immediately' => 1,
+            'od' => 1,
+            'bd' => 2,
+            'tds' => 3,
+            'qds' => 4,
+            default => 1,
+        };
+    }
+
+    public static function getPrice($id, $profile = 'RETAIL') {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+
+        return $prices->first()?->price ?? 0;
+    }
+
+    public static function getPriceData($id, $profile = 'RETAIL') {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+
+        return $prices->first() ?? null;
     }
 }

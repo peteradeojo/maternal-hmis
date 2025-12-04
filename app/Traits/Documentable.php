@@ -3,15 +3,16 @@
 namespace App\Traits;
 
 use App\Enums\Status;
+use App\Models\Prescription;
 use App\Models\PatientImaging;
 use App\Models\DocumentationTest;
 use App\Models\DocumentedDiagnosis;
+use App\Models\PatientExaminations;
 use App\Models\DocumentationComplaints;
 use App\Models\DocumentationPrescription;
-use App\Models\PatientExaminations;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Documentable
 {
@@ -32,7 +33,7 @@ trait Documentable
 
     public function valid_tests(): MorphMany
     {
-        return $this->morphMany(DocumentationTest::class, 'testable')->where('status', '!=', Status::cancelled->value);
+        return $this->morphMany(DocumentationTest::class, 'testable')->where('status', '!=', Status::cancelled->value)->latest();
     }
 
     public function allPrescriptionsAvailable(): Attribute
@@ -60,9 +61,21 @@ trait Documentable
         return $this->treatments();
     }
 
+    public function prescription()
+    {
+        return $this->morphOne(Prescription::class, 'event')->latest();
+    }
+
     public function treatments()
     {
-        return $this->morphMany(DocumentationPrescription::class, 'event');
+        try {
+            //code...
+            return $this->morphMany(DocumentationPrescription::class, 'event');
+        } catch (\Throwable $th) {
+            //throw $th;
+
+            return null;
+        }
     }
 
     public function scopeActive($query)

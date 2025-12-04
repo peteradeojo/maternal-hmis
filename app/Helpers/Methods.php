@@ -54,8 +54,9 @@ function departmentRoutes()
     ];
 
     $phm = [
-        route('phm.prescriptions') => ['Presciptions', 'fa-prescription'],
+        route('phm.prescriptions') => ['Prescriptions', 'fa-prescription'],
         route('phm.inventory.index') => ['Inventory', ''],
+        route('phm.admissions') => ['Wards', 'fa-bed'],
     ];
 
     $dis = [
@@ -127,7 +128,7 @@ function resolve_render($value, $mode = null)
 function notifyUserSuccess(string $message, User|int $user, $options = [])
 {
     $options['mode'] ??= AppNotifications::$IN_APP;
-    sendUserMessage(['message' => $message, 'bg' => ['bg-blue-400', 'text-white']], $user, $options);
+    sendUserMessage(['message' => $message, 'bg' => $options['bg'] ?? ['bg-blue-400', 'text-white']], $user, $options);
 }
 
 function notifyUserError(string $message, User|int $user, $options = [])
@@ -138,9 +139,12 @@ function notifyUserError(string $message, User|int $user, $options = [])
 
 function sendUserMessage($message, User|int $userId, $options = [])
 {
-    $options['mode'] ??= AppNotifications::$BOTH;
+    $default = [
+        'mode' => AppNotifications::$BOTH,
+        ...$options,
+    ];
 
-    $message = array_merge($message, ['options' => $options]);
+    $message = array_merge($message, ['options' => $default]);
     try {
         Broadcast::private("user." . (is_a($userId, User::class) ? $userId->id : $userId))
             ->as("UserEvent")

@@ -38,7 +38,6 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Route</th>
                                             <th>Dosage</th>
                                             <th>Frequency</th>
                                             <th>Duration</th>
@@ -46,10 +45,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($admission->plan->treatments ?? [] as $p)
+                                        @forelse ($admission->plan->prescription?->lines ?? [] as $p)
                                             <tr>
-                                                <td>{{ $p->name }}</td>
-                                                <td>{{ $p->route }}</td>
+                                                <td>{{ $p->item?->name ?? $p->description }}</td>
                                                 <td>{{ $p->dosage }}</td>
                                                 <td>{{ $p->frequency }}</td>
                                                 <td>{{ $p->duration }}</td>
@@ -62,7 +60,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                                @if ($admission->plan->treatments?->count() > 0 && $admission->in_ward)
+                                @if ($admission->plan->prescription?->lines->count() > 0 && $admission->in_ward)
                                     <div class="pt-1"></div>
                                     <button type="submit" class="btn btn-red">Submit</button>
                                 @endif

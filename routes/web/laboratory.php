@@ -13,6 +13,7 @@ Route::prefix('/lab')->name('lab.')->middleware(['department:' . Department::LAB
     // Route::match(['get', 'post'], 'test/{visit}', [LabController::class, 'test'])->name('take-test');
 
     Route::match(['get', 'post'], 'tests/{visit}', [LabController::class, 'viewTests'])->name('view-tests');
+    Route::get('tests/{visit}/results', [LabController::class, 'testResults'])->name('test-results');
     Route::match(['get'], 'report/{patient}', [LabController::class, 'testReport'])->name('report-test');
 
     Route::match(['get', 'post'], 'anc-test/{profile}', [LabController::class, 'antenatalBooking'])->name('test-anc');

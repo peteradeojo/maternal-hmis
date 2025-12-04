@@ -21,3 +21,4 @@ yarn-error.log
 /.vscode
 /public/post_uploads
 /public/posts
+.env*

@@ -5,16 +5,30 @@
         <thead>
             <tr>
                 <th>Item</th>
-                <th>Dosage</th>
-                <th>Duration</th>
+                {{-- <th>Dosage</th>
+                <th>Duration</th> --}}
             </tr>
         </thead>
         <tbody>
-            @forelse ($visit->treatments->merge($visit->visit?->treatments ?? []) as $treatment)
+            {{-- @forelse ($visit->treatments->merge($visit->visit?->treatments ?? []) as $treatment)
                 <tr>
                     <td>{{ $treatment->name }}</td>
                     <td>{{ $treatment->dosage }}</td>
                     <td>{{ $treatment->duration }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="3">No records</td>
+                </tr>
+                <tr>
+                    <td colspan="3">No records</td>
+                </tr>
+                @endforelse --}}
+
+            @forelse ($visit->prescription?->lines ?? [] as $treatment)
+                @continue($treatment->status == Status::blocked)
+                <tr>
+                    <td>{{ $treatment }}</td>
                 </tr>
             @empty
                 <tr>

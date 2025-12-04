@@ -19,7 +19,7 @@
                 <td>{{ $d->visit->type }}</td>
                 <td>
                     @if (auth()->user()->department_id == DepartmentsEnum::DIS->value)
-                        <a href="{{ route('dis.get-prescription', $d) }}">View</a>
+                        <a href="{{ route('dis.get-prescriptions', $d) }}">View</a>
                     @else
                         <a href="{{ route('phm.get-prescription', $d) }}">View</a>
                     @endif

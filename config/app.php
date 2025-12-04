@@ -5,6 +5,7 @@ use App\Enums\Department;
 use App\Enums\MaritalStatus;
 use App\Enums\Status;
 use App\Providers\HelperProvider;
+use App\Services\TreatmentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -197,6 +198,7 @@ return [
         'AncCardEnum' => AncCategory::class,
         'Carbon' => Carbon::class,
         'Status' => Status::class,
+        'TreatmentService' => TreatmentService::class,
     ])->toArray(),
 
     'currency' => '₦'

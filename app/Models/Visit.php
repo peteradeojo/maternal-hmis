@@ -50,6 +50,10 @@ class Visit extends Model implements OperationalEvent
         return $this->morphTo();
     }
 
+    public function doctor() {
+        return $this->belongsTo(User::class, 'consultant_id');
+    }
+
     // Methods
     public function getReadableVisitTypeAttribute()
     {

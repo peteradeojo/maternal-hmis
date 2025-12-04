@@ -61,7 +61,10 @@ class AdmissionsController extends Controller
                     'ministered' => 'required|array|min:1'
                 ]);
 
-                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', array_keys($request->ministered))); //->with('ministered', array_keys($request->ministered));
+                // dd($request->all());
+                $items = (array_keys($request->ministered));
+
+                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', $items)); //->with('ministered', array_keys($request->ministered));
             }
         }
 
@@ -155,7 +158,7 @@ class AdmissionsController extends Controller
     {
         if (!$request->isMethod('POST')) {
             $ministered = explode(',', $request->query('treatments'));
-            $treatments = $admission->plan->treatments()->whereIn('id', $ministered)->get();
+            $treatments = $admission->plan->prescription?->lines()->whereIn('id', $ministered)->get();
 
             if ($treatments->count() < 1) {
                 return redirect()->back()->withErrors("Malformed request.");
@@ -334,6 +337,8 @@ class AdmissionsController extends Controller
         }
 
         $admission->discharged_on = $request->input('discharged_on');
+        $admission->ward->filled_beds--;
+        $admission->ward->save();
         $admission->save();
 
         return response()->json([

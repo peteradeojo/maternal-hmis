@@ -64,6 +64,32 @@ class PatientCheckIn extends Component
             "1" => GeneralVisit::class,
             "2" => AncVisit::class,
         };
+
+        $visit = $this->patient->visits->first();
+        if ($visit && $visit?->created_at->diffInDays(now()) < 1) {
+            if ($subVisit == $visit->visit_type) {
+                $visit->status = Status::active->value;
+                $visit->save();
+
+                notifyUserSuccess("Visit re-opened for {$this->patient->name}!", auth()->user());
+
+                notifyDepartment(Department::NUR->value, [
+                    'message' => "Consultation started for {$this->patient->card_number}",
+                    'bg' => ['bg-green-400', 'text-white'],
+                ], [
+                    'mode' => AppNotifications::$DESKTOP,
+                ]);
+
+                notifyDepartment(Department::DOC->value, [
+                    'message' => "Consultation started for {$this->patient->card_number}",
+                    'bg' => ['bg-green-400', 'text-white'],
+                ], [
+                    'mode' => AppNotifications::$DESKTOP,
+                ]);
+                return;
+            }
+        }
+
         $subVisit = new $subVisit([
             'patient_id' => $this->patient->id,
             'doctor_id' => $this->consultant,

@@ -35,7 +35,7 @@
                         <td>Treatment Plan</td>
                         <td>
                             <ul class="list-disc list-inside">
-                                @forelse ($data->plan->treatments ?? [] as $treatment)
+                                @forelse ($data->plan->prescription?->lines ?? [] as $treatment)
                                     <li class="list-item">{{ $treatment }}</li>
                                 @empty
                                     <li>No plan</li>

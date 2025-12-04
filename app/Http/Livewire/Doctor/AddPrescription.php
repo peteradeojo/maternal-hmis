@@ -5,13 +5,11 @@ namespace App\Http\Livewire\Doctor;
 use App\Models\Visit;
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\AncVisit;
 use App\Dto\PrescriptionDto;
-use Illuminate\Support\Collection;
-use App\Models\DocumentationPrescription;
 use App\Livewire\Forms\Doctor\PrescriptionRequest;
+use App\Services\TreatmentService;
 
-class AddPresciption extends Component
+class AddPrescription extends Component
 {
     /**
      * @var Visit
@@ -31,6 +29,7 @@ class AddPresciption extends Component
     public $results = null;
 
     public $title;
+    public $count ;
 
     public function mount($visit, $dispatch = false, $display = true)
     {
@@ -46,10 +45,12 @@ class AddPresciption extends Component
         $this->selections = Product::where('name', $detail['product'])->first() ?? (object) $detail['product'];
     }
 
-    public function addPrescription($id)
+    public function addPrescription($item)
     {
-        $product = Product::find($id);
-        $this->selections = $product;
+        $item['weight'] ??= null;
+        $item['si_unit'] ??= null;
+        $item['id'] ??= null;
+        $this->selections = (object) $item;
     }
 
     public function saveRequest()
@@ -108,13 +109,22 @@ class AddPresciption extends Component
 
     public function deleteRequestItem($id)
     {
-        $this->visit->prescriptions()->where('id', $id)->delete();
+        $this->visit->prescription?->lines()->where('id', $id)->delete();
         $this->visit->refresh();
         $this->dispatch('treatments_updated');
     }
 
     public function render()
     {
-        return view('livewire.doctor.add-presciption');
+        return view('livewire.doctor.add-prescription');
+    }
+
+    public function getCount()
+    {
+        if (isset($this->selections->id)) {
+            $this->count = TreatmentService::getCount((array) $this->selections, (object) $this->requestForm->all());
+        } else {
+            $this->count = "No inventory";
+        }
     }
 }

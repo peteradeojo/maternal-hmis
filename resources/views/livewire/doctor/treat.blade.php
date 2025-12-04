@@ -148,7 +148,7 @@
 
         {{-- Scans --}}
         <div class="p-2 border border-black">
-            <div class="flex-center hover:bg-gray-50 p-2 gap-4">
+            <div class="flex-center hover:bg-gray-50 p-2 gap-4" @click="$dispatch('open-m-scans')">
                 <p class="text-lg font-bold">Scans</p>
                 <i class="fa fa-plus"></i>
             </div>
@@ -185,28 +185,22 @@
 </div>
 
 <x-modal id="t-prescriptions">
-    <livewire:doctor.add-presciption :visit="$visit" @treatments_updated="addedTreatment" />
+    <livewire:doctor.add-prescription :visit="$visit" @treatments_updated="addedTreatment" />
 </x-modal>
 <x-modal id="t-tests-modal">
     <p class="bold text-xl">Add Investigation</p>
-    <div id="anc-visit-tests-2" data-tablist="#anc-visit-tests">
-        @include('components.tabs', ['options' => ['Test', 'Investigation']])
+    <div id="anc-visit-tests-2">
+        <p class="basic-header">Lab Tests</p>
 
-        <div id="anc-visit-tests">
-            <div class="tab">
-                <div class="py-1 w-1/2">
-                    <p>Search here to add a test</p>
-                    <livewire:dynamic-product-search @selected='addTest($event.detail.id)' departmentId='5' />
-                </div>
-            </div>
-            <div class="tab">
-                <div class="py-1 w-1/2">
-                    <p>Search here to add a scan</p>
-                    <livewire:dynamic-product-search @selected='addScan($event.detail.id)' departmentId='7' />
-                </div>
-            </div>
+        <div class="py-1 w-1/2">
+            <p>Search here to add a test</p>
+            <livewire:dynamic-product-search @selected='addTest($event.detail.id)' departmentId='5' />
         </div>
     </div>
+</x-modal>
+<x-modal id="m-scans">
+    <div class="basic-header">Request Scan</div>
+    <livewire:doctor.add-scan :event="$visit" />
 </x-modal>
 <x-modal id="t-notes-modal">
     <p class="text-xl bold">Add Note</p>
@@ -244,12 +238,12 @@
 @script
 <script>
     $(document).ready(function() {
-        initTab(document.querySelector('#anc-visit-tests-2'));
-
-        $(document).on('click', '.view-scan', function (e) {
+        $(document).on('click', '.view-scan', function(e) {
             e.preventDefault();
-            const {scanid} = $(e.currentTarget).data();
-            axios.get("{{route('rad.scan-results', ':id')}}".replace(':id', scanid)).then((res) => {
+            const {
+                scanid
+            } = $(e.currentTarget).data();
+            axios.get("{{ route('rad.scan-results', ':id') }}".replace(':id', scanid)).then((res) => {
                 useGlobalModal((a) => {
                     a.find(MODAL_TITLE).text('Scan Result');
                     a.find(MODAL_BODY).html(res.data);

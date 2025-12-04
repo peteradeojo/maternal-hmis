@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Enums\EventLookup;
 use App\Enums\Status;
+use App\Models\Admission;
+use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\Documentation;
-use App\Models\DocumentationPrescription;
+use App\Models\Prescription;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -16,25 +18,12 @@ class PharmacyController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value, Status::PAID->value]))->get();
-        return view('phm.prescriptions', compact('data'));
+        return view('phm.prescriptions');
     }
 
     public function getPrescriptions(Request $request)
     {
-        // $query = Bill::with(['patient'])->whereHasMorph('billable', [Visit::class], function ($query) {
-        //     $query->whereIn('status', [Status::active->value, Status::quoted->value, Status::pending->value])->has('treatments');
-        // })->whereHas('entries', function (Builder $query) {
-        $query = Bill::with(['patient'])->hasMorph('billable', [Visit::class])->whereHas('entries', function (Builder $query) {
-            $query->where('tag', 'drug');
-        })->whereIn('status', [
-            Status::pending->value,
-            Status::quoted->value,
-            Status::active->value,
-            Status::completed->value,
-            Status::closed->value,
-            Status::PAID->value
-        ])->latest();
+        $query = Prescription::with(['patient'])->whereHasMorph('event', [Visit::class])->where('status', Status::active)->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
@@ -75,5 +64,43 @@ class PharmacyController extends Controller
     {
         $bill->load(['entries']);
         return view('dis.bill', compact('bill'));
+    }
+
+    public function viewPrescription(Request $request, Prescription $prescription)
+    {
+        return view('phm.show-prescription', compact('prescription'));
+    }
+
+    public function admissions(Request $request)
+    {
+        $admissions = Admission::valid()->latest()->get();
+        return view('phm.admissions.index', compact('admissions'));
+    }
+
+    public function showAdmissionTreatment(Request $request, Admission $admission)
+    {
+        $prescription = $admission->plan->prescription()->firstOrCreate([
+            'patient_id' => $admission->patient_id,
+        ]);
+
+        return view('phm.show-prescription', compact('prescription'));
+    }
+
+    public function reverseLookup(Request $request)
+    {
+        $searchTerm = $request->input('search', ['value' => null, 'regex' => false])['value'];
+        $query = Prescription::with(['patient.category'])->when(
+            $searchTerm,
+            function ($query) use ($searchTerm) {
+                return $query->whereHas('lines.item', function ($q) use ($searchTerm) {
+                    $q->where('name', 'ilike', "$searchTerm%");
+                });
+            },
+            function ($query) {
+                return $query->whereRaw("1 = 0");
+            }
+        )->latest();
+
+        return $this->dataTable($request, $query);
     }
 }

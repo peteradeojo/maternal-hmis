@@ -28,7 +28,9 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $("#table").DataTable();
+            $("#table").DataTable({
+                ordering: false,
+            });
         });
     </script>
 @endpush

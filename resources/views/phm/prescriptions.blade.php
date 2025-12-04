@@ -2,24 +2,41 @@
 @section('title', 'Pending prescriptions')
 
 @section('content')
-    <div class="card py px">
-        <div class="card-header">Prescriptions</div>
-        <div class="body mt-2">
-            <table id="prescriptions">
+    <div class="grid gap-y-4">
+        <div class="card p-1">
+            <div class="card-header">Prescriptions</div>
+            <div class="body mt-2">
+                <table id="prescriptions">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Card Number</th>
+                            <th>Gender</th>
+                            <th>Phone No.</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card p-1">
+            <div class="basic-header">Reverse Lookup</div>
+
+            <table id="reverse-lookup" class="table">
                 <thead>
                     <tr>
                         <th>Patient</th>
                         <th>Card Number</th>
                         <th>Gender</th>
-                        <th>Phone No.</th>
+                        <th>Category</th>
                         <th>Date</th>
-                        <th></th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
-
         </div>
     </div>
 @endsection
@@ -31,22 +48,20 @@
                 try {
                     e.preventDefault();
                     const el = e.currentTarget;
-                    // const [type, id] = el.dataset.event.split(":") || [];
                     const bill = el.dataset.bill;
 
                     useGlobalModal((a) => {
                         a.find(".modal-title").text("Prescription");
                         a.find(MODAL_BODY).html(`@include('components.spinner')`)
 
-                        axios.get("{{ route('dis.get-bill', ':id') }}".replace(':id', bill), {
-                            headers: {Accept: 'text/html'}
-                        })
+                        axios.get("{{ route('dis.get-prescriptions', ':id') }}".replace(':id', bill))
                             .then((response) => {
                                 a.find(".modal-body").html(response.data);
                             }).catch((err) => {
                                 a.find(".modal-body").html(`<p>An error occurred.</p>`);
                                 displayNotification({
-                                    message: "An error occurred while loading the prescription: " + err.message,
+                                    message: "An error occurred while loading the prescription: " +
+                                        err.message,
                                     bg: ["bg-red-500", "text-white"],
                                     type: 'in-app'
                                 });
@@ -65,7 +80,12 @@
                 serverSide: true,
                 ajax: '{{ route('dispensary.api.prescriptions.data') }}',
                 columns: [{
-                        data: 'patient.name',
+                        data: ({
+                                patient,
+                                id
+                            }) =>
+                            `<a class="link" href="{{ route('dis.get-prescriptions', ':id') }}">${patient.name}</a>`
+                            .replace(':id', id), //'patient.name',
                         name: 'patient.name'
                     },
                     {
@@ -84,19 +104,37 @@
                             hour: '2-digit',
                         }),
                     },
-                    {
-                        data: (row) => row.status !== {{Status::quoted->value}} ?
-                            `<a data-bill="${row.id}" href="#" class='btn bg-blue-400 text-white view-prescription'>View <i class="fa fa-open"></i></a>` : `<a data-bill="${row.id}" href="#" class='btn bg-green-400 text-white view-prescription'>Done <i class="fa fa-check"></i> </a>`,
-                        orderable: false,
-                        searchable: false
-                    },
                 ],
                 // order: [[4, 'desc']],
                 responsive: true,
                 ordering: false,
             });
 
-            $(document).on('click', '.view-prescription', loadPrescription);
+            $("table#reverse-lookup").DataTable({
+                serverSide: true,
+                ajax: {
+                    url: "{{route('phm-api.reverse-lookup')}}"
+                },
+                columns: [
+                    {
+                        data: ({id, patient}) =>  `<a href="{{route('dis.get-prescriptions', ':id')}}" class="link">${patient.name}</a>`.replace(':id', id),
+                    },
+                    {
+                        data: 'patient.card_number',
+                    },
+                    {
+                        data: 'patient.gender',
+                    },
+                    {
+                        data: 'patient.category.name',
+                    },
+                    {
+                        data: (row) => parseDateFromSource(row.created_at),
+                    },
+                ],
+            });
+
+            // $(document).on('click', '.view-prescription', loadPrescription);
 
         });
     </script>

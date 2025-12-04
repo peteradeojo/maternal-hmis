@@ -16,6 +16,9 @@ class Vitals extends Component
 
     public VitalsForm $vitals;
 
+    public $extra = [
+    ];
+
     public function render()
     {
         return view('livewire.nurses.vitals');
@@ -31,6 +34,7 @@ class Vitals extends Component
         $data = $this->vitals->validate();
 
         $data = array_filter($data);
+
         if (count($data) < 1) return;
 
         ModelsVitals::create([
@@ -39,6 +43,7 @@ class Vitals extends Component
             'recordable_id' => $this->evt->id,
             'recording_user_id' => auth()->user()->id,
             ...$data,
+            'extra' => array_filter($this->extra),
         ]);
 
         $this->dispatch('saved');

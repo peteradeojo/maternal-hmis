@@ -10,4 +10,8 @@ class PurchaseOrderLine extends Model
         'po_id', 'item_id', 'qty_ordered',
         'unit', 'unit_cost', 'qty_received',
     ];
+
+    public function item() {
+        return $this->belongsTo(StockItem::class, 'item_id');
+    }
 }

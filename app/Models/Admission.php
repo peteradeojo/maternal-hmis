@@ -93,7 +93,7 @@ class Admission extends Model implements OperationalEvent
     #[\Override]
     public function scopeActive($query)
     {
-        return $query->whereNotIn('status', [Status::closed->value, Status::cancelled->value]);
+        return $query->whereNotIn('status', [Status::closed->value, Status::cancelled->value, Status::ejected->value]);
     }
 
     public function scopeValid($query)
