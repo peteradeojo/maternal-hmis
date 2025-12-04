@@ -110,8 +110,16 @@
                     </div>
                     <div class="form-group">
                         <label>Quantity</label>
-                        <x-input-number name="quantity_received" class="form-control" required />
+                        <x-input-number x-model="quantity" name="quantity_received" class="form-control" required />
                     </div>
+                </div>
+            </template>
+
+            <template x-if="!in_lot">
+                {{-- <p class="basic-header">Quantity</p> --}}
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <x-input-number name="quantity_received" class="form-control" x-model="quantity" />
                 </div>
             </template>
 
@@ -143,7 +151,7 @@
                             </div>
                             <div class="col-span-full">
                                 <button type="button" class="btn btn-sm bg-red-500 text-white"
-                                @click="selling_prices = selling_prices.slice(index, 1)"
+                                @click="selling_prices.splice(index, 1)"
                                 ><i class="fa fa-trash"></i></button>
                             </div>
                         </div>
