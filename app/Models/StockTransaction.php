@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class StockTransaction extends Model
+{
+    const RECEIPT = "RECEIPT";
+
+    protected $fillable = [
+        'tx_type', 'item_id', 'lot_id', 'quantity',
+        'unit', 'unit_cost', 'from_location_id', 'to_location_id', 'related_document', 'reason',
+        'performed_by',
+    ];
+}

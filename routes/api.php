@@ -30,6 +30,7 @@ Route::middleware(['auth', 'auth:sanctum'])->group(function () {
     include_once __DIR__ . '/api/nhi.php';
     include_once __DIR__ . '/api/dispensary.php';
     include_once __DIR__ . '/api/billing.php';
+    include_once __DIR__ . '/api/pharmacy.php';
 });
 // include_once __DIR__ . '/api/records.php';
 

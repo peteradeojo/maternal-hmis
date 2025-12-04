@@ -55,6 +55,7 @@ function departmentRoutes()
 
     $phm = [
         route('phm.prescriptions') => ['Presciptions', 'fa-prescription'],
+        route('phm.inventory.index') => ['Inventory', ''],
     ];
 
     $dis = [

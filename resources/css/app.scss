@@ -20,6 +20,10 @@
         @apply border border-gray-500 p-[5px] rounded-md;
     }
 
+    .basic-header {
+        @apply text-lg font-semibold;
+    }
+
     .drag_drop {
         @apply hover:bg-gray-100 cursor-pointer w-full border-4 border-dashed p-3 grid place-items-center;
     }
@@ -87,7 +91,7 @@
     }
 
     .card {
-        @apply px-1 py-2 mb-4;
+        @apply p-4 container;
     }
 
     .btn-sm {
@@ -181,10 +185,6 @@
 }
 
 .card {
-    // background-color: #fff;
-    @apply bg-white;
-    border-radius: 6px;
-
     &>.header {
         padding: 8px 6px;
         // background-color: #fff;
