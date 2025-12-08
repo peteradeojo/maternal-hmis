@@ -22,8 +22,8 @@ class ProductsController extends Controller
     {
         return $this->dataTable($request, Product::with(['category']), [
             function ($query, $search) {
-                $query->where('name', 'like', "$search%")->orWhereHas('category', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%");
+                $query->where('name', 'ilike', "$search%")->orWhereHas('category', function ($q) use ($search) {
+                    $q->where('name', 'ilike', "%$search%");
                 });
             }
         ]);

@@ -39,7 +39,7 @@ class PharmacyController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")->orWhere('phone', 'like', "$search%");
+                    $q->where('name', 'ilike', "%$search%")->orWhere('phone', 'ilike', "$search%");
                 });
             }
         ]);

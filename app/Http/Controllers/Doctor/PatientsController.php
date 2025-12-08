@@ -245,7 +245,7 @@ class PatientsController extends Controller
     {
         return $this->dataTable($request, Patient::with(['category']), [
             function ($query, $search) {
-                $query->where('name', 'like', "$search%");
+                $query->where('name', 'ilike', "$search%");
             }
         ]);
     }
@@ -268,7 +268,7 @@ class PatientsController extends Controller
         return $this->dataTable($request, $visits, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%");
+                    $q->where('name', 'ilike', "%$search%")->orWhere('card_number', 'ilike', "$search%");
                 });
             }
         ]);

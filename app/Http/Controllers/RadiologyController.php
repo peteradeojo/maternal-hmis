@@ -36,7 +36,7 @@ class RadiologyController extends Controller
                 } else {
                     $query->where(function ($query) use (&$search, &$visitId) {
                         $query->whereHas('patient', function ($q) use (&$search) {
-                            $q->where('name', 'like', "%$search%");
+                            $q->where('name', 'ilike', "%$search%");
                         });
                     });
                 }
