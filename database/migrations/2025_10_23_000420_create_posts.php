@@ -12,16 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('libsql')->create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->string('title')->nullable(false);
-            $table->string('description', 64)->nullable();
-            $table->text('post');
-            $table->smallInteger('status')->default(1);
-            $table->string('user')->nullable();
-            $table->string('image')->nullable();
-            $table->timestamps();
-        });
+        // Schema::connection('libsql')->create('posts', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('title')->nullable(false);
+        //     $table->string('description', 64)->nullable();
+        //     $table->text('post');
+        //     $table->smallInteger('status')->default(1);
+        //     $table->string('user')->nullable();
+        //     $table->string('image')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('libsql')->dropIfExists('posts');
+        // Schema::connection('libsql')->dropIfExists('posts');
     }
 };
