@@ -130,7 +130,9 @@
             <thead>
                 <tr>
                     <th>Description</th>
+                    <th>Unit</th>
                     <th>Amount</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -138,13 +140,15 @@
                     {{-- @dump($img) --}}
                     <tr>
                         <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }}
-                            (days)
+                            day(s)
                         </td>
-                        <td class="flex items-center justify-between">
-                            <span>{{ $img['data']['amount'] ?? 0 }}</span>
+                        <td>{{ round($img['product']['prices'][0]['price'] ?? 0, 2) }}</td>
+                        <td><span>{{ round($img['total_amt'], 2) }}</span></td>
+                        <td>
+                            <button class="btn btn-sm" wire:click="removeDrug()"><i class="fa fa-trash"></i></button>
                         </td>
                         @php
-                            $thisTotal += $img['data']['amount'] ?? 0;
+                            $thisTotal += $img['total_amt'];
                         @endphp
                     </tr>
                 @endforeach
@@ -159,7 +163,7 @@
             </tbody>
         </table>
 
-        <div class="p-3">
+        <div class="p-3" x-data>
             <p class="text-lg font-semibold">Add more drugs</p>
             <livewire:billing.add-prescription @selected="addDrug($event.detail)" />
         </div>

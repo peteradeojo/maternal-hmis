@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Billing;
 
+use App\Services\TreatmentService;
 use Livewire\Component;
 
 class AddPrescription extends Component
 {
     public $selection;
+    public $count = 0;
 
     public function render()
     {
@@ -18,9 +20,10 @@ class AddPrescription extends Component
         $this->selection = [...$data, 'dosage' => null, 'frequency' => 'stat', 'duration' => null,];
     }
 
-    public function saveRequest() {
+    public function saveRequest()
+    {
         $details = [
-            'product' => (object) $this->selection['product'],
+            'product' => (object) $this->selection, //['product'],
             'data' => (object) [
                 'name' => $this->selection['name'],
                 'dosage' => $this->selection['dosage'],
@@ -28,11 +31,23 @@ class AddPrescription extends Component
                 'duration' => $this->selection['duration'],
             ],
         ];
+
         $this->dispatch("selected", ...$details);
         $this->cancel();
     }
 
-    public function cancel() {
+    public function cancel()
+    {
         $this->reset("selection");
+    }
+
+    public function getCount()
+    {
+        $this->count = TreatmentService::getCount($this->selection, (object) [
+            'name' => $this->selection['name'],
+            'dosage' => $this->selection['dosage'],
+            'frequency' => $this->selection['frequency'],
+            'duration' => $this->selection['duration'],
+        ]);
     }
 }

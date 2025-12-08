@@ -36,7 +36,7 @@ class InventoryProductSearch extends Component
 
     public function selected($id)
     {
-        $product = StockItem::find($id)?->load(['costs']);
+        $product = StockItem::find($id)?->load(['costs', 'prices']);
 
         $line = new PurchaseOrderLine();
         $line->unit = $product->base_unit;

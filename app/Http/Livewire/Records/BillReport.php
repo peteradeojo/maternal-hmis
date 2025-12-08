@@ -7,6 +7,7 @@ use App\Models\Bill;
 use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Models\Product;
+use App\Services\TreatmentService;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 
@@ -52,8 +53,9 @@ class BillReport extends Component
 
         $drugs = $drugs->map(fn($item) => [
             'saved' => true,
-            'product' => $item->prescriptionable->toArray(),
+            'product' => $item->prescriptionable->load(['prices'])->toArray(),
             'data' => $item->toArray(),
+            'total_amt' => TreatmentService::getCount($item->prescriptionable->toArray(), $item) * ($item->prescriptionable->prices->first()?->price ?? 0),
         ])->toArray();
 
         $tests = $tests->map(fn($test) => [
@@ -104,7 +106,7 @@ class BillReport extends Component
 
     public function subTotal($prop)
     {
-        $this->{$prop . "_amt"} = collect($this->{$prop})->reduce(fn($a, $p) => $a + $p['product']['amount'], 0);
+        $this->{$prop . "_amt"} = collect($this->{$prop})->reduce(fn($a, $p) => $a + ($p['total_amt'] ?? $p['product']['amount']), 0);
     }
 
     public function removeItem($index, $prop)
@@ -245,6 +247,9 @@ class BillReport extends Component
     public function addDrug($data)
     {
         $comp = ['product' => $data['product'], 'data' => $data['data'], 'saved' => true];
+
+        $totalAmt = TreatmentService::getCount($data['product'], (object) $data['data']) * $data['product']['prices'][0]['price'];
+        $comp['total_amt'] = $totalAmt;
         $this->drugs[] = ($comp);
     }
 }
