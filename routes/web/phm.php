@@ -13,5 +13,21 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
 
     Route::prefix('inventory')->name('inventory')->middleware(['department:' . join(",", [Department::PHA->value, Department::IT->value])])->group(function () {
         Route::get('/', [InventoryController::class, 'index'])->name('.index');
+        Route::post('/', [InventoryController::class, 'createStockItem']);
+
+        Route::match(['GET', 'POST'], '/item/{item}', [InventoryController::class, 'viewStockDetails'])->name('.stock-details');
+
+
+        Route::prefix('/purchases')->group(function () {
+            Route::get('/', [InventoryController::class, 'purchaseOrders'])->name('.purchases');
+            Route::get('/new', [InventoryController::class, 'createPurchaseOrder'])->name('.new-order');
+            Route::post('/new', [InventoryController::class, 'storePurchaseOrder'])->name('.new-order');
+            Route::get('/{order}', [InventoryController::class, 'viewOrder'])->name('.order');
+            Route::post('/{order}', [InventoryController::class, 'editPurchaseOrder'])->name('.order');
+        });
+
+        Route::prefix('/suppliers')->group(function () {
+            Route::match(['GET', 'POST'] ,'/', [InventoryController::class, 'suppliers'])->name('.suppliers');
+        });
     });
 });

@@ -9,18 +9,18 @@
 
     <div class="card bg-white">
         <div class="grid grid-cols-6 gap-4">
-            <div class="p-2 border-2 border-blue-400 grid place-items-center">
+            <a href="{{route('phm.inventory.purchases')}}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Purchases <i class="fa fa-dollar"></i></p>
-            </div>
+            </a>
             <div class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Stock History <i class="fa fa-clock text-blue-400"></i></p>
             </div>
             <div class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Transfer <i class="fa fa-arrow-right text-blue-500"></i></p>
             </div>
-            {{-- <div class="p-2 border-2 border-blue-400 grid place-items-center">
-                <p>Purchases <i class="fa fa-dollar"></i></p>
-            </div> --}}
+            <a href="{{route('phm.inventory.suppliers')}}" class="p-2 border-2 border-blue-400 grid place-items-center">
+                <p>Suppliers <i class="fa fa-arrow-right text-blue-500"></i></p>
+            </a>
         </div>
     </div>
 
@@ -49,7 +49,7 @@
     </div>
 
     <x-overlay-modal title="Add Inventory" id="new-item">
-        <form action="#" method="post" x-data="{ in_lot: false, quantity: 0, cost_price: 0, }">
+        <form action="#" id="new-stock-form" method="post" x-data="{ in_lot: false, quantity: 0, cost_price: 0, }">
             @csrf
             <p class="basic-header">Item information</p>
             <div class="form-group">
@@ -100,13 +100,15 @@
                         <label>Lot number</label>
                         <x-input-text name="lot_number" class="form-control" required />
                     </div>
-                    <div class="form-group">
-                        <label>Manufacture date</label>
-                        <x-input-date name="manufacture_date" class="form-control" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Expiry date</label>
-                        <x-input-date name="expiry_date" class="form-control" required />
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label>Manufacture date</label>
+                            <x-input-date name="manufacture_date" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Expiry date</label>
+                            <x-input-date name="expiry_date" class="form-control" required />
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Quantity</label>
@@ -130,15 +132,17 @@
                     <x-input-number name="unit_cost" x-model="cost_price" class="form-control" required />
                 </div>
 
-                <div x-data="{types: @js($price_types), selling_prices: [0]}">
-                    <button type="button" @click="selling_prices.push(0)" class="btn bg-blue-500 text-white">Add Selling Price</button>
+                <div x-data="{ types: @js($price_types), selling_prices: [0] }">
+                    <button type="button" @click="selling_prices.push(0)" class="btn bg-blue-500 text-white">Add Selling
+                        Price</button>
 
                     <template x-for="(price, index) in selling_prices">
                         <div class="grid grid-cols-2 gap-x-4 py-2">
                             <p class="col-span-full" x-text="'Price ' + (index + 1)"></p>
                             <div class="form-group">
                                 <label>Unit Selling price</label>
-                                <x-input-select name="prices[][price_type]" class="form-control">
+                                <x-input-select name="" x-bind:name="'prices[' + index + '][price_type]'"
+                                    class="form-control">
                                     <template x-for="type in types" :key="type">
                                         <option :value="type" x-text="type"></option>
                                     </template>
@@ -146,20 +150,29 @@
                             </div>
                             <div class="form-group">
                                 <label>Unit Selling price</label>
-                                <x-input-number name="prices[][price]" x-model="price" class="form-control"
-                                    required />
+                                <input type='number' x-bind:name="'prices[' + index + '][price]'" x-model="price"
+                                    class="form-control" required />
                             </div>
                             <div class="col-span-full">
                                 <button type="button" class="btn btn-sm bg-red-500 text-white"
-                                @click="selling_prices.splice(index, 1)"
-                                ><i class="fa fa-trash"></i></button>
+                                    @click="selling_prices.splice(index, 1)"><i class="fa fa-trash"></i></button>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
+
+            <div class="form-group">
+                <button class="btn bg-blue-400 text-white" type="submit">Submit <i class="fa fa-save"></i></button>
+            </div>
         </form>
     </x-overlay-modal>
+
+    {{-- <x-overlay-modal title="Create purchase order" id="purchase-order">
+        <form action="" method="post">
+            @csrf
+        </form>
+    </x-overlay-modal> --}}
 @endsection
 
 @push('scripts')
@@ -169,7 +182,7 @@
                 serverSide: true,
                 ajax: "{{ route('phm-api.get-inventory') }}",
                 columns: [{
-                        data: 'item.name'
+                        data: (row) => `<a href='#' class='link stock-item' data-id="${row.item_id}">${row.item.name}</a>`,
                     },
                     {
                         data: 'item.sku'
@@ -178,13 +191,35 @@
                         data: (row) => row.prices[0]?.price
                     },
                     {
-                        data: 'qty_on_hand'
+                        data: 'item.balance'
                     },
                     {
                         data: 'location.name'
                     },
                 ],
                 responsive: true,
+            });
+
+            asyncForm("#new-stock-form", "{{ route('phm.inventory.index') }}", (e, data) => {
+                console.log(data);
+                dispatchEvent(new CustomEvent('close-new-item'));
+                e.target.reset();
+            });
+
+            $(document).on('click', ".stock-item", function (e) {
+                e.preventDefault();
+
+                const id = $(this).data('id');
+
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text('Stock details');
+
+                    axios.get("{{route('phm.inventory.stock-details', ':id')}}".replace(':id', id)).then((res) => {
+                        a.find(MODAL_CONTENT).html(res.data);
+                    }).catch((err) => {
+                        a.find(MODAL_CONTENT).html(err.message);
+                    })
+                });
             });
         });
     </script>

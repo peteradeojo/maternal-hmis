@@ -11,7 +11,11 @@ class InventoryBalance extends Model
         'qty_on_hand', 'last_updated',
     ];
 
-    protected $with = ['item'];
+    protected $with = [];
+
+    protected $casts = [
+        'qty_on_hand' => 'integer',
+    ];
 
     public function item() {
         return $this->belongsTo(StockItem::class, 'item_id');

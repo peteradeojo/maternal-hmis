@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\StockItemFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,17 @@ use Illuminate\Database\Eloquent\Model;
 class StockItem extends Model
 {
     use HasFactory;
+
+    const CATEGORIES = ['DRUG','LAB', 'CONSUMABLE'];
+
+    const units = [
+        'tab' => 'Tablet',
+        'bottle' => 'Bottle',
+        'satchet' => 'Satchet',
+        'ampoule' => 'ampoule',
+        'vial' => 'Vial',
+        'bag' => 'Bag',
+    ];
 
     protected $fillable = [
         'sku',
@@ -22,11 +34,17 @@ class StockItem extends Model
         'base_unit',
     ];
 
-    const CATEGORIES = ['DRUG','LAB', 'CONSUMABLE'];
+    protected $appends = ['balance'];
 
-    public function balance()
+    public function balances()
     {
-        return $this->hasOne(InventoryBalance::class, 'item_id');
+        return $this->hasMany(InventoryBalance::class, 'item_id');
+    }
+
+    public function balance(): Attribute {
+        return Attribute::make(
+            get: fn () => $this->balances->sum('qty_on_hand'),
+        );
     }
 
     public function transactions()
@@ -42,5 +60,9 @@ class StockItem extends Model
     public function prices()
     {
         return $this->hasMany(StockItemPrice::class, 'item_id')->latest();
+    }
+
+    public function costs() {
+        return $this->hasMany(StockItemCost::class, 'item_id');
     }
 }

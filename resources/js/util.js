@@ -56,14 +56,8 @@ window.asyncForm = (form, route, callback = (e, data) => { }) => {
         }).then((res) => {
             callback(e.currentTarget, res);
         }).catch((err) => {
-            console.error(err.message);
-            displayNotification({
-                message: err.message,
-                bg: ['bg-red-500', 'text-white'],
-                options: {
-                    mode: ['in-app']
-                },
-            });
+            console.error(err);
+            notifyError(err.response.data.message || err.message);
         });
     });
 }
