@@ -48,6 +48,11 @@
                                 <p><b>Temperature</b>: {{ $visit->vitals?->temperature }} &deg;C</p>
                                 <p><b>Pulse</b>: {{ $visit->vitals?->pulse }} bpm</p>
                                 <p><b>Respiration</b>: {{ $visit->vitals?->respiration }} bpm</p>
+
+                                @foreach ($visit->vitals->extra ?? [] as $k => $v)
+                                    <p><b>{{ ucfirst(unslug($k)) }}:</b>
+                                        {{ is_bool($v) ? ($v == true ? 'Yes' : 'No') : $v }}</p>
+                                @endforeach
                             </div>
                         @else
                             <p>No vitals have been recorded for this visit.</p>
@@ -66,8 +71,8 @@
                 @include('components.tabs', [
                     'options' =>
                         $visit->type == 'Antenatal'
-                            // ? ['First Visit', 'Follow Up', 'Medical Records']
-                            ? [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
+                            ? // ? ['First Visit', 'Follow Up', 'Medical Records']
+                            [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
                             : ['Medical Records'],
                 ])
 

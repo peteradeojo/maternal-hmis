@@ -1,7 +1,8 @@
 <div @closeModal="removeGlobalModal" class="overflow-x-auto">
     @unless ($form == false)
         <form wire:submit.prevent="save" x-data="{
-            vitals: @entangle('vitals')
+            vitals: @entangle('vitals'),
+            show_more: false,
         }">
             <div class="grid gap-x-3 grid-cols-3">
                 <div class="form-group">
@@ -73,7 +74,27 @@
                 </div>
             </div>
 
-            <div class="flex justify-end">
+            <fieldset class="border p-2">
+                <legend>More</legend>
+                <a href="#" @click.prevent="show_more = !show_more" x-text="show_more ? 'Hide' : 'Show'"></a>
+
+
+                <div x-show="show_more" x-transition>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label>Tuberculosis
+                                <input type="checkbox" wire:model="extra.tuberculosis" />
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>TB Score</label>
+                            <input type="number" wire:model="extra.tuberculosis_score" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="flex justify-end py-2">
                 <button wire:click="save" class="btn bg-blue-400 text-white">Save <i class="fa fa-save"></i></button>
             </div>
         </form>
@@ -113,6 +134,15 @@
                                 @endif
                             </td>
                         @endif
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="basic-header">Extra</p>
+                            @foreach ($vital->extra as $k => $value)
+                                <p><b>{{ ucfirst(unslug($k)) }}</b>:
+                                    {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
+                            @endforeach
+                        </td>
                     </tr>
                 @empty
                     <tr>
