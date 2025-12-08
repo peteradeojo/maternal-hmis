@@ -138,7 +138,7 @@
                     <tr>
                         <td>
                             <p class="basic-header">Extra</p>
-                            @foreach ($vital->extra as $k => $value)
+                            @foreach (($vital->extra ?? []) as $k => $value)
                                 <p><b>{{ ucfirst(unslug($k)) }}</b>:
                                     {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
                             @endforeach
