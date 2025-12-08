@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('libsql')->table('posts', function (Blueprint $table) {
-            $table->text('slug');
-        });
+        // Schema::connection('libsql')->table('posts', function (Blueprint $table) {
+        //     $table->text('slug');
+        // });
     }
 
     /**
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('libsql')->table('posts', function (Blueprint $table) {
-            $table->dropColumn(['slug']);
-        });
+        // Schema::connection('libsql')->table('posts', function (Blueprint $table) {
+        //     $table->dropColumn(['slug']);
+        // });
     }
 };
