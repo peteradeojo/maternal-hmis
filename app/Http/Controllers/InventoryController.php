@@ -72,6 +72,8 @@ class InventoryController extends Controller
             'unit_cost' => 'required|numeric|min:0',
             'is_pharmaceutical' => 'nullable|in:on',
             'requires_lot' => 'nullable|in:on',
+            'si_unit' => 'nullable|string',
+            'weight' => 'nullable|numeric',
         ]);
 
         DB::beginTransaction();
@@ -85,6 +87,8 @@ class InventoryController extends Controller
                 'is_pharmaceutical' => $request->input('is_pharmaceutical') == 'on',
                 'requires_lot' => $request->input('requires_lot') == 'on',
                 'base_unit' => $request->base_unit,
+                'si_unit' => $request->si_unit,
+                'weight' => $request->weight,
             ]);
 
             $lot = $request->input('lot_number') !== null ? StockLot::create([

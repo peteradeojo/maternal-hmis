@@ -81,16 +81,27 @@
                         name="requires_lot" />
                 </label>
             </div>
-            <div class="form-group">
-                <label>Base unit</label>
-                <x-input-select class="form-control" name="base_unit">
-                    <option value="tab">Tablet</option>
-                    <option value="bottle">Bottle</option>
-                    <option value="satchet">Satchet</option>
-                    <option value="ampoule">Ampoule</option>
-                    <option value="vial">Vial</option>
-                    <option value="bag">Bag</option>
-                </x-input-select>
+
+            <div class="grid grid-cols-3 gap-x-4">
+                <div class="form-group">
+                    <label>Base unit</label>
+                    <x-input-select class="form-control" name="base_unit">
+                        <option value="tab">Tablet</option>
+                        <option value="bottle">Bottle</option>
+                        <option value="satchet">Satchet</option>
+                        <option value="ampoule">Ampoule</option>
+                        <option value="vial">Vial</option>
+                        <option value="bag">Bag</option>
+                    </x-input-select>
+                </div>
+                <div class="form-group">
+                    <label>Weight</label>
+                    <x-input-number step="0.1" name="weight" class="form-control" placeholder="e.g. 500" />
+                </div>
+                <div class="form-group">
+                    <label>Unit Measurement</label>
+                    <x-input-text placeholder="e.g. mg,ml" name="si_unit" class="form-control" />
+                </div>
             </div>
 
             <template x-if="in_lot">

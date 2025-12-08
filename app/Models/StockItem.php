@@ -13,7 +13,7 @@ class StockItem extends Model
 {
     use HasFactory;
 
-    const CATEGORIES = ['DRUG','LAB', 'CONSUMABLE'];
+    const CATEGORIES = ['DRUG', 'LAB', 'CONSUMABLE'];
 
     const units = [
         'tab' => 'Tablet',
@@ -32,6 +32,8 @@ class StockItem extends Model
         'is_pharmaceutical',
         'requires_lot',
         'base_unit',
+        'weight',
+        'si_unit',
     ];
 
     protected $appends = ['balance'];
@@ -41,9 +43,10 @@ class StockItem extends Model
         return $this->hasMany(InventoryBalance::class, 'item_id');
     }
 
-    public function balance(): Attribute {
+    public function balance(): Attribute
+    {
         return Attribute::make(
-            get: fn () => $this->balances->sum('qty_on_hand'),
+            get: fn() => $this->balances->sum('qty_on_hand'),
         );
     }
 
@@ -62,7 +65,8 @@ class StockItem extends Model
         return $this->hasMany(StockItemPrice::class, 'item_id')->latest();
     }
 
-    public function costs() {
+    public function costs()
+    {
         return $this->hasMany(StockItemCost::class, 'item_id');
     }
 }

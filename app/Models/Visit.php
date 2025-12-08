@@ -165,4 +165,18 @@ class Visit extends Model implements OperationalEvent
             }
         });
     }
+
+    final public function addPrescription(Patient $patient, $product, mixed $data)
+    {
+        return $this->prescriptions()->create([
+            'patient_id' => $patient->id,
+            'prescriptionable_type' => StockItem::class,
+            'prescriptionable_id' => $product->id,
+            'name' => $product->name,
+            'dosage' => $data->dosage,
+            'duration' => $data->duration,
+            'frequency' => $data->frequency,
+            'requested_by' => auth()->user()?->id,
+        ]);
+    }
 }
