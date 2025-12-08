@@ -62,7 +62,14 @@ trait Documentable
 
     public function treatments()
     {
-        return $this->morphMany(DocumentationPrescription::class, 'event');
+        try {
+            //code...
+            return $this->morphMany(DocumentationPrescription::class, 'event');
+        } catch (\Throwable $th) {
+            //throw $th;
+
+            return null;
+        }
     }
 
     public function scopeActive($query)

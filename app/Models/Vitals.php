@@ -22,10 +22,12 @@ class Vitals extends Model
         'recorded_date',
         'spo2',
         'fetal_heart_rate',
+        'extra',
     ];
 
     protected $casts = [
         'recorded_date' => 'datetime',
+        'extra' => 'array',
     ];
 
     public function recordable()
