@@ -135,15 +135,17 @@
                             </td>
                         @endif
                     </tr>
-                    <tr>
-                        <td>
-                            <p class="basic-header">Extra</p>
-                            @foreach ($vital->extra as $k => $value)
-                                <p><b>{{ ucfirst(unslug($k)) }}</b>:
-                                    {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
-                            @endforeach
-                        </td>
-                    </tr>
+                    @if ($vital->extra)
+                        <tr>
+                            <td>
+                                <p class="basic-header">Extra</p>
+                                @foreach ($vital->extra ?? [] as $k => $value)
+                                    <p><b>{{ ucfirst(unslug($k)) }}</b>:
+                                        {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
+                                @endforeach
+                            </td>
+                        </tr>
+                    @endif
                 @empty
                     <tr>
                         <td colspan="6" align="center">No vitals recorded.</td>

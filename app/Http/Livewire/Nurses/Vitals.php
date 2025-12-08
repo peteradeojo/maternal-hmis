@@ -17,7 +17,6 @@ class Vitals extends Component
     public VitalsForm $vitals;
 
     public $extra = [
-        'tuberculosis' => false,
     ];
 
     public function render()
@@ -44,7 +43,7 @@ class Vitals extends Component
             'recordable_id' => $this->evt->id,
             'recording_user_id' => auth()->user()->id,
             ...$data,
-            'extra' => $this->extra,
+            'extra' => array_filter($this->extra),
         ]);
 
         $this->dispatch('saved');
