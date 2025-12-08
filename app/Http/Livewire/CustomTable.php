@@ -106,7 +106,7 @@ class CustomTable extends Component
             [$rel, $c] = explode('.', $field);
 
             $query->where($rel, function ($query) use ($c) {
-                $query->where($c, 'like', "%{$this->searchTerm}%");
+                $query->where($c, 'ilike', "%{$this->searchTerm}%");
             });
         } else {
             $query->where($field, "like", "%{$this->searchTerm}%");

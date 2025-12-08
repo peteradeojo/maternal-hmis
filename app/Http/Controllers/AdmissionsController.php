@@ -97,7 +97,7 @@ class AdmissionsController extends Controller
         return $this->dataTable($request, $admissions, [
             function (&$query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search");
+                    $q->where('name', 'ilike', "%$search");
                 });
             },
         ]);

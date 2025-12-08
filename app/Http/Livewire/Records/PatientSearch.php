@@ -45,11 +45,11 @@ class PatientSearch extends Component
         }
 
         if (!empty($this->searchName)) {
-            $query->where('name', 'like', "%{$this->searchName}%");
+            $query->where('name', 'ilike', "%{$this->searchName}%");
         }
 
         if (!empty($this->searchNumber)) {
-            $query->where('name', 'like', "{$this->searchNumber}%");
+            $query->where('name', 'ilike', "{$this->searchNumber}%");
         }
 
         if (!empty($this->category)) {

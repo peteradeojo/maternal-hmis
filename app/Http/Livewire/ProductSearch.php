@@ -41,7 +41,7 @@ class ProductSearch extends Component
                 } else $q->where('name', $this->category);
             }
         })->where(function ($q) {
-            $q->where('name', 'like', "%{$this->search}%")->orWhere('description', 'like', "%{$this->search}%");
+            $q->where('name', 'ilike', "%{$this->search}%")->orWhere('description', 'ilike', "%{$this->search}%");
         })->limit(100)->get();
         $this->display = true;
     }
