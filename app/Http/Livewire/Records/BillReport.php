@@ -6,6 +6,7 @@ use App\Enums\Department;
 use App\Models\Bill;
 use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
+use App\Models\DocumentationPrescription;
 use App\Models\Product;
 use App\Services\TreatmentService;
 use Livewire\Component;
@@ -139,13 +140,11 @@ class BillReport extends Component
     {
         DB::beginTransaction();
         try {
-
-
             $bill = $this->visit->bills()->create([
                 'status' => Status::pending->value,
                 'created_by' => auth()->user()->id,
                 'bill_number' => date('ym-') . str_pad(
-                    Bill::whereRaw("MONTH(created_at) = ? AND YEAR(created_at) = ?", [date('m'), date('Y')])->count() + 1,
+                    Bill::whereRaw("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", [date('m'), date('Y')])->count() + 1,
                     6,
                     "0",
                     STR_PAD_LEFT
@@ -206,6 +205,7 @@ class BillReport extends Component
 
     public function saveDrugs(Bill $bill)
     {
+        // dd($this->drugs);
         foreach ($this->drugs as $d) {
             $useNull = !isset($d['product']['id']);
 
@@ -213,9 +213,9 @@ class BillReport extends Component
                 'chargeable_type' => $useNull ? null : Product::class,
                 'user_id' => $bill->created_by,
                 'chargeable_id' => $useNull ? null : $d['product']['id'],
-                'unit_price' => $d['data']['amount'] ?? $d['product']['amount'] ?? 0,
-                'total_price' => $d['data']['amount'] ?? $d['product']['amount'] ?? 0,
-                'description' => $d['data']['name'],
+                'unit_price' => $d['product']['prices'][0]['price'],
+                'total_price' => $d['total_amt'],
+                'description' => (string) (new DocumentationPrescription($d['data'])),
                 'tag' => 'drug',
                 'meta' => [
                     'id' => $d['data']['id'] ?? null,

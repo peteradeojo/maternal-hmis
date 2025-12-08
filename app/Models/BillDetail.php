@@ -39,7 +39,8 @@ class BillDetail extends Model
     public function amount(): Attribute
     {
         return Attribute::make(
-            get: fn($v, $attributes) => $attributes['tag'] == 'drug' ? $attributes['total_price'] * 1.5 : $attributes['total_price'],
+            // get: fn($v, $attributes) => $attributes['tag'] == 'drug' ? $attributes['total_price'] * 1.5 : $attributes['total_price'],
+            get: fn($v, $attributes) => $attributes['total_price'],
         );
     }
 

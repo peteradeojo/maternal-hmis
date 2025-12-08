@@ -140,7 +140,7 @@ class MakePayment extends Component
         $this->hydrate();
         $this->dispatch('$refresh');
 
-        Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
+        // Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
     }
 
     public function unreject($id)
@@ -148,6 +148,6 @@ class MakePayment extends Component
         BillDetail::where('id', $id)->update(['status' => Status::pending->value]);
         $this->hydrate();
         $this->dispatch('$refresh');
-        Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
+        // Broadcast::on("bill-update.{$this->bill->id}")->with([])->as('BillingUpdate')->sendNow();
     }
 }

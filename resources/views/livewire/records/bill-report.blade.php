@@ -145,7 +145,7 @@
                         <td>{{ round($img['product']['prices'][0]['price'] ?? 0, 2) }}</td>
                         <td><span>{{ round($img['total_amt'], 2) }}</span></td>
                         <td>
-                            <button class="btn btn-sm" wire:click="removeDrug()"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-sm" wire:click="removeItem({{$i}}, 'drugs')"><i class="fa fa-trash"></i></button>
                         </td>
                         @php
                             $thisTotal += $img['total_amt'];
