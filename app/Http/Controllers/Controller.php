@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 
 class Controller extends BaseController
 {
@@ -28,15 +29,18 @@ class Controller extends BaseController
             }
         });
 
-        $data = $results->clone()->skip($start)->limit($length)->get()->toArray();
+        $countQuery = DB::table($builder, 't1')->selectRaw("COUNT(*) total");
+        $filteredCount = DB::table($results, 't1')->selectRaw("COUNT(*) as total");
+
+        $data = $results->skip($start)->limit($length)->get()->toArray();
 
         if ($orderFunction)
             $data = $orderFunction($data, $order);
 
         $data = [
             'data' => $data,
-            'recordsTotal' => $builder->count(),
-            'recordsFiltered' => $results->count(),
+            'recordsTotal' => $countQuery->first()->total,
+            'recordsFiltered' => $filteredCount->first()->total,
             'draw' => (int) $request->input('draw'),
         ];
 

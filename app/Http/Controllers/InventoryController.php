@@ -16,7 +16,9 @@ use App\Models\PurchaseOrderLine;
 use App\Models\StockTransaction;
 use App\Models\Supplier;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class InventoryController extends Controller
 {
@@ -42,7 +44,7 @@ class InventoryController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $searchString) {
                 $query->whereHas('item', function ($q) use ($searchString) {
-                    $q->where('name', 'like', "%$searchString%");
+                    $q->where('name', 'ilike', "%$searchString%");
                 });
             }
         ]);
@@ -282,5 +284,29 @@ class InventoryController extends Controller
                 'message' => $th->getMessage(),
             ], 500);
         }
+    }
+
+    public function bulkImport(Request $request)
+    {
+        $client = Redis::client();
+        if (!$request->isMethod('POST')) {
+            $keys = $client->hgetall("stock-imports");
+            return view('inventory.bulk-import', compact('keys'));
+        }
+
+        $request->validate([
+            'import' => 'required|file|mimetypes:text/csv',
+        ]);
+
+        $file = $request->file('import');
+
+        $path = $file->store();
+
+        $key = date('YmdHis');
+
+        $client->hset("stock-imports", $key, $path);
+        Artisan::queue("app:bulk-stock-import", ['hkey' => $key]);
+
+        return redirect()->back();
     }
 }

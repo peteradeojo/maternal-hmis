@@ -29,5 +29,7 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
         Route::prefix('/suppliers')->group(function () {
             Route::match(['GET', 'POST'] ,'/', [InventoryController::class, 'suppliers'])->name('.suppliers');
         });
+
+        Route::match(['GET', 'POST'], '/bulk-import', [InventoryController::class, 'bulkImport'])->name('.bulk-import');
     });
 });

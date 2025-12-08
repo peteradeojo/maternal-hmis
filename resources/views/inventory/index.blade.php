@@ -9,7 +9,7 @@
 
     <div class="card bg-white">
         <div class="grid grid-cols-6 gap-4">
-            <a href="{{route('phm.inventory.purchases')}}" class="p-2 border-2 border-blue-400 grid place-items-center">
+            <a href="{{ route('phm.inventory.purchases') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Purchases <i class="fa fa-dollar"></i></p>
             </a>
             <div class="p-2 border-2 border-blue-400 grid place-items-center">
@@ -18,8 +18,11 @@
             <div class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Transfer <i class="fa fa-arrow-right text-blue-500"></i></p>
             </div>
-            <a href="{{route('phm.inventory.suppliers')}}" class="p-2 border-2 border-blue-400 grid place-items-center">
+            <a href="{{ route('phm.inventory.suppliers') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Suppliers <i class="fa fa-arrow-right text-blue-500"></i></p>
+            </a>
+            <a href="{{ route('phm.inventory.bulk-import') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
+                <p>Import <i class="fa fa-gears text-blue-500"></i></p>
             </a>
         </div>
     </div>
@@ -193,7 +196,8 @@
                 serverSide: true,
                 ajax: "{{ route('phm-api.get-inventory') }}",
                 columns: [{
-                        data: (row) => `<a href='#' class='link stock-item' data-id="${row.item_id}">${row.item.name}</a>`,
+                        data: (row) =>
+                            `<a href='#' class='link stock-item' data-id="${row.item_id}">${row.item.name}</a>`,
                     },
                     {
                         data: 'item.sku'
@@ -217,7 +221,7 @@
                 e.target.reset();
             });
 
-            $(document).on('click', ".stock-item", function (e) {
+            $(document).on('click', ".stock-item", function(e) {
                 e.preventDefault();
 
                 const id = $(this).data('id');
@@ -225,7 +229,8 @@
                 useGlobalModal((a) => {
                     a.find(MODAL_TITLE).text('Stock details');
 
-                    axios.get("{{route('phm.inventory.stock-details', ':id')}}".replace(':id', id)).then((res) => {
+                    axios.get("{{ route('phm.inventory.stock-details', ':id') }}".replace(':id',
+                        id)).then((res) => {
                         a.find(MODAL_CONTENT).html(res.data);
                     }).catch((err) => {
                         a.find(MODAL_CONTENT).html(err.message);
