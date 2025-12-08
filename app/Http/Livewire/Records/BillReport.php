@@ -143,7 +143,7 @@ class BillReport extends Component
                 'status' => Status::pending->value,
                 'created_by' => auth()->user()->id,
                 'bill_number' => date('ym-') . str_pad(
-                    Bill::whereRaw("MONTH(created_at) = ? AND YEAR(created_at) = ?", [date('m'), date('Y')])->count() + 1,
+                    Bill::whereRaw("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", [date('m'), date('Y')])->count() + 1,
                     6,
                     "0",
                     STR_PAD_LEFT
