@@ -73,7 +73,8 @@ trait HasVisitData
         );
     }
 
-    public function getTestResult($name) {
+    public function getTestResult($name)
+    {
         $test = $this->tests->where('name', $name)->first();
         if (empty($test) || empty($test->results)) {
             return null;
@@ -82,9 +83,9 @@ trait HasVisitData
         return $test->results[0]->result;
     }
 
-    public function getTestResults($name, $key = null) {
-        $tests = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name));
-        // dump($tests);
+    public function getTestResults($name, $key = null)
+    {
+        $tests = $this->tests->filter(fn($n) => strtolower($n->name) == strtolower($name));
 
         if ($tests->isEmpty()) return "Not requested.";
         $test = $tests->where('results', '!=', null)->first();
@@ -93,17 +94,18 @@ trait HasVisitData
             return "No result";
         }
 
-        if (is_array($key)) $key = array_map(fn ($k) => strtolower($k), $key);
+        if (is_array($key)) $key = array_map(fn($k) => strtolower($k), $key);
 
         if (!empty($key)) {
-            foreach($test->results ?? [] as $o) {
+            foreach ($test->results ?? [] as $o) {
                 if (!is_array($key)) {
                     if (strtolower(@$o->description) == strtolower($key)) return @$o->result;
+                } else {
+                    if (in_array(strtolower(@$o->description), $key)) {
+                        return $o->result;
+                    }
                 }
 
-                if (in_array(strtolower(@$o->description), $key)) {
-                    return $o->result;
-                }
             }
             return "No result.";
         }
