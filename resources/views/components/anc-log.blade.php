@@ -120,8 +120,8 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-            // @isset($visit)
-                asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit?->id ?? ':not-foun') }}", (e,
+            asyncForm(document.querySelector("#anc-log-form"),
+                "{{ route('doctor.treat-anc', $visit?->id ?? ':not-foun') }}", (e,
                     data) => {
                     displayNotification({
                         message: 'Saved',
@@ -131,7 +131,6 @@
                         }
                     });
                 });
-            // @endisset
 
             $(document).on("click", ".expand-i", function(e) {
                 const id = $(e.currentTarget).data().id;
