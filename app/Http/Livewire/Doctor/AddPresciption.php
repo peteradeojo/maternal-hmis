@@ -120,74 +120,7 @@ class AddPresciption extends Component
         return view('livewire.doctor.add-presciption');
     }
 
-    // public function hydrate() {
-    //     $this->getCount();
-    // }
-
     public function getCount() {
-        // try {
-        //     //code...
-        //     $freq = $this->requestForm->frequency;
-        //     $dosage = $this->translateDosage($this->requestForm->dosage);
-        //     $days = $this->requestForm->duration;
-
-        //     $delta = round($dosage / $this->selections?->weight, 5);
-
-        //     $freq = $this->analyzeFreqeuency($freq);
-
-        //     // dump("Delta: " . $delta);
-        //     $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
-
-        //     $this->count = $count;
-        // } catch (\Throwable $th) {
-        //     dump($th->getMessage());
-        //     $this->count = 0;
-        // }
-
         $this->count = TreatmentService::getCount((array) $this->selections, (object) $this->requestForm->all());
-    }
-
-    private function translateDosage($dosage) {
-        $si_unit = strtolower($this->selections->si_unit);
-        try {
-            $matches = null;
-            preg_match("/^((\d+)(\.(\d+))?)([a-zA-Z]+)?/", $dosage, $matches);
-
-            $count = floatval($matches[1]);
-            $si = isset($matches[5]) ? strtolower($matches[5]) : null;
-
-            if ($si == null || $si == $si_unit) {
-                return $count;
-            }
-
-            if ($si_unit == "m{$si}") {
-                return $count * 1000;
-            }
-            if ($si == "m{$si_unit}") {
-                return $count / 1000;
-            }
-
-            if ($si_unit == "k{$si}") {
-                return $count / 1000;
-            }
-            if ($si == "k{$si_unit}") {
-                return $count * 1000;
-            }
-
-            return 0;
-        } catch (\Throwable $th) {
-            return 0;
-        }
-    }
-
-    private function analyzeFreqeuency($freq) {
-        return match ($freq) {
-            'stat' => 1,
-            'immediately' => 1,
-            'od' => 1,
-            'bd' => 2,
-            'tds' => 3,
-            'qds' => 4,
-        };
     }
 }

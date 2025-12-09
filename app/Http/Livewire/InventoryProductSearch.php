@@ -19,7 +19,7 @@ class InventoryProductSearch extends Component
         //     return;
         // }
 
-        $query = StockItem::where('name', 'ilike', "%{$this->queryString}%")->limit(30);
+        $query = StockItem::where('name', 'ilike', "%{$this->queryString}%")->orWhere('description', 'ilike', "%{$this->queryString}%")->limit(30);
 
         if ($this->category) {
             $query = $query->where('category', $this->category);

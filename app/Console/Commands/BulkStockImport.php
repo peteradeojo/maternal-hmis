@@ -55,6 +55,8 @@ class BulkStockImport extends Command
             try {
                 //code...
                 $sku = $item->get('sku');
+                $weight = $item->get('weight', null);
+                empty($weight) && $weight = null;
                 empty($sku) && $sku = "INV_" . rand(1000, 9999);
 
                 $stockItem = StockItem::create([
@@ -62,11 +64,12 @@ class BulkStockImport extends Command
                     ...$item->only([
                         'base_unit',
                         'name',
-                        'weight',
                         'si_unit',
                         'is_pharmaceutical',
-                        'category'
+                        'category',
+                        'description',
                     ]),
+                    'weight' => $weight,
                 ]);
 
                 $stockItem->transactions()->create([
