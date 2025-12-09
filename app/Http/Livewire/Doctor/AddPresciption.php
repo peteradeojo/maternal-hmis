@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use App\Models\DocumentationPrescription;
 use App\Livewire\Forms\Doctor\PrescriptionRequest;
 use App\Models\StockItem;
+use App\Services\TreatmentService;
 
 class AddPresciption extends Component
 {
@@ -124,24 +125,26 @@ class AddPresciption extends Component
     // }
 
     public function getCount() {
-        try {
-            //code...
-            $freq = $this->requestForm->frequency;
-            $dosage = $this->translateDosage($this->requestForm->dosage);
-            $days = $this->requestForm->duration;
+        // try {
+        //     //code...
+        //     $freq = $this->requestForm->frequency;
+        //     $dosage = $this->translateDosage($this->requestForm->dosage);
+        //     $days = $this->requestForm->duration;
 
-            $delta = round($dosage / $this->selections?->weight, 5);
+        //     $delta = round($dosage / $this->selections?->weight, 5);
 
-            $freq = $this->analyzeFreqeuency($freq);
+        //     $freq = $this->analyzeFreqeuency($freq);
 
-            // dump("Delta: " . $delta);
-            $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
+        //     // dump("Delta: " . $delta);
+        //     $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
 
-            $this->count = $count;
-        } catch (\Throwable $th) {
-            dump($th->getMessage());
-            $this->count = 0;
-        }
+        //     $this->count = $count;
+        // } catch (\Throwable $th) {
+        //     dump($th->getMessage());
+        //     $this->count = 0;
+        // }
+
+        $this->count = TreatmentService::getCount((array) $this->selections, (object) $this->requestForm->all());
     }
 
     private function translateDosage($dosage) {

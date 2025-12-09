@@ -223,25 +223,28 @@ class TreatmentService
 
     public static function getCount($item, $data)
     {
-        // dd($item, $data);
         try {
             if (!$item['weight']) {
                 return 0;
             }
 
-            //code...
             $freq = $data->frequency;
-            $dosage = self::translateDosage($item['si_unit'], $data->dosage);
+            $dosage = $data->dosage;
             $days = $data->duration;
 
-            $delta = round($dosage / $item['weight'], 5);
+            if (!is_numeric($dosage)) {
+                $dosage = self::translateDosage($item['si_unit'], $data->dosage);
+                $delta = round($dosage / $item['weight'], 5);
+            } else {
+                $delta = $dosage;
+            }
 
             $freq = self::analyzeFreqeuency($freq);
-
             $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
 
             return $count;
         } catch (\Throwable $th) {
+            report($th);
             return 0;
         }
     }
@@ -249,35 +252,31 @@ class TreatmentService
     private static function translateDosage($si_unit, $dosage)
     {
         $si_unit = strtolower($si_unit);
-        try {
-            $matches = null;
-            preg_match("/^((\d+)(\.(\d+))?)([a-zA-Z]+)?/", $dosage, $matches);
+        $matches = null;
+        preg_match("/^((\d+)(\.(\d+))?)([a-zA-Z]+)?/", $dosage, $matches);
 
-            $count = floatval($matches[1]);
-            $si = isset($matches[5]) ? strtolower($matches[5]) : null;
+        $count = floatval($matches[1]);
+        $si = isset($matches[5]) ? strtolower($matches[5]) : null;
 
-            if ($si == null || $si == $si_unit) {
-                return $count;
-            }
-
-            if ($si_unit == "m{$si}") {
-                return $count * 1000;
-            }
-            if ($si == "m{$si_unit}") {
-                return $count / 1000;
-            }
-
-            if ($si_unit == "k{$si}") {
-                return $count / 1000;
-            }
-            if ($si == "k{$si_unit}") {
-                return $count * 1000;
-            }
-
-            return 0;
-        } catch (\Throwable $th) {
-            return 0;
+        if ($si == null || $si == $si_unit) {
+            return $count;
         }
+
+        if ($si_unit == "m{$si}") {
+            return $count * 1000;
+        }
+        if ($si == "m{$si_unit}") {
+            return $count / 1000;
+        }
+
+        if ($si_unit == "k{$si}") {
+            return $count / 1000;
+        }
+        if ($si == "k{$si_unit}") {
+            return $count * 1000;
+        }
+
+        return 0;
     }
 
     private static function analyzeFreqeuency($freq)
