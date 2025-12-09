@@ -47,11 +47,11 @@ class BulkStockImport extends Command
         $header = fgetcsv($fh);
 
         $user = User::where('phone', 'ict')->first();
+        DB::beginTransaction();
 
         while ($data = fgetcsv($fh)) {
             $item = collect(array_combine($header, $data));
 
-            DB::beginTransaction();
             try {
                 //code...
                 $sku = $item->get('sku');
@@ -96,8 +96,6 @@ class BulkStockImport extends Command
                     'price' => $item->get('price'),
                     'created_by' => $user->id,
                 ]);
-
-                DB::commit();
             } catch (\Throwable $th) {
                 report($th);
                 DB::rollBack();
@@ -105,6 +103,7 @@ class BulkStockImport extends Command
             }
         }
 
+        DB::commit();
         fclose($fh);
         unlink($filename);
 

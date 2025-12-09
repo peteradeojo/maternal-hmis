@@ -39,7 +39,7 @@ class InventoryController extends Controller
 
     public function getInventory(Request $request)
     {
-        $query = InventoryBalance::with(['prices', 'location', 'item'])->groupBy(['item_id'])->selectRaw("item_id");
+        $query = InventoryBalance::with(['prices', 'location', 'item'])->groupBy(['item_id', 'location_id'])->selectRaw("item_id, location_id");
 
         return $this->dataTable($request, $query, [
             function ($query, $searchString) {
