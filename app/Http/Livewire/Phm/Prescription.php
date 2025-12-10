@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Phm;
 
 use App\Enums\Status;
 use App\Models\Admission;
-use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\Prescription as ModelsPrescription;
 use App\Models\PrescriptionLine;
@@ -55,7 +54,7 @@ class Prescription extends Component
     {
         $this->totalAmt = array_reduce(
             $this->prescriptions,
-            fn($a, $b) => $a + ($b['quantity'] * ($b['status'] == Status::cancelled ? 0 : TreatmentService::getPrice(
+            fn($a, $b) => $a + ($b['quantity'] * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
                 $b['item_id'],
                 $b['profile'],
             ))),
@@ -77,6 +76,8 @@ class Prescription extends Component
                 'dosage' => $line->dosage,
                 'frequency' => $line->frequency,
                 'duration' => $line->duration,
+                'weight' => $line->item?->weight,
+                'si_unit' => $line->item?->si_unit,
             ];
         })->toArray();
 
@@ -98,6 +99,7 @@ class Prescription extends Component
                 'profile' => 'RETAIL',
             ]);
         } catch (\Throwable $th) {
+            report($th);
             notifyUserError("Unable to add prescription", auth()->user());
         }
 
@@ -125,7 +127,6 @@ class Prescription extends Component
     public function saveToBill()
     {
         $event = ($this->doc->event->load(['bills']));
-
         DB::beginTransaction();
 
         try {
@@ -142,7 +143,7 @@ class Prescription extends Component
             }
 
             foreach ($this->prescriptions as $i => $line) {
-                $price = TreatmentService::getPrice($line['item_id'], $line['profile']);
+                $price = TreatmentService::getPrice(@$line['item_id'], $line['profile']);
 
                 PrescriptionLine::where('id', $line['id'])->update([
                     'status' => $line['status'],
@@ -156,7 +157,7 @@ class Prescription extends Component
                 ], [
                     'user_id' => auth()->user()->id,
                     'description' => "{$line['name']} {$line['dosage']} {$line['frequency']} for {$line['duration']} days(s)",
-                    'quantity' => $line['quantity'],
+                    'quantity' => $line['quantity'] ??  TreatmentService::getCount($line, (object) $line),
                     'unit_price' => $price,
                     'total_price' => $price * $line['quantity'],
                     'status' => $line['status']->value,
@@ -168,7 +169,6 @@ class Prescription extends Component
 
             notifyUserSuccess("Bill saved for patient {$this->doc->patient->name}", auth()->user()->id);
         } catch (\Throwable $th) {
-            dump($th);
             report($th);
             DB::rollBack();
             notifyUserError($th->getMessage(), auth()->user()->id);

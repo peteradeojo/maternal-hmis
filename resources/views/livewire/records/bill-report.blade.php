@@ -121,10 +121,10 @@
                 </tr>
             </thead>
             <tbody>
+                {{-- @dump($drugs) --}}
                 @foreach ($drugs as $i => $img)
-                    {{-- @dump($img) --}}
                     <tr>
-                        <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }}
+                        <td>{{ $img['product']['name'] ?? $img['data']['description'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }}
                             day(s)
                         </td>
                         <td><span>{{ round($img['total_amt'], 2) }}</span></td>

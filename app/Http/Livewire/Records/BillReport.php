@@ -55,10 +55,10 @@ class BillReport extends Component
 
         $drugs = $drugs->map(fn($line) => [
             'saved' => true,
-            'product' => $line->item->load(['prices'])->toArray(),
+            'product' => $line->item?->load(['prices'])->toArray(),
             'data' => $line->toArray(),
             'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
-            'total_amt' => TreatmentService::getCount($line->item->toArray(), $line) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
+            'total_amt' => TreatmentService::getCount($line->item?->toArray(), $line) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
         ])->toArray();
 
         $tests = $tests->map(fn($test) => [
