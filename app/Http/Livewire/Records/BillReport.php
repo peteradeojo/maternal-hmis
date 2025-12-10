@@ -7,6 +7,7 @@ use App\Models\Bill;
 use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Models\DocumentationPrescription;
+use App\Models\PrescriptionLine;
 use App\Models\Product;
 use App\Models\StockItem;
 use App\Services\TreatmentService;
@@ -58,7 +59,7 @@ class BillReport extends Component
             'product' => $line->item?->load(['prices'])->toArray(),
             'data' => $line->toArray(),
             'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
-            'total_amt' => TreatmentService::getCount($line->item?->toArray(), $line) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
+            'total_amt' => ($line['qty_dispensed'] ?? TreatmentService::getCount($line->item?->toArray(), $line)) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
         ])->toArray();
 
         $tests = $tests->map(fn($test) => [
@@ -209,16 +210,18 @@ class BillReport extends Component
 
     public function saveDrugs(Bill $bill)
     {
+        // dd($this->drugs);
         foreach ($this->drugs as $d) {
             $bill->entries()->create([
-                'chargeable_type' => StockItem::class,
+                'chargeable_type' => PrescriptionLine::class,
+                'chargeable_id' => $d['data']['id'],
                 'user_id' => $bill->created_by,
-                'chargeable_id' => $d['product']['id'],
-                'unit_price' => TreatmentService::getPrice($d['product']['id'], @$d['data']['profile'] ?? 'RETAIL'),
+                'unit_price' => !empty($d['product']) ? TreatmentService::getPrice($d['product']['id'], @$d['data']['profile'] ?? 'RETAIL') : 0,
                 'total_price' => $d['total_amt'],
-                'description' => "{$d['product']['name']} {$d['data']['dosage']} for {$d['data']['dosage']} day(s)",
+                'description' => !empty($d['product']) ? "{$d['product']['name']} {$d['data']['dosage']} for {$d['data']['dosage']} day(s)" : $d['data']['description'],
                 'tag' => 'drug',
-                'status' => Status::active->value,
+                'quantity' => floatval($d['data']['qty_dispensed'] ?? TreatmentService::getCount($d['product'], (object) $d['data']) ?? 0),
+                'status' => $d['data']['status'], // !empty($d['product']) ? Status::active->value : Status::blocked->value,
             ]);
         }
     }

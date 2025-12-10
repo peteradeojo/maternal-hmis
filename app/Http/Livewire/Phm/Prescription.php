@@ -136,6 +136,8 @@ class Prescription extends Component
             foreach ($this->prescriptions as $i => $line) {
                 $price = TreatmentService::getPrice(@$line['item_id'], $line['profile']);
 
+                // dump($line);
+
                 PrescriptionLine::where('id', $line['id'])->update([
                     'status' => $line['status'],
                     'profile' => $line['profile'],
