@@ -44,7 +44,9 @@ class InventoryController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $searchString) {
                 $query->whereHas('item', function ($q) use ($searchString) {
-                    $q->where('name', 'ilike', "%$searchString%");
+                    $q->where('name', 'ilike', "%$searchString%")
+                    ->orWhere('description', 'ilike', "%$searchString%")
+                    ->orWhere('sku', 'ilike', "%$searchString%");
                 });
             }
         ]);
