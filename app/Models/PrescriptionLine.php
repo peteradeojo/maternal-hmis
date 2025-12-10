@@ -16,6 +16,7 @@ class PrescriptionLine extends Model
         'dispensed_by',
         'prescribed_by',
         'profile',
+        'description',
     ];
 
     protected $casts = [
@@ -38,6 +39,6 @@ class PrescriptionLine extends Model
 
     public function __toString()
     {
-        return "{$this->item->name} {$this->dosage} {$this->frequency} - for {$this->duration} " . (is_numeric($this->duration) ? 'day(s)' : '');
+        return ($this->item?->name ?? $this->description) . " {$this->dosage} {$this->frequency} - for {$this->duration} " . (is_numeric($this->duration) ? 'day(s)' : '');
     }
 }

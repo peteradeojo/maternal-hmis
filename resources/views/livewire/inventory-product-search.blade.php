@@ -9,7 +9,7 @@
             x-on:keyup="$wire.search()" />
 
         <ul x-show="open" class="relative bottom-0 border border-black sp-list max-h-80 overflow-y-auto w-2/3">
-            @forelse ($results as $result)
+            @forelse ($results ?? [] as $result)
                 <li @click="$wire.selected('{{ $result->id }}')" class="p-1 hover:bg-gray-300">{{ $result->name }}
                 </li>
             @empty

@@ -26,11 +26,11 @@
                                 <td>
                                     <input type="text" autofocus name="dosage" wire:model="requestForm.dosage" wire:change="getCount"
                                         wire:keyup.enter.prevent="saveRequest" name="dosage" value="1" required />
-                                    <div>
+                                    {{-- <div>
                                         @error('requestForm.dosage')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
                                         @enderror
-                                    </div>
+                                    </div> --}}
                                 </td>
                                 <td>
                                     <select name="frequency" wire:change="getCount" wire:model="requestForm.frequency" required>
@@ -130,7 +130,7 @@
                     @if ($display)
                         @forelse ($visit->prescription?->lines ?? [] as $prescription)
                             <tr>
-                                <td>{{ $prescription->item->name }}</td>
+                                <td>{{ $prescription->item?->name ?? $prescription->description }}</td>
                                 <td>{{ $prescription->dosage }}</td>
                                 <td>{{ $prescription->frequency }}</td>
                                 <td>{{ $prescription->duration }}</td>

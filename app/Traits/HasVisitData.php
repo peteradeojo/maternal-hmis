@@ -61,6 +61,7 @@ trait HasVisitData
             'item_id' => $product->id,
             'prescribed_by' => auth()->user()->id,
             'status' => Status::active,
+            'description' => $product->name,
         ]);
     }
 

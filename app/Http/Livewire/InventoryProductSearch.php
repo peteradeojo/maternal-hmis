@@ -10,7 +10,7 @@ class InventoryProductSearch extends Component
 {
     public $category;
     public $queryString;
-    public $results = [];
+    public $results;
 
     public function search()
     {
@@ -26,6 +26,15 @@ class InventoryProductSearch extends Component
         }
 
         $this->results = $query->get();
+
+        if ($this->results->isEmpty()) {
+            $this->results = [new StockItem([
+                'name' => $this->queryString,
+                'weight' => null,
+                'si_unit' => null,
+            ])];
+        }
+
         $this->dispatch('searched', count($this->results));
     }
 
@@ -36,7 +45,13 @@ class InventoryProductSearch extends Component
 
     public function selected($id)
     {
-        $product = StockItem::find($id)?->load(['costs', 'prices']);
+        if (!empty($id)) {
+            $product = StockItem::find($id)?->load(['costs', 'prices']);
+        } else {
+            $product = new StockItem([
+                'name' => $this->queryString,
+            ]);
+        }
 
         $line = new PurchaseOrderLine();
         $line->unit = $product->base_unit;
