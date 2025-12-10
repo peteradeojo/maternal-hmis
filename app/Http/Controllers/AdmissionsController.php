@@ -246,7 +246,7 @@ class AdmissionsController extends Controller
         ]);
 
         $admission->discharged_on ??= $request->input('discharged_on');
-        $admission->status = Status::active->value;
+        $admission->status = Status::closed->value;
         $admission->discharge_summary ??= $request->input('discharge_summary');
         $admission->save();
 
