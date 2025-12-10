@@ -69,7 +69,7 @@ class Prescription extends Component
             return [
                 'id' => $line->id,
                 'item_id' => $line->item_id,
-                'name' => $line->item->name,
+                'name' => $line->item?->name ?? $line->description,
                 'quantity' => TreatmentService::getCount($line->item, $line),
                 'profile' => $line->profile ?? 'RETAIL',
                 'status' => $line->status,
