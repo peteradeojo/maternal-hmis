@@ -131,7 +131,7 @@
 
                     <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
                         <ul class="list-disc px-3 text-sm">
-                            @forelse ($visit->prescriptions as $pres)
+                            @forelse (($visit->prescription?->lines ?? []) as $pres)
                                 <li>{{ $pres }}</li>
                             @empty
                                 <li>No prescriptions provided.</li>

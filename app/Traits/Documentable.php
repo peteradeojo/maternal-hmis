@@ -3,15 +3,16 @@
 namespace App\Traits;
 
 use App\Enums\Status;
+use App\Models\Prescription;
 use App\Models\PatientImaging;
 use App\Models\DocumentationTest;
 use App\Models\DocumentedDiagnosis;
+use App\Models\PatientExaminations;
 use App\Models\DocumentationComplaints;
 use App\Models\DocumentationPrescription;
-use App\Models\PatientExaminations;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Documentable
 {
@@ -58,6 +59,11 @@ trait Documentable
     public function prescriptions()
     {
         return $this->treatments();
+    }
+
+    public function prescription()
+    {
+        return $this->morphOne(Prescription::class, 'event')->latest();
     }
 
     public function treatments()

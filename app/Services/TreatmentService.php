@@ -13,6 +13,7 @@ use App\Interfaces\Documentable;
 use App\Models\Admission;
 use App\Models\AncVisit;
 use App\Models\Patient;
+use App\Models\StockItemPrice;
 use App\Models\User;
 
 class TreatmentService
@@ -225,7 +226,7 @@ class TreatmentService
     {
         try {
             if (!$item['weight']) {
-                return 0;
+                return is_numeric($data->dosage) ? $data->dosage : 0;
             }
 
             $freq = $data->frequency;
@@ -289,5 +290,11 @@ class TreatmentService
             'tds' => 3,
             'qds' => 4,
         };
+    }
+
+    public static function getPrice($id, $profile = 'RETAIL') {
+        $prices = StockItemPrice::where('item_id', $id)->where('price_type', $profile)->latest(); //->first();
+
+        return $prices->first()?->price ?? 0;
     }
 }

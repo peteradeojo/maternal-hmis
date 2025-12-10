@@ -2,9 +2,7 @@
     <div class="relative">
         <p class="bold">{{ $title ?? 'Add Prescription' }}</p>
 
-        <div class="py-2" x-data>
-            {{-- <livewire:dynamic-product-search departmentId='4' @selected="addPrescription($event.detail.id)"
-                @selected_temp="addTempPrescription($event.detail)" /> --}}
+        <div x-data>
             <livewire:inventory-product-search @handle-select="addPrescription($event.detail.product.item)" />
         </div>
 
@@ -27,7 +25,7 @@
                                 <td>{{ $selections->name }} ({{ $selections->weight }} {{ $selections->si_unit }})</td>
                                 <td>
                                     <input type="text" autofocus name="dosage" wire:model="requestForm.dosage" wire:change="getCount"
-                                        wire:keyup.enter.prevent="saveRequest" name="dosage" value="1" />
+                                        wire:keyup.enter.prevent="saveRequest" name="dosage" value="1" required />
                                     <div>
                                         @error('requestForm.dosage')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -35,7 +33,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <select name="frequency" wire:change="getCount" wire:model="requestForm.frequency">
+                                    <select name="frequency" wire:change="getCount" wire:model="requestForm.frequency" required>
                                         <option disabled="disabled" selected>Select Frequency</option>
                                         <option value="stat">stat</option>
                                         <option value="od">once daily</option>
@@ -52,7 +50,7 @@
                                 </td>
                                 <td>
                                     <input type="number" wire:change="getCount" wire:model="requestForm.duration" name="duration"
-                                        wire:keyup.enter.prevent="saveRequest" value="1" />
+                                        wire:keyup.enter.prevent="saveRequest" value="1" required />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -130,7 +128,7 @@
                     @endif
 
                     @if ($display)
-                        @forelse ($visit->prescriptions as $prescription)
+                        @forelse ($visit->prescription?->lines as $prescription)
                             <tr>
                                 <td>{{ $prescription->name }}</td>
                                 <td>{{ $prescription->dosage }}</td>

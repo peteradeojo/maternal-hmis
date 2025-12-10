@@ -5,12 +5,8 @@ namespace App\Http\Livewire\Doctor;
 use App\Models\Visit;
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\AncVisit;
 use App\Dto\PrescriptionDto;
-use Illuminate\Support\Collection;
-use App\Models\DocumentationPrescription;
 use App\Livewire\Forms\Doctor\PrescriptionRequest;
-use App\Models\StockItem;
 use App\Services\TreatmentService;
 
 class AddPresciption extends Component

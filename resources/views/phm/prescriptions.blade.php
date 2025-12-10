@@ -38,8 +38,8 @@
                         a.find(".modal-title").text("Prescription");
                         a.find(MODAL_BODY).html(`@include('components.spinner')`)
 
-                        axios.get("{{ route('dis.get-bill', ':id') }}".replace(':id', bill), {
-                            headers: {Accept: 'text/html'}
+                        axios.get("{{ route('dis.get-prescriptions', ':id') }}".replace(':id', bill), {
+                            // headers: {Accept: 'application/html'}
                         })
                             .then((response) => {
                                 a.find(".modal-body").html(response.data);
@@ -85,8 +85,7 @@
                         }),
                     },
                     {
-                        data: (row) => row.status !== {{Status::quoted->value}} ?
-                            `<a data-bill="${row.id}" href="#" class='btn bg-blue-400 text-white view-prescription'>View <i class="fa fa-open"></i></a>` : `<a data-bill="${row.id}" href="#" class='btn bg-green-400 text-white view-prescription'>Done <i class="fa fa-check"></i> </a>`,
+                        data: (row) => `<a href="{{route('dis.get-prescriptions', ':id')}}" class='btn bg-blue-400 text-white view-prescription'>View <i class="fa fa-open"></i></a>`.replace(':id', row.id),
                         orderable: false,
                         searchable: false
                     },
@@ -96,7 +95,7 @@
                 ordering: false,
             });
 
-            $(document).on('click', '.view-prescription', loadPrescription);
+            // $(document).on('click', '.view-prescription', loadPrescription);
 
         });
     </script>

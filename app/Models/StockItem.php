@@ -60,9 +60,15 @@ class StockItem extends Model
         return $this->hasMany(StockLot::class, 'item_id');
     }
 
-    public function prices()
+    public function prices($type = null)
     {
-        return $this->hasMany(StockItemPrice::class, 'item_id')->latest();
+        $query = $this->hasMany(StockItemPrice::class, 'item_id')->where('active', true)->latest();
+
+        if ($type) {
+            $query = $query->where('price_type', $type);
+        }
+
+        return $query;
     }
 
     public function costs()

@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Enums\Status;
 use App\Models\Patient;
 use App\Models\Product;
 use App\Interfaces\OperationalEvent;
@@ -24,23 +25,42 @@ trait HasVisitData
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
+    // public function addPrescription(Patient $patient, $product, mixed $data)
+    // {
+    //     if ($product instanceof stdClass) { // product was newly created triggers this behavior
+    //         $product = new Product((array) $product);
+    //         $product->save();
+    //     }
+
+    //     return $this->prescriptions()->create([
+    //         'patient_id' => $patient->id,
+    //         'prescriptionable_type' => $product::class,
+    //         'prescriptionable_id' => $product->id,
+    //         'name' => $product->name,
+    //         'dosage' => $data->dosage,
+    //         'duration' => $data->duration,
+    //         'route' => $data->route,
+    //         'frequency' => $data->frequency,
+    //         'requested_by' => auth()->user()?->id,
+    //     ]);
+    // }
+
     public function addPrescription(Patient $patient, $product, mixed $data)
     {
-        if ($product instanceof stdClass) { // product was newly created triggers this behavior
-            $product = new Product((array) $product);
-            $product->save();
+        if (is_null($this->prescription)) {
+            $this->prescription()->create([
+                'patient_id' => $patient->id,
+            ]);
+            $this->refresh();
         }
 
-        return $this->prescriptions()->create([
-            'patient_id' => $patient->id,
-            'prescriptionable_type' => $product::class,
-            'prescriptionable_id' => $product->id,
-            'name' => $product->name,
+        return $this->prescription->lines()->create([
             'dosage' => $data->dosage,
             'duration' => $data->duration,
-            'route' => $data->route,
             'frequency' => $data->frequency,
-            'requested_by' => auth()->user()?->id,
+            'item_id' => $product->id,
+            'prescribed_by' => auth()->user()->id,
+            'status' => Status::active,
         ]);
     }
 
@@ -73,7 +93,8 @@ trait HasVisitData
         );
     }
 
-    public function getTestResult($name) {
+    public function getTestResult($name)
+    {
         $test = $this->tests->where('name', $name)->first();
         if (empty($test) || empty($test->results)) {
             return null;
@@ -82,8 +103,9 @@ trait HasVisitData
         return $test->results[0]->result;
     }
 
-    public function getTestResults($name, $key = null) {
-        $tests = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name));
+    public function getTestResults($name, $key = null)
+    {
+        $tests = $this->tests->filter(fn($n) => strtolower($n->name) == strtolower($name));
 
         if ($tests->isEmpty()) return "Not requested.";
         $test = $tests->where('results', '!=', null)->first();
@@ -93,7 +115,7 @@ trait HasVisitData
         }
 
         if (!empty($key)) {
-            foreach($test->results ?? [] as $o) {
+            foreach ($test->results ?? [] as $o) {
                 if (strtolower(@$o->description) == strtolower($key)) return @$o->result;
             }
             return "No result.";
