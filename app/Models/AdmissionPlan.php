@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
