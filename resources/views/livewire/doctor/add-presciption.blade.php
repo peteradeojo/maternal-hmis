@@ -79,7 +79,7 @@
                         </tr>
                     @endif
 
-                    @if ($updating)
+                    {{-- @if ($updating)
                         <tr>
                             <form wire:submit.prevent="saveRequest" wire:key="{{ $updating->name }}">
                                 <td>{{ $updating->name }}</td>
@@ -125,7 +125,7 @@
                                 </td>
                             </form>
                         </tr>
-                    @endif
+                    @endif --}}
 
                     @if ($display)
                         @forelse ($visit->prescription?->lines ?? [] as $prescription)
@@ -135,9 +135,9 @@
                                 <td>{{ $prescription->frequency }}</td>
                                 <td>{{ $prescription->duration }}</td>
                                 <td>
-                                    <button type="button"
+                                    {{-- <button type="button"
                                         class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
-                                        wire:click="edit({{ $prescription->id }})">Edit</button>
+                                        wire:click="edit({{ $prescription->id }})">Edit</button> --}}
                                     <button type="button"
                                         class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
                                         wire:click="deleteRequestItem({{ $prescription->id }})">&times;</button>
