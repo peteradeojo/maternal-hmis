@@ -168,6 +168,7 @@ class Prescription extends Component
 
             notifyUserSuccess("Bill saved for patient {$this->doc->patient->name}", auth()->user()->id);
         } catch (\Throwable $th) {
+            dump($th);
             report($th);
             DB::rollBack();
             notifyUserError($th->getMessage(), auth()->user()->id);
