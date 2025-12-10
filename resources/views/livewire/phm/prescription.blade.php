@@ -42,7 +42,7 @@
                     </td>
                     <td>{{ $t['balance'] }}</td>
                     <td>
-                        <input type="checkbox" @checked($t['status'] != Status::cancelled)
+                        <input type="checkbox" @checked($t['status'] != Status::blocked)
                             wire:change="setLineStatus({{ $i }}, $event.target.checked)" />
                     </td>
                 </tr>

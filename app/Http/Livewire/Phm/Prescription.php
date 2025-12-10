@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Phm;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\Bill;
+use App\Models\BillDetail;
 use App\Models\Prescription as ModelsPrescription;
 use App\Models\PrescriptionLine;
 use App\Models\Visit;
@@ -69,7 +70,7 @@ class Prescription extends Component
                 'id' => $line->id,
                 'item_id' => $line->item_id,
                 'name' => $line->item?->name ?? $line->description,
-                'quantity' => TreatmentService::getCount($line->item, $line),
+                'quantity' => $line->qty_dispensed ?? TreatmentService::getCount($line->item, $line),
                 'profile' => $line->profile ?? 'RETAIL',
                 'status' => $line->status,
                 'balance' => $line->item?->balance ?? 0,
@@ -82,7 +83,7 @@ class Prescription extends Component
         })->toArray();
 
         if ($this->doc->event instanceof Visit) {
-            $this->bill = $this->doc->event->bills()->where('status', Status::pending->value)->first();
+            $this->bill = $this->doc->event->bills()->whereIn('status', [Status::pending->value, Status::active->value])->first();
         }
     }
 
@@ -132,41 +133,33 @@ class Prescription extends Component
         try {
             $bill = $event->bills()->where('status', Status::pending->value)->first();
 
-            if (empty($bill)) {
-                $bill = $event->bills()->create([
-                    'bill_number' => Bill::generateBillNumber($event),
-                    'status' => Status::pending->value,
-                    'created_by' => auth()->user()->id,
-                    'patient_id' => $this->doc->patient_id,
-                    'bill_date' => now(),
-                ]);
-            }
-
             foreach ($this->prescriptions as $i => $line) {
                 $price = TreatmentService::getPrice(@$line['item_id'], $line['profile']);
 
                 PrescriptionLine::where('id', $line['id'])->update([
                     'status' => $line['status'],
                     'profile' => $line['profile'],
+                    'qty_dispensed' => $line['quantity'],
                 ]);
 
-                $bill->entries()->updateOrCreate([
-                    'chargeable_type' => PrescriptionLine::class,
-                    'chargeable_id' => $line['id'],
-                    'bill_id' => $bill->id,
-                ], [
-                    'user_id' => auth()->user()->id,
-                    'description' => "{$line['name']} {$line['dosage']} {$line['frequency']} for {$line['duration']} days(s)",
-                    'quantity' => $line['quantity'] ??  TreatmentService::getCount($line, (object) $line),
-                    'unit_price' => $price,
-                    'total_price' => $price * $line['quantity'],
-                    'status' => $line['status']->value,
-                    'tag' => 'drug',
-                ]);
+                if (!empty($bill)) {
+                    BillDetail::updateOrCreate([
+                        'chargeable_type' => PrescriptionLine::class,
+                        'chargeable_id' => $line['id'],
+                        'bill_id' => $bill->id,
+                    ], [
+                        'user_id' => auth()->user()->id,
+                        'description' => "{$line['name']} {$line['dosage']} {$line['frequency']} for {$line['duration']} days(s)",
+                        'quantity' => floatval($line['quantity'] ??  TreatmentService::getCount($line, (object) $line)),
+                        'unit_price' => $price,
+                        'total_price' => $price * $line['quantity'],
+                        'status' => $line['status']->value,
+                        'tag' => 'drug',
+                    ]);
+                }
             }
 
             DB::commit();
-
             notifyUserSuccess("Bill saved for patient {$this->doc->patient->name}", auth()->user()->id);
         } catch (\Throwable $th) {
             report($th);

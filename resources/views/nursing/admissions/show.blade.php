@@ -47,7 +47,7 @@
                                     <tbody>
                                         @forelse ($admission->plan->prescription?->lines ?? [] as $p)
                                             <tr>
-                                                <td>{{ $p->item->name }}</td>
+                                                <td>{{ $p->item?->name ?? $p->description }}</td>
                                                 <td>{{ $p->dosage }}</td>
                                                 <td>{{ $p->frequency }}</td>
                                                 <td>{{ $p->duration }}</td>

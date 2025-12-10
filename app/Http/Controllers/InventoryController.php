@@ -272,6 +272,10 @@ class InventoryController extends Controller
                         'reason' => 'Purchase order fulfilled',
                         'performed_by' => auth()->user()->id,
                     ]);
+
+                    StockItemCost::create([
+                        'item_id' => $line['item_id'],
+                    ]);
                 }
             }
 

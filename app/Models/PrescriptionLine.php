@@ -17,6 +17,7 @@ class PrescriptionLine extends Model
         'prescribed_by',
         'profile',
         'description',
+        'qty_dispensed',
     ];
 
     protected $casts = [

@@ -14,6 +14,5 @@ enum Status: int
     case PAID = 7;
     case UNPAID = 8;
     case cancelled = 9;
-
     case Unavailable = 10;
 }
