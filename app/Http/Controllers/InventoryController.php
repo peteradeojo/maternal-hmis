@@ -275,6 +275,7 @@ class InventoryController extends Controller
 
                     StockItemCost::create([
                         'item_id' => $line['item_id'],
+                        'cost' => $line['unit_cost'],
                     ]);
                 }
             }
