@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Phm;
 
 use App\Enums\Status;
 use App\Models\Admission;
+use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\Prescription as ModelsPrescription;
 use App\Models\PrescriptionLine;
@@ -78,7 +79,9 @@ class Prescription extends Component
             ];
         })->toArray();
 
-        $this->bill = $this->doc->event->bills()->where('status', Status::pending->value)->first();
+        if ($this->doc->event instanceof AdmissionPlan) {
+            $this->bill = $this->doc->event->bills()->where('status', Status::pending->value)->first();
+        }
     }
 
     public function addLine($data)

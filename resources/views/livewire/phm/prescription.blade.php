@@ -25,16 +25,16 @@
                     <td>{{ $t['duration'] }}</td>
                     <td>{{ number_format(TreatmentService::getPrice($t['item_id'], $t['profile']) ?? 0) }}
 
-                        <select class="form-control"
-                            wire:model="prescriptions.{{$i}}.profile"
+                        <select class="form-control" wire:model="prescriptions.{{ $i }}.profile"
                             wire:change="updateProfile({{ $i }}, $event.target.value)">
                             <option value="RETAIL">RETAIL</option>
                             <option value="NHIS">NHIS</option>
                         </select>
                     </td>
                     <td>
-                        <input type="number" wire:change="compute" wire:model="prescriptions.{{ $i }}.quantity"
-                            id="" class="form-control" />
+                        <input type="number" wire:change="compute"
+                            wire:model="prescriptions.{{ $i }}.quantity" id=""
+                            class="form-control" />
                     </td>
                     <td>
                         {{ config('app.currency') }}
@@ -59,7 +59,7 @@
                     <button class="btn bg-blue-400 text-white" wire:click.prevent="saveToBill">Save bill <i
                             class="fa fa-save"></i></button>
 
-                    @if ($bill && ($is_admission or $bill->status == Status::PAID->value))
+                    @if (!$bill || $is_admission || $bill->status == Status::PAID->value)
                         <button class="btn bg-red-500 text-white">Dispense <i class="fa fa-send"></i></button>
                     @endif
                 </td>
