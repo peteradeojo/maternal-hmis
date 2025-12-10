@@ -143,7 +143,7 @@
                 <p class="basic-header">Price information</p>
                 <div class="form-group">
                     <label>Unit cost price</label>
-                    <x-input-number name="unit_cost" x-model="cost_price" class="form-control" required />
+                    <x-input-number name="unit_cost" step="0.0001" x-model="cost_price" class="form-control" required />
                 </div>
 
                 <div x-data="{ types: @js($price_types), selling_prices: [0] }">
@@ -164,7 +164,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Unit Selling price</label>
-                                <input type='number' x-bind:name="'prices[' + index + '][price]'" x-model="price"
+                                <input type='number' step="0.0001" x-bind:name="'prices[' + index + '][price]'" x-model="price"
                                     class="form-control" required />
                             </div>
                             <div class="col-span-full">

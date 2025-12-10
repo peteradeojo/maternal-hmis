@@ -61,7 +61,7 @@
                                     <button type="button" wire:click.prevent="saveRequest"
                                         class="btn btn-sm bg-blue-200 hover:bg-blue-500">&check;</button>
                                     <button type="button" class="btn btn-sm bg-red-200 hover:bg-red-500"
-                                        wire:click.prevent="cancel">&times;</button>
+                                        wire:click.prevent="cancel"><i class="fa fa-delete"></i></button>
                                 </td>
                             </form>
                         </tr>
@@ -140,7 +140,9 @@
                                         wire:click="edit({{ $prescription->id }})">Edit</button> --}}
                                     <button type="button"
                                         class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
-                                        wire:click="deleteRequestItem({{ $prescription->id }})">&times;</button>
+                                        wire:click="deleteRequestItem({{ $prescription->id }})">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @empty
