@@ -28,6 +28,6 @@ class AdmissionTreatments extends Model
     }
 
     public function treatments() {
-        return $this->belongsTo(DocumentationPrescription::class, 'treatment_id');
+        return $this->belongsTo(PrescriptionLine::class, 'treatment_id');
     }
 }
