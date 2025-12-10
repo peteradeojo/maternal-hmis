@@ -8,6 +8,7 @@ use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\Prescription as ModelsPrescription;
 use App\Models\PrescriptionLine;
+use App\Models\Visit;
 use App\Services\TreatmentService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -79,7 +80,7 @@ class Prescription extends Component
             ];
         })->toArray();
 
-        if ($this->doc->event instanceof AdmissionPlan) {
+        if ($this->doc->event instanceof Visit) {
             $this->bill = $this->doc->event->bills()->where('status', Status::pending->value)->first();
         }
     }
