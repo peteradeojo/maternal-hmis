@@ -22,6 +22,8 @@ class StockItem extends Model
         'ampoule' => 'ampoule',
         'vial' => 'Vial',
         'bag' => 'Bag',
+        'capsule' => 'Capsule',
+        'unit' => 'Unit',
     ];
 
     protected $fillable = [

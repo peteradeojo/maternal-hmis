@@ -73,7 +73,7 @@ class Prescription extends Component
                 'quantity' => TreatmentService::getCount($line->item, $line),
                 'profile' => $line->profile ?? 'RETAIL',
                 'status' => $line->status,
-                'balance' => $line->item->balance,
+                'balance' => $line->item?->balance ?? 0,
                 'dosage' => $line->dosage,
                 'frequency' => $line->frequency,
                 'duration' => $line->duration,

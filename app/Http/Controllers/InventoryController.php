@@ -84,14 +84,14 @@ class InventoryController extends Controller
 
         try {
             $stockItem = StockItem::create([
-                'name' => $request->name,
-                'sku' => $request->sku,
-                'description' => $request->description,
+                'name' => strtoupper($request->name),
+                'sku' => strtoupper($request->sku),
+                'description' => strtoupper($request->description),
                 'category' => $request->category,
                 'is_pharmaceutical' => $request->input('is_pharmaceutical') == 'on',
                 'requires_lot' => $request->input('requires_lot') == 'on',
                 'base_unit' => $request->base_unit,
-                'si_unit' => $request->si_unit,
+                'si_unit' => strtolower($request->si_unit),
                 'weight' => $request->weight,
             ]);
 
@@ -142,7 +142,11 @@ class InventoryController extends Controller
         }
     }
 
-    public function viewStockDetails(Request $request, StockItem $item) {}
+    public function viewStockDetails(Request $request, StockItem $item) {
+        $item->load(['balances', 'prices', 'costs']);
+        $categories = StockItem::CATEGORIES;
+        return view('inventory.item-view', compact('item', 'categories'));
+    }
 
     public function purchaseOrders(Request $request)
     {

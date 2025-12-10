@@ -224,6 +224,7 @@ class TreatmentService
 
     public static function getCount($item, $data)
     {
+        if (empty($item)) return;
         try {
             if (!$item['weight']) {
                 return is_numeric($data->dosage) ? $data->dosage : 0;
