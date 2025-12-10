@@ -39,7 +39,6 @@ class BillDetail extends Model
     public function amount(): Attribute
     {
         return Attribute::make(
-            // get: fn($v, $attributes) => $attributes['tag'] == 'drug' ? $attributes['total_price'] * 1.5 : $attributes['total_price'],
             get: fn($v, $attributes) => $attributes['total_price'],
         );
     }
@@ -47,12 +46,8 @@ class BillDetail extends Model
     public function name(): Attribute
     {
         return Attribute::make(
-            // get: fn($value, $attributes) => $attributes['tag'] != 'drug' ? $attributes['description'] : "{$attributes['meta']['data']['name']}"
             get: function ($value, $attributes) {
-                if ($attributes['tag'] != 'drug') return $attributes['description'];
-
-                $meta = json_decode($attributes['meta']);
-                return "{$meta->data->name} {$meta->data->dosage} {$meta->data->frequency} {$meta->data->duration} (days)";
+                return $attributes['description'];
             }
         );
     }
@@ -64,14 +59,9 @@ class BillDetail extends Model
                 $meta = json_decode($attrs['meta']);
                 switch ($attrs['tag']) {
                     case 'drug':
-                        if ($attrs['status'] == Status::blocked->value) return "Blocked";
+                        if ($attrs['status'] == Status::cancelled->value) return "Blocked";
 
-                        if (!empty($attrs['quoted_at'])) {
-                            return isset($meta->available) && $meta->available ? "Available" : "Unavailable";
-                        } else {
-                            return "Not quoted.";
-                        }
-                        // return !empty($attrs['quoted_at']) ? "Quoted" : (($meta->available ?? false) ? "Available" : false);
+                        return ucfirst(Status::from($attrs['status'])->name);
                     case 'test':
                         if (isset($meta->data)) {
                             if ($meta->data->status == Status::cancelled->value) {
@@ -89,6 +79,8 @@ class BillDetail extends Model
                         }
 
                         return "Added to bill";
+                    default:
+                        return Status::tryFrom($attrs['status'])?->name;
                 }
             }
         );
@@ -106,7 +98,6 @@ class BillDetail extends Model
             if ($tag == 'drug' && isset($meta_data['id'])) {
                 DocumentationPrescription::find($meta_data['id'])?->update([
                     'available' => isset($meta['available']) ? $meta['available'] : false,
-                    // 'amount' => BillDetail::find($id)->
                 ]);
             }
 
@@ -116,5 +107,9 @@ class BillDetail extends Model
                 ]);
             }
         });
+    }
+
+    public function chargeable() {
+        return $this->morphTo();
     }
 }

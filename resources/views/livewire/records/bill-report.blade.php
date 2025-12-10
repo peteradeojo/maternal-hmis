@@ -21,20 +21,6 @@
                             <span>
                                 {{ $test['product']['amount'] ?? '0.00' }}
                             </span>
-                            {{-- @if ($test['saved'] ?? true)
-                                <span>
-                                    <button wire:click="removeItem({{ $i }}, 'tests')"
-                                        class="btn bg-red-500 text-white"><i class="fa fa-trash"></i></button>
-                                    <button wire:click="editItem({{ $i }}, 'tests')"
-                                        class="btn bg-green-500 text-white"><i class="fa fa-pencil"></i></button>
-                                </span>
-                            @else
-                                <input type="number" wire:keyup.enter="saveItem({{ $i }}, 'tests')"
-                                    wire:model="tests.{{ $i }}.product.amount"
-                                    value="{{ $test['product']['amount'] }}" required />
-                                <button wire:click="saveItem({{ $i }}, 'tests')"
-                                    class="btn btn-sm bg-blue-400 text-white"><i class="fa fa-save"></i></button>
-                            @endif --}}
                         </td>
                         @php
                             $thisTotal += $test['product']['amount'];
@@ -130,8 +116,7 @@
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th>Unit</th>
-                    <th>Amount</th>
+                    <th>Amount ({{ config('app.currency') }})</th>
                     <th></th>
                 </tr>
             </thead>
@@ -142,10 +127,10 @@
                         <td>{{ $img['product']['name'] }} {{ $img['data']['dosage'] }} {{ $img['data']['duration'] }}
                             day(s)
                         </td>
-                        <td>{{ round($img['product']['prices'][0]['price'] ?? 0, 2) }}</td>
                         <td><span>{{ round($img['total_amt'], 2) }}</span></td>
                         <td>
-                            <button class="btn btn-sm" wire:click="removeItem({{$i}}, 'drugs')"><i class="fa fa-trash"></i></button>
+                            <button class="btn btn-sm" wire:click="removeItem({{ $i }}, 'drugs')"><i
+                                    class="fa fa-trash"></i></button>
                         </td>
                         @php
                             $thisTotal += $img['total_amt'];
@@ -163,10 +148,10 @@
             </tbody>
         </table>
 
-        <div class="p-3" x-data>
+        {{-- <div class="p-3" x-data>
             <p class="text-lg font-semibold">Add more drugs</p>
             <livewire:billing.add-prescription @selected="addDrug($event.detail)" />
-        </div>
+        </div> --}}
     </div>
 
     <div class="py-3">
@@ -174,7 +159,7 @@
 
         @unless ($visit->status == Status::closed->value)
             <div class="py-2">
-                <livewire:dynamic-product-search @selected="addItem($event.detail.id, 'others')"
+                <livewire:dynamic-product-search category="MISCELLANEOUS" @selected="addItem($event.detail.id, 'others')"
                     @selected_temp="addNewItem($event.detail.name)" />
             </div>
         @endunless

@@ -8,6 +8,7 @@ use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Models\DocumentationPrescription;
 use App\Models\Product;
+use App\Models\StockItem;
 use App\Services\TreatmentService;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
@@ -48,15 +49,16 @@ class BillReport extends Component
     {
         if (empty($evt)) return;
 
-        $drugs = $evt->treatments;
+        $drugs = $evt->prescription?->lines ?? collect([]);
         $tests = $evt->valid_tests;
         $scans = $evt->radios;
 
-        $drugs = $drugs->map(fn($item) => [
+        $drugs = $drugs->map(fn($line) => [
             'saved' => true,
-            'product' => $item->prescriptionable->load(['prices'])->toArray(),
-            'data' => $item->toArray(),
-            'total_amt' => TreatmentService::getCount($item->prescriptionable->toArray(), $item) * ($item->prescriptionable->prices->first()?->price ?? 0),
+            'product' => $line->item->load(['prices'])->toArray(),
+            'data' => $line->toArray(),
+            'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
+            'total_amt' => TreatmentService::getCount($line->item->toArray(), $line) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
         ])->toArray();
 
         $tests = $tests->map(fn($test) => [
@@ -112,16 +114,18 @@ class BillReport extends Component
 
     public function removeItem($index, $prop)
     {
-        if ($index == 0) {
-            array_shift($this->{$prop});
-            return;
-        }
+        // if ($index == 0) {
+        //     array_shift($this->{$prop});
+        //     return;
+        // }
 
-        if ($index == count($this->{$prop}) - 1) {
-            return array_pop($this->{$prop});
-        }
+        // if ($index == count($this->{$prop}) - 1) {
+        //     return array_pop($this->{$prop});
+        // }
 
-        $this->{$prop} = array_slice($this->{$prop}, 0, $index) + array_slice($this->{$prop}, $index);
+        // $this->{$prop} = array_slice($this->{$prop}, 0, $index) + array_slice($this->{$prop}, $index);
+
+        array_splice($this->{$prop}, $index, 1);
         $this->subTotal($prop);
     }
 
@@ -205,22 +209,16 @@ class BillReport extends Component
 
     public function saveDrugs(Bill $bill)
     {
-        // dd($this->drugs);
         foreach ($this->drugs as $d) {
-            $useNull = !isset($d['product']['id']);
-
             $bill->entries()->create([
-                'chargeable_type' => $useNull ? null : Product::class,
+                'chargeable_type' => StockItem::class,
                 'user_id' => $bill->created_by,
-                'chargeable_id' => $useNull ? null : $d['product']['id'],
-                'unit_price' => $d['product']['prices'][0]['price'],
+                'chargeable_id' => $d['product']['id'],
+                'unit_price' => TreatmentService::getPrice($d['product']['id'], @$d['data']['profile'] ?? 'RETAIL'),
                 'total_price' => $d['total_amt'],
-                'description' => (string) (new DocumentationPrescription($d['data'])),
+                'description' => "{$d['product']['name']} {$d['data']['dosage']} for {$d['data']['dosage']} day(s)",
                 'tag' => 'drug',
-                'meta' => [
-                    'id' => $d['data']['id'] ?? null,
-                    'data' => $d['data'],
-                ],
+                'status' => Status::active->value,
             ]);
         }
     }

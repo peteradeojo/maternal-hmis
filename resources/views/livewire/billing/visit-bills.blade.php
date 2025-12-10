@@ -72,7 +72,10 @@
             <div class="p-1" x-show="show" x-cloak x-transition>
                 <ul class="p-4 list-disc list-inside bg-gray-100">
                     @foreach ($bill->entries as $e)
-                        <li>{{ $e->description }} - {{ $e->total_price }}</li>
+                        <li @class([
+                            'text-red-500' => $e->status == Status::blocked->value,
+                            'font-semibold' => $e->status == Status::blocked->value
+                        ])>{{ $e->description }} - {{ $e->total_price }}</li>
                     @endforeach
                 </ul>
             </div>

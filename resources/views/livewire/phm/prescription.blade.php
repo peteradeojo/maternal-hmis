@@ -26,6 +26,7 @@
                     <td>{{ number_format(TreatmentService::getPrice($t['item_id'], $t['profile']) ?? 0) }}
 
                         <select class="form-control"
+                            wire:model="prescriptions.{{$i}}.profile"
                             wire:change="updateProfile({{ $i }}, $event.target.value)">
                             <option value="RETAIL">RETAIL</option>
                             <option value="NHIS">NHIS</option>

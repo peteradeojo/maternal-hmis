@@ -5,7 +5,8 @@
         <small class="float-end"><i class="fa fa-info"></i> Press enter to search</small>
         <input type="search" placeholder="Item name, code, description" class="form-control" wire:model="queryString"
             {{-- minlength="2"  --}} {{-- @focus="open = true" --}} {{-- @blur="open = false" --}}
-            x-on:keydown.enter.prevent="$wire.search()" />
+            x-on:keydown.enter.prevent="$wire.search()"
+            x-on:keyup="$wire.search()" />
 
         <ul x-show="open" class="relative bottom-0 border border-black sp-list max-h-80 overflow-y-auto w-2/3">
             @forelse ($results as $result)

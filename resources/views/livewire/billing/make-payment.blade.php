@@ -1,6 +1,6 @@
 <div x-data="{
     bill: @entangle('bill'),
-}" wire:poll.5s>
+}">
     <p>Bill No: {{ $bill->bill_number }}</p>
     <p>Patient: {{ $bill->patient->name }} ({{ $bill->patient->card_number }})</p>
 
@@ -30,9 +30,9 @@
                                                 class="fa fa-pencil"></i></button>
                                     @endif
 
-                                    @if ($entry['status'] != 'Blocked')
+                                    @if ($entry['status_id'] != Status::blocked->value)
                                         <button title="Reject" wire:click="reject({{ $entry['id'] }})"
-                                            class="btn btn-sm bg-red-500 text-white"><i
+                                            class="btn btn-sm bg-red-300"><i
                                                 class="fa fa-trash"></i></button>
                                     @else
                                         <button title="Reject" wire:click="unreject({{ $entry['id'] }})"
@@ -75,6 +75,28 @@
                 </tr>
             </tbody>
         </table>
+
+        <p class="font-semibold mt-4">Add</p>
+        <livewire:dynamic-product-search category="MISCELLANEOUS" @selected="addItem($event.detail)"
+            @selected_temp="addItem($event.detail)" />
+
+        @if ($adding)
+            <form wire:submit.prevent="saveAddItem">
+                <div class="grid grid-cols-2 gap-x-4">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" readonly wire:model="adding.name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" step="0.01" wire:model="adding.amount" class="form-control" required />
+                    </div>
+                    <div>
+                        <button class="btn bg-blue-400 text-white">Save <i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+            </form>
+        @endif
     </div>
 
     @if ($bill->balance > 0)

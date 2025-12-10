@@ -6,8 +6,7 @@ use App\Enums\EventLookup;
 use App\Enums\Status;
 use App\Models\Bill;
 use App\Models\Documentation;
-use App\Models\DocumentationPrescription;
-use App\Models\Visit;
+use App\Models\Prescription;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,25 +15,12 @@ class PharmacyController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value, Status::PAID->value]))->get();
-        return view('phm.prescriptions', compact('data'));
+        return view('phm.prescriptions');
     }
 
     public function getPrescriptions(Request $request)
     {
-        // $query = Bill::with(['patient'])->whereHasMorph('billable', [Visit::class], function ($query) {
-        //     $query->whereIn('status', [Status::active->value, Status::quoted->value, Status::pending->value])->has('treatments');
-        // })->whereHas('entries', function (Builder $query) {
-        $query = Bill::with(['patient'])->hasMorph('billable', [Visit::class])->whereHas('entries', function (Builder $query) {
-            $query->where('tag', 'drug');
-        })->whereIn('status', [
-            Status::pending->value,
-            Status::quoted->value,
-            Status::active->value,
-            Status::completed->value,
-            Status::closed->value,
-            Status::PAID->value
-        ])->latest();
+        $query = Prescription::with(['patient']);
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
@@ -75,5 +61,9 @@ class PharmacyController extends Controller
     {
         $bill->load(['entries']);
         return view('dis.bill', compact('bill'));
+    }
+
+    public function viewPrescription(Request $request, Prescription $prescription) {
+        return view('phm.show-prescription', compact('prescription'));
     }
 }
