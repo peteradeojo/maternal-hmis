@@ -95,6 +95,8 @@
                         <option value="ampoule">Ampoule</option>
                         <option value="vial">Vial</option>
                         <option value="bag">Bag</option>
+                        <option value="capsule">Capsule</option>
+                        <option value="unit">Unit</option>
                     </x-input-select>
                 </div>
                 <div class="form-group">
