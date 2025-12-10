@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Phm;
 
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
 use App\Models\Admission;
+use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\BillDetail;
 use App\Models\Prescription as ModelsPrescription;
@@ -127,16 +129,17 @@ class Prescription extends Component
 
     public function saveToBill()
     {
-        $event = ($this->doc->event->load(['bills']));
+        $event = null;
+        if ($this->doc->event instanceof AdmissionPlan == false) {
+            $event = ($this->doc->event->load(['bills']));
+        }
         DB::beginTransaction();
 
         try {
-            $bill = $event->bills()->where('status', Status::pending->value)->first();
+            $bill = $event?->bills()->where('status', Status::pending->value)->first();
 
             foreach ($this->prescriptions as $i => $line) {
                 $price = TreatmentService::getPrice(@$line['item_id'], $line['profile']);
-
-                // dump($line);
 
                 PrescriptionLine::where('id', $line['id'])->update([
                     'status' => $line['status'],
