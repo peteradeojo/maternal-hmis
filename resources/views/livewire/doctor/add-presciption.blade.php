@@ -130,7 +130,7 @@
                     @if ($display)
                         @forelse ($visit->prescription?->lines ?? [] as $prescription)
                             <tr>
-                                <td>{{ $prescription->name }}</td>
+                                <td>{{ $prescription->item->name }}</td>
                                 <td>{{ $prescription->dosage }}</td>
                                 <td>{{ $prescription->frequency }}</td>
                                 <td>{{ $prescription->duration }}</td>
