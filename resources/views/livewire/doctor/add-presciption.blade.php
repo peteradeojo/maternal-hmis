@@ -128,7 +128,7 @@
                     @endif
 
                     @if ($display)
-                        @forelse ($visit->prescription?->lines as $prescription)
+                        @forelse ($visit->prescription?->lines ?? [] as $prescription)
                             <tr>
                                 <td>{{ $prescription->name }}</td>
                                 <td>{{ $prescription->dosage }}</td>
