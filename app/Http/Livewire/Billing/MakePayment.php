@@ -31,6 +31,7 @@ class MakePayment extends Component
     public function mount($bill)
     {
         $this->bill = $bill;
+        dump($bill->entries);
         $this->resetHash();
     }
 
@@ -146,7 +147,7 @@ class MakePayment extends Component
         $bd->update(['status' => Status::blocked->value]);
 
         try {
-            $bd->chargeable->update(['status' => Status::blocked]);
+            $bd->chargeable?->update(['status' => Status::blocked]);
         } catch (\Exception $e) {}
 
         $this->hydrate();
@@ -159,7 +160,7 @@ class MakePayment extends Component
     {
         $bd = BillDetail::find($id);
         $bd->update(['status' => Status::active->value]);
-        $bd->chargeable->update(['status' => Status::active]);
+        $bd->chargeable?->update(['status' => Status::active]);
 
         $this->hydrate();
         $this->dispatch('$refresh');

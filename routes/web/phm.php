@@ -2,6 +2,7 @@
 
 use App\Enums\Department;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\Pharmacy\AdmissionsController;
 use App\Http\Controllers\PharmacyController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,5 +32,9 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
         });
 
         Route::match(['GET', 'POST'], '/bulk-import', [InventoryController::class, 'bulkImport'])->name('.bulk-import');
+    });
+
+    Route::prefix('admissions')->group(function () {
+        Route::get('/', [AdmissionsController::class, 'index'])->name('admissions');
     });
 });

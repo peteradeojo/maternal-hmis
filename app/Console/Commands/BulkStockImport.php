@@ -57,7 +57,7 @@ class BulkStockImport extends Command
                 $sku = $item->get('sku');
                 $weight = $item->get('weight', null);
                 empty($weight) && $weight = null;
-                empty($sku) && $sku = "INV_" . rand(1000, 9999);
+                empty($sku) && $sku = "INV_" . rand(100000, 999999);
 
                 $stockItem = StockItem::create([
                     'sku' => $sku,

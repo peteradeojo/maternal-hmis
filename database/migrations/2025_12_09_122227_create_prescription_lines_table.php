@@ -42,7 +42,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("DROP INDEX idx_prescription_line_items;");
+        DB::statement("DROP INDEX IF EXISTS idx_prescription_line_items;");
         Schema::dropIfExists('prescription_lines');
     }
 };

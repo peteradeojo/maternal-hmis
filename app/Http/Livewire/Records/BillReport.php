@@ -54,13 +54,17 @@ class BillReport extends Component
         $tests = $evt->valid_tests;
         $scans = $evt->radios;
 
-        $drugs = $drugs->map(fn($line) => [
-            'saved' => true,
-            'product' => $line->item?->load(['prices'])->toArray(),
-            'data' => $line->toArray(),
-            'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
-            'total_amt' => ($line['qty_dispensed'] ?? TreatmentService::getCount($line->item?->toArray(), $line)) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
-        ])->toArray();
+        $drugs = $drugs->map(function ($line) {
+            $dispensed = $line->dispensed();
+
+            return [
+                'saved' => true,
+                'product' => $line->item?->load(['prices'])->toArray(),
+                'data' => $line->toArray(),
+                'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
+                'total_amt' => ($dispensed + ($line['qty_dispensed'] ?? TreatmentService::getCount($line->item?->toArray(), $line))) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
+            ];
+        })->toArray();
 
         $tests = $tests->map(fn($test) => [
             'saved' => true,

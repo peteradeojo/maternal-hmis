@@ -120,5 +120,6 @@ return new class extends Migration
         DB::statement("DROP TRIGGER IF EXISTS after_stock_transaction ON stock_transactions;");
         DB::statement("DROP FUNCTION IF EXISTS trg_after_stock_transaction();");
         DB::statement("DROP FUNCTION IF EXISTS apply_stock_transaction (BIGINT, BIGINT, BIGINT, NUMERIC);");
+        DB::statement("DROP FUNCTION IF EXISTS rebuild_inventory_balances();");
     }
 };
