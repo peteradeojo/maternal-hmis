@@ -225,6 +225,8 @@ class Prescription extends Component
                     'reason' => "Dispensed to patient",
                     'performed_by' => $userId,
                 ]);
+
+                Prescription::where('id', $d['id'])->first()?->update(['qty_dispensed', 0]);
             }
 
             if ($andClose) {
