@@ -226,7 +226,7 @@ class Prescription extends Component
                     'performed_by' => $userId,
                 ]);
 
-                PrescriptionLine::where('id', $d['id'])->first()?->update(['qty_dispensed', 0]);
+                PrescriptionLine::where('id', $d['id'])->first()?->update(['qty_dispensed' => 0]);
             }
 
             if ($andClose) {
