@@ -12,18 +12,18 @@
             <a href="{{ route('phm.inventory.purchases') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Purchases <i class="fa fa-dollar"></i></p>
             </a>
-            <div class="p-2 border-2 border-blue-400 grid place-items-center">
+            {{-- <div class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Stock History <i class="fa fa-clock text-blue-400"></i></p>
-            </div>
+            </div> --}}
             <div class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Transfer <i class="fa fa-arrow-right text-blue-500"></i></p>
             </div>
             <a href="{{ route('phm.inventory.suppliers') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Suppliers <i class="fa fa-arrow-right text-blue-500"></i></p>
             </a>
-            <a href="{{ route('phm.inventory.bulk-import') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
+            {{-- <a href="{{ route('phm.inventory.bulk-import') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Import <i class="fa fa-gears text-blue-500"></i></p>
-            </a>
+            </a> --}}
         </div>
     </div>
 

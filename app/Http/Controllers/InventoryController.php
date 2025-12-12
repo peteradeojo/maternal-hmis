@@ -15,6 +15,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderLine;
 use App\Models\StockTransaction;
 use App\Models\Supplier;
+use App\Services\TreatmentService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -143,9 +144,110 @@ class InventoryController extends Controller
     }
 
     public function viewStockDetails(Request $request, StockItem $item) {
-        $item->load(['balances', 'prices', 'costs']);
         $categories = StockItem::CATEGORIES;
-        return view('inventory.item-view', compact('item', 'categories'));
+        $units = StockItem::units;
+        $price_types = [
+            StockItemPrice::RETAIL,
+            StockItemPrice::NHIS,
+            StockItemPrice::WARD,
+            StockItemPrice::INTERNAL,
+            StockItemPrice::PRIVATE,
+        ];
+
+        if ($request->isMethod('POST') == false) {
+            $item->load(['balances', 'prices', 'costs']);
+            return view('inventory.item-view', compact('item', 'categories', 'units', 'price_types'));
+        }
+
+        $data = $request->validate([
+            'item' => 'required|array',
+            'item.name' => 'required|string',
+            'item.description' => 'required|string',
+            'item.is_pharmaceutical' => 'boolean',
+            'item.category' => 'required|in:' . join(',', $categories),
+            'item.si_unit' => 'string|nullable',
+            'item.weight' => 'numeric|nullable',
+            'item.sku' => 'required|string',
+            'item.base_unit' => 'string|nullable',
+            'quantity' => 'required|numeric',
+            'cost' => 'required|min:0|numeric',
+            'prices' => 'required|array',
+            'prices.*.id' => 'nullable|integer',
+            'prices.*.price_type' => 'required|in:' . join(",", $price_types),
+            'prices.*.price' => 'required|numeric|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Cost upate
+            if ($item->costs->first()?->cost != $data['cost']) {
+                $item->costs()->create([
+                    'cost' => $data['cost'],
+                    'source' => StockItemCost::SOURCES['MANUAL'],
+                ]);
+            }
+
+            // Price update
+            foreach($data['prices'] as $i => $price) {
+                if (TreatmentService::getPrice($item->id, $price['price_type']) != $price['price']) {
+                    $item->prices()->create([
+                        'price_type' => $price['price_type'],
+                        'price' => $price['price'],
+                        'currency' => 'NGN',
+                        'effective_at' => now(),
+                        'created_by' => $request->user()->id,
+                        'active' => true,
+                    ]);
+                }
+            }
+
+            // Item information update
+            $item->fill($data['item']);
+            if ($item->isDirty()) {
+                $item->save();
+            }
+
+            // Stock Transaction logging
+            $delta = (float) $data['quantity'] - $item->balance;
+            $cost = $item->costs()->get()->first();
+            if ($delta > 0) {
+                $item->transactions()->create([
+                    'tx_type' => StockTransaction::ADJUSTMENT,
+                    'quantity' => $delta,
+                    'from_location_id' => Location::INBOUND,
+                    'to_location_id' => Location::STORE,
+                    'unit' => $data['item']['base_unit'],
+                    'unit_cost' => $cost?->cost,
+                    'performed_by' => $request->user()->id,
+
+                ]);
+            } elseif ($delta < 0) {
+                $item->transactions()->create([
+                    'tx_type' => StockTransaction::ADJUSTMENT,
+                    'quantity' => $delta,
+                    'from_transaction_id' => Location::STORE,
+                    'to_transaction_id' => Location::OUTBOUND,
+                    'unit' => $data['item']['base_unit'],
+                    'unit_cost' => $cost?->cost,
+                    'performed_by' => $request->user()->id,
+                ]);
+            }
+
+            DB::commit();
+
+            notifyUserSuccess("Item update successful", $request->user()->id);
+            return response()->json([
+                'item' => $item,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            report($e);
+            notifyUserError($e->getMessage(), $request->user()->id);
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function purchaseOrders(Request $request)

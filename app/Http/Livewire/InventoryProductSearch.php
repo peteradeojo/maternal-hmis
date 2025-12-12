@@ -27,13 +27,13 @@ class InventoryProductSearch extends Component
 
         $this->results = $query->get();
 
-        if ($this->results->isEmpty()) {
-            $this->results = [new StockItem([
-                'name' => $this->queryString,
-                'weight' => null,
-                'si_unit' => null,
-            ])];
-        }
+        // if ($this->results->isEmpty()) {
+        //     $this->results = [new StockItem([
+        //         'name' => $this->queryString,
+        //         'weight' => null,
+        //         'si_unit' => null,
+        //     ])];
+        // }
 
         $this->dispatch('searched', count($this->results));
     }
