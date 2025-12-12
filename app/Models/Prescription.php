@@ -26,7 +26,7 @@ class Prescription extends Model
     }
 
     public function lines() {
-        return $this->hasMany(PrescriptionLine::class, 'prescription_id');
+        return $this->hasMany(PrescriptionLine::class, 'prescription_id')->latest();
     }
 
     public function patient() {
