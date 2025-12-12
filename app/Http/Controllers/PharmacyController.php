@@ -20,7 +20,7 @@ class PharmacyController extends Controller
 
     public function getPrescriptions(Request $request)
     {
-        $query = Prescription::with(['patient']);
+        $query = Prescription::with(['patient'])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
