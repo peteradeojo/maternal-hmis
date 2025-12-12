@@ -20,7 +20,7 @@ class PharmacyController extends Controller
 
     public function getPrescriptions(Request $request)
     {
-        $query = Prescription::with(['patient'])->latest();
+        $query = Prescription::with(['patient'])->where('status', Status::active)->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
@@ -63,7 +63,8 @@ class PharmacyController extends Controller
         return view('dis.bill', compact('bill'));
     }
 
-    public function viewPrescription(Request $request, Prescription $prescription) {
+    public function viewPrescription(Request $request, Prescription $prescription)
+    {
         return view('phm.show-prescription', compact('prescription'));
     }
 }
