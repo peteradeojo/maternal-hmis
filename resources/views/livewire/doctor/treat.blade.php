@@ -148,7 +148,7 @@
 
         {{-- Scans --}}
         <div class="p-2 border border-black">
-            <div class="flex-center hover:bg-gray-50 p-2 gap-4">
+            <div class="flex-center hover:bg-gray-50 p-2 gap-4" @click="$dispatch('open-t-tests-modal')">
                 <p class="text-lg font-bold">Scans</p>
                 <i class="fa fa-plus"></i>
             </div>

@@ -95,6 +95,8 @@
         <tbody>
             @foreach ($profile->ancVisits as $v)
                 @continue(empty($v->visit))
+
+                {{-- @dump($v->visit->tests) --}}
                 <tr>
                     <td class="text-center">
                         <button data-id="{{ $v->id }}" class="btn expand-i">
@@ -108,8 +110,8 @@
                     <td>{{ $v->visit?->vitals?->weight }}</td>
                     <td>{{ $v->visit?->vitals?->blood_pressure }}</td>
                     <td>{{ $v->visit?->getTestResults('PCV', 'PCV') }}</td>
-                    <td>{{ $v->visit?->getTestResults('Urinalysis', 'glucose') }}</td>
-                    <td>{{ $v->visit?->getTestResults('Urinalysis', 'protein') }}</td>
+                    <td>{{ $v->visit?->getTestResults('Urinalysis', ['glucose', 'pro%glu']) }}</td>
+                    <td>{{ $v->visit?->getTestResults('Urinalysis', ['protein', 'pro%glu']) }}</td>
                     <td>{{ $v->return_visit }}</td>
                 </tr>
             @endforeach
@@ -120,8 +122,8 @@
 @pushOnce('scripts')
     <script>
         $(document).ready(function() {
-            @isset($visit)
-                asyncForm(document.querySelector("#anc-log-form"), "{{ route('doctor.treat-anc', $visit) }}", (e,
+            asyncForm(document.querySelector("#anc-log-form"),
+                "{{ route('doctor.treat-anc', $visit?->id ?? ':not-foun') }}", (e,
                     data) => {
                     displayNotification({
                         message: 'Saved',
@@ -131,7 +133,6 @@
                         }
                     });
                 });
-            @endisset
 
             $(document).on("click", ".expand-i", function(e) {
                 const id = $(e.currentTarget).data().id;

@@ -115,9 +115,18 @@ trait HasVisitData
             return "No result";
         }
 
+        if (is_array($key)) $key = array_map(fn($k) => strtolower($k), $key);
+
         if (!empty($key)) {
             foreach ($test->results ?? [] as $o) {
-                if (strtolower(@$o->description) == strtolower($key)) return @$o->result;
+                if (!is_array($key)) {
+                    if (strtolower(@$o->description) == strtolower($key)) return @$o->result;
+                } else {
+                    if (in_array(strtolower(@$o->description), $key)) {
+                        return $o->result;
+                    }
+                }
+
             }
             return "No result.";
         }
