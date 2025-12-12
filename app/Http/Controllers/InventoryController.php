@@ -219,17 +219,19 @@ class InventoryController extends Controller
                     'unit' => $data['item']['base_unit'],
                     'unit_cost' => $cost?->cost,
                     'performed_by' => $request->user()->id,
+                    'reason' => 'Manual adjustment',
 
                 ]);
             } elseif ($delta < 0) {
                 $item->transactions()->create([
                     'tx_type' => StockTransaction::ADJUSTMENT,
-                    'quantity' => $delta,
-                    'from_transaction_id' => Location::STORE,
-                    'to_transaction_id' => Location::OUTBOUND,
+                    'quantity' => -$delta,
+                    'from_location_id' => Location::STORE,
+                    'to_location_id' => Location::OUTBOUND,
                     'unit' => $data['item']['base_unit'],
                     'unit_cost' => $cost?->cost,
                     'performed_by' => $request->user()->id,
+                    'reason' => 'Manual adjustment',
                 ]);
             }
 

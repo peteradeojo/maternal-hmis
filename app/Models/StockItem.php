@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StockItem extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     const CATEGORIES = ['DRUG', 'LAB', 'CONSUMABLE'];
 
