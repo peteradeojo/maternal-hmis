@@ -245,7 +245,7 @@ class Prescription extends Component
             DB::rollBack();
             report($th);
 
-            notifyUserError("An error occurred while dispensing this prescription", $userId);
+            notifyUserError($th->getMessage(), $userId);
             $this->dispatch("close-dispense-confirm");
         }
     }
