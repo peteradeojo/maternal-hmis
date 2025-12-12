@@ -139,7 +139,10 @@ class Prescription extends Component
         $event = null;
         if ($this->doc->event instanceof AdmissionPlan == false) {
             $event = ($this->doc->event->load(['bills']));
+        } else {
+            $event = $this->doc->event->admission->visit->load(['bills']);
         }
+
         DB::beginTransaction();
 
         try {
