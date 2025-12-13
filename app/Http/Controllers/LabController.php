@@ -12,6 +12,7 @@ use App\Models\DocumentationTest;
 use App\Models\GeneralVisit;
 use App\Models\Patient;
 use App\Models\Visit;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -287,5 +288,19 @@ class LabController extends Controller
                 });
             }
         ]);
+    }
+
+    public function testResults(Request $request, Visit $visit)
+    {
+        $html = view('exports.test-results', compact('visit'));
+
+        // $dompdf = new Dompdf();
+        // $dompdf->loadHtml($html);
+        // $dompdf->setPaper('A4');
+
+        // $dompdf->render();
+
+        // return $dompdf->stream("document.pdf", ['Attachment' => false]);
+        return $html;
     }
 }

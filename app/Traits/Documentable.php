@@ -33,7 +33,7 @@ trait Documentable
 
     public function valid_tests(): MorphMany
     {
-        return $this->morphMany(DocumentationTest::class, 'testable')->where('status', '!=', Status::cancelled->value);
+        return $this->morphMany(DocumentationTest::class, 'testable')->where('status', '!=', Status::cancelled->value)->latest();
     }
 
     public function allPrescriptionsAvailable(): Attribute
