@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\Patient;
 use App\Models\Product;
@@ -52,6 +53,10 @@ trait HasVisitData
                 'patient_id' => $patient->id,
             ]);
             $this->refresh();
+
+            notifyDepartment(Department::PHA->value, "New prescription created for {$patient->name}.", [
+                'timeout' => 10000
+            ]);
         }
 
         return $this->prescription->lines()->create([
