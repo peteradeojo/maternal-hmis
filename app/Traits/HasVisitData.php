@@ -55,7 +55,8 @@ trait HasVisitData
             $this->refresh();
 
             notifyDepartment(Department::PHA->value, "New prescription created for {$patient->name}.", [
-                'timeout' => 10000
+                'timeout' => 10000,
+                'mode' => 'both',
             ]);
         }
 
