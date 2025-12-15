@@ -185,7 +185,7 @@
 </div>
 
 <x-modal id="t-prescriptions">
-    <livewire:doctor.add-presciption :visit="$visit" @treatments_updated="addedTreatment" />
+    <livewire:doctor.add-prescription :visit="$visit" @treatments_updated="addedTreatment" />
 </x-modal>
 <x-modal id="t-tests-modal">
     <p class="bold text-xl">Add Investigation</p>

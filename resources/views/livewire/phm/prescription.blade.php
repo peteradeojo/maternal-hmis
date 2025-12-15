@@ -71,7 +71,7 @@
     </table>
 
     @if ($doc->status == Status::active)
-        <livewire:doctor.add-presciption :visit="$doc->event" :dispatch="true" :display="false"
+        <livewire:doctor.add-prescription :visit="$doc->event" :dispatch="true" :display="false"
             @prescription_selected="addLine($event.detail.product)" />
     @endif
 

@@ -9,7 +9,7 @@ use App\Dto\PrescriptionDto;
 use App\Livewire\Forms\Doctor\PrescriptionRequest;
 use App\Services\TreatmentService;
 
-class AddPresciption extends Component
+class AddPrescription extends Component
 {
     /**
      * @var Visit
@@ -116,7 +116,7 @@ class AddPresciption extends Component
 
     public function render()
     {
-        return view('livewire.doctor.add-presciption');
+        return view('livewire.doctor.add-prescription');
     }
 
     public function getCount()

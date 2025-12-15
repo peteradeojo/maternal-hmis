@@ -153,7 +153,7 @@
     </x-overlay-modal>
 
     <x-overlay-modal id="prescriptions-modal" title="Add Prescription">
-        @livewire('doctor.add-presciption', ['visit' => $visit])
+        @livewire('doctor.add-prescription', ['visit' => $visit])
     </x-overlay-modal>
 
     <x-overlay-modal id="tests-modal" title="Request Investigations">

@@ -6,7 +6,7 @@
             <label>Note</label>
             <x-input-textarea name="note" wire:model="note" required />
         </div>
-        <livewire:doctor.add-presciption :visit="$admission->plan" :dispatch="true" :display="true"
+        <livewire:doctor.add-prescription :visit="$admission->plan" :dispatch="true" :display="true"
             @prescription_selected="addPrescription($event.detail)" />
 
         <div class="form-group">
