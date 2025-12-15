@@ -18,7 +18,6 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
 
         Route::match(['GET', 'POST'], '/item/{item}', [InventoryController::class, 'viewStockDetails'])->name('.stock-details');
 
-
         Route::prefix('/purchases')->group(function () {
             Route::get('/', [InventoryController::class, 'purchaseOrders'])->name('.purchases');
             Route::get('/new', [InventoryController::class, 'createPurchaseOrder'])->name('.new-order');
@@ -32,6 +31,12 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
         });
 
         Route::match(['GET', 'POST'], '/bulk-import', [InventoryController::class, 'bulkImport'])->name('.bulk-import');
+
+        Route::prefix('/stock-take')->group(function () {
+            Route::get('/', [InventoryController::class, 'stockTake'])->name('.stock-take');
+            Route::get('/new', [InventoryController::class, 'newStockTake'])->name('.new-stock-take');
+            Route::get('/{take}', [InventoryController::class, 'stockCount'])->name('.stock-count')->whereNumber(['take']);
+        });
     });
 
     Route::prefix('admissions')->group(function () {

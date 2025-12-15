@@ -13,6 +13,7 @@ use App\Models\StockItemPrice;
 use App\Models\InventoryBalance;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderLine;
+use App\Models\StockCount;
 use App\Models\StockTransaction;
 use App\Models\Supplier;
 use App\Services\TreatmentService;
@@ -46,8 +47,8 @@ class InventoryController extends Controller
             function ($query, $searchString) {
                 $query->whereHas('item', function ($q) use ($searchString) {
                     $q->where('name', 'ilike', "%$searchString%")
-                    ->orWhere('description', 'ilike', "%$searchString%")
-                    ->orWhere('sku', 'ilike', "%$searchString%");
+                        ->orWhere('description', 'ilike', "%$searchString%")
+                        ->orWhere('sku', 'ilike', "%$searchString%");
                 });
             }
         ]);
@@ -143,7 +144,8 @@ class InventoryController extends Controller
         }
     }
 
-    public function viewStockDetails(Request $request, StockItem $item) {
+    public function viewStockDetails(Request $request, StockItem $item)
+    {
         $categories = StockItem::CATEGORIES;
         $units = StockItem::units;
         $price_types = [
@@ -188,7 +190,7 @@ class InventoryController extends Controller
             }
 
             // Price update
-            foreach($data['prices'] as $i => $price) {
+            foreach ($data['prices'] as $i => $price) {
                 if (TreatmentService::getPrice($item->id, $price['price_type']) != $price['price']) {
                     $item->prices()->create([
                         'price_type' => $price['price_type'],
@@ -424,5 +426,35 @@ class InventoryController extends Controller
         Artisan::queue("app:bulk-stock-import", ['hkey' => $key]);
 
         return redirect()->back();
+    }
+
+    public function stockTake(Request $request)
+    {
+        $counts = StockCount::latest()->get();
+        return view('inventory.stock-counts', compact('counts'));
+    }
+
+    public function newStockTake(Request $request)
+    {
+        $prevStockTakes = StockCount::where('status', Status::pending->value)->exists();
+        if ($prevStockTakes) {
+            return redirect()->back()->withErrors([
+                'error' => "Complete pending stock takes.",
+            ]);
+        }
+
+        $stockTake = StockCount::create([
+            'performed_by' => $request->user()->id,
+            'count_date' => now(),
+            'location_id' => Location::STORE,
+            'status' => Status::pending,
+        ]);
+
+        return back()->with(['stock_take' => $stockTake]);
+    }
+
+    public function stockCount(Request $request, StockCount $take)
+    {
+        return view('inventory.stock-take', compact('take'));
     }
 }

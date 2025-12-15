@@ -24,6 +24,9 @@
             {{-- <a href="{{ route('phm.inventory.bulk-import') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Import <i class="fa fa-gears text-blue-500"></i></p>
             </a> --}}
+            <a href="{{ route('phm.inventory.stock-take') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
+                <p>Stock Take <i class="fa fa-check text-blue-500"></i></p>
+            </a>
         </div>
     </div>
 
@@ -166,8 +169,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Unit Selling price</label>
-                                <input type='number' step="0.0001" x-bind:name="'prices[' + index + '][price]'" x-model="price"
-                                    class="form-control" required />
+                                <input type='number' step="0.0001" x-bind:name="'prices[' + index + '][price]'"
+                                    x-model="price" class="form-control" required />
                             </div>
                             <div class="col-span-full">
                                 <button type="button" class="btn btn-sm bg-red-500 text-white"
