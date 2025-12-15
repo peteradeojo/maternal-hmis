@@ -60,7 +60,9 @@ class BillReport extends Component
             return [
                 'saved' => true,
                 'product' => $line->item?->load(['prices'])->toArray(),
-                'data' => $line->toArray(),
+                'data' => $line->toArray() + [
+                    'status' => $line['qty_dispensed'] > $line['balance'] ? Status::blocked->value : Status::active->value,
+                ],
                 'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
                 'total_amt' => ($dispensed + ($line['qty_dispensed'] ?? TreatmentService::getCount($line->item?->toArray(), $line))) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
             ];
@@ -114,22 +116,19 @@ class BillReport extends Component
 
     public function subTotal($prop)
     {
-        $this->{$prop . "_amt"} = collect($this->{$prop})->reduce(fn($a, $p) => $a + ($p['total_amt'] ?? $p['product']['amount']), 0);
+        $this->{$prop . "_amt"} = collect($this->{$prop})->reduce(function ($a, $p) {
+            if ($status = ($p['data']['status'] ?? null)) {
+                if ($status && $status == Status::blocked->value) {
+                    return 0;
+                }
+            }
+
+            return $a + ($p['total_amt'] ?? $p['product']['amount']);
+        }, 0);
     }
 
     public function removeItem($index, $prop)
     {
-        // if ($index == 0) {
-        //     array_shift($this->{$prop});
-        //     return;
-        // }
-
-        // if ($index == count($this->{$prop}) - 1) {
-        //     return array_pop($this->{$prop});
-        // }
-
-        // $this->{$prop} = array_slice($this->{$prop}, 0, $index) + array_slice($this->{$prop}, $index);
-
         array_splice($this->{$prop}, $index, 1);
         $this->subTotal($prop);
     }
@@ -214,7 +213,6 @@ class BillReport extends Component
 
     public function saveDrugs(Bill $bill)
     {
-        // dd($this->drugs);
         foreach ($this->drugs as $d) {
             $bill->entries()->create([
                 'chargeable_type' => PrescriptionLine::class,
