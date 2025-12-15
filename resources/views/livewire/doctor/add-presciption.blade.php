@@ -75,7 +75,9 @@
                                 </p>
                                 @endif
                             </td>
-                            <td></td>
+                            <td @class(['text-red-500 font-bold' => isset($count) && $count > $selections->balance])>
+                                Available: {{ $selections->balance }} {{str()->plural($selections->base_unit ?? 'unit', $selections->balance)}}
+                            </td>
                         </tr>
                     @endif
 

@@ -222,7 +222,7 @@ class TreatmentService
         return $ancVisit;
     }
 
-    public static function getCount($item, $data)
+    public static function getCount($item, $data, $options = ['exact' => false])
     {
         if (empty($item)) return;
         try {
@@ -232,7 +232,7 @@ class TreatmentService
 
             $freq = $data->frequency;
             $dosage = $data->dosage;
-            $days = $data->duration;
+            $days = $data->duration ?? 1;
 
             if (!is_numeric($dosage)) {
                 $dosage = self::translateDosage($item['si_unit'], $data->dosage);
@@ -244,7 +244,9 @@ class TreatmentService
             $freq = self::analyzeFreqeuency($freq);
             $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
 
-            return $count;
+            if ($options['exact']) return $count;
+
+            return ceil($count);
         } catch (\Throwable $th) {
             report($th);
             return 0;
@@ -278,7 +280,7 @@ class TreatmentService
             return $count * 1000;
         }
 
-        return 0;
+        return $count;
     }
 
     private static function analyzeFreqeuency($freq)
@@ -290,6 +292,7 @@ class TreatmentService
             'bd' => 2,
             'tds' => 3,
             'qds' => 4,
+            default => 1,
         };
     }
 

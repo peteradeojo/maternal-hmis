@@ -26,26 +26,6 @@ trait HasVisitData
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    // public function addPrescription(Patient $patient, $product, mixed $data)
-    // {
-    //     if ($product instanceof stdClass) { // product was newly created triggers this behavior
-    //         $product = new Product((array) $product);
-    //         $product->save();
-    //     }
-
-    //     return $this->prescriptions()->create([
-    //         'patient_id' => $patient->id,
-    //         'prescriptionable_type' => $product::class,
-    //         'prescriptionable_id' => $product->id,
-    //         'name' => $product->name,
-    //         'dosage' => $data->dosage,
-    //         'duration' => $data->duration,
-    //         'route' => $data->route,
-    //         'frequency' => $data->frequency,
-    //         'requested_by' => auth()->user()?->id,
-    //     ]);
-    // }
-
     public function addPrescription(Patient $patient, $product, mixed $data)
     {
         if (is_null($this->prescription)) {
