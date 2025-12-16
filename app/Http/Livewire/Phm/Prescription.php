@@ -41,8 +41,6 @@ class Prescription extends Component
         $this->compute();
     }
 
-    public function reload() {}
-
     public function render()
     {
         return view('livewire.phm.prescription');
@@ -113,6 +111,7 @@ class Prescription extends Component
 
         $this->loadLines();
         $this->compute();
+        $this->dispatch('$refresh');
     }
 
     public function updateProfile($index, $profile)

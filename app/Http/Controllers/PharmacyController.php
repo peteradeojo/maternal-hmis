@@ -84,9 +84,5 @@ class PharmacyController extends Controller
         ]);
 
         return view('phm.show-prescription', compact('prescription'));
-        // if ($prescription) {
-        // }
-
-        // return redirect()->back()->withErrors(['error' => "Missing prescription."]);
     }
 }
