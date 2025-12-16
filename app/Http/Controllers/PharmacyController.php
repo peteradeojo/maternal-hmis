@@ -79,7 +79,14 @@ class PharmacyController extends Controller
 
     public function showAdmissionTreatment(Request $request, Admission $admission)
     {
-        $prescription = $admission->plan->prescription()->first();
+        $prescription = $admission->plan->prescription()->firstOrCreate([
+            'patient_id' => $admission->patient_id,
+        ]);
+
         return view('phm.show-prescription', compact('prescription'));
+        // if ($prescription) {
+        // }
+
+        // return redirect()->back()->withErrors(['error' => "Missing prescription."]);
     }
 }
