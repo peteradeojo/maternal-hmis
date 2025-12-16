@@ -30,7 +30,7 @@
                 <tr>
                     <td>
                         <p class="basic-header">Extra</p>
-                        @foreach ($visit->vitals->extra as $k => $value)
+                        @foreach ($visit->vitals->extra ?? [] as $k => $value)
                             <p><b>{{ ucfirst(unslug($k)) }}</b>: {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
                         @endforeach
                     </td>
