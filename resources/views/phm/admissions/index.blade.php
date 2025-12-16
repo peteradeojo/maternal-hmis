@@ -11,6 +11,7 @@
                     <th>Category</th>
                     <th>Ward</th>
                     <th>Date admitted</th>
+                    <th>Date discharged</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,6 +23,7 @@
                         <td>{{ $adm->patient->category->name }}</td>
                         <td>{{ $adm->ward?->name }}</td>
                         <td>{{ $adm->created_at?->format('Y-m-d h:i A') }}</td>
+                        <td>{{ $adm->discharged_on?->format('Y-m-d h:i A') }}</td>
                     </tr>
                 @endforeach
             </tbody>
