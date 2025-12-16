@@ -27,7 +27,7 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
         });
 
         Route::prefix('/suppliers')->group(function () {
-            Route::match(['GET', 'POST'] ,'/', [InventoryController::class, 'suppliers'])->name('.suppliers');
+            Route::match(['GET', 'POST'], '/', [InventoryController::class, 'suppliers'])->name('.suppliers');
         });
 
         Route::match(['GET', 'POST'], '/bulk-import', [InventoryController::class, 'bulkImport'])->name('.bulk-import');
@@ -40,6 +40,7 @@ Route::prefix('phm')->name('phm.')->middleware(['datalog'])->group(function () {
     });
 
     Route::prefix('admissions')->group(function () {
-        Route::get('/', [AdmissionsController::class, 'index'])->name('admissions');
+        Route::get('/', [PharmacyController::class, 'admissions'])->name('admissions');
+        Route::get('/{admission}', [PharmacyController::class, 'showAdmissionTreatment'])->name('show-admission');
     });
 });

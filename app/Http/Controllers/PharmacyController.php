@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\EventLookup;
 use App\Enums\Status;
+use App\Models\Admission;
+use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\Documentation;
 use App\Models\Prescription;
+use App\Models\Visit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +23,7 @@ class PharmacyController extends Controller
 
     public function getPrescriptions(Request $request)
     {
-        $query = Prescription::with(['patient'])->where('status', Status::active)->latest();
+        $query = Prescription::with(['patient'])->whereHasMorph('event', [Visit::class])->where('status', Status::active)->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
@@ -65,6 +68,18 @@ class PharmacyController extends Controller
 
     public function viewPrescription(Request $request, Prescription $prescription)
     {
+        return view('phm.show-prescription', compact('prescription'));
+    }
+
+    public function admissions(Request $request)
+    {
+        $admissions = Admission::active()->latest()->get();
+        return view('phm.admissions.index', compact('admissions'));
+    }
+
+    public function showAdmissionTreatment(Request $request, Admission $admission)
+    {
+        $prescription = $admission->plan->prescription()->first();
         return view('phm.show-prescription', compact('prescription'));
     }
 }
