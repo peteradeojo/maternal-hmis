@@ -73,7 +73,7 @@ class PharmacyController extends Controller
 
     public function admissions(Request $request)
     {
-        $admissions = Admission::active()->latest()->get();
+        $admissions = Admission::valid()->latest()->get();
         return view('phm.admissions.index', compact('admissions'));
     }
 
