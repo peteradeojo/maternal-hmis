@@ -63,11 +63,11 @@ class Prescription extends Component
         );
     }
 
-    public function loadLines()
+    public function loadLines($refresh = false)
     {
-        $this->prescriptions = $this->doc->lines->map(function ($line) {
+        $this->prescriptions = $this->doc->lines->map(function ($line) use (&$refresh) {
             $dispensed = $line->dispenses->sum('qty_dispensed');
-            $quantity = $line->qty_dispensed ?? TreatmentService::getCount($line->item, $line);
+            $quantity = $refresh === true ? 0 : ($line->qty_dispensed ?? TreatmentService::getCount($line->item, $line));
             return [
                 'id' => $line->id,
                 'item_id' => $line->item_id,
@@ -202,7 +202,8 @@ class Prescription extends Component
         $this->dispatch('open-dispense-confirm');
     }
 
-    public function confirmDispense($andClose = false) {
+    public function confirmDispense($andClose = false)
+    {
         DB::beginTransaction();
         $userId = auth()->user()->id;
 
@@ -241,7 +242,7 @@ class Prescription extends Component
             notifyUserSuccess("Prescriptions have been dispensed.", $userId);
 
             $this->reset('dispensing');
-            $this->loadLines();
+            $this->loadLines(refresh: true);
             $this->compute();
 
             $this->dispatch("close-dispense-confirm");
