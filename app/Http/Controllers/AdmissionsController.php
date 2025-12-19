@@ -337,6 +337,8 @@ class AdmissionsController extends Controller
         }
 
         $admission->discharged_on = $request->input('discharged_on');
+        $admission->ward->filled_beds--;
+        $admission->ward->save();
         $admission->save();
 
         return response()->json([
