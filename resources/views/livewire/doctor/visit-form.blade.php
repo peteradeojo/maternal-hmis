@@ -170,7 +170,7 @@
             <p class="text-lg font-semibold">Radiology</p>
             <div class="form-group">
                 <label>Request Scan</label>
-                <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
+                <livewire:doctor.add-scan :event="$visit" />
             </div>
         </div>
     </x-overlay-modal>
