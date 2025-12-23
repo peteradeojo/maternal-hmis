@@ -11,6 +11,7 @@ use App\Models\GeneralVisit;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -65,28 +66,30 @@ class PatientCheckIn extends Component
             "2" => AncVisit::class,
         };
 
-        $visit = $this->patient->visits->first();
-        if ($visit && $visit?->created_at->diffInDays(now()) < 1) {
-            if ($subVisit == $visit->visit_type) {
-                $visit->status = Status::active->value;
-                $visit->save();
+        if (Cache::get("visit-reopen") === 're-open') {
+            $visit = $this->patient->visits->first();
+            if ($visit && $visit?->created_at->diffInHours(now()) < 1) {
+                if ($subVisit == $visit->visit_type) {
+                    $visit->status = Status::active->value;
+                    $visit->save();
 
-                notifyUserSuccess("Visit re-opened for {$this->patient->name}!", auth()->user());
+                    notifyUserSuccess("Visit re-opened for {$this->patient->name}!", auth()->user());
 
-                notifyDepartment(Department::NUR->value, [
-                    'message' => "Consultation started for {$this->patient->card_number}",
-                    'bg' => ['bg-green-400', 'text-white'],
-                ], [
-                    'mode' => AppNotifications::$DESKTOP,
-                ]);
+                    notifyDepartment(Department::NUR->value, [
+                        'message' => "Consultation started for {$this->patient->card_number}",
+                        'bg' => ['bg-green-400', 'text-white'],
+                    ], [
+                        'mode' => AppNotifications::$DESKTOP,
+                    ]);
 
-                notifyDepartment(Department::DOC->value, [
-                    'message' => "Consultation started for {$this->patient->card_number}",
-                    'bg' => ['bg-green-400', 'text-white'],
-                ], [
-                    'mode' => AppNotifications::$DESKTOP,
-                ]);
-                return;
+                    notifyDepartment(Department::DOC->value, [
+                        'message' => "Consultation started for {$this->patient->card_number}",
+                        'bg' => ['bg-green-400', 'text-white'],
+                    ], [
+                        'mode' => AppNotifications::$DESKTOP,
+                    ]);
+                    return;
+                }
             }
         }
 
