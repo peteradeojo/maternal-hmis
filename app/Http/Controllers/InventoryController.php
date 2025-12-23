@@ -177,6 +177,7 @@ class InventoryController extends Controller
             'prices.*.id' => 'nullable|integer',
             'prices.*.price_type' => 'required|in:' . join(",", $price_types),
             'prices.*.price' => 'required|numeric|min:0',
+            'prices.*.active' => 'nullable|boolean',
         ]);
 
         DB::beginTransaction();
@@ -190,8 +191,22 @@ class InventoryController extends Controller
             }
 
             // Price update
+            $prices = [];
             foreach ($data['prices'] as $i => $price) {
-                if (TreatmentService::getPrice($item->id, $price['price_type']) != $price['price']) {
+                // dump($price);
+
+                if (@$price['active'] === false) {
+                    if (isset($price['id'])) {
+                        StockItemPrice::where('id', $price['id'])->update([
+                            'active' => false,
+                        ]);
+                    }
+
+                    continue;
+                }
+
+                $priceVal = (float) TreatmentService::getPrice($item->id, $price['price_type']);
+                if ($priceVal != floatval($price['price'])) {
                     $item->prices()->create([
                         'price_type' => $price['price_type'],
                         'price' => $price['price'],
@@ -350,7 +365,6 @@ class InventoryController extends Controller
 
     public function editPurchaseOrder(PurchaseOrderRequest $request, PurchaseOrder $order)
     {
-        // dd($request->all());
         if ($order->status !== Status::pending) {
             return response()->json([
                 'message' => "This order can no longer be modified."

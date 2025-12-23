@@ -297,8 +297,14 @@ class TreatmentService
     }
 
     public static function getPrice($id, $profile = 'RETAIL') {
-        $prices = StockItemPrice::where('item_id', $id)->where('price_type', $profile)->latest(); //->first();
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
 
         return $prices->first()?->price ?? 0;
+    }
+
+    public static function getPriceData($id, $profile = 'RETAIL') {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+
+        return $prices->first() ?? null;
     }
 }

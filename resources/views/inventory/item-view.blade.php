@@ -32,7 +32,7 @@ quantity = item.balance" x-cloak>
         </div>
         <div class="form-group">
             <label>Description</label>
-            <x-input-text x-model="item.description" class="form-control" name="name" required="required" />
+            <x-input-text x-model="item.description" class="form-control" name="name" />
         </div>
         <div class="form-group">
             <label>Category</label>
@@ -48,9 +48,6 @@ quantity = item.balance" x-cloak>
                     Is Pharmaceutical? <input x-model="item.is_pharmaceutical" type="checkbox" />
                 </label>
             </div>
-            {{-- <div class="form-group">
-                <label></label>
-            </div> --}}
         </div>
 
         <div class="grid grid-cols-3 gap-x-4">
@@ -82,29 +79,31 @@ quantity = item.balance" x-cloak>
             <label>Unit cost price</label>
             <input type="number" x-model="cost" step="0.0001" class="form-control" />
         </div>
-        <button type="button" class="btn bg-blue-400 text-white">Add Selling Price</button>
+        <button type="button" @click="prices.push({id:null, price: 0, price_type: 'RETAIL'})" class="btn bg-blue-400 text-white">Add Selling Price</button>
 
         <div class="py-2"></div>
         <template x-for="(price, index) in prices">
-            <div class="grid grid-cols-2 gap-x-4">
-                <label class="col-span-full" x-text="`Price ${index+1}`"></label>
-                <div class="form-group">
-                    <label>Price profile</label>
-                    <select class="form-control">
-                        @foreach ($price_types as $type)
-                            <option value="{{ $type }}">{{ $type }}</option>
-                        @endforeach
-                    </select>
+            <template x-if="price.active !== false">
+                <div class="grid grid-cols-2 gap-x-4">
+                    <label class="col-span-full" x-text="`Price ${index+1}`"></label>
+                    <div class="form-group">
+                        <label>Price profile</label>
+                        <select class="form-control">
+                            @foreach ($price_types as $type)
+                                <option value="{{ $type }}">{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Selling profile</label>
+                        <input type="number" x-model="prices[index].price" id="" step="0.0001"
+                            class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" @click="prices[index].active = false" class="btn btn-sm bg-red-500 text-white"><i class="fa fa-trash"></i></button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Selling profile</label>
-                    <input type="number" x-model="prices[index].price" id="" step="0.0001"
-                        class="form-control">
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-sm bg-red-500 text-white"><i class="fa fa-trash"></i></button>
-                </div>
-            </div>
+            </template>
         </template>
 
         <button class="btn float-right bg-red-500 text-white">Submit <i class="fa fa-save"></i></button>

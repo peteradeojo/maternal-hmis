@@ -22,7 +22,7 @@ class InventoryBalance extends Model
     }
 
     public function prices() {
-        return $this->hasMany(StockItemPrice::class, 'item_id', 'item_id');
+        return $this->hasMany(StockItemPrice::class, 'item_id', 'item_id')->active()->latest();
     }
 
     public function location() {
