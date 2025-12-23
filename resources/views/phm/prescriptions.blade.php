@@ -123,10 +123,10 @@
                         data: 'patient.card_number',
                     },
                     {
-                        data: 'patient.name',
+                        data: 'patient.gender',
                     },
                     {
-                        data: 'patient.name',
+                        data: 'patient.category.name',
                     },
                     {
                         data: (row) => parseDateFromSource(row.created_at),
