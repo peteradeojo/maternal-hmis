@@ -85,4 +85,16 @@ class PharmacyController extends Controller
 
         return view('phm.show-prescription', compact('prescription'));
     }
+
+    public function reverseLookup(Request $request)
+    {
+        $searchTerm = $request->input('search', ['value' => null, 'regex' => false])['value'];
+        $query = Prescription::whereHas('lines', function ($query) use (&$searchTerm) {
+            $query->whereHas('item', function ($query) use (&$searchTerm) {
+                $query->where('name', 'ilike', "%$searchTerm%");
+            });
+        });
+
+        return $this->dataTable($request, $query);
+    }
 }

@@ -24,7 +24,19 @@
 
         <div class="card p-1">
             <div class="basic-header">Reverse Lookup</div>
-            
+
+            <table id="reverse-lookup" class="table">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Card Number</th>
+                        <th>Gender</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 @endsection
@@ -36,16 +48,13 @@
                 try {
                     e.preventDefault();
                     const el = e.currentTarget;
-                    // const [type, id] = el.dataset.event.split(":") || [];
                     const bill = el.dataset.bill;
 
                     useGlobalModal((a) => {
                         a.find(".modal-title").text("Prescription");
                         a.find(MODAL_BODY).html(`@include('components.spinner')`)
 
-                        axios.get("{{ route('dis.get-prescriptions', ':id') }}".replace(':id', bill), {
-                                // headers: {Accept: 'application/html'}
-                            })
+                        axios.get("{{ route('dis.get-prescriptions', ':id') }}".replace(':id', bill))
                             .then((response) => {
                                 a.find(".modal-body").html(response.data);
                             }).catch((err) => {
@@ -99,6 +108,30 @@
                 // order: [[4, 'desc']],
                 responsive: true,
                 ordering: false,
+            });
+
+            $("table#reverse-lookup").DataTable({
+                serverSide: true,
+                ajax: {
+                    url: "{{route('phm-api.reverse-lookup')}}"
+                },
+                columns: [
+                    {
+                        data: 'patient.name',
+                    },
+                    {
+                        data: 'patient.name',
+                    },
+                    {
+                        data: 'patient.name',
+                    },
+                    {
+                        data: 'patient.name',
+                    },
+                    {
+                        data: (row) => parseDateFromSource(row.created_at),
+                    },
+                ],
             });
 
             // $(document).on('click', '.view-prescription', loadPrescription);

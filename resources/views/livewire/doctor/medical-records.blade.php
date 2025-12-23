@@ -91,14 +91,21 @@
                     <div class="py-2">
                         <p><b>Scans</b></p>
                         @foreach ($visit->imagings as $img)
+                            @unless (empty($img->results))
+                                <x-overlay-modal id="scan-{{ $img->id }}" title="{{ $img->name }}">
+                                    <p>{{ $img->getResults() }}</p>
+                                </x-overlay-modal>
+                            @endunless
+
                             <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
                                 <p><b class="text-sm">{{ $img->name }}</b>:
                                     <br>
-                                    <small>Result: @empty($img->path)
+                                    <small>Result: @empty($img->results)
                                             No result
                                         @else
                                             <a href="#" data-target="#scan-result-modal"
                                                 data-scanid="{{ $img->id }}"
+                                                @click="$dispatch('open-scan-{{ $img->id }}')"
                                                 class="scan-result text-blue-500 underline">View Result</a>
                                         @endempty
                                     </small>
@@ -143,41 +150,3 @@
         </div>
     @endforeach
 </div>
-
-@script
-    <script>
-        document.querySelectorAll(".scan-result").forEach((trigger) => {
-            trigger.addEventListener('click', (e) => {
-                e.preventDefault();
-
-                const {
-                    target,
-                    scanid
-                } = e.target.dataset;
-                const modal = document.querySelector(target);
-
-                // Guard clause
-                // if (!modal) return;
-
-                modal.classList.remove("hide");
-
-                fetch("{{ route('api.rad.scans.result', ['scan' => ':id']) }}".replace(":id", scanid))
-                    .then((res) => {
-                        res.json().then((data) => {
-                            let el = '';
-                            if (data.path.endsWith(".pdf")) {
-                                el = `<iframe src="${data.path}" frameborder="0" width="100%" height="600"
-                            allowfullscreen="true"></iframe>`;
-                            } else {
-                                el = `<img src='${data.path}' />`
-                            }
-
-                            modal.querySelector("#display").innerHTML = el;
-                        });
-                    }).catch((err) => {
-                        console.error(err);
-                    });
-            });
-        });
-    </script>
-@endscript

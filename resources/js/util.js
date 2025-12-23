@@ -178,6 +178,11 @@ window.notifyAction = function (message) {
     })
 }
 
+window.parseDateFromSource = (date) => new Date(date).toLocaleDateString('en-CA', {
+    minute: '2-digit',
+    hour: '2-digit',
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     document
         .querySelectorAll(".foldable .foldable-header")
