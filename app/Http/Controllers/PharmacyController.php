@@ -89,11 +89,17 @@ class PharmacyController extends Controller
     public function reverseLookup(Request $request)
     {
         $searchTerm = $request->input('search', ['value' => null, 'regex' => false])['value'];
-        $query = Prescription::whereHas('lines', function ($query) use (&$searchTerm) {
-            $query->whereHas('item', function ($query) use (&$searchTerm) {
-                $query->where('name', 'ilike', "%$searchTerm%");
-            });
-        });
+        $query = Prescription::with(['patient'])->when(
+            $searchTerm,
+            function ($query) use ($searchTerm) {
+                return $query->whereHas('lines.item', function ($q) use ($searchTerm) {
+                    $q->where('name', 'ilike', "$searchTerm%");
+                });
+            },
+            function ($query) {
+                return $query->whereRaw("1 = 0");
+            }
+        );
 
         return $this->dataTable($request, $query);
     }

@@ -117,10 +117,10 @@
                 },
                 columns: [
                     {
-                        data: 'patient.name',
+                        data: ({id, patient}) =>  `<a href="{{route('dis.get-prescriptions', ':id')}}" class="link">${patient.name}</a>`.replace(':id', id),
                     },
                     {
-                        data: 'patient.name',
+                        data: 'patient.card_number',
                     },
                     {
                         data: 'patient.name',
