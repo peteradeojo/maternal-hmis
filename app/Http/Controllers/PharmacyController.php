@@ -99,7 +99,7 @@ class PharmacyController extends Controller
             function ($query) {
                 return $query->whereRaw("1 = 0");
             }
-        );
+        )->latest();
 
         return $this->dataTable($request, $query);
     }
