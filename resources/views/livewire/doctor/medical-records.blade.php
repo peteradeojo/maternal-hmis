@@ -91,23 +91,18 @@
                     <div class="py-2">
                         <p><b>Scans</b></p>
                         @foreach ($visit->imagings as $img)
-                            @unless (empty($img->results))
-                                <x-overlay-modal id="scan-{{ $img->id }}" title="{{ $img->name }}">
-                                    <p>{{ $img->getResults() }}</p>
-                                </x-overlay-modal>
-                            @endunless
+                            <x-overlay-modal id="scan-{{ $img->id }}" title="{{ $img->name }}">
+                                <p>{{ $img->getResults() }}</p>
+                            </x-overlay-modal>
 
                             <div class="py-2 px-2 bg-gray-100 grid gap-y-1">
                                 <p><b class="text-sm">{{ $img->name }}</b>:
                                     <br>
-                                    <small>Result: @empty($img->results)
-                                            No result
-                                        @else
-                                            <a href="#" data-target="#scan-result-modal"
-                                                data-scanid="{{ $img->id }}"
-                                                @click="$dispatch('open-scan-{{ $img->id }}')"
-                                                class="scan-result text-blue-500 underline">View Result</a>
-                                        @endempty
+                                    <small>
+                                        <a href="#" data-target="#scan-result-modal"
+                                            data-scanid="{{ $img->id }}"
+                                            @click="$dispatch('open-scan-{{ $img->id }}')"
+                                            class="scan-result text-blue-500 underline">View Result</a>
                                     </small>
                                     <br>
                                     <small>Comment: {{ $img->comment ?? 'No comment' }}</small>
