@@ -31,7 +31,7 @@ class MakePayment extends Component
     public function mount($bill)
     {
         $this->bill = $bill;
-        dump($bill->entries);
+        // dump($bill->entries);
         $this->resetHash();
     }
 
