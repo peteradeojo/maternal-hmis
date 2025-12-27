@@ -6,13 +6,15 @@ use App\Enums\AncCategory;
 use App\Enums\Status;
 use App\Http\Controllers\LabController;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 class AntenatalProfile extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, Auditable;
 
     protected $fillable = [
         'patient_id',

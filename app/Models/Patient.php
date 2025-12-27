@@ -7,6 +7,7 @@ use App\Enums\MaritalStatus;
 use App\Enums\Religion;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +15,7 @@ use Illuminate\Support\Carbon;
 
 class Patient extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Auditable;
 
     protected $fillable = [
         'card_number',
