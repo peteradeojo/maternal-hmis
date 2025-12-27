@@ -71,9 +71,9 @@
                         <td>{{ $data->plan->note ?? 'nil' }}</td>
                     </tr>
                     <tr>
-                        <td>
+                        {{-- <td>
                             <a href="{{ route('doctor.show-admission-plan', $data) }}" class="link">View Plan</a>
-                        </td>
+                        </td> --}}
                         <td>
                             <a href="#" @click="$dispatch('open-discharge-form')" class="link">Discharge</a>
                         </td>
