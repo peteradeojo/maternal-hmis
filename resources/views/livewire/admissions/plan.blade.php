@@ -1,7 +1,5 @@
 <div>
     {{-- Stop trying to control. --}}
-
-
     <div class="py-2 px-2 bg-gray-200 grid gap-y-4">
         <p class="bold">Indication for Admission</p>
         <x-input-text name="indication" wire:model="indication" placeholder="Indication for Admission"
@@ -16,7 +14,6 @@
                 <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)" />
 
                 <ul class="list-disc list-inside pt-1">
-                    {{-- @dump($tests) --}}
                     @foreach ($tests as $selectedTest)
                         <li class="flex justify-between items-center">
                             @unless ($selectedTest->results)
@@ -33,26 +30,9 @@
             </div>
             <div>
                 <p class="bold">Investigations</p>
-                <livewire:dynamic-product-search :departmentId="7" @selected="addInvestigation($event.detail)" />
-
-                <ul class="list-disc list-inside pt-1">
-                    @foreach ($investigations as $i)
-                        <li class="flex justify-between items-center">
-                            <span>{{ $i['name'] }}</span>
-                            <button wire.prevent wire:click="removeInvestigation({{ $i['id'] }})"
-                                class="btn btn-sm btn-red">Remove</button>
-                        </li>
-                    @endforeach
-                </ul>
+                <livewire:doctor.add-scan :event="$admission->plan" />
             </div>
         </div>
-
-        {{-- <p class="text-xl bold">Surgery</p>
-        <input type="text" name="procedure" id="" placeholder="Procedure to be undergone"
-            wire:model="surgery"> --}}
-
-        {{-- <p class="bold">Operation Note</p>
-        <textarea rows="3" class="form-control" wire:model="operationNote"></textarea> --}}
 
         <p>Admission Note / More</p>
         <x-input-textarea wire:model="admissionNote" class="form-control" row="3" name="admissionNote" />

@@ -83,7 +83,13 @@
         </div>
 
         <div class="p-3">
-            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Vitals Chart', 'Drug Chart', 'Continuation notes', 'Operation Notes', 'Delivery Note']" :active="1">
+            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Admission Plan', 'Vitals Chart', 'Drug Chart', 'Continuation notes', 'Operation Notes', 'Delivery Note']" :active="1">
+                {{-- Admission Plan --}}
+                <div class="tab p-2">
+                    <p class="text-lg font-semibold">Admission Plan</p>
+                    <livewire:admissions.plan :visit="$data->visit->visit" :admission="$data" />
+                </div>
+
                 {{-- Vitals --}}
                 <div class="tab p-2">
                     <p class="text-lg font-semibold">Vitals</p>
