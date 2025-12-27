@@ -30,17 +30,21 @@ class ViewStats extends Command
     public function handle()
     {
         if ($this->option('list-options')) {
-            $this->info("Available stats:");
-            $this->info(implode("\n", array_keys($this->stats)));
-            exit(0);
+            $this->usage();
         }
 
         if ($option = $this->argument('option')) {
             return $this->__call($option, []);
         } else {
-            $this->info("Usage: php artisan app:view-stats {option}");
-            $this->info("Usage: php artisan app:view-stats --list-options (view available options)");
+            $this->usage();
         }
+    }
+
+    public function usage() {
+        $this->info("Usage: php artisan app:view-stats {option}\n\n");
+        $this->info("Available stats:");
+        $this->info(implode("\n", array_keys($this->stats)));
+        exit(0);
     }
 
     public function nginx_uptime() {}
