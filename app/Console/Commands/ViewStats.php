@@ -21,7 +21,7 @@ class ViewStats extends Command
     protected $description = 'Command description';
 
     protected $stats = [
-        'nginx_uptime' => "awk -F'backend:' '{print $2}' /var/log/nginx/hmis_backend.log | awk '{print $1}' | sort | uniq -c",
+        'nginx_uptime' => "awk -F'backend:' '{print $2}' /var/log/nginx/hmis_backend.log | awk -F' status:' '{print $1}' | sed 's/ : /\n/g' | sort | uniq -c"
     ];
 
     /**
