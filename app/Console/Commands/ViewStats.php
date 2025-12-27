@@ -11,7 +11,7 @@ class ViewStats extends Command
      *
      * @var string
      */
-    protected $signature = 'app:view-stats {--option=}';
+    protected $signature = 'app:view-stats {--list-options} {--option=}';
 
     /**
      * The console command description.
@@ -29,6 +29,12 @@ class ViewStats extends Command
      */
     public function handle()
     {
+        if ($this->option('list-options')) {
+            $this->info("Available stats:");
+            $this->info(implode("\n", array_keys($this->stats)));
+            exit(0);
+        }
+
         if ($this->option('option')) {
             $option = $this->option('option');
             return $this->__call($option, []);
