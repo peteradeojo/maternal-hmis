@@ -2,7 +2,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="container relative">
+    <div class="container relative grid gap-y-4">
         @livewire('dashboard.patient-stats', ['user' => $user])
 
         @if ($user->department_id == DepartmentsEnum::DOC->value)
