@@ -11,7 +11,7 @@ class ViewStats extends Command
      *
      * @var string
      */
-    protected $signature = 'app:view-stats {--list-options} {--option=}';
+    protected $signature = 'app:view-stats {--list-options} {option?}';
 
     /**
      * The console command description.
@@ -21,7 +21,7 @@ class ViewStats extends Command
     protected $description = 'Command description';
 
     protected $stats = [
-        'nginx_uptime' => "awk -F'backend:' '{print $2}' /var/log/nginx/hmis_backend.log | awk -F' status:' '{print $1}' | sed 's/ : /\n/g' | sort | uniq -c"
+        'nginx_uptime' => "awk -F'backend:' '{print $2}' /var/log/nginx/hmis_backend.log | awk -F' status:' '{print $1}' | sed -e 's/ : /\\n/g' | sort | uniq -c"
     ];
 
     /**
@@ -35,11 +35,10 @@ class ViewStats extends Command
             exit(0);
         }
 
-        if ($this->option('option')) {
-            $option = $this->option('option');
+        if ($option = $this->argument('option')) {
             return $this->__call($option, []);
         } else {
-            $this->info("Usage: php artisan app:view-stats --option");
+            $this->info("Usage: php artisan app:view-stats {option}");
             $this->info("Usage: php artisan app:view-stats --list-options (view available options)");
         }
     }
@@ -51,9 +50,8 @@ class ViewStats extends Command
         if (in_array($method, array_keys($this->stats))) {
             $cmd = $this->stats[$method];
             $output = [];
-            $result = 100;
-            exec($cmd, $output, $result);
-            $this->info(implode("\n", $output));
+            $output = shell_exec($cmd);
+            $this->info($output);
             return;
         }
 
