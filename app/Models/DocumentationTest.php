@@ -27,7 +27,7 @@ class DocumentationTest extends Model
     }
 
     protected $casts = [
-        'results' => 'object',
+        'results' => 'array',
     ];
 
     public function documentation()
@@ -72,17 +72,40 @@ class DocumentationTest extends Model
         $query = static::where('name', $this->name)->where('id', '<', $this->id)->where('results', '!=', NULL)->latest();
 
         $test = $query->first();
-        if (!$test) return;
+        if (!$test)
+            return;
 
         $results = array_map(function ($r) {
             $r->result = null;
             return $r;
-        }, $test->results);
+        }, (array) $test->results);
 
         return $results;
     }
 
-    public function getResult($result) {
+    public function getResult($result)
+    {
         return object_get($this->results, $result, "not available");
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('lab')) {
+            return $query; // Lab can see all tests they might need to process
+        }
+
+        if ($user->hasRole('radiology')) {
+            return $query; // Radiology can see all tests they might need to process
+        }
+
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'billing'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 }

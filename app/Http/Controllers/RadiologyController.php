@@ -14,11 +14,13 @@ class RadiologyController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', PatientImaging::class);
         return view('rad.scans', ['patientId' => $request->query('patient_id')]);
     }
 
     public function show(Request $request, PatientImaging $scan)
     {
+        $this->authorize('view', $scan);
         $scan->load(['patient']);
 
         return view('rad.scan', ['doc' => $scan]);
@@ -26,8 +28,9 @@ class RadiologyController extends Controller
 
     public function getScans(Request $request)
     {
+        $this->authorize('viewAny', PatientImaging::class);
         $visitId = $request->query('patient_id');
-        $query = PatientImaging::query()->with(['patient', 'requester'])->latest();
+        $query = PatientImaging::accessibleBy($request->user())->with(['patient', 'requester'])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) use ($visitId) {
@@ -46,6 +49,7 @@ class RadiologyController extends Controller
 
     public function store(Request $request, Visit $visit)
     {
+        $this->authorize('create', PatientImaging::class);
         $request->validate([
             'scan' => 'required|string',
         ]);
@@ -70,6 +74,7 @@ class RadiologyController extends Controller
 
     public function storeResult(Request $request, PatientImaging $scan)
     {
+        $this->authorize('update', $scan);
         $scan->results = $request->except('_token');
         $scan->uploaded_by = $request->user()->id;
         $scan->uploaded_at = now();
@@ -82,6 +87,7 @@ class RadiologyController extends Controller
 
     public function scanResult(Request $request, PatientImaging $scan)
     {
+        $this->authorize('view', $scan);
         return response()->json([
             'path' => $scan->secure_path,
             'name' => $scan->name,
@@ -91,17 +97,20 @@ class RadiologyController extends Controller
 
     public function history()
     {
+        $this->authorize('viewAny', PatientImaging::class);
         // $history = PatientImaging::where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest()->get();
         return view('rad.history');
     }
 
     public function getScansHistory(Request $request)
     {
-        return $this->dataTable($request, PatientImaging::with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
+        $this->authorize('viewAny', PatientImaging::class);
+        return $this->dataTable($request, PatientImaging::accessibleBy($request->user())->with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
     }
 
     public function getScanResult(Request $request, PatientImaging $scan)
     {
+        $this->authorize('view', $scan);
         $results = $scan->results;
 
         if (!$results) {

@@ -15,12 +15,14 @@ class PatientsController extends Controller
 {
     public function ancBookings(Request $request)
     {
+        $this->authorize('viewAny', AntenatalProfile::class);
         return view('nursing.anc-bookings');
     }
 
     public function getPendingVitals(Request $request)
     {
-        return $this->dataTable($request, Vitals::getPendingVitalVisits(), [
+        $this->authorize('viewAny', Visit::class);
+        return $this->dataTable($request, Visit::accessibleBy($request->user())->has('vitals')->where('awaiting_vitals', true), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
                     $query->where('name', 'like', "$search%")->orWhere('card_number', "like", "$search%");
@@ -31,6 +33,7 @@ class PatientsController extends Controller
 
     public function getAncBookings(Request $request)
     {
+        $this->authorize('viewAny', AntenatalProfile::class);
         $user = $request->user();
         $query = AntenatalProfile::with('patient');
 
@@ -56,11 +59,13 @@ class PatientsController extends Controller
 
     public function viewAncBooking(Request $request, AntenatalProfile $profile)
     {
+        $this->authorize('view', $profile);
         return view('nursing.anc-booking', ['profile' => $profile]);
     }
 
     public function submitAncBooking(VitalsRequest $request, AntenatalProfile $profile)
     {
+        $this->authorize('update', $profile);
         $validated = $request->safe();
 
         // $profile->vitals = array_merge($profile->vitals ?? []);

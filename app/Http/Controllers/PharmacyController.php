@@ -23,7 +23,8 @@ class PharmacyController extends Controller
 
     public function getPrescriptions(Request $request)
     {
-        $query = Prescription::with(['patient'])->whereHasMorph('event', [Visit::class])->where('status', Status::active)->latest();
+        $this->authorize('viewAny', Prescription::class);
+        $query = Prescription::accessibleBy($request->user())->with(['patient'])->whereHasMorph('event', [Visit::class])->where('status', Status::active)->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
@@ -36,6 +37,9 @@ class PharmacyController extends Controller
 
     public function show(Request $request, Documentation $doc)
     {
+        // Documentation doesn't have a policy yet, but it's a sub-resource.
+        // For now, we'll check if the user can view the patient.
+        $this->authorize('view', $doc->patient);
         $doc->load(['treatments', 'patient']);
         return view('phm.show-prescription', compact('doc'));
     }
@@ -56,6 +60,7 @@ class PharmacyController extends Controller
 
     public function closePrescription(Request $request, Documentation $doc)
     {
+        $this->authorize('update', $doc->patient); // Assuming update patient permission for now
         $doc->treatments()->update(['status' => Status::completed->value]);
         return redirect()->route('phm.prescriptions');
     }
@@ -68,17 +73,20 @@ class PharmacyController extends Controller
 
     public function viewPrescription(Request $request, Prescription $prescription)
     {
+        $this->authorize('view', $prescription);
         return view('phm.show-prescription', compact('prescription'));
     }
 
     public function admissions(Request $request)
     {
-        $admissions = Admission::valid()->latest()->get();
+        $this->authorize('viewAny', Admission::class);
+        $admissions = Admission::accessibleBy($request->user())->valid()->latest()->get();
         return view('phm.admissions.index', compact('admissions'));
     }
 
     public function showAdmissionTreatment(Request $request, Admission $admission)
     {
+        $this->authorize('view', $admission);
         $prescription = $admission->plan->prescription()->firstOrCreate([
             'patient_id' => $admission->patient_id,
         ]);

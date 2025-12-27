@@ -79,11 +79,11 @@ class AntenatalProfile extends Model
     public function calculateEddLmp($resave = false)
     {
         if ($this->lmp && empty($this->edd)) {
-            $this->edd = Carbon::parse($this->lmp)->addMonths(9)->addDays(7)->format('Y-m-d');
+            $this->edd = Carbon::parse($this->lmp)->addMonths(9)->addDays(7);
         }
 
         if ($this->edd && empty($this->lmp)) {
-            $this->lmp = Carbon::parse($this->edd)->subMonths(9)->subDays(7)->format('Y-m-d');
+            $this->lmp = Carbon::parse($this->edd)->subMonths(9)->subDays(7);
         }
 
         if ($resave && $this->isDirty()) {
@@ -117,17 +117,20 @@ class AntenatalProfile extends Model
         }
     }
 
-    public function ancVisits() {
+    public function ancVisits()
+    {
         return $this->hasMany(AncVisit::class, 'antenatal_profile_id')->latest();
     }
 
-    public function getTestResult($name) {
+    public function getTestResult($name)
+    {
         $test = $this->tests->where('name', $name)->first();
         if (empty($test) || empty($test->results)) {
             return '';
         }
 
-        return $test->results[0]->result;
+        $results = is_array($test->results) ? $test->results : (array) $test->results;
+        return $results[0]['result'] ?? '';
     }
 
     public function maturity($datetime = null, $short = false)
@@ -148,7 +151,21 @@ class AntenatalProfile extends Model
         return "No LMP";
     }
 
-    public function consultant() {
+    public function consultant()
+    {
         return $this->belongsTo(User::class, 'doctor_id');
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'lab'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 }

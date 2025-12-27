@@ -78,4 +78,17 @@ class Bill extends Model
             STR_PAD_LEFT
         ) . "-{$visit->id}";
     }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasAnyRole(['billing', 'record', 'pharmacy', 'lab', 'radiology'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
 }

@@ -21,7 +21,7 @@ class LabController extends Controller
     public static $ancBookingTests = ['URINALYSIS', 'PCV', 'GENOTYPE', 'HIV STATUS', 'BLOOD GROUP', 'VDRL', 'RHESUS', 'Hepatitis'];
     public static $ancFollowupTests = ['URINALYSIS', 'PCV',];
 
-    private function processTests(Request $request, $data, GeneralVisit|AncVisit  $visit)
+    private function processTests(Request $request, $data, GeneralVisit|AncVisit $visit)
     {
         foreach ($visit->tests as $i => $test) {
             if (isset($data['result'][$i])) {
@@ -53,7 +53,8 @@ class LabController extends Controller
 
     public function viewPatientTests(Request $request, Patient $patient)
     {
-        $tests = DocumentationTest::where('patient_id', $patient->id)
+        $this->authorize('view', $patient);
+        $tests = DocumentationTest::accessibleBy($request->user())->where('patient_id', $patient->id)
             ->where('status', '!=', Status::cancelled->value)
             ->latest()->get();
         return view('lab.take-tests', compact('tests', 'patient'));
@@ -130,7 +131,8 @@ class LabController extends Controller
 
     public function getHistory(Request $request)
     {
-        $Q = DocumentationTest::selectRaw('testable_type, testable_id, patient_id, MAX(created_at) created_at')->groupBy('testable_type', 'testable_id', 'patient_id', 'created_at')->where(function ($q) {
+        $this->authorize('viewAny', DocumentationTest::class);
+        $Q = DocumentationTest::accessibleBy($request->user())->selectRaw('testable_type, testable_id, patient_id, MAX(created_at) created_at')->groupBy('testable_type', 'testable_id', 'patient_id', 'created_at')->where(function ($q) {
             $q->where('status', Status::completed->value)->orWhere(function ($query) {
                 $query->whereNotNull('results');
             });
@@ -147,21 +149,8 @@ class LabController extends Controller
 
     public function getAncVisits(Request $request)
     {
-        // return $this->dataTable($request, AncVisit::with(['profile'])->whereHas('tests', function ($q) {
-        //     $q->where('status', '!=', Status::completed->value);
-        // })->orWhereHas('profile', function ($q) {
-        //     $q->whereHas('tests', function ($q) {
-        //         $q->where('status', '!=', Status::completed->value);
-        //     });
-        // })->latest(), [
-        //     function ($query, $search) {
-        //         $query->whereHas('patient', function ($q) use ($search) {
-        //             $q->where('name', 'like', "{$search}%")->orWhere('card_number', 'like', "{$search}%");
-        //         });
-        //     },
-        // ]);
-
-        $query = AntenatalProfile::with(['patient'])->whereHas('tests', function ($query) {
+        $this->authorize('viewAny', AntenatalProfile::class);
+        $query = AntenatalProfile::accessibleBy($request->user())->with(['patient'])->whereHas('tests', function ($query) {
             $query->where('status', '=', Status::pending->value);
         })->latest();
 
@@ -170,6 +159,7 @@ class LabController extends Controller
 
     public function ancBooking(Request $request, AntenatalProfile $profile)
     {
+        $this->authorize('view', $profile);
         if ($request->method() !== 'POST') {
             $tests = AncVisit::testsList;
             return view('lab.anc-booking', compact('profile', 'tests'));
@@ -182,7 +172,8 @@ class LabController extends Controller
         ]);
 
         $profile->tests = array_merge($profile->tests ?? [], $request->tests);
-        if ($request->completed) $profile->awaiting_lab = false;
+        if ($request->completed)
+            $profile->awaiting_lab = false;
         $profile->save();
 
         return redirect()->route('lab.antenatals')->with('success', 'Tests booked successfully');
@@ -204,16 +195,20 @@ class LabController extends Controller
     //     return redirect()->route('dashboard');
     // }
 
-    public function antenatalBooking() {}
+    public function antenatalBooking()
+    {
+    }
 
     public function testReport(Request $request, Patient $patient)
     {
-        $tests = DocumentationTest::with(['patient'])->where('patient_id', $patient->id)->latest()->get();
+        $this->authorize('view', $patient);
+        $tests = DocumentationTest::accessibleBy($request->user())->with(['patient'])->where('patient_id', $patient->id)->latest()->get();
         return view('lab.testReport', compact('tests', 'patient'));
     }
 
-    public function store(Request  $request, Visit $visit)
+    public function store(Request $request, Visit $visit)
     {
+        $this->authorize('create', DocumentationTest::class);
         $request->validate([
             'test' => 'required|string'
         ]);
@@ -221,7 +216,7 @@ class LabController extends Controller
         $visit->visit->tests()->create([
             'name' => $request->test,
             'patient_id' => $visit->patient_id,
-            'user_id' =>  $request->user()->id,
+            'user_id' => $request->user()->id,
         ]);
 
         notifyDepartment(EnumsDepartment::LAB->value, [
@@ -238,12 +233,14 @@ class LabController extends Controller
 
     public function admissions()
     {
-        $adm = Admission::latest()->get();
+        $this->authorize('viewAny', Admission::class);
+        $adm = Admission::accessibleBy(auth()->user())->latest()->get();
         return view('lab.admissions', compact('adm'));
     }
 
     public function saveTest(Request $request, DocumentationTest $test)
     {
+        $this->authorize('update', $test);
         $request->validate([
             'results' => 'nullable|array',
             'results.*' => 'array',
@@ -265,12 +262,14 @@ class LabController extends Controller
 
     public function viewTests(Request $request, Visit $visit)
     {
+        $this->authorize('view', $visit);
         return view('lab.tests', compact('visit'));
     }
 
     public function getTests(Request $request)
     {
-        $query = Visit::with(['patient.category', 'visit'])->where(function ($q) {
+        $this->authorize('viewAny', DocumentationTest::class);
+        $query = Visit::accessibleBy($request->user())->with(['patient.category', 'visit'])->where(function ($q) {
             $q->has('tests')->orWhereHas('visit', function ($query) {
                 $query->has('tests');
             })

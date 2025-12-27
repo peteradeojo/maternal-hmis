@@ -25,11 +25,30 @@ class Prescription extends Model
         return $this->morphTo();
     }
 
-    public function lines() {
+    public function lines()
+    {
         return $this->hasMany(PrescriptionLine::class, 'prescription_id')->latest();
     }
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class, 'patient_id');
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('pharmacy')) {
+            return $query; // Pharmacy can see all prescriptions they might need to dispense
+        }
+
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'billing'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 }

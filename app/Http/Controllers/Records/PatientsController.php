@@ -21,10 +21,13 @@ use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
-    public function __construct(private PatientService $patientService) {}
+    public function __construct(private PatientService $patientService)
+    {
+    }
 
     public function index()
     {
+        $this->authorize('viewAny', Patient::class);
         return view('records.patients');
     }
 
@@ -35,6 +38,7 @@ class PatientsController extends Controller
         $ancCategory = $categories->where('name', 'Antenatal')->first();
 
         if ($request->method() !== 'POST') {
+            $this->authorize('create', Patient::class);
             $mode = $request->query('mode');
             return match ($request->query('mode')) {
                 null => view('records.new-patient', [
@@ -67,8 +71,8 @@ class PatientsController extends Controller
         if ($request->query('mode') === 'anc') {
             $rules = array_merge($rules, [
                 'card_type' => 'required|in:' . join(',', AncCategory::getValues()),
-                // 'lmp' => 'nullable|date',
-                // 'edd' => 'nullable|date',
+                'lmp' => 'nullable|date',
+                'edd' => 'nullable|date',
                 'spouse_name' => 'nullable|string',
                 'spouse_phone' => 'nullable|string',
                 'spouse_occupation' => 'nullable|string',
@@ -77,6 +81,7 @@ class PatientsController extends Controller
         }
 
         $data = $request->validate($rules);
+        $this->authorize('create', Patient::class);
         DB::beginTransaction();
         try {
             $patient = Patient::create($data);
@@ -87,10 +92,15 @@ class PatientsController extends Controller
             }
 
             if ($request->query('mode') == 'anc') {
+                // Calculate EDD if LMP is provided and EDD is not
+                if (isset($data['lmp']) && empty($data['edd'])) {
+                    $data['edd'] = Carbon::parse($data['lmp'])->addMonths(9)->addDays(7)->format('Y-m-d');
+                }
+
                 AntenatalProfile::create([
                     'patient_id' => $patient->id,
                     'lmp' => $data['lmp'] ?? null,
-                    'edd' => isset($data['edd']) ? Carbon::createFromFormat('Y-m-d', $data['edd'])->addMonths(9)->addDays(7) : null,
+                    'edd' => isset($data['edd']) ? Carbon::createFromFormat('Y-m-d', $data['edd']) : null,
                     'spouse_name' => $data['spouse_name'],
                     'spouse_phone' => $data['spouse_phone'],
                     'spouse_occupation' => $data['spouse_occupation'],
@@ -130,7 +140,8 @@ class PatientsController extends Controller
 
     public function getPatients(Request $request)
     {
-        return $this->dataTable($request, Patient::with('category')->latest(), [
+        $this->authorize('viewAny', Patient::class);
+        return $this->dataTable($request, Patient::accessibleBy($request->user())->with('category')->latest(), [
             function ($query, $search) {
                 $query->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%")->orWhere('phone', 'like', "$search%");
             },
@@ -139,6 +150,7 @@ class PatientsController extends Controller
 
     public function show(Request $request, Patient $patient)
     {
+        $this->authorize('view', $patient);
         $patient->load('antenatalProfiles');
 
         return view('records.patient', compact('patient'));
@@ -146,6 +158,7 @@ class PatientsController extends Controller
 
     public function edit(Request $request, Patient $patient)
     {
+        $this->authorize('update', $patient);
         if (!$request->isMethod('POST')) {
             $categories = PatientCategory::all();
             return view('records.edit-patient', compact('patient', 'categories'));
@@ -186,6 +199,11 @@ class PatientsController extends Controller
             'spouse_occupation' => 'nullable|string',
             'spouse_educational_status' => 'nullable|string',
         ]);
+
+        // Calculate EDD if LMP is provided and EDD is not
+        if (isset($data['lmp']) && empty($data['edd'])) {
+            $data['edd'] = Carbon::parse($data['lmp'])->addMonths(9)->addDays(7)->format('Y-m-d');
+        }
 
         $profile = AntenatalProfile::create($data + ['patient_id' => $patient->id]);
         $profile->initLabTests();
@@ -249,7 +267,8 @@ class PatientsController extends Controller
 
     public function getVisits(Request $request)
     {
-        $query = Visit::with(['patient.insurance'])->latest();
+        $this->authorize('viewAny', Visit::class);
+        $query = Visit::accessibleBy($request->user())->with(['patient.insurance'])->latest();
 
         if ($request->has('insured')) {
             $query = $query->whereHas('patient', function ($q) {
@@ -269,8 +288,9 @@ class PatientsController extends Controller
                 });
             },
         ], function (array $data, $orders) {
-            if (empty($orders)) return $data;
-            logger()->info($orders);
+            if (empty($orders))
+                return $data;
+            logger()->info(json_encode($orders));
 
             $name = array_filter($orders, fn($o) => $o['name'] == 'insurance');
 
@@ -292,7 +312,7 @@ class PatientsController extends Controller
                 });
             }
 
-            logger()->info($data);
+            logger()->info(json_encode($data));
 
             return $data;
         });
@@ -300,7 +320,8 @@ class PatientsController extends Controller
 
     public function getAntenatalAppointments(Request $request)
     {
-        $query = AncVisit::with(['patient', 'visit'])->where('return_visit', '>=', now()->subDays(7))->select([
+        $this->authorize('viewAny', AntenatalProfile::class);
+        $query = AntenatalProfile::accessibleBy($request->user())->with(['patient', 'visit'])->where('return_visit', '>=', now()->subDays(7))->select([
             'patient_id',
             'return_visit',
             'id',

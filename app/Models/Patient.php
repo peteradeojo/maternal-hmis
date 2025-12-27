@@ -152,4 +152,19 @@ class Patient extends Model
     {
         return $this->hasMany(Bill::class, 'patient_id');
     }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        // For now, all medical and records staff can see all patients.
+        // This can be further restricted if needed (e.g., by department).
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'pharmacy', 'lab', 'radiology', 'billing'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0'); // No access
+    }
 }

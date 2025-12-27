@@ -100,4 +100,17 @@ class Admission extends Model implements OperationalEvent
     {
         return $query->whereNotIn('status', [Status::cancelled->value, Status::ejected->value]);
     }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
 }

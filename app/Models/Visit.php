@@ -50,7 +50,8 @@ class Visit extends Model implements OperationalEvent
         return $this->morphTo();
     }
 
-    public function doctor() {
+    public function doctor()
+    {
         return $this->belongsTo(User::class, 'consultant_id');
     }
 
@@ -69,7 +70,7 @@ class Visit extends Model implements OperationalEvent
 
     public function canCheckOut(): Attribute
     {
-        return Attribute::make(fn() =>  !$this->awaiting_pharmacy && !$this->awaiting_doctor);
+        return Attribute::make(fn() => !$this->awaiting_pharmacy && !$this->awaiting_doctor);
     }
 
     // Scopes
@@ -101,6 +102,41 @@ class Visit extends Model implements OperationalEvent
     public function scopeActive($query)
     {
         $query->where('status', Status::active->value)->latest();
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('doctor')) {
+            return $query->where('consultant_id', $user->id);
+        }
+
+        if ($user->hasRole('nurse')) {
+            return $query->where(function ($q) {
+                $q->where('awaiting_vitals', true)->orWhere('awaiting_doctor', true);
+            });
+        }
+
+        if ($user->hasRole('lab')) {
+            return $query->where('awaiting_lab_results', true);
+        }
+
+        if ($user->hasRole('radiology')) {
+            return $query->where('awaiting_radiology', true);
+        }
+
+        if ($user->hasRole('pharmacy')) {
+            return $query->where('awaiting_pharmacy', true);
+        }
+
+        if ($user->hasAnyRole(['billing', 'record'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 
     public function checkOut($force = false)
@@ -142,12 +178,12 @@ class Visit extends Model implements OperationalEvent
 
     public function active_bills()
     {
-        return  $this->bills()->where('status', '!=', Status::cancelled->value);
+        return $this->bills()->where('status', '!=', Status::cancelled->value);
     }
 
     protected static function booted()
     {
-        static::created(function (Self $visit) {
+        static::created(function (self $visit) {
             if ($visit->visit_type == AncVisit::class) {
                 $tests = Product::whereIn('name', LabController::$ancFollowupTests)->orderByDesc('amount')->get()->unique('name');
                 if ($tests->isEmpty()) {
@@ -155,7 +191,8 @@ class Visit extends Model implements OperationalEvent
                 }
 
                 foreach ($tests as $test) {
-                    if ($visit->tests()->where('name', $test->name)->exists()) continue;
+                    if ($visit->tests()->where('name', $test->name)->exists())
+                        continue;
 
                     $visit->tests()->create([
                         'name' => $test->name,

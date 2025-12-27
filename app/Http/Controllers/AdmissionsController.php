@@ -18,7 +18,8 @@ class AdmissionsController extends Controller
 {
     public function index(Request $request)
     {
-        $admissions = Admission::active()->latest()->get();
+        $this->authorize('viewAny', Admission::class);
+        $admissions = Admission::accessibleBy($request->user())->active()->latest()->get();
         if (request()->user()->hasRole('doctor')) {
             return view('doctors.admissions.index', ['admissions' => $admissions]);
         }
@@ -27,6 +28,7 @@ class AdmissionsController extends Controller
 
     public function show(Request $request, Admission $admission)
     {
+        $this->authorize('view', $admission);
         if ($request->isMethod('POST')) {
             $action = $request->input('submit');
             // Log vitals
@@ -83,6 +85,7 @@ class AdmissionsController extends Controller
 
     public function edit(Request $request, Admission $admission)
     {
+        $this->authorize('update', $admission);
         $admission->plan->load(['tests', 'treatments']);
 
         if (!$request->isMethod('POST')) {
@@ -97,7 +100,8 @@ class AdmissionsController extends Controller
 
     public function getAdmissions(Request $request)
     {
-        $admissions = Admission::with(['patient', 'ward'])->whereIn('status', [Status::active->value, Status::pending->value]);
+        $this->authorize('viewAny', Admission::class);
+        $admissions = Admission::accessibleBy($request->user())->with(['patient', 'ward'])->whereIn('status', [Status::active->value, Status::pending->value]);
 
         return $this->dataTable($request, $admissions, [
             function (&$query, $search) {
@@ -128,6 +132,7 @@ class AdmissionsController extends Controller
 
     public function assignWard(Request $request, Admission $admission)
     {
+        $this->authorize('update', $admission);
         if (!$request->isMethod('POST')) {
             // $wards = Ward::whereRaw('filled_beds < beds')->get();
             $wards = Ward::all();
@@ -158,6 +163,7 @@ class AdmissionsController extends Controller
 
     public function previewTreatment(Request $request, Admission $admission)
     {
+        $this->authorize('update', $admission);
         if (!$request->isMethod('POST')) {
             $ministered = explode(',', $request->query('treatments'));
             $treatments = $admission->plan->prescription?->lines()->whereIn('id', $ministered)->get();
@@ -188,6 +194,7 @@ class AdmissionsController extends Controller
 
     public function createAdmission(Request $request, Visit $visit)
     {
+        $this->authorize('create', Admission::class);
         $request->validate([
             'indication' => 'required|string',
             'note' => 'nullable|string',
@@ -245,6 +252,7 @@ class AdmissionsController extends Controller
 
     public function discharge(Request $request, Admission $admission)
     {
+        $this->authorize('update', $admission);
         $request->validate([
             'discharge_summary' => 'required|string',
             'discharged_on' => 'required',
