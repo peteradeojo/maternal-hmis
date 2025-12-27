@@ -36,6 +36,7 @@ function authorizedRoutes()
         $routes[route('it.wards')] = ['Wards', 'fa-bed', null];
         $routes[route('it.products')] = ['Products', 'fa-item', null];
         $routes[route('it.crm-index')] = ['CRM', 'fa-list', null];
+        $routes[route('iam.index')] = ['IAM', 'fa-shield-halved', null];
     }
 
     if ($user->hasRole('lab')) {

@@ -37,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     });
 
-    Route::get('/radiology/{path}',function (Request $request, $path) {
+    Route::get('/radiology/{path}', function (Request $request, $path) {
         return response()->file(storage_path('app/radiology/' . $path));
     });
 
@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/dis.php';
     include __DIR__ . '/web/nhi.php';
     include __DIR__ . '/web/billing.php';
+    include __DIR__ . '/web/iam.php';
 
     Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
 });
