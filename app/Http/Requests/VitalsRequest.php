@@ -12,7 +12,7 @@ class VitalsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->department_id == Department::NUR->value;
+        return $this->user()->hasRole('nurse');
     }
 
     /**
@@ -24,19 +24,22 @@ class VitalsRequest extends FormRequest
     {
         return [
             'temperature' => 'nullable|numeric',
-            'blood_pressure' => ['nullable', function ($attr, $value, $fail) {
-                if (!preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
-                    $fail('Invalid blood pressure format');
+            'blood_pressure' => [
+                'nullable',
+                function ($attr, $value, $fail) {
+                    if (!preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                        $fail('Invalid blood pressure format');
+                    }
                 }
-            }],
+            ],
             'pulse' => 'nullable|numeric',
             'respiratory_rate' => 'nullable|numeric',
             'weight' => 'nullable|numeric',
             'height' => 'nullable|numeric',
             'lmp' => 'nullable|date',
             'edd' => 'required_with:lmp|date',
-            'gravida'  => 'required|integer',
-            'parity'  => 'required|integer',
+            'gravida' => 'required|integer',
+            'parity' => 'required|integer',
             'risk_assessment' => 'nullable|array',
         ];
     }

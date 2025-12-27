@@ -6,7 +6,7 @@ use App\Http\Controllers\Records\HistoryController;
 use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Support\Facades\Route;
 
-Route::name('records.')->prefix('/records')->middleware(['datalog'])->group(function () {
+Route::name('records.')->prefix('/records')->middleware(['role:record', 'datalog'])->group(function () {
 
     Route::match(['get', 'post'], '/patients', [PatientsController::class, 'index'])->name('patients');
     Route::match(['get', 'post'], '/patients/{patient}', [PatientsController::class, 'show'])->name('patient');

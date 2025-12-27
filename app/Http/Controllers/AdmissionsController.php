@@ -19,24 +19,26 @@ class AdmissionsController extends Controller
     public function index(Request $request)
     {
         $admissions = Admission::active()->latest()->get();
-        if (request()->user()->department_id == Department::DOC->value) {
+        if (request()->user()->hasRole('doctor')) {
             return view('doctors.admissions.index', ['admissions' => $admissions]);
         }
         return view('nursing.admissions.index', ['admissions' => $admissions]);
     }
 
-    public function show(Request  $request, Admission $admission)
+    public function show(Request $request, Admission $admission)
     {
         if ($request->isMethod('POST')) {
             $action = $request->input('submit');
             // Log vitals
             if ($action === 'vitals') {
                 $request->validate([
-                    'blood_pressure' => [function ($field, $value, $fail) {
-                        if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
-                            return $fail("Invalid format for blood pressure.");
+                    'blood_pressure' => [
+                        function ($field, $value, $fail) {
+                            if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                                return $fail("Invalid format for blood pressure.");
+                            }
                         }
-                    }],
+                    ],
                     'temperature' => 'numeric',
                     'pulse' => 'numeric',
                     'respiratory_rate' => 'numeric',
@@ -70,11 +72,11 @@ class AdmissionsController extends Controller
 
         $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'tests', 'plan.treatments', 'delivery_note']);
 
-        if (request()->user()->department_id == Department::DOC->value) {
+        if (request()->user()->hasRole('doctor')) {
             return view('doctors.admissions.show', ['data' => $admission]);
         }
 
-        if (request()->user()->department_id  == Department::NUR->value) {
+        if (request()->user()->hasRole('nurse')) {
             return view('nursing.admissions.show', ['admission' => $admission]);
         }
     }
@@ -303,7 +305,9 @@ class AdmissionsController extends Controller
         }
     }
 
-    public function saveDeliveryNote(Request $request, Admission $admission) {}
+    public function saveDeliveryNote(Request $request, Admission $admission)
+    {
+    }
 
     public function getOpNote(Request $request, OperationNote $opnote)
     {

@@ -36,12 +36,7 @@ class PatientCheckIn extends Component
             $this->visit_type = 1;
         }
 
-        $this->consultants = User::whereIn(
-            'department_id',
-            [
-                Department::DOC->value,
-            ]
-        )->get();
+        $this->consultants = User::role('doctor')->get();
 
         $this->consultant = $this->consultants->first()?->id;
     }

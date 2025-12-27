@@ -9,7 +9,7 @@ use App\Http\Controllers\IT\ProductsController;
 use App\Http\Middleware\VerifyCsrfToken;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-Route::name('it.')->middleware(['department:' . Department::IT->value])->group(function () {
+Route::name('it.')->middleware(['role:admin'])->group(function () {
     Route::get('/department/{dep}', [StaffController::class, 'department'])->name('department');
 
     Route::match(['get', 'post'], '/wards', [AdmissionsController::class, 'wards'])->name('wards');
@@ -25,7 +25,7 @@ Route::name('it.')->middleware(['department:' . Department::IT->value])->group(f
         Route::get('/', [ProductsController::class, 'index'])->name('products');
         Route::post('/', [ProductsController::class, 'addProducts']);
         Route::get('/get-products', [ProductsController::class, 'fetchProducts'])->middleware(['api', 'auth'])->name('get-products');
-        Route::match(['GET','POST'], '/get-products/{product}', [ProductsController::class, 'show'])->name('show-product');
+        Route::match(['GET', 'POST'], '/get-products/{product}', [ProductsController::class, 'show'])->name('show-product');
     });
 
     Route::prefix('/crm')->group(function () {

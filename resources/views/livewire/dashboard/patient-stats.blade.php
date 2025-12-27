@@ -1,32 +1,32 @@
 <div>
     {{-- <div class="flex-col md:flex-row flex gap-y-2 justify-between gap-x-3 pb-3"> --}}
-    <div class="grid md:grid-cols-3 gap-y-2 gap-x-3">
-        <div class="card bg-white">
-            <div class="header card-header">
-                {{ $patients }}
+        <div class="grid md:grid-cols-3 gap-y-2 gap-x-3">
+            <div class="card bg-white">
+                <div class="header card-header">
+                    {{ $patients }}
+                </div>
+                <div class="footer">
+                    Patients
+                </div>
             </div>
-            <div class="footer">
-                Patients
+            <div class="card bg-white">
+                <div class="header card-header">
+                    {{ $patientsToday }}
+                </div>
+                <div class="footer">
+                    Patients Today
+                </div>
             </div>
-        </div>
-        <div class="card bg-white">
-            <div class="header card-header">
-                {{ $patientsToday }}
+            <div class="card bg-white">
+                <div class="header card-header">
+                    {{ $currentAdmissions }}
+                </div>
+                <div class="footer">
+                    Admissions
+                </div>
             </div>
-            <div class="footer">
-                Patients Today
-            </div>
-        </div>
-        <div class="card bg-white">
-            <div class="header card-header">
-                {{ $currentAdmissions }}
-            </div>
-            <div class="footer">
-                Admissions
-            </div>
-        </div>
 
-        @if ($user->department->name == 'Records')
+            @role('record')
             <div class="card">
                 <div class="card-header header">
                     {{ $stats['pendingBills'] }}
@@ -35,10 +35,10 @@
                     <a class="link" href="{{route('billing.index')}}">Pending Bills</a>
                 </div>
             </div>
-        @endif
-    </div>
+            @endrole
+        </div>
 
-    @if (in_array($user->department_id, [DepartmentsEnum::REC->value]))
+        @role('record')
         <div class="card py px mb-1">
             <div class="card-header">
                 Waiting Patients
@@ -67,11 +67,9 @@
                                 <td>{{ $v->created_at->format('Y-m-d h:iA') }}</td>
                                 <td>{{ $v->readable_visit_type }}</td>
                                 <td>
-                                    @if ($user->department_id == DepartmentsEnum::REC->value)
-                                        <a class="btn btn-sm bg-green-400"
-                                            href="{{ route('billing.patient-bills', ['patient' => $v->patient_id]) }}">Check
-                                            out</a>
-                                    @endif
+                                    <a class="btn btn-sm bg-green-400"
+                                        href="{{ route('billing.patient-bills', ['patient' => $v->patient_id]) }}">Check
+                                        out</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -79,16 +77,16 @@
                 </table>
             </div>
         </div>
-    @endif
-</div>
+        @endrole
+    </div>
 
-@push('scripts')
-    <script>
-        let table = $("#waitlist-table").DataTable({
-            responsive: true,
-            order: [
-                [4, 'desc']
-            ]
-        });
-    </script>
-@endpush
+    @push('scripts')
+        <script>
+            let table = $("#waitlist-table").DataTable({
+                responsive: true,
+                order: [
+                    [4, 'desc']
+                ]
+            });
+        </script>
+    @endpush

@@ -7,7 +7,7 @@ use App\Http\Middleware\RestrictDepartment;
 use Illuminate\Support\Facades\Route;
 
 Route::name('doctor.')->middleware(['datalog', 'auth'])->group(function () {
-    Route::middleware(['department:' . Department::DOC->value])->group(function () {
+    Route::middleware(['role:doctor'])->group(function () {
         Route::match(['get', 'post'], '/treat/{visit}', [PatientsController::class, 'treat'])->name('treat');
         Route::match(['get', 'post'], '/review/{documentation}', [PatientsController::class, 'followUp'])->name('follow-up');
 

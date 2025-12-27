@@ -18,11 +18,12 @@
                 <td>{{ $d->created_at->format('Y/m/d H:i A') }}</td>
                 <td>{{ $d->visit->type }}</td>
                 <td>
-                    @if (auth()->user()->department_id == DepartmentsEnum::DIS->value)
-                        <a href="{{ route('dis.get-prescriptions', $d) }}">View</a>
-                    @else
-                        <a href="{{ route('phm.get-prescription', $d) }}">View</a>
-                    @endif
+                    @role('billing')
+                    <a href="{{ route('dis.get-prescriptions', $d) }}">View</a>
+                    @endrole
+                    @role('pharmacy')
+                    <a href="{{ route('phm.get-prescription', $d) }}">View</a>
+                    @endrole
                 </td>
             </tr>
         @endforeach

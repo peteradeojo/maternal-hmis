@@ -8,83 +8,64 @@ use Illuminate\Support\Facades\Broadcast;
 
 const T1 = 0.3;
 
-function departmentRoutes()
+function authorizedRoutes()
 {
-    $base = [
-        route('user-profile') => ['Profile', 'fa-gear'],
-        route('logout') => ['Logout', 'fa-sign-out'],
+    $user = auth()->user();
+    $routes = [
+        route('dashboard') => ['Dashboard', 'fa-home', null],
     ];
 
-    $doctors =
-        [
-            route('doctor.history') => ['History', 'fa-clock'],
-            route('doctor.admissions') => ['Wards', 'fa-bed'],
-            route('doctor.anc-bookings') => ['Antenatal Appointments', 'fa-book'],
-        ];
+    if ($user->hasRole('doctor')) {
+        $routes[route('doctor.history')] = ['History', 'fa-clock', null];
+        $routes[route('doctor.admissions')] = ['Wards', 'fa-bed', null];
+        $routes[route('doctor.anc-bookings')] = ['Antenatal Appointments', 'fa-book', null];
+    }
 
-    $nurses = [
-        // route('nurses.vitals') => 'Vitals',
-        route('nurses.admissions.get') => ['Admissions', 'fa-bed'],
-        route('nurses.anc-bookings') => ['Antenatal Bookings', 'fa-female'],
-    ];
+    if ($user->hasRole('nurse')) {
+        $routes[route('nurses.admissions.get')] = ['Admissions', 'fa-bed', null];
+        $routes[route('nurses.anc-bookings')] = ['Antenatal Bookings', 'fa-female', null];
+    }
 
-    $records = [
-        route('records.patients') => ['Patients', 'fa-person'],
-        route('billing.index') => ['Billing', 'fa-money-bill-wave'],
-        // route('records.history') => 'Visit History',
-        route('records.admissions') => ['Admissions', 'fa-bed'],
-    ];
+    if ($user->hasRole('record')) {
+        $routes[route('records.patients')] = ['Patients', 'fa-person', null];
+        $routes[route('records.admissions')] = ['Admissions', 'fa-bed', null];
+    }
 
-    $it = [
-        route('it.staff') => ['Staff', 'fa-people'],
-        route('it.wards') => ['Wards', 'fa-bed'],
-        route('it.products') => ['Products', 'fa-item'],
-        route('it.crm-index') => ['CRM', 'fa-list'],
-    ];
+    if ($user->hasRole('admin')) {
+        $routes[route('it.staff')] = ['Staff', 'fa-people', null];
+        $routes[route('it.wards')] = ['Wards', 'fa-bed', null];
+        $routes[route('it.products')] = ['Products', 'fa-item', null];
+        $routes[route('it.crm-index')] = ['CRM', 'fa-list', null];
+    }
 
-    $lab = [
-        route('lab.history') => ['History', 'fa-clock'],
-        route('lab.admissions') => ['Admissions', 'fa-bed'],
-        route('lab.antenatals') => ['Antenatal Registration', 'fa-heart'],
-    ];
+    if ($user->hasRole('lab')) {
+        $routes[route('lab.history')] = ['History', 'fa-clock', null];
+        $routes[route('lab.admissions')] = ['Admissions', 'fa-bed', null];
+        $routes[route('lab.antenatals')] = ['Antenatal Registration', 'fa-heart', null];
+    }
 
-    $rad = [
-        route('rad.scans') => ['Scans', 'fa-xray'],
-        route('rad.history') => ['History', 'fa-clock'],
-    ];
+    if ($user->hasRole('radiology')) {
+        $routes[route('rad.scans')] = ['Scans', 'fa-xray', null];
+        $routes[route('rad.history')] = ['History', 'fa-clock', null];
+    }
 
-    $phm = [
-        route('phm.prescriptions') => ['Prescriptions', 'fa-prescription'],
-        route('phm.inventory.index') => ['Inventory', ''],
-        route('phm.admissions') => ['Wards', 'fa-bed'],
-    ];
+    if ($user->hasRole('pharmacy')) {
+        $routes[route('phm.prescriptions')] = ['Prescriptions', 'fa-prescription', null];
+        $routes[route('phm.inventory.index')] = ['Inventory', 'fa-warehouse', null];
+        $routes[route('phm.admissions')] = ['Wards', 'fa-bed', null];
+    }
 
-    $dis = [
-        route('dis.index') => ['Prescriptions', 'fa-prescription'],
-    ];
+    if ($user->hasRole('billing')) {
+        $routes[route('billing.index')] = ['Billing', 'fa-money-bill-wave', null];
+        $routes[route('dis.index')] = ['Prescriptions', 'fa-prescription', null];
+        $routes[route('nhi.index')] = ['Patients', 'fa-person', null];
+        $routes[route('nhi.encounters')] = ['Encounters', 'fa-walk', null];
+    }
 
-    $nhi = [
-        route('nhi.index') => ['Patients', 'fa-person'],
-        route('nhi.encounters') => ['Encounters', 'fa-walk'],
-        route('billing.index') => ['Billing', 'fa-money-bill-wave'],
-        route('records.admissions') => ['Admissions', 'fa-bed'],
-    ];
+    $routes[route('user-profile')] = ['Profile', 'fa-gear', null];
+    $routes[route('logout')] = ['Logout', 'fa-sign-out', null];
 
-    $dashboard = [
-        route('dashboard') => ['Dashboard', 'fa-home'],
-    ];
-
-    return [
-        Department::DOC->value => array_merge($dashboard, $doctors, $base),
-        Department::NUR->value => array_merge($dashboard, $nurses, $base),
-        Department::REC->value => array_merge($dashboard, $records, $base),
-        Department::IT->value => array_merge($dashboard, $it, $base),
-        Department::LAB->value => array_merge($dashboard, $lab, $base),
-        Department::RAD->value => array_merge($dashboard, $rad, $base),
-        Department::PHA->value => array_merge($dashboard, $phm, $base),
-        Department::DIS->value => array_merge($dashboard, $dis, $base),
-        Department::NHI->value => array_merge($dashboard, $nhi, $base),
-    ];
+    return $routes;
 }
 
 function ancCardType(int $value)

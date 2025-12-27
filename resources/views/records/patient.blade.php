@@ -7,7 +7,8 @@
 
 @section('content')
     {{-- <div class="card py px">
-        <a href="{{ route('records.patient.edit', $patient) }}" class="btn btn-red"><u>Edit this patient information</u>.</a>
+        <a href="{{ route('records.patient.edit', $patient) }}" class="btn btn-red"><u>Edit this patient
+                information</u>.</a>
     </div> --}}
     <div class="p-8 bg-white">
         <div class="header">
@@ -30,33 +31,32 @@
                     <p><b>Religion: </b> {{ $patient->religion }}</p>
                 </div>
 
-                @if (auth()->user()->department_id == DepartmentsEnum::REC->value)
-                    <div class="grid grid-cols-2 p-2 gap-2 no-print">
-                        <button
-                            class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
-                            <span>Visits this year</span>
-                            <span class="text-xl font-semibold">
-                                {{ $patient->visits->where('created_at', '>=', date('Y-01-01'))->count() }}
-                            </span>
-                            <span>
-                                Last visit: {{ $patient->visits->last()?->created_at }}
-                            </span>
-                        </button>
-                        <button class="rounded bg-teal-400 hover:text-white hover:scale-[1.04] duration-200"
-                            id="edit-patient">
-                            Update patient details <i class="fa fa-edit"></i>
-                        </button>
-                        <button class="border rounded bg-green-400 hover:text-white hover:scale-[1.04] duration-200"
-                            id="start-visit">
-                            Start a visit <i class="fa fa-user-circle"></i>
-                        </button>
-                        <button class="border rounded bg-blue-200 hover:text-white hover:scale-[1.04] duration-200">
-                            Print patient profile <i class="fa fa-address-card"></i>
-                        </button>
-                        {{-- <button class="border rounded">
+                @role('record')
+                <div class="grid grid-cols-2 p-2 gap-2 no-print">
+                    <button
+                        class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
+                        <span>Visits this year</span>
+                        <span class="text-xl font-semibold">
+                            {{ $patient->visits->where('created_at', '>=', date('Y-01-01'))->count() }}
+                        </span>
+                        <span>
+                            Last visit: {{ $patient->visits->last()?->created_at }}
+                        </span>
+                    </button>
+                    <button class="rounded bg-teal-400 hover:text-white hover:scale-[1.04] duration-200" id="edit-patient">
+                        Update patient details <i class="fa fa-edit"></i>
+                    </button>
+                    <button class="border rounded bg-green-400 hover:text-white hover:scale-[1.04] duration-200"
+                        id="start-visit">
+                        Start a visit <i class="fa fa-user-circle"></i>
+                    </button>
+                    <button class="border rounded bg-blue-200 hover:text-white hover:scale-[1.04] duration-200">
+                        Print patient profile <i class="fa fa-address-card"></i>
+                    </button>
+                    {{-- <button class="border rounded">
                     </button> --}}
-                    </div>
-                @endif
+                </div>
+                @endrole
             </div>
         </div>
     </div>
@@ -83,9 +83,9 @@
                         <p><b>Category:</b>
                             {{ preg_replace('/_/', ' ', $patient->antenatalProfiles[0]?->card_type ?? '') }}</p>
                         <p><b>Registration Date:</b> {{ $patient->antenatalProfiles[0]?->created_at->format('Y-m-d') }}</p>
-                        <p><b>Status: </b> {{ Status::tryFrom($patient->anc_profile->status)?->name }} | <a href="#"
-                                class="link" id="close-anc-profile"
-                                data-id="{{ $patient->antenatalProfiles[0]->id }}">Delete this profile</a></p>
+                        <p><b>Status: </b> {{ Status::tryFrom($patient->anc_profile->status)?->name }} | <a href="#" class="link"
+                                id="close-anc-profile" data-id="{{ $patient->antenatalProfiles[0]->id }}">Delete this profile</a>
+                        </p>
                     @endif
                 </div>
             </div>
@@ -179,19 +179,19 @@
                 });
             });
 
-            $("#close-anc-profile").on("click", function() {
+            $("#close-anc-profile").on("click", function () {
                 useGlobalModal((a) => {
                     a.find("#global-modal-title").text("Close Antenatal Profile")
                     axios.get("{{ route('records.close-anc', ':profile') }}".replace(":profile", $(
                         this).attr('data-id'))).then(({
-                        data
-                    }) => {
-                        a.find("#global-modal-content").html(data);
-                    }).catch((err) => a.find("#global-modal-content").html(err.response.data))
+                            data
+                        }) => {
+                            a.find("#global-modal-content").html(data);
+                        }).catch((err) => a.find("#global-modal-content").html(err.response.data))
                 });
             })
 
-            asyncForm('#insurance-profile-form', "{{ route('api.records.insurance', $patient->id) }}", function(
+            asyncForm('#insurance-profile-form', "{{ route('api.records.insurance', $patient->id) }}", function (
                 e, {
                     data
                 }) {

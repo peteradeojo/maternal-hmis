@@ -81,8 +81,23 @@ class UserSeeder extends Seeder
             ],
         ];
 
+        $roleMap = [
+            Department::DOC->value => 'doctor',
+            Department::NUR->value => 'nurse',
+            Department::REC->value => 'record',
+            Department::PHA->value => 'pharmacy',
+            Department::LAB->value => 'lab',
+            Department::IT->value => 'admin',
+            Department::RAD->value => 'radiology',
+            Department::DIS->value => 'billing',
+            Department::NHI->value => 'billing',
+        ];
+
         foreach ($staff as $st) {
-            User::updateOrCreate(['phone' => $st['phone']], $st);
+            $user = User::updateOrCreate(['phone' => $st['phone']], $st);
+            if (isset($roleMap[$st['department_id']])) {
+                $user->syncRoles([$roleMap[$st['department_id']]]);
+            }
         }
     }
 }

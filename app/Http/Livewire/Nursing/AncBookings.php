@@ -18,7 +18,7 @@ class AncBookings extends Component
 
     public $resetChildComponent = 0;
 
-    public AntenatalProfile | null $profile;
+    public AntenatalProfile|null $profile;
 
     public function mount(User $user)
     {
@@ -38,10 +38,10 @@ class AncBookings extends Component
 
     public function render()
     {
-        if ($this->user->department_id == Department::DOC->value) {
+        if ($this->user->hasRole('doctor')) {
             return view('doctors.anc-booking-form');
         }
-        if ($this->user->department_id == Department::LAB->value) {
+        if ($this->user->hasRole('lab')) {
             return view('lab.anc-bookings');
         }
         return view('livewire.nursing.anc-bookings');

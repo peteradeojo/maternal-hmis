@@ -4,7 +4,7 @@ use App\Enums\Department;
 use App\Http\Controllers\LabController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/lab')->name('lab.')->middleware(['department:' . Department::LAB->value, 'datalog'])->group(function () {
+Route::prefix('/lab')->name('lab.')->middleware(['role:lab', 'datalog'])->group(function () {
     Route::get('/history', [LabController::class, 'history'])->name('history');
     Route::get('/anc', function () {
         $user = auth()->user();
