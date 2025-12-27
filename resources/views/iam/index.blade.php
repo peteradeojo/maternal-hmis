@@ -3,7 +3,7 @@
 @section('title', 'IAM Dashboard')
 
 @section('content')
-    <div class="container mx-auto px-4 py-6">
+    <div class="container mx-auto px-4 py-6 grid gap-y-4">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Identity & Access Management</h1>
         </div>

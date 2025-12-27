@@ -168,4 +168,5 @@ class Patient extends Model
 
         return $query->whereRaw('1 = 0'); // No access
     }
+    
 }

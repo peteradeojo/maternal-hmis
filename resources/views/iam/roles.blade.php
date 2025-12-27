@@ -11,6 +11,6 @@
             </a>
         </div>
 
-        @livewire('iam.role-manager')
+        @livewire('i-a-m.role-manager')
     </div>
 @endsection

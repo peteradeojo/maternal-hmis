@@ -11,6 +11,6 @@
             </a>
         </div>
 
-        @livewire('iam.permission-manager')
+        @livewire('i-a-m.permission-manager')
     </div>
 @endsection

@@ -35,7 +35,7 @@
                 serverSide: true,
                 ajax: "{{ route('iam.get-datalogs') }}",
                 columns: [
-                    { data: 'created_at', name: 'created_at' },
+                    { data: ({ created_at }) => parseDateFromSource(created_at, true), name: 'created_at' },
                     { data: 'user.name', name: 'user.name', defaultContent: 'Guest' },
                     { data: 'action', name: 'action' },
                     {

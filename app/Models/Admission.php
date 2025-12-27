@@ -91,7 +91,7 @@ class Admission extends Model implements OperationalEvent
         return $this->morphOne(ConsultationNote::class, 'visit')->latest()->where('code', NoteCodes::Delivery);
     }
 
-    #[\Override]
+    #[Override]
     public function scopeActive($query)
     {
         return $query->whereNotIn('status', [Status::closed->value, Status::cancelled->value, Status::ejected->value]);
