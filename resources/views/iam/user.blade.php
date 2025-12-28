@@ -27,7 +27,7 @@
         <p>Roles: {{ $user->roles->pluck('name')->join(', ') }}</p>
 
         <p class="basic-header">Roles</p>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid md:grid-cols-3 gap-4">
             @foreach ($roles as $i => $role)
                 <div class="form-group">
                     <label>
