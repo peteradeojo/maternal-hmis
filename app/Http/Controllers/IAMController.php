@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AuditLog;
 use App\Models\Datalog;
 use App\Models\User;
+use Cloudinary\Api\HttpStatusCode;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -55,12 +56,33 @@ class IAMController extends Controller
         return $this->dataTable($request, $query);
     }
 
-    public function users(Request $request) {
+    public function users(Request $request)
+    {
         $users = User::all();
         return view('iam.users', compact('users'));
     }
 
-    public function manageUser(Request $request, User $user) {
-        return view('iam.user', compact('user'));
+    public function manageUser(Request $request, User $user)
+    {
+        $permissions = Permission::all();
+        $roles = Role::all();
+        return view('iam.user', compact('user', 'roles', 'permissions'));
+    }
+
+    public function saveUserRoles(Request $request, User $user)
+    {
+        $rUser = $request->user();
+
+        if (!$rUser->hasRole('admin')) {
+            return abort(403);
+        }
+
+        $request->validate([
+            'roles' => 'required|array',
+            'roles.*' => 'required|exists:roles,name',
+        ]);
+
+        $user->syncRoles([$request->input('roles')]);
+        return response()->json([], HttpStatusCode::OK);
     }
 }

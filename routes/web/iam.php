@@ -15,4 +15,5 @@ Route::prefix('iam')->name('iam.')->middleware(['auth', 'role:admin'])->group(fu
 
     Route::get('users', [IAMController::class, 'users'])->name('users');
     Route::get('users/{user}', [IAMController::class, 'manageUser'])->name('manage-user');
+    Route::post('users/{user}/roles', [IAMController::class, 'saveUserRoles'])->name('save-user-roles');
 });
