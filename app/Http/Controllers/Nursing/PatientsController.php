@@ -22,7 +22,9 @@ class PatientsController extends Controller
     public function getPendingVitals(Request $request)
     {
         $this->authorize('viewAny', Visit::class);
-        return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category'])->has('vitals')->where('awaiting_vitals', true), [
+        return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category'])->where(function ($query) {
+            $query->doesntHave('vitals')->orWhere('awaiting_vitals', true);
+        }), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
                     $query->where('name', 'like', "$search%")->orWhere('card_number', "like", "$search%");
