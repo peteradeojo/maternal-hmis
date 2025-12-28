@@ -75,7 +75,7 @@
                             <a href="{{ route('doctor.show-admission-plan', $data) }}" class="link">View Plan</a>
                         </td> --}}
                         <td>
-                            <a href="#" @click="$dispatch('open-discharge-form')" class="link">Discharge</a>
+                            <a href="#" @click.prevent="$dispatch('open-discharge-form')" class="link">Discharge</a>
                         </td>
                     </tr>
                 </tbody>
