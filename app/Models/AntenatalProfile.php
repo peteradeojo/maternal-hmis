@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
 
 class AntenatalProfile extends Model
 {
-    use HasFactory, SoftDeletes, Auditable;
+    use HasFactory, Auditable;
 
     protected $fillable = [
         'patient_id',
