@@ -8,60 +8,101 @@ use Illuminate\Support\Facades\Broadcast;
 
 const T1 = 0.3;
 
+function getRouteMap()
+{
+    $routeMap = [
+        'doctor' => [
+            route('doctor.history') => ['History', 'fa-clock', null],
+            route('doctor.admissions') => ['Wards', 'fa-bed', null],
+            route('doctor.anc-bookings') => ['Antenatal Appointments', 'fa-book', null],
+        ],
+        'nurse' => [
+            route('nurses.admissions.get') => ['Admissions', 'fa-bed', null],
+            route('nurses.anc-bookings') => ['Antenatal Bookings', 'fa-female', null],
+        ],
+        'record' => [
+            route('records.patients') => ['Patients', 'fa-person', null],
+            route('records.admissions') => ['Admissions', 'fa-bed', null],
+        ],
+        'admin' => [
+            route('it.staff') => ['Staff', 'fa-people', null],
+            route('it.wards') => ['Wards', 'fa-bed', null],
+            route('it.products') => ['Products', 'fa-item', null],
+            route('it.crm-index') => ['CRM', 'fa-list', null],
+            route('iam.index') => ['IAM', 'fa-shield-halved', null],
+        ],
+        'lab' => [
+            route('lab.history') => ['History', 'fa-clock', null],
+            route('lab.admissions') => ['Admissions', 'fa-bed', null],
+            route('lab.antenatals') => ['Antenatal Registration', 'fa-heart', null],
+        ],
+        'radiology' => [
+            route('rad.scans') => ['Scans', 'fa-xray', null],
+            route('rad.history') => ['History', 'fa-clock', null],
+        ],
+        'pharmacy' => [
+            route('phm.prescriptions') => ['Prescriptions', 'fa-prescription', null],
+            route('phm.inventory.index') => ['Inventory', 'fa-warehouse', null],
+            route('phm.admissions') => ['Wards', 'fa-bed', null],
+        ],
+        'billing' => [
+            route('billing.index') => ['Billing', 'fa-money-bill-wave', null],
+            route('dis.index') => ['Prescriptions', 'fa-prescription', null],
+            route('nhi.index') => ['Patients', 'fa-person', null],
+            route('nhi.encounters') => ['Encounters', 'fa-walk', null],
+        ],
+    ];
+    return $routeMap;
+}
+
 function authorizedRoutes()
 {
+    $routeMap = getRouteMap();
+
     $user = auth()->user();
     $routes = [
         route('dashboard') => ['Dashboard', 'fa-home', null],
     ];
 
     if ($user->hasRole('doctor')) {
-        $routes[route('doctor.history')] = ['History', 'fa-clock', null];
-        $routes[route('doctor.admissions')] = ['Wards', 'fa-bed', null];
-        $routes[route('doctor.anc-bookings')] = ['Antenatal Appointments', 'fa-book', null];
+        $routes = array_merge($routes, $routeMap['doctor']);
     }
 
     if ($user->hasRole('nurse')) {
-        $routes[route('nurses.admissions.get')] = ['Admissions', 'fa-bed', null];
-        $routes[route('nurses.anc-bookings')] = ['Antenatal Bookings', 'fa-female', null];
+        $routes = array_merge($routes, $routeMap['nurse']);
     }
 
     if ($user->hasRole('record')) {
-        $routes[route('records.patients')] = ['Patients', 'fa-person', null];
-        $routes[route('records.admissions')] = ['Admissions', 'fa-bed', null];
-    }
-
-    if ($user->hasRole('admin')) {
-        $routes[route('it.staff')] = ['Staff', 'fa-people', null];
-        $routes[route('it.wards')] = ['Wards', 'fa-bed', null];
-        $routes[route('it.products')] = ['Products', 'fa-item', null];
-        $routes[route('it.crm-index')] = ['CRM', 'fa-list', null];
-        $routes[route('iam.index')] = ['IAM', 'fa-shield-halved', null];
+        $routes = array_merge($routes, $routeMap['record']);
     }
 
     if ($user->hasRole('lab')) {
-        $routes[route('lab.history')] = ['History', 'fa-clock', null];
-        $routes[route('lab.admissions')] = ['Admissions', 'fa-bed', null];
-        $routes[route('lab.antenatals')] = ['Antenatal Registration', 'fa-heart', null];
+        $routes = array_merge($routes, $routeMap['lab']);
     }
 
     if ($user->hasRole('radiology')) {
-        $routes[route('rad.scans')] = ['Scans', 'fa-xray', null];
-        $routes[route('rad.history')] = ['History', 'fa-clock', null];
+        $routes = array_merge($routes, $routeMap['radiology']);
     }
 
     if ($user->hasRole('pharmacy')) {
-        $routes[route('phm.prescriptions')] = ['Prescriptions', 'fa-prescription', null];
-        $routes[route('phm.inventory.index')] = ['Inventory', 'fa-warehouse', null];
-        $routes[route('phm.admissions')] = ['Wards', 'fa-bed', null];
+        $routes = array_merge($routes, $routeMap['pharmacy']);
     }
 
     if ($user->hasRole('billing')) {
-        $routes[route('billing.index')] = ['Billing', 'fa-money-bill-wave', null];
-        $routes[route('dis.index')] = ['Prescriptions', 'fa-prescription', null];
-        $routes[route('nhi.index')] = ['Patients', 'fa-person', null];
-        $routes[route('nhi.encounters')] = ['Encounters', 'fa-walk', null];
+        $routes = array_merge($routes, $routeMap['billing']);
     }
+
+    if ($user->hasRole('admin')) {
+        // foreach ($routeMap as $role => $rM) {
+        //     $routes = array_merge($routes, $rM);
+        // }
+        $routes = array_merge($routes, $routeMap['admin']);
+    }
+
+    $uniqRoutes = [];
+    $uniqRoutes = array_unique(array_keys($routes));
+
+    $routes = array_combine($uniqRoutes, array_values($routes));
 
     $routes[route('user-profile')] = ['Profile', 'fa-gear', null];
     $routes[route('logout')] = ['Logout', 'fa-sign-out', null];

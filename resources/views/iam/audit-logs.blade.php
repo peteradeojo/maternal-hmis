@@ -37,7 +37,7 @@
                 serverSide: true,
                 ajax: "{{ route('iam.get-audit-logs') }}",
                 columns: [
-                    { data: 'created_at', name: 'created_at' },
+                    { data: ({ created_at }) => parseDateFromSource(created_at, true), name: 'created_at' },
                     { data: 'user.name', name: 'user.name', defaultContent: 'System' },
                     { data: 'event', name: 'event' },
                     { data: 'auditable_type', name: 'auditable_type' },
@@ -55,8 +55,38 @@
             $(document).on('click', '.view-details', function () {
                 const id = $(this).data('id');
                 // Implement details modal if needed
-                alert('Details for log ID: ' + id + '\nCheck console for raw data.');
-                console.log($('#audit-logs-table').DataTable().row($(this).parents('tr')).data());
+                // alert('Details for log ID: ' + id + '\nCheck console for raw data.');
+                const data = $('#audit-logs-table').DataTable().row($(this).parents('tr')).data();
+
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text('Audit Log Details');
+                    a.find(MODAL_CONTENT).html(`
+                        <p><strong>Date:</strong> ${data.created_at}</p>
+                        <p><strong>User:</strong> ${data.user.name}</p>
+                        <p><strong>Event:</strong> ${data.event}</p>
+                        <p><strong>Resource:</strong> ${data.auditable_type}</p>
+                        <p><strong>ID:</strong> ${data.auditable_id}</p>
+                        <p><strong>Details:</strong> ${data.data}</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Old Value</th>
+                                    <th>New Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.entries(data.new_values).map(([key, value]) => `
+                                    <tr>
+                                        <td>${key}</td>
+                                        <td>${data.old_values[key]}</td>
+                                        <td>${value}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `);
+                });
             });
         });
     </script>
