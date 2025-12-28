@@ -16,7 +16,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($visits as $v)
+                    {{-- @foreach ($visits as $v)
                         <tr>
                             <td>{{ $v->patient->name }}</td>
                             <td>{{ $v->patient->card_number }}</td>
@@ -33,7 +33,7 @@
                                 @endif
                             </td>
                         </tr>
-                    @endforeach
+                    @endforeach --}}
                 </tbody>
             </table>
         </div>
@@ -42,19 +42,22 @@
 
 @push('scripts')
     <script>
-        new DataTable('#patients', {
-            // ordering: false,
-            serverSide: true,
-            ajax: "{{ route('api.doctor.consultations') }}",
-            columns: [
-                { data: 'patient.name', name: 'patient.name' },
-                { data: 'patient.card_number', name: 'patient.card_number' },
-                { data: 'patient.category.name', name: 'patient.category.name' },
-                { data: 'type', name: 'type' },
-                { data: (row) => new Date(row.created_at).toLocaleString('en-CA'), name: 'created_at' },
-                { data: (row) => `<a href="{{ route('doctor.treat', ':id') }}" class="link">Start Visit</a>` .replace(':id', row.id)}
-            ],
-            responsive: true,
-        });
+        $(() => {
+            $("#patients").DataTable({
+                ordering: false,
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('api.doctor.consultations') }}",
+                columns: [
+                    { data: 'patient.name', name: 'patient.name' },
+                    { data: 'patient.card_number', name: 'patient.card_number' },
+                    { data: 'patient.category.name', name: 'patient.category.name' },
+                    { data: 'type', name: 'type' },
+                    { data: (row) => parseDateFromSource(row.created_at), name: 'created_at' },
+                    { data: (row) => `<a href="{{ route('doctor.treat', ':id') }}" class="link">Start Visit</a>` .replace(':id', row.id)}
+                ],
+                responsive: true,
+            });
+        })
     </script>
 @endpush
