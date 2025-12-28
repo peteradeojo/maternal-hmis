@@ -1,51 +1,69 @@
-<div>
-    {{-- <div class="flex-col md:flex-row flex gap-y-2 justify-between gap-x-3 pb-3"> --}}
-        <div class="grid md:grid-cols-3 gap-y-2 gap-x-3">
-            <div class="card bg-white">
-                <div class="header card-header">
-                    {{ $patients }}
-                </div>
-                <div class="footer">
-                    Patients
-                </div>
-            </div>
-            <div class="card bg-white">
-                <div class="header card-header">
-                    {{ $patientsToday }}
-                </div>
-                <div class="footer">
-                    Patients Today
-                </div>
-            </div>
-            <div class="card bg-white">
-                <div class="header card-header">
-                    {{ $currentAdmissions }}
-                </div>
-                <div class="footer">
-                    Admissions
-                </div>
-            </div>
+<div class="grid gap-y-4">
+    <div class="grid md:grid-cols-3 gap-y-2 gap-x-3">
+        <x-card>
+            <x-slot:title>
+                <p class="font-semibold text-4xl">{{ $patients }}</p>
+            </x-slot:title>
 
-            @role('record')
-            <div class="card">
-                <div class="card-header header">
-                    {{ $stats['pendingBills'] }}
-                </div>
-                <div class="footer">
-                    <a class="link" href="{{route('billing.index')}}">Pending Bills</a>
-                </div>
-            </div>
-            @endrole
-        </div>
+            <x-slot:footer>
+                @role(['record', 'admin'])
+                    <a href="{{ route('records.patients') }}" class="link">Patients &rarr;</a>
+                @else
+                    <p>Patients</p>
+                @endrole
+            </x-slot:footer>
+        </x-card>
+
+        <x-card border="green-500" color="green-500">
+            <x-slot:title>
+                <p class="font-semibold text-4xl">{{ $patientsToday }}</p>
+            </x-slot:title>
+
+            <x-slot:footer>
+                <p>Patients Today</p>
+            </x-slot:footer>
+        </x-card>
+
+        <x-card color="purple-700">
+            <x-slot:title>
+                <p class="font-semibold text-4xl">{{ $currentAdmissions }}</p>
+            </x-slot:title>
+
+            <x-slot:footer>
+                @role(['nurse'])
+                    <a href="{{ route('nurses.admissions.get') }}" class="hover:underline">Current Admissions &rarr;</a>
+                    @elserole(['record'])
+                    <a href="{{ route('records.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
+                    @elserole(['doctor'])
+                    <a href="{{ route('doctor.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
+                    @elserole(['billing', 'pharmacy'])
+                    <a href="{{ route('phm.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
+                @else
+                    <p>Current admissions</p>
+                @endrole
+            </x-slot:footer>
+        </x-card>
 
         @role('record')
+            <x-card border="green-500" color="green-500">
+                <x-slot:title>
+                    <span class="font-medium text-4xl">{{ $stats['pendingBills'] }}</span>
+                </x-slot:title>
+                <x-slot:footer>
+                    <a class="hover:underline" href="{{ route('billing.index') }}">Pending Bills &rarr;</a>
+                </x-slot:footer>
+            </x-card>
+        @endrole
+    </div>
+
+    @role('record')
         <div class="card py px mb-1">
             <div class="card-header">
                 Waiting Patients
             </div>
             <div class="body py">
-                <table class="table" id="waitlist-table">
-                    <thead>
+                <x-datatables id="waitlist-table">
+                    <x-slot:thead>
                         <tr>
                             <th>Name</th>
                             <th>Card Number</th>
@@ -55,8 +73,8 @@
                             <th>Visit Type</th>
                             <td></td>
                         </tr>
-                    </thead>
-                    <tbody>
+                    </x-slot:thead>
+                    <x-slot:tbody>
                         @foreach ($visits as $v)
                             <tr>
                                 <td><a href="{{ route('records.patient', $v->patient) }}"
@@ -73,20 +91,21 @@
                                 </td>
                             </tr>
                         @endforeach
-                    </tbody>
-                </table>
+                    </x-slot:tbody>
+                </x-datatables>
+
             </div>
         </div>
-        @endrole
-    </div>
+    @endrole
+</div>
 
-    @push('scripts')
-        <script>
-            let table = $("#waitlist-table").DataTable({
-                responsive: true,
-                order: [
-                    [4, 'desc']
-                ]
-            });
-        </script>
-    @endpush
+@push('scripts')
+    <script>
+        let table = $("#waitlist-table").DataTable({
+            responsive: true,
+            order: [
+                [4, 'desc']
+            ]
+        });
+    </script>
+@endpush

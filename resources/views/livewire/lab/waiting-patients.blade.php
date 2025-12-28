@@ -5,20 +5,17 @@
         </div>
         <div class="body foldable-body unfolded">
             <div class="py">
-                <table id="tests-table" class="table rounded-md">
-                    <thead>
+                <x-datatables id="tests-table">
+                    <x-slot:thead>
                         <tr>
                             <th>Name</th>
                             <th>Card Number</th>
                             <th>Date</th>
                             <th>Category</th>
-                            <th>Gender</th>
                             <th></th>
                         </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                    </x-slot:thead>
+                </x-datatables>
             </div>
         </div>
     </div>
@@ -40,7 +37,9 @@
                     data: 'patient.card_number'
                 },
                 {
-                    data: ({created_at}) => new Date(created_at).toLocaleString('en-US', {
+                    data: ({
+                        created_at
+                    }) => new Date(created_at).toLocaleString('en-US', {
                         timeZone: 'Africa/Lagos'
                     }),
                 },

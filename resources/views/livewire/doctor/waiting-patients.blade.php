@@ -4,38 +4,17 @@
             <p>Patients</p>
         </div>
         <div class="body py">
-            <table class="table" id="patients">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Card Number</th>
-                        <th>Category</th>
-                        <th>Visit Type</th>
-                        <th>Date & Time</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- @foreach ($visits as $v)
-                        <tr>
-                            <td>{{ $v->patient->name }}</td>
-                            <td>{{ $v->patient->card_number }}</td>
-                            <td>{{ $v->patient->category->name }}</td>
-                            <td>{{ $v->readable_visit_type }}</td>
-                            <td>{{ $v->created_at }}</td>
-                            <td>
-                                @if ($v->waiting_for_doctor)
-                                    <a href="{{ route('doctor.treat', $v) }}">Review Last
-                                        Documentation</a>
-                                @else
-                                    <a class="text-blue-600 underline" href="{{ route('doctor.treat', $v) }}">Start
-                                        Visit</a>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach --}}
-                </tbody>
-            </table>
+            <x-datatables id="patients">
+                <x-datatables-thead>
+                    <th>Name</th>
+                    <th>Card Number</th>
+                    <th>Card type</th>
+                    <th>Visit Type</th>
+                    <th>Date & Time</th>
+                    <th></th>
+                </x-datatables-thead>
+                <tbody></tbody>
+            </x-datatables>
         </div>
     </div>
 </div>
@@ -44,17 +23,35 @@
     <script>
         $(() => {
             $("#patients").DataTable({
-                ordering: false,
                 processing: true,
+                ordering: false,
                 serverSide: true,
                 ajax: "{{ route('api.doctor.consultations') }}",
-                columns: [
-                    { data: 'patient.name', name: 'patient.name' },
-                    { data: 'patient.card_number', name: 'patient.card_number' },
-                    { data: 'patient.category.name', name: 'patient.category.name' },
-                    { data: 'type', name: 'type' },
-                    { data: (row) => parseDateFromSource(row.created_at), name: 'created_at' },
-                    { data: (row) => `<a href="{{ route('doctor.treat', ':id') }}" class="link">Start Visit</a>` .replace(':id', row.id)}
+                columns: [{
+                        data: 'patient.name',
+                        name: 'patient.name'
+                    },
+                    {
+                        data: 'patient.card_number',
+                        name: 'patient.card_number'
+                    },
+                    {
+                        data: 'patient.category.name',
+                        name: 'patient.category.name'
+                    },
+                    {
+                        data: 'type',
+                        name: 'type'
+                    },
+                    {
+                        data: (row) => parseDateFromSource(row.created_at),
+                        name: 'created_at'
+                    },
+                    {
+                        data: (row) =>
+                            `<a href="{{ route('doctor.treat', ':id') }}" class="link">Start Visit</a>`
+                            .replace(':id', row.id)
+                    }
                 ],
                 responsive: true,
             });
