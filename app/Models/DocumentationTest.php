@@ -27,7 +27,7 @@ class DocumentationTest extends Model
     }
 
     protected $casts = [
-        'results' => 'array',
+        'results' => 'object',
     ];
 
     public function documentation()
