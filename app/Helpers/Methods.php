@@ -47,7 +47,7 @@ function getRouteMap()
         ],
         'billing' => [
             route('billing.index') => ['Billing', 'fa-money-bill-wave', null],
-            route('dis.index') => ['Prescriptions', 'fa-prescription', null],
+            // route('dis.index') => ['Prescriptions', 'fa-prescription', null],
             route('nhi.index') => ['Patients', 'fa-person', null],
             route('nhi.encounters') => ['Encounters', 'fa-walk', null],
         ],
