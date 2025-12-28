@@ -12,4 +12,7 @@ Route::prefix('iam')->name('iam.')->middleware(['auth', 'role:admin'])->group(fu
 
     Route::get('/get-audit-logs', [IAMController::class, 'getAuditLogs'])->name('get-audit-logs');
     Route::get('/get-datalogs', [IAMController::class, 'getDatalogs'])->name('get-datalogs');
+
+    Route::get('users', [IAMController::class, 'users'])->name('users');
+    Route::get('users/{user}', [IAMController::class, 'manageUser'])->name('manage-user');
 });

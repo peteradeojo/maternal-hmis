@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\Datalog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -52,5 +53,14 @@ class IAMController extends Controller
         $query = Datalog::with(['user'])->latest();
 
         return $this->dataTable($request, $query);
+    }
+
+    public function users(Request $request) {
+        $users = User::all();
+        return view('iam.users', compact('users'));
+    }
+
+    public function manageUser(Request $request, User $user) {
+        return view('iam.user', compact('user'));
     }
 }

@@ -72,6 +72,21 @@
                         Failures &rarr;</a>
                 </div>
             </div>
+
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100 text-red-500 mr-4">
+                        <i class="fa fa-person text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 uppercase font-semibold">Users</p>
+                        {{-- <p class="text-2xl font-bold text-gray-800">{{ $datalogsCount }}</p> --}}
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="{{ route('iam.users') }}" class="text-red-500 hover:text-red-700 text-sm font-medium">Manage Users &rarr;</a>
+                </div>
+            </div>
         </div>
 
         <div class="bg-white rounded-lg shadow overflow-hidden">
