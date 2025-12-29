@@ -294,6 +294,7 @@ class AdmissionsController extends Controller
             'incision' => 'nullable|string',
             'findings' => 'required|string',
             'procedure' => 'required|string',
+            'procedure_name' => 'required|string',
         ]);
 
         try {
@@ -313,9 +314,7 @@ class AdmissionsController extends Controller
         }
     }
 
-    public function saveDeliveryNote(Request $request, Admission $admission)
-    {
-    }
+    public function saveDeliveryNote(Request $request, Admission $admission) {}
 
     public function getOpNote(Request $request, OperationNote $opnote)
     {

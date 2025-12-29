@@ -83,7 +83,14 @@
         </div>
 
         <div class="p-3">
-            <x-tabs_v2 id="tablist" target="plan-tabs" :options="['Admission Plan', 'Vitals Chart', 'Drug Chart', 'Continuation notes', 'Operation Notes', 'Delivery Note']" :active="1">
+            <x-tabs_v2 id="tablist" target="plan-tabs" :options="[
+                'Admission Plan',
+                'Vitals Chart',
+                'Drug Chart',
+                'Continuation notes',
+                'Operation Notes',
+                'Delivery Note',
+            ]" :active="1">
                 {{-- Admission Plan --}}
                 <div class="tab p-2">
                     <p class="text-lg font-semibold">Admission Plan</p>
@@ -125,7 +132,10 @@
                     <div class="py-2 grid gap-y-2">
                         @forelse ($data->operation_notes as $opnote)
                             <div data-id="{{ $opnote->id }}" class="p-2 border rounded cursor-pointer opnote">
-                                <p><b>Procedure:</b> {{ $opnote->procedure }}</p>
+                                <div>
+                                    <b>Procedure: {{ $opnote->procedure_name ?? '' }}</b>
+                                    <p>{{ $opnote->procedure }}</p>
+                                </div>
                                 <p><b>Surgeons:</b> {{ $opnote->surgeons }}</p>
                                 <p><small><b>Date: </b>{{ $opnote->created_at->format('Y-m-d h:i A') }}</small></p>
                             </div>
@@ -224,6 +234,10 @@
             </div>
             <div class="form-group">
                 <label>Procedure</label>
+                <x-input-text name="procedure_name" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label>Procedure Details</label>
                 <textarea name="procedure" rows="15" class="form-control" required></textarea>
             </div>
             <div class="form-group">

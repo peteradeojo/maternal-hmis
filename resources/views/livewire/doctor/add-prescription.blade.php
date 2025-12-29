@@ -40,6 +40,11 @@
                                         <option value="bd">bd</option>
                                         <option value="tds">tds</option>
                                         <option value="qds">qds</option>
+                                        <option value="3hourly">3 hourly</option>
+                                        <option value="4hourly">4 hourly</option>
+                                        <option value="6hourly">6 hourly</option>
+                                        <option value="8hourly">8 hourly</option>
+                                        <option value="12hourly">12 hourly</option>
                                         <option value="hourly">hourly</option>
                                         <option value="weekly">weekly</option>
                                         <option value="night">at night</option>
