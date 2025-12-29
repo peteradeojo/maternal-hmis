@@ -108,7 +108,7 @@ class Admission extends Model implements OperationalEvent
             return $query;
         }
 
-        if ($user->hasAnyRole(['doctor', 'nurse', 'record'])) {
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'pharmacy'])) {
             return $query;
         }
 

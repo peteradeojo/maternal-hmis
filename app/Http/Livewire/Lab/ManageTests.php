@@ -48,6 +48,7 @@ class ManageTests extends Component
         $this->tests = $this->visit->tests
             ->merge($this->visit->visit->tests)
             ->merge($this->visit->admission?->plan->tests ?? [])
+            ->merge($this->visit->plan?->tests ?? [])
             ->merge($this->visit->admission?->tests ?? []);
     }
 }
