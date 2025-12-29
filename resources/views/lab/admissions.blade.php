@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- @dump($adm[0]) --}}
     <div class="container">
         <div class="card">
             <div class="card-header">
