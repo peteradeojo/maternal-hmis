@@ -60,70 +60,6 @@ class LabController extends Controller
         return view('lab.take-tests', compact('tests', 'patient'));
     }
 
-    // public function test(Request $request, $visit)
-    // {
-    //     if ($request->method() !== 'POST') {
-    //         return view('lab.take-test', ['documentation' => $test->testable]);
-    //     }
-
-    //     $data = $request->validate([
-    //         'completed' => 'array',
-    //         'description' => 'array',
-    //         'description.*.*' => 'required|string',
-    //         'result' => 'array',
-    //         'result.*.*' => 'required|string',
-    //         'unit' => 'array',
-    //         'unit.*.*' => 'nullable|string',
-    //         'reference_range' => 'array',
-    //         'reference_range.*.*' => 'nullable|string',
-    //         'comment' => 'nullable|string',
-    //     ]);
-
-    //     foreach ($visit->visit->tests as $i => $test) {
-    //         if (isset($data['result'][$i])) {
-    //             $results = [];
-    //             $resultData = $data['result'][$i] ?? [];
-    //             $descriptionData = $data['description'][$i] ?? [];
-    //             $unitData = $data['unit'][$i] ?? [];
-    //             $referenceRangeData = $data['reference_range'][$i] ?? [];
-
-    //             foreach ($resultData as $j => $result) {
-    //                 $results[] = [
-    //                     'result' => $result,
-    //                     'description' => $descriptionData[$j],
-    //                     'unit' => $unitData[$j],
-    //                     'reference_range' => $referenceRangeData[$j],
-    //                 ];
-    //             }
-
-    //             DB::beginTransaction();
-    //             try {
-    //                 if (isset($data['completed'][$i])) {
-    //                     $test->status = Status::completed->value;
-    //                 }
-
-    //                 $test->results = $results;
-    //                 $test->tested_by = $request->user()->id;
-    //                 $test->save();
-    //                 DB::commit();
-    //             } catch (\Throwable $th) {
-    //                 DB::rollBack();
-    //                 logger()->emergency($th->getMessage());
-    //                 return back()->with('error', 'An error occured while saving test results');
-    //             }
-    //         }
-    //     }
-
-    //     if ($visit->visit->tests()->where('status', Status::completed->value)->count() > 0) {
-    //         $visit->awaiting_lab_results = false;
-    //     }
-
-    //     $visit->awaiting_doctor = true;
-    //     $visit->save();
-
-    //     return redirect()->route('dashboard')->with('success', 'Test results saved successfully');
-    // }
-
     public function history(Request $request)
     {
         return view('lab.history');
@@ -177,26 +113,6 @@ class LabController extends Controller
         $profile->save();
 
         return redirect()->route('lab.antenatals')->with('success', 'Tests booked successfully');
-    }
-
-    // public function testAnc(Request $request, AncVisit $visit)
-    // {
-    //     if ($request->method() !== 'POST') {
-    //         $visit->load(['tests', 'treatments']);
-    //         $tests = array_diff(AncVisit::testsList, ['HIV', 'Hepatitis B', 'VDRL', 'Blood Group', 'Genotype', 'Pap Smear']);
-    //         return view('lab.take-test', compact('tests', 'visit') + ['documentation' => $visit]);
-    //     }
-
-    //     $visit->visit->awaiting_doctor = true;
-    //     $visit->visit->save();
-
-    //     $this->processTests($request, $request->all(), $visit);
-
-    //     return redirect()->route('dashboard');
-    // }
-
-    public function antenatalBooking()
-    {
     }
 
     public function testReport(Request $request, Patient $patient)
@@ -270,13 +186,15 @@ class LabController extends Controller
     {
         $this->authorize('viewAny', DocumentationTest::class);
 
-        $query = Visit::accessibleBy($request->user())->with(['patient.category', 'visit'])->where(function ($q) {
-            $q->has('tests')->orWhereHas('visit', function ($query) {
-                $query->has('tests');
-            })->orWhereHas('admission', function ($q) {
-                $q->has('tests');
-            });
-        })->latest();
+        // $query = Visit::accessibleBy($request->user())->with(['patient.category', 'visit'])->where(function ($q) {
+        //     $q->has('tests')->orWhereHas('visit', function ($query) {
+        //         $query->has('tests');
+        //     })->orWhereHas('admission', function ($q) {
+        //         $q->has('tests');
+        //     });
+        // })->latest();
+
+        $query = Visit::accessibleBy($request->user())->with(['patient.category', 'visit'])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {

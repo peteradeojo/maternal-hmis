@@ -33,15 +33,15 @@ class VisitPolicy
             return true;
         }
 
-        if ($user->hasRole('lab') && $visit->awaiting_lab_results) {
+        if ($user->hasRole('lab') && $visit->tests()->exists()) {
             return true;
         }
 
-        if ($user->hasRole('radiology') && $visit->awaiting_radiology) {
+        if ($user->hasRole('radiology') && $visit->imagings()->exists()) {
             return true;
         }
 
-        if ($user->hasRole('pharmacy') && $visit->awaiting_pharmacy) {
+        if ($user->hasRole('pharmacy') && $visit->prescription()->exists()) {
             return true;
         }
 

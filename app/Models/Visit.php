@@ -122,15 +122,17 @@ class Visit extends Model implements OperationalEvent
         }
 
         if ($user->hasRole('lab')) {
-            return $query->where('awaiting_lab_results', true);
+            return $query->where(function ($query) {
+                $query->has('tests')->orWhere('awaiting_lab_results', true);
+            });
         }
 
         if ($user->hasRole('radiology')) {
-            return $query->where('awaiting_radiology', true);
+            return $query; // TODO: ->where('awaiting_radiology', true);
         }
 
         if ($user->hasRole('pharmacy')) {
-            return $query->where('awaiting_pharmacy', true);
+            return $query; //TODO: ->where('awaiting_pharmacy', true);
         }
 
         if ($user->hasAnyRole(['billing', 'record'])) {
