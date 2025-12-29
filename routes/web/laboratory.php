@@ -24,4 +24,5 @@ Route::prefix('/lab')->name('lab.')->middleware(['role:lab', 'datalog'])->group(
     Route::match(['get', 'post'], '/anc-booking/{profile}', [LabController::class, 'ancBooking'])->name('submit-anc-booking');
 
     Route::get('/admissions', [LabController::class, 'admissions'])->name('admissions');
+    Route::get('/admissions/{admission}', [LabController::class, 'viewAdmissionTests'])->name('admission-test');
 });

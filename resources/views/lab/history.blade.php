@@ -26,6 +26,8 @@
         $("#history").DataTable({
             responsive: true,
             serverSide: true,
+            processing: true,
+            ordering: false,
             ajax: {
                 url: "{{ route('api.lab.history') }}",
                 dataSrc: "data",
@@ -39,7 +41,7 @@
                 {
                     data: ({
                         created_at
-                    }) => new Date(created_at).toLocaleDateString(),
+                    }) => parseDateFromSource(created_at),
                 },
                 {
                     data: (row, type, set) => {

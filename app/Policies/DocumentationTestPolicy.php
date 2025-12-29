@@ -13,7 +13,7 @@ class DocumentationTestPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['admin', 'doctor', 'nurse', 'record', 'pharmacy', 'lab', 'radiology', 'billing']);
+        return $user->hasAnyRole(['admin', 'doctor', 'nurse', 'record', 'lab', 'billing']);
     }
 
     /**
@@ -21,7 +21,7 @@ class DocumentationTestPolicy
      */
     public function view(User $user, DocumentationTest $test): bool
     {
-        return $user->hasAnyRole(['admin', 'doctor', 'nurse', 'record', 'lab', 'radiology']);
+        return $user->hasAnyRole(['admin', 'doctor', 'nurse', 'record', 'lab']);
     }
 
     /**
@@ -37,7 +37,7 @@ class DocumentationTestPolicy
      */
     public function update(User $user, DocumentationTest $test): bool
     {
-        return $user->hasAnyRole(['admin', 'lab', 'radiology']);
+        return $user->hasAnyRole(['admin', 'lab']);
     }
 
     /**

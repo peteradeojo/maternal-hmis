@@ -3,19 +3,20 @@
 namespace App\Http\Livewire\Lab;
 
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
 use App\Models\Product;
 use App\Models\Visit;
 use Livewire\Component;
 
 class ManageTests extends Component
 {
-    public $visit;
+    public OperationalEvent $visit;
 
     public $tests;
 
     public $orderedTests;
 
-    public function mount(Visit $visit)
+    public function mount(OperationalEvent $visit)
     {
         $this->visit = $visit;
         $this->getTests();
@@ -44,6 +45,9 @@ class ManageTests extends Component
 
     private function getTests()
     {
-        $this->tests = $this->visit->tests->merge($this->visit->visit->tests)->merge($this->visit->admission?->tests ?? []);
+        $this->tests = $this->visit->tests
+            ->merge($this->visit->visit->tests)
+            ->merge($this->visit->admission?->plan->tests ?? [])
+            ->merge($this->visit->admission?->tests ?? []);
     }
 }

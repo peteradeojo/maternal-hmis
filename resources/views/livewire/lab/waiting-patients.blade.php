@@ -26,6 +26,7 @@
     <script>
         $("#tests-table").DataTable({
             serverSide: true,
+            processing: true,
             ordering: false,
             ajax: "{{ route('api.lab.tests') }}",
             columns: [{

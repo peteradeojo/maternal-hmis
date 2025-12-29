@@ -68,12 +68,18 @@ class LabController extends Controller
     public function getHistory(Request $request)
     {
         $this->authorize('viewAny', DocumentationTest::class);
-        $Q = DocumentationTest::accessibleBy($request->user())->selectRaw('testable_type, testable_id, patient_id, MAX(created_at) created_at')->groupBy('testable_type', 'testable_id', 'patient_id', 'created_at')->where(function ($q) {
-            $q->where('status', Status::completed->value)->orWhere(function ($query) {
-                $query->whereNotNull('results');
-            });
-        })->with(['patient', 'testable.visit']);
-        // return $this->dataTable($request, Visit::with(['patient'])->whereHas('visit', function ($query) {
+
+        $Q = DocumentationTest::accessibleBy($request->user())
+            ->selectRaw('testable_type, testable_id, patient_id, MAX(created_at) created_at')
+            ->groupBy('testable_type', 'testable_id', 'patient_id', 'created_at')
+            ->where(function ($q) {
+                $q->where('status', Status::completed->value)->orWhere(function ($query) {
+                    $query->whereNotNull('results');
+                });
+                // $q->where('results', '!=', null);
+            })->with(['patient', 'testable.visit'])->latest();
+
+
         return $this->dataTable($request, $Q, [
             function (&$query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
@@ -219,5 +225,11 @@ class LabController extends Controller
 
         // return $dompdf->stream("document.pdf", ['Attachment' => false]);
         return $html;
+    }
+
+    public function viewAdmissionTests(Request $request, Admission $admission)
+    {
+        // dd($admission);
+        return view('lab.admissions.tests', compact('admission'));
     }
 }
