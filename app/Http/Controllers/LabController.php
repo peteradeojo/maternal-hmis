@@ -269,13 +269,13 @@ class LabController extends Controller
     public function getTests(Request $request)
     {
         $this->authorize('viewAny', DocumentationTest::class);
+
         $query = Visit::accessibleBy($request->user())->with(['patient.category', 'visit'])->where(function ($q) {
             $q->has('tests')->orWhereHas('visit', function ($query) {
                 $query->has('tests');
-            })
-                ->orWhereHas('admission', function ($q) {
-                    $q->has('tests');
-                });
+            })->orWhereHas('admission', function ($q) {
+                $q->has('tests');
+            });
         })->latest();
 
         return $this->dataTable($request, $query, [
