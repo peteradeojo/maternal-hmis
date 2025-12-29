@@ -30,8 +30,10 @@ class DynamicProductSearch extends Component
     public function searchProducts()
     {
         if (strlen($this->queryString) == 0) return;
-        $query = Product::query()->where('is_visible', 1)->limit(100)->where(function ($q) {
-            $q->where('name', 'ilike', '%' . $this->queryString  . '%')->orWhere('description', 'ilike', "%$this->queryString%");
+
+        $str = trim($this->queryString);
+        $query = Product::query()->where('is_visible', 1)->limit(100)->where(function ($q) use ($str) {
+            $q->where('name', 'ilike', '%' . $str  . '%')->orWhere('description', 'ilike', "%$str%");
         });
 
         if ($this->departmentId) {
@@ -40,18 +42,13 @@ class DynamicProductSearch extends Component
             });
         }
 
-        // $this->results = [new Product([
-        //     'id' => null,
-        //     'name' => "Your item: $this->queryString",
-        //     'product_category_id' => $this->category?->id,
-        // ]), ...($query->get())];
         $this->results = $query->get();
         $this->display = true;
     }
 
     public function select(?Product $product)
     {
-        if (count($this->results) >= 1) {
+        if (empty($product) && count($this->results) >= 1) {
             notifyUserError("Please select from the available results", request()->user());
             return;
         }
@@ -73,7 +70,6 @@ class DynamicProductSearch extends Component
         }
 
         $this->reset('queryString', 'results');
-
         $this->dispatch('selected', id: $id, name: $product['name'], product: $product);
     }
 
