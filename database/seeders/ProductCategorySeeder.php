@@ -14,13 +14,27 @@ class ProductCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        ProductCategory::updateOrCreate(['name' => 'PHARMACY'], [
-            'name' => 'PHARMACY',
-            'department_id' => Department::PHA->value,
-        ]);
-        ProductCategory::updateOrCreate(['name' => 'RECORD'], [
-            'name' => 'RECORD',
-            'department_id' => Department::REC->value,
-        ]);
+        $data = [
+            [
+                'name' => 'LABORATORY',
+                'department_id' => Department::LAB->value,
+            ],
+            [
+                'name' => 'PHARMACY',
+                'department_id' => Department::PHA->value,
+            ],
+            [
+                'name' => 'RECORD',
+                'department_id' => Department::REC->value,
+            ],
+            [
+                'name' => 'RADIOLOGY',
+                'department_id' => Department::RAD->value,
+            ]
+        ];
+
+        foreach ($data as $row) {
+            ProductCategory::updateOrCreate(['name' => $row['name']], $row);
+        }
     }
 }

@@ -25,7 +25,7 @@ class Product extends Model
                 foreach ([Department::IT->value, Department::PHA->value, Department::DIS->value] as $deptId) {
                     notifyDepartment($deptId, [
                         'title' => 'New Product Created with No Amount',
-                        'message' => "A new product has been created with no amount. Product id {$model->id}",
+                        'message' => "A new product has been created with no amount. Product {$model->name}",
                     ], [
                         'mode' => AppNotifications::$BOTH,
                     ]);

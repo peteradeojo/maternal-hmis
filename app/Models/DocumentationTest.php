@@ -30,11 +30,6 @@ class DocumentationTest extends Model
         'results' => 'object',
     ];
 
-    public function documentation()
-    {
-        return $this->belongsTo(Documentation::class);
-    }
-
     // The event, visit or admission
     public function testable()
     {

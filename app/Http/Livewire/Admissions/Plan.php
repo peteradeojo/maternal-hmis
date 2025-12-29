@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Admissions;
 
 use App\Enums\Status;
+use App\Models\DocumentationTest;
 use App\Models\Product;
 use App\Services\Comms;
 use Livewire\Attributes\Validate;
@@ -40,7 +41,7 @@ class Plan extends Component
     public function mount($visit, $admission = null)
     {
         if (!empty($admission)) {
-            $this->tests = $admission->plan->tests;
+            $this->tests = $admission->plan->tests()->status(Status::pending)->get();
             $this->investigations = $admission->plan->scans;
 
             $this->plans = $admission->plan->treatments;
@@ -102,32 +103,32 @@ class Plan extends Component
         Comms::notifyUserSuccess("Admission updated successfully", auth()->user()->id);
     }
 
-    public function addTest($data)
-    {
-        if (empty($this->admission)) {
-            if ($this->tests->doesntContain("id", '=', $data['id'])) {
-                $this->tests->add($data);
-            }
+    // public function addTest($data)
+    // {
+    //     if (empty($this->admission)) {
+    //         if ($this->tests->doesntContain("id", '=', $data['id'])) {
+    //             $this->tests->add($data);
+    //         }
 
-            return;
-        } else {
-            $this->admission->plan->tests()->firstOrCreate([
-                'describable_type' => Product::class,
-                'describable_id' => $data['id'],
-                'patient_id' => $this->admission->patient_id,
-                'name' => $data['name'],
-                'status' => Status::pending->value,
-            ], [
-                'describable_type' => Product::class,
-                'describable_id' => $data['id'],
-                'patient_id' => $this->admission->patient_id,
-                'name' => $data['name'],
-            ]);
+    //         return;
+    //     } else {
+    //         $this->admission->plan->tests()->firstOrCreate([
+    //             'describable_type' => Product::class,
+    //             'describable_id' => $data['id'],
+    //             'patient_id' => $this->admission->patient_id,
+    //             'name' => $data['name'],
+    //             'status' => Status::pending->value,
+    //         ], [
+    //             'describable_type' => Product::class,
+    //             'describable_id' => $data['id'],
+    //             'patient_id' => $this->admission->patient_id,
+    //             'name' => $data['name'],
+    //         ]);
 
-            $this->admission->refresh();
-            $this->tests = $this->admission->plan->tests;
-        }
-    }
+    //         $this->admission->refresh();
+    //         $this->tests = $this->admission->plan->tests;
+    //     }
+    // }
 
     public function addInvestigation($data)
     {
@@ -158,6 +159,7 @@ class Plan extends Component
 
     public function removeTest($id)
     {
+        DocumentationTest::where('id', $id)->update(['status' => Status::cancelled->value]);
         $this->tests = $this->tests->filter(fn($i) => $i['id'] != $id);
     }
 

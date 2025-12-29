@@ -8,6 +8,7 @@ use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 class AdmissionPlan extends Model implements OperationalEvent
 {
@@ -26,8 +27,9 @@ class AdmissionPlan extends Model implements OperationalEvent
         return $this->morphMany(DocumentationPrescription::class, 'event');//->where('status', Status::active->value);
     }
 
+    #[Override]
     public function tests() {
-        return $this->morphMany(DocumentationTest::class, 'testable');
+        return $this->morphMany(DocumentationTest::class, 'testable')->latest();
     }
 
     public function scans() {

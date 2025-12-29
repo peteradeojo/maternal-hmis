@@ -182,6 +182,7 @@ window.parseDateFromSource = (date, second = false) => new Date(date).toLocaleDa
     minute: '2-digit',
     hour: '2-digit',
     ...(second && { second: '2-digit' }),
+    timeZone: 'Africa/Lagos',
 });
 
 document.addEventListener("DOMContentLoaded", () => {

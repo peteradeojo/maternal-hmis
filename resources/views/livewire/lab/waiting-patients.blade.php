@@ -26,9 +26,7 @@
     <script>
         $("#tests-table").DataTable({
             serverSide: true,
-            order: [
-                [2, 'desc']
-            ],
+            ordering: false,
             ajax: "{{ route('api.lab.tests') }}",
             columns: [{
                     data: 'patient.name'
@@ -39,9 +37,7 @@
                 {
                     data: ({
                         created_at
-                    }) => new Date(created_at).toLocaleString('en-US', {
-                        timeZone: 'Africa/Lagos'
-                    }),
+                    }) => parseDateFromSource(created_at),
                 },
                 {
                     data: 'patient.category.name'

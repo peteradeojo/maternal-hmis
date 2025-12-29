@@ -11,7 +11,8 @@
         <div class="grid grid-cols-2 gap-x-4">
             <div>
                 <p class="bold">Tests</p>
-                <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)" />
+                {{-- <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)" /> --}}
+                <livewire:doctor.add-test :event="$admission->plan" @tests-added="$refresh" />
 
                 <ul class="list-disc list-inside pt-1">
                     @foreach ($tests as $selectedTest)

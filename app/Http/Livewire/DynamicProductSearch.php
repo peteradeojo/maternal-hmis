@@ -31,7 +31,7 @@ class DynamicProductSearch extends Component
     {
         if (strlen($this->queryString) == 0) return;
         $query = Product::query()->where('is_visible', 1)->limit(100)->where(function ($q) {
-            $q->where('name', 'like', '%' . $this->queryString  . '%')->orWhere('description', 'like', "%$this->queryString%");
+            $q->where('name', 'ilike', '%' . $this->queryString  . '%')->orWhere('description', 'ilike', "%$this->queryString%");
         });
 
         if ($this->departmentId) {
@@ -51,6 +51,11 @@ class DynamicProductSearch extends Component
 
     public function select(?Product $product)
     {
+        if (count($this->results) >= 1) {
+            notifyUserError("Please select from the available results", request()->user());
+            return;
+        }
+
         $this->resetResults();
 
         $id = @$product['id'];
