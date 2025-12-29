@@ -21,7 +21,7 @@ class AdmissionPolicy
      */
     public function view(User $user, Admission $admission): bool
     {
-        return $user->hasAnyRole(['admin', 'doctor', 'nurse', 'record']);
+        return $user->hasAnyRole(['admin', 'doctor', 'nurse', 'record', 'pharmacy']);
     }
 
     /**
