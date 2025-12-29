@@ -21,9 +21,9 @@ class BillingController extends Controller
         return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category', 'visit'])->whereIn('status', [Status::active, Status::completed])->latest(), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")
-                        ->orWhere('card_number', 'like', "$search%")
-                        ->orWhere('phone', 'like', "$search%");
+                    $q->where('name', 'ilike', "%$search%")
+                        ->orWhere('card_number', 'ilike', "$search%")
+                        ->orWhere('phone', 'ilike', "$search%");
                 });
             }
         ]);

@@ -18,7 +18,7 @@ class HistoryController extends Controller
         return $this->dataTable($request, Visit::with(['patient.category', 'visit'])->latest(),  [
             function ($query, $search) {
                 return $query->whereHas('patient', function ($q) use (&$search) {
-                    return $q->where('name', 'like', "$search%")->orWhere('card_number',  'like',  "$search%");
+                    return $q->where('name', 'ilike', "$search%")->orWhere('card_number',  'ilike',  "$search%");
                 });
             },
         ]);

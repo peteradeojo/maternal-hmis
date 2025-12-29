@@ -143,7 +143,7 @@ class PatientsController extends Controller
         $this->authorize('viewAny', Patient::class);
         return $this->dataTable($request, Patient::accessibleBy($request->user())->with('category')->latest(), [
             function ($query, $search) {
-                $query->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%")->orWhere('phone', 'like', "$search%");
+                $query->where('name', 'ilike', "%$search%")->orWhere('card_number', 'ilike', "$search%")->orWhere('phone', 'ilike', "$search%");
             },
         ]);
     }
@@ -279,11 +279,11 @@ class PatientsController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")
-                        ->orWhere('card_number', 'like', "$search%")
-                        ->orWhere('phone', 'like', "$search%")
+                    $q->where('name', 'ilike', "%$search%")
+                        ->orWhere('card_number', 'ilike', "$search%")
+                        ->orWhere('phone', 'ilike', "$search%")
                         ->orWhereHas('insurance', function ($q) use ($search) {
-                            $q->where('hmo_name', 'like', "$search%");
+                            $q->where('hmo_name', 'ilike', "$search%");
                         });
                 });
             },
@@ -330,7 +330,7 @@ class PatientsController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%")->orWhere('phone', 'like', "$search%");
+                    $q->where('name', 'ilike', "%$search%")->orWhere('card_number', 'ilike', "$search%")->orWhere('phone', 'ilike', "$search%");
                 });
             },
         ]);

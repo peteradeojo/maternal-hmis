@@ -20,7 +20,7 @@ class VisitsController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas("patient", function ($q) use ($search) {
-                    $q->where("name", "like", "%{$search}%");
+                    $q->where("name", "ilike", "%{$search}%");
                 });
             },
         ]);
