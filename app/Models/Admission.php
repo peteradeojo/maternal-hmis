@@ -113,9 +113,11 @@ class Admission extends Model implements OperationalEvent
         }
 
         if ($user->hasRole('lab')) {
-            return $query->has('tests')->orWhere(function ($q) {
-                $q->has('plan.tests');
-            });
+            return $query->where(function ($q) {
+                $q->has('tests')->orWhere(function ($q) {
+                    $q->has('plan.tests');
+                });
+            })->where('status', '!=', Status::closed->value);
         }
 
         return $query->whereRaw('1 = 0');
