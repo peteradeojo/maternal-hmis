@@ -51,6 +51,9 @@ function getRouteMap()
             route('nhi.index') => ['Patients', 'fa-person', null],
             route('nhi.encounters') => ['Encounters', 'fa-walk', null],
         ],
+        'media' => [
+            route('it.crm-index') => ['CRM', 'fa-list', null],
+        ],
     ];
     return $routeMap;
 }
