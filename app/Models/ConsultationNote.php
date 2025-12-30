@@ -3,17 +3,25 @@
 namespace App\Models;
 
 use App\Enums\NoteCodes;
+use App\Interfaces\PatientRecord;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ConsultationNote extends Model
+class ConsultationNote extends Model implements PatientRecord
 {
-    use HasFactory;
+    use HasFactory, NeedsRecorderInfo;
 
-    protected $fillable =  ['patient_id',  'visit_id', 'consultant_id', 'note', 'code'];
+    protected $fillable =  [
+        'patient_id',
+        'visit_id',
+        'consultant_id',
+        'note',
+        'code',
+    ];
 
-    protected $with = ['consultant'];
+    protected $with = ['consultant', 'recorder'];
 
     protected $casts = [
         'code' => NoteCodes::class,

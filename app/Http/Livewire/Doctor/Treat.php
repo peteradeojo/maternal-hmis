@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Doctor;
 
+use App\Models\ConsultationNote;
 use App\Models\Product;
 use Illuminate\Support\Facades\Broadcast;
 use Livewire\Attributes\Validate;
@@ -110,8 +111,11 @@ class Treat extends Component
 
     public function removeNote($id)
     {
-        $this->visit->notes()->where('id', $id)->delete();
-        $this->dispatch('$refresh');
+        $note = ConsultationNote::find($id);
+        if (request()->user()->can('delete', $note)) {
+            $this->visit->notes()->where('id', $id)->delete();
+            $this->dispatch('$refresh');
+        }
     }
 
     public function removeComplaint($id)

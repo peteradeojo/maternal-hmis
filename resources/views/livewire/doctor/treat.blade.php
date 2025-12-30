@@ -43,17 +43,9 @@
                 </button>
             </div>
 
-            <div>
+            <div class="grid gap-y-2">
                 @forelse ($visit->notes as $note)
-                    <div class="bg-gray-100 p-2">
-                        <p>{{ $note->note }}</p>
-                        <p class="text-xs">Consultant: {{ $note->consultant->name }}</p>
-
-                        <div class="flex-center justify-between text-xs">
-                            <p class="text-red-700">{{ $note->created_at }}</p>
-                            <button wire:click="removeNote({{ $note->id }})" class="text-red-700">Delete</button>
-                        </div>
-                    </div>
+                    <x-doctors-note :note="$note" />
                 @empty
                     <p class="py-1">No notes added yet. Add a note to view here</p>
                 @endforelse

@@ -324,6 +324,7 @@ class AdmissionsController extends Controller
 
     public function updateNote(Request $request, ConsultationNote $note)
     {
+        $this->authorize('edit', $note);
         $note->update($request->validate([
             'note' => 'required|string',
         ]));

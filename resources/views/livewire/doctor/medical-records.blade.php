@@ -41,13 +41,6 @@
                 <div class="py-2">
                     <p><b>Notes</b></p>
                     @forelse ($visit->notes as $note)
-                        {{-- <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
-                            <p>{{ $note->note }}</p>
-                            <div class="text-xs">
-                                <p class=" text-red">Consultant: {{ $note->consultant->name }}</p>
-                                <p>{{ $note->created_at->format('Y-m-d h:i A') }}</p>
-                            </div>
-                        </div> --}}
                         <x-editable-note :note="$note" />
                     @empty
                         <p>No notes added</p>

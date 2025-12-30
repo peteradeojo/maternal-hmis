@@ -37,6 +37,8 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     });
 
+    Route::match(['GET', 'POST'], '/whoami', [AuthController::class, 'whoami'])->name('whoami');
+
     Route::get('/radiology/{path}', function (Request $request, $path) {
         return response()->file(storage_path('app/radiology/' . $path));
     });

@@ -143,6 +143,7 @@
             }).then((res) => {
                 notifySuccess("Note saved!");
             }).catch((err) => {
+                console.error(err);
                 notifyError(err.response.data.message);
             });
         }

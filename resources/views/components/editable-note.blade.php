@@ -1,7 +1,7 @@
 <div x-data="{ editing: false, note: @js($note) }" @keyup.escape="note.note=`{{ $note->note }}`;editing=false">
     <div x-show="!editing" class="bg-gray-100 p-2">
         <p x-text="note.note"></p>
-        <p><b>Attending:</b> <span x-text="note.consultant?.name"></span></p>
+        <p><b>Attending:</b> <span x-text="note.recorder?.recorder ?? note.consultant?.name"></span></p>
         <p><small><span x-text="new Date(note.created_at).toLocaleString('en-CA')"></span></small></p>
         <div class="flex gap-x-2">
             <button class="btn btn-sm bg-green-400 text-white" @click="editing = true">Edit <i

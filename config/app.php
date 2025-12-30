@@ -201,5 +201,7 @@ return [
         'TreatmentService' => TreatmentService::class,
     ])->toArray(),
 
-    'currency' => '₦'
+    'currency' => '₦',
+    'generic_doctor_id' => 'eheiuiauiauiue####',
+    'generic_doctor_profiles' => ['doctor001'],
 ];

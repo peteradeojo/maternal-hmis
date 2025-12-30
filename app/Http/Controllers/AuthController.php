@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -16,16 +14,35 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
 
-
+        Session::flush();
         if (auth()->attempt($request->only('phone', 'password'))) {
-            // $user = User::where('phone', $request->phone)->first();
-            $request->session()->regenerate();
+            if (in_array($request->input('phone'), config('app.generic_doctor_profiles'))) {
+                return redirect()->route('whoami');
+            }
 
-            // $token = $user->createToken('auth_token')->plainTextToken;
-            // return redirect(route('dashboard'))->withCookie(cookie('auth_token', $token, 60 * 24, null, null, false, App::environment('prodcuction')));
+
+            $request->session()->regenerate(destroy: true);
             return redirect()->intended(route('dashboard'));
         }
 
         return redirect()->back()->with('error', "Invalid login");
+    }
+
+    function whoami(Request $request)
+    {
+        if (!$request->isMethod('POST')) {
+            return view('whoami');
+        }
+
+        $request->validate([
+            'whoami' => 'required|string',
+        ]);
+
+        Session::put(
+            config('app.generic_doctor_id'),
+            $request->input('whoami')
+        );
+
+        return redirect()->route('dashboard');
     }
 }

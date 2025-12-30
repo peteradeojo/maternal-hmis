@@ -1,8 +1,8 @@
 <nav class="navbar-nav no-print w-full">
     <div class="bg-white p-2 text-center">
-        <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" alt=""
-            class="rounded-full w-12 m-auto">
-        <p x-show="aside" class="font-bold">{{ auth()->user()->name }}</p>
+        <img src="https://ui-avatars.com/api/?name={{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}"
+            alt="" class="rounded-full w-12 m-auto">
+        <p x-show="aside" class="font-bold">{{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}</p>
         <p x-show="aside">{{ auth()->user()->department->name }}</p>
     </div>
 

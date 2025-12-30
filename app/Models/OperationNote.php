@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Interfaces\PatientRecord;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OperationNote extends Model
+class OperationNote extends Model implements PatientRecord
 {
-    use SoftDeletes;
+    use SoftDeletes, NeedsRecorderInfo;
 
     protected $fillable = [
         'unit',
@@ -27,6 +29,8 @@ class OperationNote extends Model
         'admission_id',
         'user_id',
     ];
+
+    protected $with = ['recorder'];
 
     public function patient() {
         return $this->belongsTo(Patient::class);

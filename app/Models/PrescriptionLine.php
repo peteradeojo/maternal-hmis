@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Interfaces\PatientRecord;
 use App\Services\TreatmentService;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Model;
 
-class PrescriptionLine extends Model
+class PrescriptionLine extends Model implements PatientRecord
 {
+    use NeedsRecorderInfo;
+
     protected $fillable = [
         'item_id',
         'dosage',
@@ -25,7 +29,7 @@ class PrescriptionLine extends Model
         'status' => Status::class,
     ];
 
-    protected $with = ['item'];
+    protected $with = ['item', 'recorder'];
 
     public function prescription()
     {
