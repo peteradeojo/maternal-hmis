@@ -28,7 +28,7 @@ Route::name('it.')->middleware(['role:admin'])->group(function () {
         Route::match(['GET', 'POST'], '/get-products/{product}', [ProductsController::class, 'show'])->name('show-product');
     });
 
-    Route::prefix('/crm')->middleware(['role:media|admin'])->group(function () {
+    Route::prefix('/crm')->middleware(['role:media'])->group(function () {
         Route::get('/', [CrmController::class, 'index'])->name('crm-index');
         Route::get('/publish', [CrmController::class, 'create'])->name('crm-publish');
         Route::post('/publish', [CrmController::class, 'publish']);
