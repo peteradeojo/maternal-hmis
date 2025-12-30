@@ -4,37 +4,22 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Item</th>
-                {{-- <th>Dosage</th>
-                <th>Duration</th> --}}
+                <th>Description</th>
             </tr>
         </thead>
         <tbody>
-            {{-- @forelse ($visit->treatments->merge($visit->visit?->treatments ?? []) as $treatment)
+            @foreach ($visit->treatments->merge($visit->visit?->treatments ?? []) as $treatment)
                 <tr>
-                    <td>{{ $treatment->name }}</td>
-                    <td>{{ $treatment->dosage }}</td>
-                    <td>{{ $treatment->duration }}</td>
+                    <td>{{ $treatment }}</td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="3">No records</td>
-                </tr>
-                <tr>
-                    <td colspan="3">No records</td>
-                </tr>
-                @endforelse --}}
+            @endforeach
 
-            @forelse ($visit->prescription?->lines ?? [] as $treatment)
+            @foreach ($visit->prescription?->lines ?? [] as $treatment)
                 @continue($treatment->status == Status::blocked)
                 <tr>
                     <td>{{ $treatment }}</td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="3">No records</td>
-                </tr>
-            @endforelse
+            @endforeach
         </tbody>
     </table>
 </div>
