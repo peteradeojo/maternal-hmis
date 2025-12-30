@@ -67,39 +67,45 @@ function authorizedRoutes()
         route('dashboard') => ['Dashboard', 'fa-home', null],
     ];
 
-    if ($user->hasRole('doctor')) {
-        $routes = array_merge($routes, $routeMap['doctor']);
-    }
+    // if ($user->hasRole('doctor')) {
+    //     $routes = array_merge($routes, $routeMap['doctor']);
+    // }
 
-    if ($user->hasRole('nurse')) {
-        $routes = array_merge($routes, $routeMap['nurse']);
-    }
+    // if ($user->hasRole('nurse')) {
+    //     $routes = array_merge($routes, $routeMap['nurse']);
+    // }
 
-    if ($user->hasRole('record')) {
-        $routes = array_merge($routes, $routeMap['record']);
-    }
+    // if ($user->hasRole('record')) {
+    //     $routes = array_merge($routes, $routeMap['record']);
+    // }
 
-    if ($user->hasRole('lab')) {
-        $routes = array_merge($routes, $routeMap['lab']);
-    }
+    // if ($user->hasRole('lab')) {
+    //     $routes = array_merge($routes, $routeMap['lab']);
+    // }
 
-    if ($user->hasRole('radiology')) {
-        $routes = array_merge($routes, $routeMap['radiology']);
-    }
+    // if ($user->hasRole('radiology')) {
+    //     $routes = array_merge($routes, $routeMap['radiology']);
+    // }
 
-    if ($user->hasRole('pharmacy')) {
-        $routes = array_merge($routes, $routeMap['pharmacy']);
-    }
+    // if ($user->hasRole('pharmacy')) {
+    //     $routes = array_merge($routes, $routeMap['pharmacy']);
+    // }
 
-    if ($user->hasRole('billing')) {
-        $routes = array_merge($routes, $routeMap['billing']);
-    }
+    // if ($user->hasRole('billing')) {
+    //     $routes = array_merge($routes, $routeMap['billing']);
+    // }
 
-    if ($user->hasRole('admin')) {
-        // foreach ($routeMap as $role => $rM) {
-        //     $routes = array_merge($routes, $rM);
-        // }
-        $routes = array_merge($routes, $routeMap['admin']);
+    // if ($user->hasRole('admin')) {
+    //     // foreach ($routeMap as $role => $rM) {
+    //     //     $routes = array_merge($routes, $rM);
+    //     // }
+    //     $routes = array_merge($routes, $routeMap['admin']);
+    // }
+
+    foreach ($routeMap as $role => $map) {
+        if ($user->hasRole($role)) {
+            $routes = array_merge($routes, $map);
+        }
     }
 
     $uniqRoutes = [];
