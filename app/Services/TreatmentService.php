@@ -12,7 +12,6 @@ use App\Enums\Department;
 use App\Interfaces\Documentable;
 use App\Models\Admission;
 use App\Models\AncVisit;
-use App\Models\Patient;
 use App\Models\StockItemPrice;
 use App\Models\User;
 
@@ -22,13 +21,6 @@ class TreatmentService
 
     private function saveDiagnoses(Documentable|Documentation|AncVisit &$doc, $data, $doctor_id)
     {
-        // if (isset($data['prognosis'])) {
-        //     $doc->diagnoses()->create([
-        //         'diagnoses' => $data['prognosis'],
-        //         'patient_id' => $doc->patient_id,
-        //         'user_id' => $doctor_id
-        //     ]);
-        // }
         if (isset($data['diagnosis'])) {
             foreach ($data['diagnosis'] as $d) {
                 $doc->diagnoses()->create([
@@ -292,6 +284,11 @@ class TreatmentService
             'bd' => 2,
             'tds' => 3,
             'qds' => 4,
+            '3hourly' => 8,
+            '8hourly' => 3,
+            '12hourly' => 2,
+            '6hourly' => 4,
+            '4hourly' => 6,
             default => 1,
         };
     }

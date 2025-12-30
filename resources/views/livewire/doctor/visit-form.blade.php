@@ -97,7 +97,7 @@
                     <button class="btn btn-blue btn-sm" @click="$dispatch('open-history-modal')">Presenting
                         Complaints</button>
 
-                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-notes-modal')">Add Note</button>
+                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-notes-modal')">History of Presenting Complaints</button>
                     @if ($visit->examination)
                         <button class="btn btn-green btn-sm" @click="$dispatch('open-exams-modal')">Edit
                             Examination</button>
