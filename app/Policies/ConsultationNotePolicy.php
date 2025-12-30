@@ -22,7 +22,7 @@ class ConsultationNotePolicy
         }
 
         if (isset($note->recorder)) {
-            return session(config('app.generic_doctor_id')) == $note->{ConsultationNote::getRecorderKey()};
+            return session(config('app.generic_doctor_id')) == $note->recorder->recorder;
         }
 
         return $user->id == $note->consultant_id;
