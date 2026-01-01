@@ -59,12 +59,12 @@
                             @endphp
                             <div>
                                 <p><b>General</b></p>
-                                <p>{{ $exam->general }}</p>
+                                <p>@nl2br($exam->general)</p>
                             </div>
 
                             @foreach ($exam->specifics as $k => $sp)
                                 <div>
-                                    <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
+                                    <p><b>@nl2br(unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))))</b></p>
                                     <p>{{ $sp }}</p>
                                 </div>
                             @endforeach
