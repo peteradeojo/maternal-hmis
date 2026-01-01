@@ -30,21 +30,23 @@
             </x-slot:title>
 
             <x-slot:footer>
-                @role(['nurse'])
-                    <a href="{{ route('nurses.admissions.get') }}" class="hover:underline">Current Admissions &rarr;</a>
-                    @elserole(['record'])
-                    <a href="{{ route('records.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
-                    @elserole(['doctor'])
-                    <a href="{{ route('doctor.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
-                    @elserole(['billing', 'pharmacy'])
-                    <a href="{{ route('phm.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
-                @else
-                    <p>Current admissions</p>
-                @endrole
+                @can('view admissions')
+                    @role(['nurse'])
+                        <a href="{{ route('nurses.admissions.get') }}" class="hover:underline">Current Admissions &rarr;</a>
+                        @elserole(['record'])
+                        <a href="{{ route('records.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
+                        @elserole(['doctor'])
+                        <a href="{{ route('doctor.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
+                        @elserole(['billing', 'pharmacy'])
+                        <a href="{{ route('phm.admissions') }}" class="hover:underline">Current Admissions &rarr;</a>
+                    @else
+                        <p>Current admissions</p>
+                    @endrole
+                @endcan
             </x-slot:footer>
         </x-card>
 
-        @role('record')
+        @can('view bills')
             <x-card border="green-500" color="green-500">
                 <x-slot:title>
                     <span class="font-medium text-4xl">{{ $stats['pendingBills'] }}</span>
@@ -53,7 +55,7 @@
                     <a class="hover:underline" href="{{ route('billing.index') }}">Pending Bills &rarr;</a>
                 </x-slot:footer>
             </x-card>
-        @endrole
+        @endcan
     </div>
 
     @role('record')

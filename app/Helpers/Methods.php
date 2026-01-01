@@ -54,6 +54,11 @@ function getRouteMap()
         'media' => [
             route('it.crm-index') => ['CRM', 'fa-list', null],
         ],
+        'support' => [
+            route('it.staff') => ['Staff', 'fa-person'],
+            route('it.wards') => ['Wards', 'fa-bed'],
+            route('it.products') => ['Products', 'fa-item'],
+        ],
     ];
     return $routeMap;
 }

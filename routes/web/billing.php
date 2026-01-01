@@ -3,7 +3,7 @@
 use App\Http\Controllers\BillingController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('billing')->name('billing.')->middleware(['role:billing|record|pharmacy'])->group(function () {
+Route::prefix('billing')->name('billing.')->middleware(['role:admin|billing|record|pharmacy'])->group(function () {
     Route::get('/', [BillingController::class, 'index'])->name('index');
     Route::get('/patient/{patient}', [BillingController::class, 'patientBills'])->name('patient-bills');
 

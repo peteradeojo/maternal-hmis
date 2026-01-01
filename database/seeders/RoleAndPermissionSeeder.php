@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Department;
+use App\Enums\Permissions;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -18,74 +19,71 @@ class RoleAndPermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create permissions
-        $permissions = [
-            'view patients',
-            'create patients',
-            'edit patients',
-            'delete patients',
-            'view visits',
-            'create visits',
-            'edit visits',
-            'view admissions',
-            'create admissions',
-            'edit admissions',
-            'view bills',
-            'create bills',
-            'edit bills',
-            'manage users',
-            'manage roles',
-        ];
+        $permissions = Permissions::cases();
 
         foreach ($permissions as $permission) {
-            Permission::findOrCreate($permission);
+            Permission::findOrCreate($permission->value);
         }
 
         // Create roles and assign existing permissions
         $roles = [
-            'admin' => $permissions,
+            'admin' => array_map(fn($p) => $p->value, $permissions),
             'doctor' => [
-                'view patients',
-                'edit patients',
-                'view visits',
-                'create visits',
-                'edit visits',
-                'view admissions',
-                'create admissions',
-                'edit admissions',
+                Permissions::VIEW_PATIENTS,
+                Permissions::VIEW_VISITS,
+                Permissions::EDIT_VISITS,
+                Permissions::CREATE_VISITS,
+                Permissions::EDIT_NOTES,
+                Permissions::DELETE_NOTE,
+                Permissions::CREATE_ADMISSIONS,
+                Permissions::VIEW_ADMISSIONS,
+                Permissions::EDIT_ADMISSIONS,
             ],
             'nurse' => [
-                'view patients',
-                'view visits',
-                'view admissions',
-                'edit admissions',
+                Permissions::VIEW_ADMISSIONS,
+                Permissions::EDIT_ADMISSIONS,
+                Permissions::VIEW_PATIENTS,
+                Permissions::VIEW_VISITS,
             ],
             'record' => [
-                'view patients',
-                'create patients',
-                'edit patients',
-                'view visits',
-                'create visits',
+                Permissions::VIEW_PATIENTS,
+                Permissions::CREATE_PATIENTS,
+                Permissions::EDIT_PATIENTS,
+                Permissions::VIEW_VISITS,
+                Permissions::CREATE_VISITS,
             ],
             'pharmacy' => [
-                'view patients',
-                'view visits',
-                'view bills',
+                Permissions::VIEW_PATIENTS,
+                Permissions::VIEW_VISITS,
+                Permissions::VIEW_BILLS,
+                Permissions::MANAGE_PRESCRIPTIONS,
             ],
             'lab' => [
-                'view patients',
-                'view visits',
+                Permissions::MANAGE_TESTS,
+                Permissions::ORDER_TEST,
+                Permissions::VIEW_PATIENTS,
+                Permissions::VIEW_VISITS,
             ],
             'radiology' => [
-                'view patients',
-                'view visits',
+                Permissions::MANAGE_SCANS,
             ],
             'billing' => [
-                'view patients',
-                'view visits',
-                'view bills',
-                'create bills',
-                'edit bills',
+                Permissions::VIEW_BILLS,
+                Permissions::CREATE_BILLS,
+                Permissions::EDIT_BILLS,
+                Permissions::VIEW_VISITS,
             ],
+            'media' => [
+                Permissions::VIEW_POSTS,
+                Permissions::EDIT_POSTS,
+                Permissions::CREATE_POSTS,
+            ],
+            'insurance' => [
+                Permissions::VIEW_PATIENTS,
+                Permissions::VIEW_VISITS,
+                Permissions::VIEW_BILLS,
+            ],
+            'support' => [],
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {

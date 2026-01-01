@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::if('match', function ($a, $b) {
             return $a == $b;
+        });
+
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('admin') ? true : null;
         });
     }
 }
