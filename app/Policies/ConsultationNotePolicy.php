@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\ConsultationNote;
 use App\Models\User;
+use Illuminate\Support\Facades\Session;
 
 class ConsultationNotePolicy
 {
@@ -22,7 +23,7 @@ class ConsultationNotePolicy
         }
 
         if (isset($note->recorder)) {
-            return session(config('app.generic_doctor_id')) == $note->recorder->recorder;
+            return Session::getId() === $note->recorder->session_id;
         }
 
         return $user->id == $note->consultant_id;

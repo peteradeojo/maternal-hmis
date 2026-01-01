@@ -9,7 +9,6 @@ use App\Services\TreatmentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
-use Turso\Driver\Laravel\LibSQLDriverServiceProvider;
 
 return [
 
