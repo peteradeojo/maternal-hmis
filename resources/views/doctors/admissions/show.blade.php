@@ -84,7 +84,7 @@
 
         <div class="p-3">
             <x-tabs_v2 id="tablist" target="plan-tabs" :options="[
-                'Admission Plan',
+                'History & Plan',
                 'Vitals Chart',
                 'Drug Chart',
                 'Continuation notes',
@@ -93,7 +93,53 @@
             ]" :active="1">
                 {{-- Admission Plan --}}
                 <div class="tab p-2">
-                    <p class="text-lg font-semibold">Admission Plan</p>
+                    <p class="basic-header">History</p>
+                    <div>
+                        <table class="table">
+                            <tr>
+                                <th>Presentation</th>
+                                <th>Duration</th>
+                            </tr>
+                            @foreach ($data->visit->histories->merge($data->visit->visit->histories) as $h)
+                                <tr>
+                                    <td>{{ $h->presentation }}</td>
+                                    <td>{{ $h->duration }}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4 py-4">
+                        <div class="max-h-[100px] overflow-auto">
+                            <p class="basic-header">History of presenting complaints</p>
+                            @foreach ($data->visit->notes as $note)
+                                <x-doctors-note :note="$note" />
+                            @endforeach
+                        </div>
+                        <div class="max-h-[100px] overflow-auto">
+                            <p class="basic-header">Examinations</p>
+                            @unless ($data->visit->examination || $data->visit->visit->examination)
+                                <p>No examination conducted.</p>
+                            @else
+                                @php
+                                    $exam = $data->visit->examination ?? $data->visit->visit->examination;
+                                @endphp
+                                <div class="bg-gray-100 p-2">
+                                    <p><b>General</b></p>
+                                    <p>{{ $exam->general }}</p>
+                                </div>
+
+                                @foreach ($exam->specifics as $k => $sp)
+                                    <div class="bg-gray-100 p-2">
+                                        <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
+                                        <p>{{ $sp ?? "-" }}</p>
+                                    </div>
+                                @endforeach
+                            @endunless
+                        </div>
+                    </div>
+
+                    <p class="basic-header">Admission Plan</p>
                     <livewire:admissions.plan :visit="$data->visit->visit" :admission="$data" />
                 </div>
 

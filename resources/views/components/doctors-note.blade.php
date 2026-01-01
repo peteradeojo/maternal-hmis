@@ -1,6 +1,8 @@
-<div class="bg-gray-100 p-2">
-    <p>{{ $note->note }}</p>
-    <p class="text-xs">Consultant: {{ $note->recorder?->recorder ?? $note->consultant->name }}</p>
+@props(['color' => 'bg-gray-100', 'note'])
+
+<div class="{{ $color }} p-2">
+    <pre>{{ $note->note }}</pre>
+    <p class="text-xs font-semibold">{{ $note->recorder?->recorder ?? $note->consultant->name }}</p>
 
     <div class="flex-center justify-between text-xs">
         <p class="text-red-700">{{ $note->created_at }}</p>

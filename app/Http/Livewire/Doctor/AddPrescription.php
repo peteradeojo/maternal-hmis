@@ -29,11 +29,13 @@ class AddPrescription extends Component
     public $results = null;
 
     public $title;
-    public $count ;
+    public $count;
+
+    public $canDelete = true;
 
     public function mount($visit, $dispatch = false, $display = true)
     {
-        $this->visit = $visit->load(['prescriptions.prescriptionable']);
+        $this->visit = $visit->load(['prescriptions.prescriptionable', 'prescription']);
         $this->dispatchEvent = $dispatch;
         $this->display = $display;
 

@@ -24,8 +24,9 @@
                                 wire:key="{{ $selections?->id ?? $selections->name }}">
                                 <td>{{ $selections->name }} ({{ $selections->weight }} {{ $selections->si_unit }})</td>
                                 <td>
-                                    <input type="text" autofocus name="dosage" wire:model="requestForm.dosage" wire:change="getCount"
-                                        wire:keyup.enter.prevent="saveRequest" name="dosage" value="1" required />
+                                    <input type="text" autofocus name="dosage" wire:model="requestForm.dosage"
+                                        wire:change="getCount" wire:keyup.enter.prevent="saveRequest" name="dosage"
+                                        value="1" required />
                                     {{-- <div>
                                         @error('requestForm.dosage')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -33,7 +34,8 @@
                                     </div> --}}
                                 </td>
                                 <td>
-                                    <select name="frequency" wire:change="getCount" wire:model="requestForm.frequency" required>
+                                    <select name="frequency" wire:change="getCount" wire:model="requestForm.frequency"
+                                        required>
                                         <option disabled="disabled" selected>Select Frequency</option>
                                         <option value="stat">stat</option>
                                         <option value="od">once daily</option>
@@ -54,8 +56,9 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" wire:change="getCount" wire:model="requestForm.duration" name="duration"
-                                        wire:keyup.enter.prevent="saveRequest" value="1" required />
+                                    <input type="number" wire:change="getCount" wire:model="requestForm.duration"
+                                        name="duration" wire:keyup.enter.prevent="saveRequest" value="1"
+                                        required />
                                     <div>
                                         @error('requestForm.duration')
                                             <span class="error text-xs text-red-600">{{ $message }}</span>
@@ -71,17 +74,21 @@
                             </form>
                         </tr>
                         <tr>
-                            <td>{{ $count !== 0 ? "Units to dispense: $count" : "Unable to compute quantity for prescription. Please check dosage and frequency." }}</td>
+                            <td>{{ $count !== 0 ? "Units to dispense: $count" : 'Unable to compute quantity for prescription. Please check dosage and frequency.' }}
+                            </td>
                             <td>
                                 @if ($count && $count > $selections->balance)
-                                <p class="text-red-500 text-sm">
-                                    <i class="fa fa-exclamation"></i>
-                                    Insufficient inventory
-                                </p>
+                                    <p class="text-red-500 text-sm">
+                                        <i class="fa fa-exclamation"></i>
+                                        Insufficient inventory
+                                    </p>
                                 @endif
                             </td>
-                            <td @class(['text-red-500 font-bold' => isset($count) && $count > $selections->balance])>
-                                Available: {{ $selections->balance }} {{str()->plural($selections->base_unit ?? 'unit', $selections->balance)}}
+                            <td @class([
+                                'text-red-500 font-bold' => isset($count) && $count > $selections->balance,
+                            ])>
+                                Available: {{ $selections->balance }}
+                                {{ str()->plural($selections->base_unit ?? 'unit', $selections->balance) }}
                             </td>
                         </tr>
                     @endif
@@ -145,11 +152,13 @@
                                     {{-- <button type="button"
                                         class="btn btn-sm bg-green-300 hover:bg-green-600 hover:text-white"
                                         wire:click="edit({{ $prescription->id }})">Edit</button> --}}
-                                    <button type="button"
-                                        class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
-                                        wire:click="deleteRequestItem({{ $prescription->id }})">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
+                                    @if ($canDelete)
+                                        <button type="button"
+                                            class="btn btn-sm bg-red-300 hover:text-white hover:bg-red-600"
+                                            wire:click="deleteRequestItem({{ $prescription->id }})">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
