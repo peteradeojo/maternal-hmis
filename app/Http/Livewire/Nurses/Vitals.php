@@ -49,9 +49,9 @@ class Vitals extends Component
         $this->dispatch('saved');
         $this->dispatch('closeModal');
 
-        if (property_exists($this->event, 'awaiting_vitals')) {
-            $this->event->awaiting_vitals = false;
-            $this->event->save();
+        if (property_exists($this->evt, 'awaiting_vitals')) {
+            $this->evt->awaiting_vitals = false;
+            $this->evt->save();
         }
 
         $this->vitals->reset();
