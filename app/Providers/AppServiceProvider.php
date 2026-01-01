@@ -39,5 +39,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->hasRole('admin') ? true : null;
         });
+
+        Blade::directive('nl2br', function ($expression) {
+            return "<?php echo nl2br(e($expression)); ?>";
+        });
     }
 }
