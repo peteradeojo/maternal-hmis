@@ -32,8 +32,7 @@
     @stack('styles')
 </head>
 
-<body class="md:flex" x-data="{ aside: false }" @closeModal.window="removeGlobalModal"
-    x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
+<body class="md:flex" x-data="{ aside: false }" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
     {{-- Navigations --}}
 
     {{-- Mobile nav --}}
@@ -66,7 +65,7 @@
     </div>
 
     {{-- Large Nav --}}
-    <aside class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800" x-cloak
+    <aside class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800 overflow-auto" x-cloak
         :class="{ 'w-[16%]': aside, 'w-[5%]': !aside }" x-transition>
         <div class="sticky top-0">
             <div class="bg-white p-2 flex" :class="aside ? 'justify-end' : 'justify-center'">
@@ -82,8 +81,17 @@
                     <span class="text-lg"><i class="fa" :class="aside ? 'fa-xmark' : 'fa-book-open'"></i></span>
                 </button> --}}
             </div>
-            @include('components.sidebar')
         </div>
+
+        <div class="bg-white p-2 text-center">
+            <img src="https://ui-avatars.com/api/?name={{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}"
+                alt="" class="rounded-full w-12 m-auto">
+            <p x-show="aside" class="font-bold">
+                {{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}</p>
+            <p x-show="aside">{{ auth()->user()->department->name }}</p>
+        </div>
+
+        @include('components.sidebar')
     </aside>
 
     <main class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms]" x-cloak
@@ -132,12 +140,12 @@
     <script
         src="https://cdn.datatables.net/v/dt/dt-2.3.4/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/r-3.0.7/datatables.min.js"
         integrity="sha384-N+pTNAj6u3zQeBQuZo/qd20fG6LAD0KVj49eFU9robOJpS7LYXJn/vy7zoXayWW6" crossorigin="anonymous">
-        </script>
+    </script>
     @vite(['resources/js/app.js', 'resources/js/util.js'])
     @livewireScripts
 
     <script>
-        window.updateNote = function (id, note) {
+        window.updateNote = function(id, note) {
             return axios.put("{{ route('doctor.admissions.update-note', ':id') }}".replace(':id', id), {
                 note,
             }).then((res) => {
@@ -161,7 +169,7 @@
 
             // Check for notification permission
             if (Notification.permission !== 'granted') {
-                Notification.requestPermission().then(function (result) {
+                Notification.requestPermission().then(function(result) {
                     if (result === 'granted') {
                         const n = new Notification('Notifications enabled', {
                             body: 'You will receive notifications when they arrive.',
