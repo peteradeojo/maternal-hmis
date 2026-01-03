@@ -110,13 +110,13 @@
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-4 py-4">
-                        <div class="max-h-[100px] overflow-auto">
+                        <div class="max-h-[400px] overflow-auto">
                             <p class="basic-header">History of presenting complaints</p>
                             @foreach ($data->visit->notes as $note)
                                 <x-doctors-note :note="$note" />
                             @endforeach
                         </div>
-                        <div class="max-h-[100px] overflow-auto">
+                        <div class="max-h-[400px] overflow-auto">
                             <p class="basic-header">Examinations</p>
                             @unless ($data->visit->examination || $data->visit->visit->examination)
                                 <p>No examination conducted.</p>
@@ -132,7 +132,7 @@
                                 @foreach ($exam->specifics as $k => $sp)
                                     <div class="bg-gray-100 p-2">
                                         <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
-                                        <p>{{ $sp ?? "-" }}</p>
+                                        <p>{{ $sp ?? '-' }}</p>
                                     </div>
                                 @endforeach
                             @endunless

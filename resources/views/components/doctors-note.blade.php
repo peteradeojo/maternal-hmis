@@ -8,7 +8,7 @@
         <p class="text-red-700">{{ $note->created_at }}</p>
         @can('delete', $note)
             @if (is_subclass_of(static::class, \Livewire\Component::class))
-                <button wire:click="removeNote({{ $note->id }})" class="text-red-700">Delete</button>
+                <button wire:click="@(removeNote({{ $note->id }}))" class="text-red-700">Delete</button>
             @endif
         @endcan
     </div>
