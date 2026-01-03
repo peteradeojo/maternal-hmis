@@ -110,13 +110,13 @@
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-4 py-4">
-                        <div class="max-h-[400px] overflow-auto">
+                        <div class="h-[400px] overflow-auto">
                             <p class="basic-header">History of presenting complaints</p>
                             @foreach ($data->visit->notes as $note)
                                 <x-doctors-note :note="$note" />
                             @endforeach
                         </div>
-                        <div class="max-h-[400px] overflow-auto">
+                        <div class="h-[400px] overflow-auto">
                             <p class="basic-header">Examinations</p>
                             @unless ($data->visit->examination || $data->visit->visit->examination)
                                 <p>No examination conducted.</p>
