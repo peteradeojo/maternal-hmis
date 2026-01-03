@@ -1,6 +1,6 @@
 <div x-data="{ editing: false, note: @js($note) }" @keyup.escape="note.note=`{{ $note->note }}`;editing=false">
     <div x-show="!editing" class="bg-gray-100 p-2">
-        <p x-text="note.note"></p>
+        <p x-text="note.note" style="white-space: pre-line;"></p>
         <p><b>Attending:</b> <span x-text="note.recorder?.recorder ?? note.consultant?.name"></span></p>
         <p><small><span x-text="new Date(note.created_at).toLocaleString('en-CA')"></span></small></p>
         <div class="flex gap-x-2">
