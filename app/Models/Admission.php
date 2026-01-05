@@ -9,6 +9,7 @@ use App\Traits\Documentable;
 use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\Auditable;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,7 +17,12 @@ use Override;
 
 class Admission extends Model implements OperationalEvent
 {
-    use HasFactory, Documentable, HasVisitData, SoftDeletes, Auditable;
+    use HasFactory,
+        Documentable,
+        HasVisitData,
+        SoftDeletes,
+        Auditable,
+        NeedsRecorderInfo;
 
     protected $guarded = [];
 

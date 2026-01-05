@@ -132,6 +132,7 @@ class Plan extends Component
 
     public function addInvestigation($data)
     {
+        return;
         if (empty($this->admission)) {
             if ($this->investigations->doesntContain("id", "=", $data['id'])) {
                 $this->investigations->add($data);

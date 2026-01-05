@@ -39,7 +39,7 @@ class AddScan extends Component
             $this->event->imagings()->create([
                 'describable_type' => Product::class,
                 'describable_id' => $p->id,
-                'patient_id' => $this->event->patient_id,
+                'patient_id' => $this->event->patient_id ?? $this->event->patient->id,
                 'requested_by' => $user,
                 'name' => $data['product']['name'],
             ]);
@@ -47,8 +47,9 @@ class AddScan extends Component
             DB::commit();
             notifyUserSuccess("Scan request added.", $user);
         } catch (\Throwable $th) {
+            report($th);
             DB::rollBack();
-            notifyUserError("Unable to add this scan.", $user);
+            notifyUserError("Unable to add this scan. " . $th->getMessage(), $user);
         }
 
         $this->dispatch('$refresh');

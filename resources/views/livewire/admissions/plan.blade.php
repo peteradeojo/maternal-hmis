@@ -32,6 +32,16 @@
             <div>
                 <p class="bold">Investigations</p>
                 <livewire:doctor.add-scan :event="$admission->plan" />
+
+                <ul class="list-disc p-1">
+                    @foreach ($investigations as $inv)
+                        <li class="flex-center justify-between">
+                            <span>{{ $inv->name }}</span>
+                            <button wire.prevent wire:click="removeInvestigation({{ $inv->id }})"
+                                class="btn btn-sm btn-red">Remove</button>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         </div>
 
