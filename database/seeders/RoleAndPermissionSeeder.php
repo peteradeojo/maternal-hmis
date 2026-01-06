@@ -84,6 +84,11 @@ class RoleAndPermissionSeeder extends Seeder
                 Permissions::VIEW_BILLS,
             ],
             'support' => [],
+            'finance' => [
+                Permissions::VIEW_ACCOUNTS,
+                Permissions::GET_PAYMENT_REPORTS,
+                Permissions::VIEW_PAYMENTS,
+            ],
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {

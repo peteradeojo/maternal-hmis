@@ -51,4 +51,9 @@ enum Permissions: string
     // Radiology
     case MANAGE_SCANS = 'scans.manage';
     case DELETE_SCANS = 'scans.delete';
+
+    // Finance & Accounting
+    case VIEW_ACCOUNTS = 'finance.view-accounts';
+    case VIEW_PAYMENTS = 'finance.view-payments';
+    case GET_PAYMENT_REPORTS = 'finance.export-payment-reports';
 }

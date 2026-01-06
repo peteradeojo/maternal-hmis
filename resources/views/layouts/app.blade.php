@@ -55,11 +55,30 @@
 
         <div class="p-2 hidden bg-green-800 text-white" id="mobile-nav-list">
             <ul>
-                @foreach ($routes as $d => [$name])
-                    <li class="p-2">
-                        <a href="{{ $d }}" class="nav-link">{{ $name }}</a>
+                <li class="p-2">
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                </li>
+                @foreach ($routes as $map)
+                    <li class="p-2" x-data="{ open: false }" x-on:click="open = !open">
+                        <div class="flex-center gap-x-2">
+                            <i class="fa {{ $map['label'][1] }}"></i>
+                            <span>{{ $map['label'][0] }}</span>
+                        </div>
+                        <ul x-show="open" x-transition class="ps-2">
+                            @foreach ($map['routes'] as $n => $l)
+                                <li class="p-2">
+                                    <a href="{{ $l[0] }}">{{ $n }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
                     </li>
                 @endforeach
+                <li class="p-2">
+                    <a href="{{ route('user-profile') }}">Settings</a>
+                </li>
+                <li class="p-2">
+                    <a href="{{ route('logout') }}">Log out</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -68,7 +87,7 @@
     <aside
         class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800 overflow-auto"
         x-cloak :class="{ 'w-[16%]': aside, 'w-[5%]': !aside }" x-transition>
-        <div class="sticky top-0">
+        {{-- <div class="sticky top-0">
             <div class="bg-white p-2 flex" :class="aside ? 'justify-end' : 'justify-center'">
                 <button x-show="!aside" x-on:click="aside = true;localStorage.setItem('aside', aside)"
                     class="btn btn-sm rounded-full" title="Open">
@@ -78,11 +97,8 @@
                     class="btn btn-sm rounded-full" title="Close">
                     <span class="text-xl"><i class="fa fa-xmark"></i></span>
                 </button>
-                {{-- <button x-on:click="aside = !aside" class="btn btn-sm">
-                    <span class="text-lg"><i class="fa" :class="aside ? 'fa-xmark' : 'fa-book-open'"></i></span>
-                </button> --}}
             </div>
-        </div>
+        </div> --}}
 
         <div class="bg-white p-2 text-center">
             <img src="https://ui-avatars.com/api/?name={{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}"
