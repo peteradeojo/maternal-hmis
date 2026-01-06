@@ -183,7 +183,7 @@ class InventoryController extends Controller
         DB::beginTransaction();
         try {
             // Cost upate
-            if ($item->costs->first()?->cost != $data['cost']) {
+            if (floatval($item->costs->first()?->cost) != floatval($data['cost'])) {
                 $item->costs()->create([
                     'cost' => $data['cost'],
                     'source' => StockItemCost::SOURCES['MANUAL'],
@@ -193,8 +193,6 @@ class InventoryController extends Controller
             // Price update
             $prices = [];
             foreach ($data['prices'] as $i => $price) {
-                // dump($price);
-
                 if (@$price['active'] === false) {
                     if (isset($price['id'])) {
                         StockItemPrice::where('id', $price['id'])->update([
@@ -205,11 +203,16 @@ class InventoryController extends Controller
                     continue;
                 }
 
-                $priceVal = (float) TreatmentService::getPrice($item->id, $price['price_type']);
-                if ($priceVal != floatval($price['price'])) {
+                $newPrice = floatval($price['price']);
+                if ($item->prices()->where('price', $newPrice)->exists()) {
+                    $oldPrice = $item->prices()->where('price', $newPrice)->latest()->first();
+                    $oldPrice->update([
+                        'active' => true,
+                    ]);
+                } else {
                     $item->prices()->create([
                         'price_type' => $price['price_type'],
-                        'price' => $price['price'],
+                        'price' => $newPrice,
                         'currency' => 'NGN',
                         'effective_at' => now(),
                         'created_by' => $request->user()->id,
