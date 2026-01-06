@@ -67,7 +67,7 @@
                         <ul x-show="open" x-transition class="ps-2">
                             @foreach ($map['routes'] as $n => $l)
                                 <li class="p-2">
-                                    <a href="{{ $l[0] }}">{{ $n }}</a>
+                                    <a href="{{ @$l[0] }}">{{ @$n }}</a>
                                 </li>
                             @endforeach
                         </ul>

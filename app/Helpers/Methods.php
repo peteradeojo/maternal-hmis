@@ -11,57 +11,6 @@ const T1 = 0.3;
 
 function getRouteMap()
 {
-    // $routeMap = [
-    //     'doctor' => [
-    //         route('doctor.history') => ['History', 'fa-clock', null],
-    //         route('doctor.admissions') => ['Wards', 'fa-bed', null],
-    //         route('doctor.anc-bookings') => ['Antenatal Appointments', 'fa-book', null],
-    //     ],
-    //     'nurse' => [
-    //         route('nurses.admissions.get') => ['Admissions', 'fa-bed', null],
-    //         route('nurses.anc-bookings') => ['Antenatal Bookings', 'fa-female', null],
-    //     ],
-    //     'record' => [
-    //         route('records.patients') => ['Patients', 'fa-person', null],
-    //         route('records.admissions') => ['Admissions', 'fa-bed', null],
-    //     ],
-    //     'admin' => [
-    //         route('it.staff') => ['Staff', 'fa-people', null],
-    //         route('it.wards') => ['Wards', 'fa-bed', null],
-    //         route('it.products') => ['Products', 'fa-item', null],
-    //         route('it.crm-index') => ['CRM', 'fa-list', null],
-    //         route('iam.index') => ['IAM', 'fa-shield-halved', null],
-    //     ],
-    //     'lab' => [
-    //         route('lab.history') => ['History', 'fa-clock', null],
-    //         route('lab.admissions') => ['Admissions', 'fa-bed', null],
-    //         route('lab.antenatals') => ['Antenatal Registration', 'fa-heart', null],
-    //     ],
-    //     'radiology' => [
-    //         route('rad.scans') => ['Scans', 'fa-xray', null],
-    //         route('rad.history') => ['History', 'fa-clock', null],
-    //     ],
-    //     'pharmacy' => [
-    //         route('phm.prescriptions') => ['Prescriptions', 'fa-prescription', null],
-    //         route('phm.inventory.index') => ['Inventory', 'fa-warehouse', null],
-    //         route('phm.admissions') => ['Wards', 'fa-bed', null],
-    //     ],
-    //     'billing' => [
-    //         route('billing.index') => ['Billing', 'fa-money-bill-wave', null],
-    //         // route('dis.index') => ['Prescriptions', 'fa-prescription', null],
-    //         route('nhi.index') => ['Patients', 'fa-person', null],
-    //         route('nhi.encounters') => ['Encounters', 'fa-walk', null],
-    //     ],
-    //     'media' => [
-    //         route('it.crm-index') => ['CRM', 'fa-list', null],
-    //     ],
-    //     'support' => [
-    //         route('it.staff') => ['Staff', 'fa-person'],
-    //         route('it.wards') => ['Wards', 'fa-bed'],
-    //         route('it.products') => ['Products', 'fa-item'],
-    //     ],
-    // ];
-
     $routeMap = [
         [
             'role' => 'doctor',

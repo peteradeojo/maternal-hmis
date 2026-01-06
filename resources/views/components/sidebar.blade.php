@@ -13,18 +13,18 @@
             <li class="p-1 nav-item border-b-2" x-data="{ open: false }">
                 <div class="flex-center gap-x-2 cursor-pointer text-white hover:text-blue-300 duration-200"
                     x-on:click="open = !open">
-                    <i class="fa {{$map['label'][1]}}"></i>
-                    <span>{{ ucfirst($map['label'][0]) }}</span>
+                    <i class="fa {{@$map['label'][1]}}"></i>
+                    <span>{{ @ucfirst($map['label'][0]) }}</span>
                     <i class="fa ml-auto" :class="{ 'fa-caret-right': !open, 'fa-caret-down': open, }"></i>
                 </div>
 
                 <ul x-transition x-show="open && aside" class="ps-4">
                     @foreach ($map['routes'] as $label => $routeInfo)
                         <li class="p-2">
-                            <a href="{{ $routeInfo[0] }}"
+                            <a href="{{ @$routeInfo[0] }}"
                                 class="flex-center gap-x-2 text-white hover:text-blue-300 duration-200">
-                                <i class="fa {{ $routeInfo[1] }}"></i>
-                                <span>{{ $label }}</span>
+                                <i class="fa {{ @$routeInfo[1] }}"></i>
+                                <span>{{ @$label }}</span>
                             </a>
                         </li>
                     @endforeach
