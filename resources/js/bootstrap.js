@@ -13,6 +13,14 @@ window.axios.defaults.baseURL = import.meta.env.VITE_APP_URL;
 window.axios.defaults.withCredentials = true;
 window.axios.defaults.withXSRFToken = true;
 
+import {
+    Chart, Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController,
+    ArcElement,
+} from "chart.js";
+Chart.register(Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController, ArcElement);
+
+window.Chart = Chart;
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

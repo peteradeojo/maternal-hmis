@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/nhi.php';
     include __DIR__ . '/web/billing.php';
     include __DIR__ . '/web/iam.php';
+    include __DIR__ . '/web/finance.php';
 
     Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
 });

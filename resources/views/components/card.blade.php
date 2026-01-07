@@ -1,3 +1,7 @@
+{{--
+Slots: title, icon, footer
+--}}
+
 @props(['border' => 'blue-500', 'color' => 'blue-500'])
 
 <div class="bg-white rounded-lg shadow p-6 border-l-4 border-{{ $border }}">

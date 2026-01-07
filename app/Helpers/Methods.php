@@ -99,6 +99,13 @@ function getRouteMap()
                 'Products' => [route('it.products'), 'fa-item'],
             ],
         ],
+        [
+            'role' => Roles::Finance->value,
+            'label' => ['Finance', 'fa-file-invoice'],
+            'routes' => [
+                'Payment Reports' => [route('finance'), 'fa-money'],
+            ],
+        ]
     ];
 
     return $routeMap;
