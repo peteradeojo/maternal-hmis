@@ -77,9 +77,9 @@ class AdmissionsController extends Controller
 
         $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'tests', 'plan.treatments', 'delivery_note']);
 
-        // if (request()->user()->hasRole('doctor')) {
-        //     return view('doctors.admissions.show', ['data' => $admission]);
-        // }
+        if (request()->user()->hasRole('doctor')) {
+            return view('doctors.admissions.show', ['data' => $admission]);
+        }
 
         if (request()->user()->hasRole('nurse')) {
             return view('nursing.admissions.show', ['admission' => $admission]);
