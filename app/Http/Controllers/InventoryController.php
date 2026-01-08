@@ -140,6 +140,7 @@ class InventoryController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            report($e);
             return response()->json(['message' => 'Failed to create stock item. ' . $e->getMessage()], 500);
         }
     }

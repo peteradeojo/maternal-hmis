@@ -10,7 +10,7 @@
         </li>
 
         @foreach ($routes as $map)
-            <li class="p-1 nav-item border-b-2" x-data="{ open: false }">
+            <li class="p-1 nav-item border-b-2" x-data="{ open: false, toggle() {} }">
                 <div class="flex-center gap-x-2 cursor-pointer text-white hover:text-blue-300 duration-200"
                     x-on:click="open = !open">
                     <i class="fa {{@$map['label'][1]}}"></i>

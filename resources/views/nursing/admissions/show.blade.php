@@ -21,14 +21,15 @@
                         'Operation Notes',
                         'Delivery Note',
                         'Discharge',
+                        'Consent Form',
                     ],
                 ])
 
                 <div id="list">
-                    <p class="p-1"><b>Indication for admission:</b> {{ $admission->plan->indication }}</p>
                     {{-- Plan --}}
                     <div id="admission-plan" class="tab p-1">
                         <h2>Admission Plan</h2>
+                        <p class="p-1"><b>Indication for admission:</b> {{ $admission->plan->indication }}</p>
                         <div class="py-2">
                             <h2 class="header">Drugs</h2>
                             <p><i><b>NB:</b> Tick boxes to submit administration</i></p>
@@ -122,11 +123,7 @@
 
                         <div class="grid gap-y-2">
                             @forelse ($admission->reviews as $review)
-                                <div class="p-2 bg-gray-50">
-                                    <p>{{ $review->note }}</p>
-                                    <p><small><b>Dr. {{ $review->consultant->name }}</b></small></p>
-                                    <p><small><b>Date:</b> {{ $review->created_at->format('Y-m-d h:i A') }}</small></p>
-                                </div>
+                                <x-doctors-note :note="$review"></x-doctors-note>
                             @empty
                                 <p>No reviews posted for this admission.</p>
                             @endforelse
@@ -187,6 +184,11 @@
                             </div>
                         </form>
                     </div>
+
+                    {{-- Consent Form --}}
+                    <div class="tab p-1" x-data="{ name: '', procedure: '', patient: '', relationship: '', }">
+                        <x-consent-form :patient="$admission->patient" />
+                    </div>
                 </div>
             </div>
 
@@ -220,6 +222,131 @@
                 }).catch((err) => {
                     notifyError(err.message);
                 })
+            });
+        });
+
+        $(document).ready(function() {
+            // const canvas = document.getElementById('signature');
+            // const ctx = canvas.getContext('2d');
+            // let painting = false;
+
+            // console.log(ctx);
+
+
+            // function startPosition(e) {
+            //     console.log(e);
+            //     painting = true;
+            //     draw(e);
+            // }
+
+            // function finishedPosition() {
+            //     painting = false;
+            //     ctx.beginPath();
+            // }
+
+            // function draw(e) {
+            //     console.log(painting);
+            //     if (!painting) return;
+            //     console.log(e);
+
+            //     // Set brush styles
+            //     ctx.lineWidth = 5;
+            //     ctx.lineCap = 'round';
+            //     ctx.strokeStyle = 'black';
+
+            //     // Draw line based on mouse coordinates
+            //     ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            //     ctx.stroke();
+            //     ctx.beginPath();
+            //     ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            // }
+
+            // // Event Listeners for mouse interaction
+            // canvas.addEventListener('mousedown', startPosition);
+            // canvas.addEventListener('mouseup', finishedPosition);
+            // canvas.addEventListener('mousemove', draw);
+
+            // // Event Listeners for mouse interaction
+            // canvas.addEventListener('touchstart', startPosition);
+            // canvas.addEventListener('touchend', finishedPosition);
+            // canvas.addEventListener('touchmove', draw);
+            const canvas = document.querySelector('#signature');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+
+            // Line Style
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+
+            function startDrawing(e) {
+                drawing = true;
+                ctx.beginPath();
+                ctx.moveTo(e.offsetX, e.offsetY);
+            }
+
+            function draw(e) {
+                if (drawing) {
+                    ctx.lineTo(e.offsetX, e.offsetY);
+                    ctx.stroke(); // This draws the line as you move
+                }
+            }
+
+            function endDraw() {
+                drawing = false;
+            }
+
+            function resetCanvas() {
+                ctx.reset();
+                canvas.removeEventListener('mousedown', startDrawing);
+                canvas.removeEventListener('touchstart', startDrawing);
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('touchstart', startDrawing);
+            }
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', endDraw);
+
+            // Pro tip: Event Listeners for touch interaction
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchend', endDraw);
+            canvas.addEventListener('touchmove', draw);
+
+            document.querySelector("#clear-signature").addEventListener('click', resetCanvas);
+
+            document.querySelector("#save-signature").addEventListener('click', (e) => {
+                drawing = false;
+                canvas.removeEventListener('mousedown', startDrawing);
+                canvas.removeEventListener('touchstart', startDrawing);
+            });
+
+            document.querySelector("#consent-form").addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const data = (form.serializeArray());
+                data.push({
+                    name: 'signature',
+                    value: canvas.toDataURL()
+                });
+
+                const serialized = $.param(data);
+                console.log(serialized);
+
+                axios.post("{{ route('nurses.admissions.consent-form', $admission) }}", serialized, {
+                        headers: {
+                            'Content-type': 'application/x-www-form-urlencoded'
+                        },
+                    })
+                    .then((res) => {
+                        notifySuccess("Consent saved successfully");
+                        this.reset();
+                        resetCanvas();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        notifyError(err.response.data.message);
+                    });
             });
         });
     </script>

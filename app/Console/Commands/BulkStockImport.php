@@ -41,19 +41,14 @@ class BulkStockImport extends Command
         }
 
         $filename = storage_path("app/$filename");
-
         $fh = fopen($filename, 'r');
 
-        $header = fgetcsv($fh);
+        DB::transaction(function () use (&$fh) {
+            $user = User::where('phone', 'ict')->first();
+            $header = fgetcsv($fh);
+            while ($data = fgetcsv($fh)) {
+                $item = collect(array_combine($header, $data));
 
-        $user = User::where('phone', 'ict')->first();
-        DB::beginTransaction();
-
-        while ($data = fgetcsv($fh)) {
-            $item = collect(array_combine($header, $data));
-
-            try {
-                //code...
                 $sku = $item->get('sku');
                 $weight = $item->get('weight', null);
                 empty($weight) && $weight = null;
@@ -96,14 +91,9 @@ class BulkStockImport extends Command
                     'price' => $item->get('price'),
                     'created_by' => $user->id,
                 ]);
-            } catch (\Throwable $th) {
-                report($th);
-                DB::rollBack();
-                break;
             }
-        }
+        });
 
-        DB::commit();
         fclose($fh);
         unlink($filename);
 

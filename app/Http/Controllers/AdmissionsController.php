@@ -9,10 +9,13 @@ use App\Models\Admission;
 use App\Models\AdmissionTreatments;
 use App\Models\ConsultationNote;
 use App\Models\OperationNote;
+use App\Models\ProcedureConsent;
 use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+use function Illuminate\Filesystem\join_paths;
 
 class AdmissionsController extends Controller
 {
@@ -74,9 +77,9 @@ class AdmissionsController extends Controller
 
         $admission->load(['patient', 'ward', 'admittable', 'plan.user', 'tests', 'plan.treatments', 'delivery_note']);
 
-        if (request()->user()->hasRole('doctor')) {
-            return view('doctors.admissions.show', ['data' => $admission]);
-        }
+        // if (request()->user()->hasRole('doctor')) {
+        //     return view('doctors.admissions.show', ['data' => $admission]);
+        // }
 
         if (request()->user()->hasRole('nurse')) {
             return view('nursing.admissions.show', ['admission' => $admission]);
@@ -357,5 +360,67 @@ class AdmissionsController extends Controller
             'message' => 'Success',
             'data' => $admission,
         ]);
+    }
+
+    public function saveConsent(Request $request, Admission $admission)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'patient' => 'required|string',
+            'procedure' => 'required|string',
+            'relationship' => 'required|string',
+            'signature' => 'required|string',
+            'witness' => 'required|array',
+            'witness.*' => 'nullable|string',
+        ]);
+
+        $signature = str_replace("data:image/png;base64,", "", $data['signature']);
+        $binary = base64_decode($signature);
+
+        $path = storage_path("app/consent-form-signatures");
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+
+        $path = join_paths(
+            $path,
+            $data['name']
+                . "-" . $admission->patient->card_number
+                . "_" . $admission->id . "-"
+                . date('Y-m-d-H-i') . ".png"
+        );
+        if (!file_put_contents($path, $binary)) {
+            $error = error_get_last();
+            if ($error) {
+                return response()->json($error, 500);
+            }
+
+            return response()->json([
+                'message' => 'An error occurred. Unable to save consent.'
+            ], 500);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $consent = $admission->consent_forms()->create([
+                'patient_id' => $admission->patient_id,
+                ...$request->except('signature', 'witness'),
+                'witnesses' => $data['witness'],
+                'signature_path' => $path,
+                'user_id' => $request->user()->id,
+            ]);
+
+            DB::commit();
+            return response()->json($consent);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            report($th);
+
+            unlink($path);
+            return response()->json([
+                'message' => "Error occured",
+            ], 500);
+        }
     }
 }
