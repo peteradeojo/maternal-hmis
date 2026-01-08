@@ -1,8 +1,8 @@
 @props(['name'])
 
 <input type="number" name="{{ $name }}" {{ $attributes }} />
-<div>
-    @error($name)
+@error($name)
+    <div>
         <span class="text-red-500">{{ $message }}</span>
-    @enderror
-</div>
+    </div>
+@enderror

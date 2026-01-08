@@ -22,5 +22,7 @@ Route::name('nurses.')->middleware(['role:nurse', 'datalog'])->group(function ()
         Route::match(['get', 'post'], '/{admission}/preview-treatment', [AdmissionsController::class, 'previewTreatment'])->name('treatment-preview');
 
         Route::post('/discharge/{admission}', [AdmissionsController::class, 'discharge'])->name('discharge');
+
+        Route::post('/consent-form/{admission}', [AdmissionsController::class, 'saveConsent'])->name('consent-form');
     });
 });

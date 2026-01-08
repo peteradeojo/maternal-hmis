@@ -2,8 +2,8 @@
 
 <input type="text" name="{{ $name }}" {{ $attributes }}>
 
-<div>
-    @error($name)
+@error($name)
+    <div>
         <span class="error">{{ $message }}</span>
-    @enderror
-</div>
+    </div>
+@enderror

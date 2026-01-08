@@ -128,4 +128,8 @@ class Admission extends Model implements OperationalEvent
 
         return $query->whereRaw('1 = 0');
     }
+
+    public function consent_forms() {
+        return $this->hasMany(ProcedureConsent::class, 'admission_id');
+    }
 }
