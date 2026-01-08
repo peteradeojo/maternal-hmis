@@ -77,7 +77,7 @@ class Treat extends Component
     public function addNote()
     {
         $this->visit->notes()->create([
-            'patient_id' => $this->visit->id,
+            'patient_id' => $this->visit->patient->id,
             'note' => $this->note,
             'consultant_id' => auth()->user()->id,
         ]);
@@ -103,6 +103,7 @@ class Treat extends Component
         $this->visit->histories()->create([
             'presentation' => $this->complaint,
             'duration' => $this->complaint_duration,
+            'patient_id' => $this->visit->patient->id,
         ]);
 
         $this->dispatch('$refresh');
