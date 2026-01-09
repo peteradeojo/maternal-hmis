@@ -58,7 +58,7 @@ class FinanceController extends Controller
                 Bill::query()->groupByRaw("status, date_trunc('$interval', created_at)")
                     ->selectRaw("COUNT(id), status, date_trunc('$interval', created_at) as created_at")
                     ->whereBetween('created_at', [$date->format('Y-m-d'), $endDate])
-                    ->whereIn('status', [Status::cancelled, Status::PAID, Status::quoted->value]),
+                    ->whereIn('status', [Status::cancelled->value, Status::PAID->value, Status::quoted->value]),
                 'subquery'
             )->selectRaw(
                 "date_trunc('$interval', created_at) as created,

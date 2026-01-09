@@ -25,7 +25,7 @@ class Bill extends Model
     ];
 
     protected $casts = [
-        'status' => Status::class,
+        // 'status' => Status::class,
     ];
 
     public function billable()
