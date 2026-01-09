@@ -110,7 +110,10 @@
             let page = 0;
 
             const updateChart = (inc = 0) => {
-                if ((page + inc) < 0) page = 0;
+                if ((page + inc) < 0) {
+                    if (page == 0) return;
+                    page = 0;
+                }
                 else page += inc;
 
                 getBillTrend(page);
