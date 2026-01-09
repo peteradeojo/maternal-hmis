@@ -144,7 +144,7 @@
                     ];
 
                     data.forEach(point => {
-                        labels.push(point.created);
+                        labels.push(parseDateFromSource(point.created));
                         const vals = JSON.parse(point.status_counts);
                         datasets[0].data.push(vals[7] ?? 0);
                         datasets[1].data.push(vals[9] ?? 0);
