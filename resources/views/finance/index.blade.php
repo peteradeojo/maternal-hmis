@@ -107,16 +107,6 @@
                 }
             );
 
-            // axios.get("{{ route('finance.charts.bill-trend') }}")
-            //     .then(({
-            //         data
-            //     }) => {
-
-            //     })
-            //     .catch((err) => {
-            //         console.error(err);
-            //     });
-
             let page = 0;
 
             const updateChart = (inc = 0) => {
@@ -144,16 +134,16 @@
                     ];
 
                     data.forEach(point => {
-                        labels.push(parseDateFromSource(point.created));
+                        labels.push(parseDateFromSource(point.created, false, false));
                         const vals = JSON.parse(point.status_counts);
                         datasets[0].data.push(vals[7] ?? 0);
                         datasets[1].data.push(vals[9] ?? 0);
                     });
 
                     setChartData(billChart, labels, datasets);
-                    console.log(res);
                 } catch (error) {
-
+                    console.error(error);
+                    notifyError(error.message);
                 }
             };
 

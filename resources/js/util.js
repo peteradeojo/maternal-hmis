@@ -178,9 +178,11 @@ window.notifyAction = function (message) {
     })
 }
 
-window.parseDateFromSource = (date, second = false) => new Date(date).toLocaleDateString('en-CA', {
-    minute: '2-digit',
-    hour: '2-digit',
+window.parseDateFromSource = (date, second = false, hm = true) => new Date(date).toLocaleDateString('en-CA', {
+    ...(hm && {
+        minute: '2-digit',
+        hour: '2-digit',
+    }),
     ...(second && { second: '2-digit' }),
     timeZone: 'Africa/Lagos',
 });
