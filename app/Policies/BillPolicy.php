@@ -45,7 +45,7 @@ class BillPolicy
      */
     public function delete(User $user, Bill $bill): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole(['admin', 'finance']);
     }
 
     /**
