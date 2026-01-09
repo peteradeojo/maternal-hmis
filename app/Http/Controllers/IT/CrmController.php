@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\IT;
 
+use App\Enums\Permissions;
 use LibSQL;
 use App\Models\Post;
 use App\Enums\Status;
@@ -79,7 +80,7 @@ class CrmController extends Controller
     {
         $post->load(['user']);
 
-        $postText = app()->isProduction() ? file_get_contents($post->post) : Storage::read($post->post);
+        $postText = file_get_contents($post->post); // : Storage::read($post->post);
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -95,5 +96,20 @@ class CrmController extends Controller
         }
 
         return view('it.crm.show', ['post' => $post, 'data' => $postText]);
+    }
+
+    public function updatePostStatus(Request $request, Post $post) {
+        if ($request->user()->can(Permissions::EDIT_POSTS->value, $post) == false) {
+            return abort(403);
+        }
+
+        $data = $request->validate([
+            'status' => 'required|integer',
+        ]);
+
+        $post->status = $data['status'];
+        $post->save();
+
+        return redirect()->back();
     }
 }

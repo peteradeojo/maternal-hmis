@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -15,14 +16,18 @@ class AuthController extends Controller
         ]);
 
         Session::flush();
-        if (auth()->attempt($request->only('phone', 'password'))) {
-            if (in_array($request->input('phone'), config('app.generic_doctor_profiles'))) {
-                return redirect()->route('whoami');
+
+        try {
+            if (auth()->attempt($request->only('phone', 'password'))) {
+                if (in_array($request->input('phone'), config('app.generic_doctor_profiles'))) {
+                    return redirect()->route('whoami');
+                }
+
+                $request->session()->regenerate(destroy: true);
+                return redirect()->intended(route('dashboard'));
             }
-
-
-            $request->session()->regenerate(destroy: true);
-            return redirect()->intended(route('dashboard'));
+        } catch (Exception $e) {
+            return abort(500);
         }
 
         return redirect()->back()->with('error', "Invalid login");

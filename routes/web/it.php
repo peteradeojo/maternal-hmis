@@ -36,6 +36,7 @@ Route::name('it.')->group(function () {
         Route::get('/publish', [CrmController::class, 'create'])->name('crm-publish');
         Route::post('/publish', [CrmController::class, 'publish']);
         Route::get('/{post}', [CrmController::class, 'show'])->name('crm-show');
+        Route::put('/{post}/status', [CrmController::class, 'updatePostStatus'])->name('crm-status');
     });
 
 });
