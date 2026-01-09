@@ -15,9 +15,9 @@ window.axios.defaults.withXSRFToken = true;
 
 import {
     Chart, Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController,
-    ArcElement,
+    ArcElement, Tooltip, LineController, PointElement, LineElement,
 } from "chart.js";
-Chart.register(Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController, ArcElement);
+Chart.register(Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController, ArcElement, Tooltip, LineController, PointElement, LineElement);
 
 window.Chart = Chart;
 

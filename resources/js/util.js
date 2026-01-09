@@ -201,3 +201,28 @@ document.addEventListener("DOMContentLoaded", () => {
         $("#mobile-nav-list").toggleClass("hidden");
     });
 });
+
+const PRIMARY_COLOR = '#3fbbc0';
+window.PRIMARY_COLOR = PRIMARY_COLOR;
+
+window.addChartData = function (chart, label, newData) {
+    chart.data.labels.push(...label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(...newData);
+    });
+    chart.update();
+}
+
+window.setChartData = function (chart, labels, data) {
+    chart.data.labels = labels;
+    chart.data.datasets = data;
+    chart.update('none');
+}
+
+window.removeChartData = function (chart) {
+    chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+    });
+    chart.update();
+}

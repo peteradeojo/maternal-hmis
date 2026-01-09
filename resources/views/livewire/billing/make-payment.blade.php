@@ -32,8 +32,7 @@
 
                                     @if ($entry['status_id'] != Status::blocked->value)
                                         <button title="Reject" wire:click="reject({{ $entry['id'] }})"
-                                            class="btn btn-sm bg-red-300"><i
-                                                class="fa fa-trash"></i></button>
+                                            class="btn btn-sm bg-red-300"><i class="fa fa-trash"></i></button>
                                     @else
                                         <button title="Reject" wire:click="unreject({{ $entry['id'] }})"
                                             class="btn btn-sm bg-blue-400 text-white"><i
@@ -111,7 +110,7 @@
                             <option value="bank">Bank/Transfer</option>
                             <option value="card">Card/POS</option>
                             <option value="insurance">Insurance</option>
-                            <option value="waived">Waive amount</option>
+                            {{-- <option value="waived">Waive amount</option> --}}
                         </select>
                     </div>
 

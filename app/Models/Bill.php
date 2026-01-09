@@ -24,6 +24,10 @@ class Bill extends Model
         'created_by',
     ];
 
+    protected $casts = [
+        'status' => Status::class,
+    ];
+
     public function billable()
     {
         return $this->morphTo();
