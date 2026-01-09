@@ -177,6 +177,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         HelperProvider::class,
+        \Turso\Driver\Laravel\LibSQLDriverServiceProvider::class,
     ])->toArray(),
 
     /*
