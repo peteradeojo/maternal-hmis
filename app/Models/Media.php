@@ -33,7 +33,7 @@ class Media extends Model
             $qu->where('receiver_type', User::class)->where('receiver_id', $user->id);
         })->orWhere(function ($qu) use (&$user) {
             $qu->where('receiver_type', Department::class)->where('receiver_id', $user->department_id);
-        });
+        })->orWhereNull('receiver_type');
     }
 
     public function scopeActive($query)
