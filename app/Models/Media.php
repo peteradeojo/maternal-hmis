@@ -29,7 +29,11 @@ class Media extends Model
 
     public function scopeAccessible($query, User $user)
     {
-        return $query->where('user_id', $user->id);
+        return $query->where('user_id', $user->id)->orWhere(function ($qu) use (&$user) {
+            $qu->where('receiver_type', User::class)->where('receiver_id', $user->id);
+        })->orWhere(function ($qu) use (&$user) {
+            $qu->where('receiver_type', Department::class)->where('receiver_id', $user->department_id);
+        });
     }
 
     public function scopeActive($query)
