@@ -120,7 +120,7 @@ class CrmController extends Controller
         if (!$request->isMethod('POST')) {
             $departments = Department::all()->toArray();
             if ($request->has('fetch')) {
-                $query = Media::accessible($request->user())->active();
+                $query = Media::accessible($request->user())->active()->latest();
                 return $this->dataTable($request, $query);
             }
 

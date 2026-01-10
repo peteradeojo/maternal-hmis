@@ -20,7 +20,7 @@ class Media extends Model
         'expires_at',
     ];
 
-    protected $with = ['sender'];
+    protected $with = ['sender', 'receiver'];
 
     public function medially()
     {

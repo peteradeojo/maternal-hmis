@@ -6,17 +6,6 @@
         <div class="card p-4">
             <div class="card-header">Dropbox</div>
 
-            {{-- <table id="table" class="table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table> --}}
 
             <x-datatables id="table">
                 <x-slot:thead>
@@ -24,6 +13,7 @@
                         <th>Title</th>
                         <th>From</th>
                         <th>Date</th>
+                        <th>To</th>
                         <th></th>
                     </tr>
                 </x-slot:thead>
@@ -103,6 +93,7 @@
                     { data: 'file_name', },
                     { data: 'sender.name', },
                     { data: ({created_at}) => parseDateFromSource(created_at) },
+                    {data: 'receiver.name'},
                     {
                         data: (row) => `<a href='{{route('dropbox.download', ':id')}}' class='btn bg-primary'>Download</a>`.replace(':id', row.id),
                     },
