@@ -7,8 +7,13 @@ use App\Models\Post;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Department;
+use App\Models\Media;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\File as RulesFile;
 
 class CrmController extends Controller
 {
@@ -94,7 +99,8 @@ class CrmController extends Controller
         return view('it.crm.show', ['post' => $post, 'data' => $postText]);
     }
 
-    public function updatePostStatus(Request $request, Post $post) {
+    public function updatePostStatus(Request $request, Post $post)
+    {
         if ($request->user()->can(Permissions::EDIT_POSTS->value, $post) == false) {
             return abort(403);
         }
@@ -107,5 +113,66 @@ class CrmController extends Controller
         $post->save();
 
         return redirect()->back();
+    }
+
+    public function dropbox(Request $request)
+    {
+        if (!$request->isMethod('POST')) {
+            $departments = Department::all()->toArray();
+            if ($request->has('fetch')) {
+                $query = Media::accessible($request->user())->active();
+                return $this->dataTable($request, $query);
+            }
+
+            return view('dropbox', compact('departments'));
+        }
+
+        $request->validate([
+            'to' => 'required|in:user,dept',
+            'file' => 'required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,odt|max:' . (20 * 1024),
+            'phone' => 'required_if:to,user|exists:users,phone',
+            'department' => 'required_if:to,dept',
+        ]);
+
+        if ($request->input('to') == 'user') {
+            $receiver = User::where('phone', $request->input('phone'))->first();
+        } else {
+            if ($request->input('department') == 'all') {
+                $receiver = null;
+            } else {
+                $receiver = Department::where('name', $request->input('dept'))->first();
+            }
+        }
+
+        $file = $request->file('file');
+
+        DB::beginTransaction();
+
+        try {
+            $entry = new Media([
+                'user_id' => $request->user()->id,
+                'size' => $file->getSize(),
+                'file_type' => $file->getClientMimeType(),
+                'file_name' => $file->getClientOriginalName(),
+                'medially_type' => User::class,
+                'medially_id' => $request->user()->id,
+                'expires_at' => null,
+                'receiver_type' => !empty($receiver) ? $receiver::class : null,
+                'receiver_id' => !empty($receiver) ? $receiver->id : null,
+                'file_url' => $file->store('media'),
+            ]);
+            $entry->save();
+
+            DB::commit();
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->withErrors($th->getMessage());
+        }
+    }
+
+    public function downloadMedia(Request $request, Media $entry)
+    {
+        return Storage::download($entry->file_url, $entry->file_name);
     }
 }

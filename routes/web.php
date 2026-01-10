@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\IT\CrmController;
 use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,8 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/finance.php';
 
     Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
+    Route::match(['GET', 'POST'], '/dropbox', [CrmController::class, 'dropbox'])->name('dropbox');
+    Route::get('/dropbox/{entry}', [CrmController::class, 'downloadMedia'])->name('dropbox.download');
 });
 
 Route::get('/inv', [InventoryController::class, 'getInventory']);

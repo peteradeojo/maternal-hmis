@@ -113,7 +113,10 @@
 
     <main class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms]" x-cloak
         x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">
-        <div class="flex justify-end">
+        <div class="flex-center p-2 justify-end gap-x-4">
+            <a href="{{route('dropbox')}}">
+                <i class="fab fa-dropbox text-2xl"></i>
+            </a>
             <p class="text-black sm:px-8">Version: {{ env('APP_VERSION', '0.0.1') }}</p>
         </div>
         <div class="sm:px-8 sm:py-4">
