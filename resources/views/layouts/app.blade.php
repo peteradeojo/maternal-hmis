@@ -161,16 +161,29 @@
         src="https://cdn.datatables.net/v/dt/dt-2.3.4/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/r-3.0.7/datatables.min.js"
         integrity="sha384-N+pTNAj6u3zQeBQuZo/qd20fG6LAD0KVj49eFU9robOJpS7LYXJn/vy7zoXayWW6" crossorigin="anonymous">
     </script>
-    <!-- Privacy-friendly analytics by Plausible -->
-    <script async src="https://analytics.maternalchildhosp.com/js/pa-j72StbS78esaf_3yXCg9m.js"></script>
-    <script>
-        window.plausible = window.plausible || function() {
-            (plausible.q = plausible.q || []).push(arguments)
-        }, plausible.init = plausible.init || function(i) {
-            plausible.o = i || {}
-        };
-        plausible.init()
-    </script>
+    @if (str_ends_with(request()->host(), '.lan'))
+        <!-- Privacy-friendly analytics by Plausible -->
+        <script async src="https://analytics.maternalchildhosp.com/js/pa-cCAS5cmshMRHQhNZzPKZ5.js"></script>
+        <script>
+            window.plausible = window.plausible || function() {
+                (plausible.q = plausible.q || []).push(arguments)
+            }, plausible.init = plausible.init || function(i) {
+                plausible.o = i || {}
+            };
+            plausible.init()
+        </script>
+    @elseif (str_ends_with(request()->host(), 'maternalchildhosp.com'))
+        <!-- Privacy-friendly analytics by Plausible -->
+        <script async src="https://analytics.maternalchildhosp.com/js/pa-j72StbS78esaf_3yXCg9m.js"></script>
+        <script>
+            window.plausible = window.plausible || function() {
+                (plausible.q = plausible.q || []).push(arguments)
+            }, plausible.init = plausible.init || function(i) {
+                plausible.o = i || {}
+            };
+            plausible.init()
+        </script>
+    @endif
 
     @vite(['resources/js/app.js', 'resources/js/util.js'])
     @livewireScripts
