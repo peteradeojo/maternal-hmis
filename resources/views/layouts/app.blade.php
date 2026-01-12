@@ -114,7 +114,7 @@
     <main class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms]" x-cloak
         x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">
         <div class="flex-center p-2 justify-end gap-x-4">
-            <a href="{{route('dropbox')}}">
+            <a href="{{ route('dropbox') }}">
                 <i class="fab fa-dropbox text-2xl"></i>
             </a>
             <p class="text-black sm:px-8">Version: {{ env('APP_VERSION', '0.0.1') }}</p>
@@ -161,6 +161,17 @@
         src="https://cdn.datatables.net/v/dt/dt-2.3.4/b-3.2.5/b-colvis-3.2.5/b-html5-3.2.5/b-print-3.2.5/r-3.0.7/datatables.min.js"
         integrity="sha384-N+pTNAj6u3zQeBQuZo/qd20fG6LAD0KVj49eFU9robOJpS7LYXJn/vy7zoXayWW6" crossorigin="anonymous">
     </script>
+    <!-- Privacy-friendly analytics by Plausible -->
+    <script async src="https://analytics.maternalchildhosp.com/js/pa-j72StbS78esaf_3yXCg9m.js"></script>
+    <script>
+        window.plausible = window.plausible || function() {
+            (plausible.q = plausible.q || []).push(arguments)
+        }, plausible.init = plausible.init || function(i) {
+            plausible.o = i || {}
+        };
+        plausible.init()
+    </script>
+
     @vite(['resources/js/app.js', 'resources/js/util.js'])
     @livewireScripts
 

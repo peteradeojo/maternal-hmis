@@ -20,6 +20,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"
         integrity="sha512-6BTOlkauINO65nLhXhthZMtepgJSghyimIalb+crKRPhvhmsCdnIuGcVbR5/aQY2A+260iC1OPy1oCdB6pSSwQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Privacy-friendly analytics by Plausible -->
+    <script async src="https://analytics.maternalchildhosp.com/js/pa-j72StbS78esaf_3yXCg9m.js"></script>
+    <script>
+        window.plausible = window.plausible || function() {
+            (plausible.q = plausible.q || []).push(arguments)
+        }, plausible.init = plausible.init || function(i) {
+            plausible.o = i || {}
+        };
+        plausible.init()
+    </script>
+
 </body>
 
 </html>
