@@ -5,6 +5,7 @@
             <th>Result</th>
             <th>Unit</th>
             <th>Ref. range</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -18,6 +19,7 @@
                             Request</button>
                     @endif
                 </td>
+                <td>{{ $test->created_at?->format('Y-m-d h:i A') }}</td>
             </tr>
             @forelse ($test->results ?? [] as $result)
                 <tr wire:key="test:{{ $test->name }}">
