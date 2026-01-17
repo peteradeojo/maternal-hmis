@@ -30,7 +30,7 @@
                 </ul> --}}
 
                 @include('doctors.components.test-results', [
-                    'tests' => $admission->plan->valid_tests,
+                    'tests' => $admission->plan->valid_tests->merge($admission->visit->tests),
                     'cancellable' => false,
                 ])
             </div>
