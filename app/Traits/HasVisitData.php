@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Interfaces\OperationalEvent;
 use App\Models\ConsultationNote;
 use App\Models\PatientHistory;
+use App\Models\TreatmentPlan;
 use App\Models\Visit;
 use App\Models\Vitals;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -109,5 +110,9 @@ trait HasVisitData
         }
 
         return $test->results;
+    }
+
+    public function treatment_plans() {
+        return $this->morphMany(TreatmentPlan::class, 'origin');
     }
 }

@@ -94,23 +94,25 @@
                 @endif
 
                 <div class="tab">
-                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-history-modal')">Presenting
+                    <button class="btn btn-blue" @click="$dispatch('open-history-modal')">Presenting
                         Complaints</button>
 
-                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-notes-modal')">History of Presenting Complaints</button>
+                    <button class="btn btn-blue" @click="$dispatch('open-notes-modal')">History of Presenting
+                        Complaints</button>
                     @if ($visit->examination)
-                        <button class="btn btn-green btn-sm" @click="$dispatch('open-exams-modal')">Edit
+                        <button class="btn btn-green" @click="$dispatch('open-exams-modal')">Edit
                             Examination</button>
                     @else
-                        <button class="btn btn-blue btn-sm" @click="$dispatch('open-exams-modal')">Add
+                        <button class="btn btn-blue" @click="$dispatch('open-exams-modal')">Add
                             Examination</button>
                     @endif
 
-                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-tests-modal')">Add
+                    <button class="btn btn-blue" @click="$dispatch('open-tests-modal')">Add
                         Investigation</button>
-                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-diagnosis-modal')">Add
+                    <button class="btn btn-blue" @click="$dispatch('open-diagnosis-modal')">Add
                         Diagnosis</button>
-                    <button class="btn btn-blue btn-sm" @click="$dispatch('open-prescriptions-modal')">Add
+                    <button class="btn bg-blue-400" @click="$dispatch('open-treatment-plan')">Create Plan</button>
+                    <button class="btn btn-blue" @click="$dispatch('open-prescriptions-modal')">Add
                         Prescription</button>
 
                     <livewire:doctor.medical-records :visit="$visit" />
@@ -118,6 +120,10 @@
             </div>
         </div>
     </div>
+
+    <x-overlay-modal id="treatment-plan" title="Treatment Plans">
+        <livewire:doctor.treatment-plans :event="$visit" />
+    </x-overlay-modal>
 
     <x-overlay-modal id="history-modal" title="History/Presentation">
         {{-- Add History --}}

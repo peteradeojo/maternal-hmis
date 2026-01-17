@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Session;
 
 trait NeedsRecorderInfo
 {
+    use Auditable;
+
     protected static function bootNeedsRecorderInfo()
     {
         static::created(function (Self $model) {

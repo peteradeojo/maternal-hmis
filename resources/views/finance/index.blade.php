@@ -2,7 +2,7 @@
 @section('title', 'Finance Dashboard')
 
 @section('content')
-    <div class="container">
+    <div class="container grid gap-4">
         <div class="grid grid-cols-2 gap-4">
             <div class="card p-2">
                 <div class="card-header">
@@ -14,8 +14,6 @@
             </div>
         </div>
 
-        <div class="p-1"></div>
-
         <div class="grid grid-cols-3 gap-4">
             <div class="card p-4">
                 <div class="text-center card-header">Payments Breakdown</div>
@@ -26,7 +24,7 @@
                 <canvas id="today-payments"></canvas>
             </div>
         </div>
-        <div class="p-1"></div>
+
         <div class="card p-4 bill-trends">
             <div class="text-center card-header">Bill trends</div>
             <div class="flex-center gap-x-4">
@@ -35,6 +33,19 @@
                     <canvas id="bill-trends"></canvas>
                 </div>
                 <button id="next" class="btn bg-primary text-white">&gt;</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <div class="card p-4">
+                <div class="text-center card-header">Service Breakdown</div>
+                <div class="flex-center gap-x-4">
+                    <button class="btn bg-primary text-white">&prec;</button>
+                    <div class="w-full">
+                        <canvas id="services"></canvas>
+                    </div>
+                    <button class="btn bg-primary text-white">&gt;</button>
+                </div>
             </div>
         </div>
     </div>
@@ -109,12 +120,11 @@
 
             let page = 0;
 
-            const updateChart = (inc = 0) => {
+            const updateBillChart = (inc = 0) => {
                 if ((page + inc) < 0) {
                     if (page == 0) return;
                     page = 0;
-                }
-                else page += inc;
+                } else page += inc;
 
                 getBillTrend(page);
             }
@@ -150,10 +160,58 @@
                 }
             };
 
-            updateChart();
+            updateBillChart();
 
-            document.querySelector("button#previous").addEventListener('click', () => updateChart(1));
-            document.querySelector("button#next").addEventListener('click', () => updateChart(-1));
+            document.querySelector("button#previous").addEventListener('click', () => updateBillChart(1));
+            document.querySelector("button#next").addEventListener('click', () => updateBillChart(-1));
+
+            try {
+                const services = new Chart(document.querySelector('#services'), {
+                    type: 'bar',
+                    options: {
+                        indexAxis: 'y',
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Services breakdown',
+                            },
+                            legend: {
+                                display: false,
+                            },
+                        },
+                        elements: {
+                            bar: {
+                                borderWidth: 2,
+                            },
+                        },
+                        responsive: true,
+
+                    },
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Services breakdown',
+                                axis: 'y',
+                                barPercentage: 0.2,
+                                barThickness: 20,
+                                maxBarThickness: 25,
+                                borderRadius: 4,
+                                data: [10, 20, 14, 8],
+                                backgroundColor: [
+                                    'yellow',
+                                    'red',
+                                    'blue',
+                                    'green'
+                                ],
+                            }
+                        ],
+                        labels: ['Lab', 'Consultation', 'Pharmacy', 'Radiology'],
+                    },
+                });
+            } catch (error) {
+                console.error(error);
+                // notifyError(error);
+            }
         });
     </script>
 @endpush
