@@ -14,7 +14,7 @@
                 {{-- <livewire:dynamic-product-search :departmentId="5" @selected="addTest($event.detail)" /> --}}
                 <livewire:doctor.add-test :event="$admission->plan" @tests-added="$refresh" />
 
-                <ul class="list-disc list-inside pt-1">
+                {{-- <ul class="list-disc list-inside pt-1">
                     @foreach ($tests as $selectedTest)
                         <li class="flex justify-between items-center">
                             @unless ($selectedTest->results)
@@ -27,7 +27,12 @@
                             @endunless
                         </li>
                     @endforeach
-                </ul>
+                </ul> --}}
+
+                @include('doctors.components.test-results', [
+                    'tests' => $admission->plan->valid_tests,
+                    'cancellable' => false,
+                ])
             </div>
             <div>
                 <p class="bold">Investigations</p>
