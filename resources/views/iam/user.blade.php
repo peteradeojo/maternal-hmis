@@ -2,6 +2,7 @@
 @section('title', $user->name)
 
 @section('content')
+    <x-back-link to="{{route('iam.users')}}" />
     <div class="container grid gap-y-4">
         <div class="card p-4" x-data="{
             roles: [],
@@ -76,7 +77,7 @@
                     <button type="submit" class="btn btn-blue">Submit</button>
                 </form>
 
-                <form action="{{route('it.staff.update-status', $user)}}" method="post">
+                <form action="{{ route('it.staff.update-status', $user) }}" method="post">
                     @csrf
                     @method('PATCH')
                     <div class="form-group">
