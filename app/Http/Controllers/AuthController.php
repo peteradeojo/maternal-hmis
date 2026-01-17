@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -18,6 +20,11 @@ class AuthController extends Controller
         Session::flush();
 
         try {
+            $user = User::where('phone', $request->phone)->first();
+            if (!$user || $user->status != Status::active) {
+                return back(419)->with('error', "Invalid login. Please check with admin.");
+            }
+
             if (auth()->attempt($request->only('phone', 'password'))) {
                 if (in_array($request->input('phone'), config('app.generic_doctor_profiles'))) {
                     return redirect()->route('whoami');

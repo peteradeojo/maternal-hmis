@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\IT;
 
 use App\Enums\Department as EnumsDepartment;
+use App\Enums\Permissions;
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
@@ -66,5 +68,27 @@ class StaffController extends Controller
     {
         $dep->load('members');
         return view('it.show-department', compact('dep'));
+    }
+
+    public function changeUserStatus(Request $request, User $user)
+    {
+        $this->authorize('change_status', $user);
+
+        $request->validate([
+            'account_status' => 'required|in:enable,disable'
+        ]);
+
+        $status = match ($request->account_status) {
+            'enable' => Status::active,
+            'disable' => Status::blocked,
+            default => null,
+        };
+
+        if ($status) {
+            $user->status = $status;
+            $user->save();
+        }
+
+        return redirect()->route('iam.manage-user', $user);
     }
 }
