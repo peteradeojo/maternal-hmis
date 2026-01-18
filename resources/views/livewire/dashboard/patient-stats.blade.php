@@ -57,48 +57,6 @@
             </x-card>
         @endcan
     </div>
-
-    @role('record')
-        <div class="card py px mb-1">
-            <div class="card-header">
-                Waiting Patients
-            </div>
-            <div class="body py">
-                <x-datatables id="waitlist-table">
-                    <x-slot:thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Card Number</th>
-                            <th>Category</th>
-                            <th>Gender</th>
-                            <th>Checked In</th>
-                            <th>Visit Type</th>
-                            <td></td>
-                        </tr>
-                    </x-slot:thead>
-                    <x-slot:tbody>
-                        @foreach ($visits as $v)
-                            <tr>
-                                <td><a href="{{ route('records.patient', $v->patient) }}"
-                                        class="link">{{ $v->patient->name }}</a></td>
-                                <td>{{ $v->patient->card_number }}</td>
-                                <td>{{ $v->patient->category->name }}</td>
-                                <td>{{ $v->patient->gender_value[0] }}</td>
-                                <td>{{ $v->created_at->format('Y-m-d h:iA') }}</td>
-                                <td>{{ $v->readable_visit_type }}</td>
-                                <td>
-                                    <a class="btn btn-sm bg-green-400"
-                                        href="{{ route('billing.patient-bills', ['patient' => $v->patient_id]) }}">Check
-                                        out</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </x-slot:tbody>
-                </x-datatables>
-
-            </div>
-        </div>
-    @endrole
 </div>
 
 @push('scripts')
