@@ -1,3 +1,3 @@
 <div>
-    <livewire:records.patient-check-in :patient="$patient" />
+    <livewire:records.patient-check-in :patient="$patient" :appointmentId="$appointmentId" />
 </div>

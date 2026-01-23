@@ -21,8 +21,12 @@ class AppointmentsController extends Controller
 
     public function show(Request $request, PatientAppointment $appointment)
     {
+        if ($request->has('mini')) {
+            return view('appointments.show-mini', compact('appointment'));
+        }
         return view('appointments.show', compact('appointment'));
     }
+
     public function edit(Request $request, PatientAppointment $appointment) {}
 
     public function store(Request $request)
@@ -38,7 +42,7 @@ class AppointmentsController extends Controller
 
         try {
             $app = PatientAppointment::create([
-                'user_id' => $request->user()->id,
+                'booked_by' => $request->user()->id,
                 'patient_id' => $visit->patient_id,
                 'status' => Status::active->value,
                 ...$data,

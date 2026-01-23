@@ -1,6 +1,11 @@
 <div>
-    @unless ($patient->visits->count() > 0 && $patient->visits[0]->status == Status::active->value)
+    @unless ($patient->visits()->active()->count() > 0)
         <form wire:submit.prevent="startVisit" method="post">
+            @if ($appointment)
+                <div>
+                    Check-in for apppointment: {{ $appointment->appointment_date->format('Y-m-d h:i A') }}
+                </div>
+            @endif
             <div class="form-group">
                 <label>Consultant</label>
                 <select name="consultant" wire:model="consultant" class="form-control">

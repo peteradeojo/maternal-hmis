@@ -8,6 +8,7 @@ use App\Enums\Status;
 use App\Events\NotificationSent;
 use App\Models\AncVisit;
 use App\Models\GeneralVisit;
+use App\Models\PatientAppointment;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Broadcast;
@@ -23,17 +24,23 @@ class PatientCheckIn extends Component
     #[Validate('required|integer')]
     public $consultant;
 
-    #[Validate('required|integer|in:1,2')]
+    #[Validate('required|integer|in:1,2,3')]
     public $visit_type;
+
+    public $appointment;
 
     private $user;
 
-    public function mount()
+    public function mount($appointmentId = null)
     {
         if ($this->patient->category->name == "Antenatal") {
             $this->visit_type = 2;
         } else {
             $this->visit_type = 1;
+        }
+
+        if ($appointmentId) {
+            $this->appointment = PatientAppointment::findOrFail($appointmentId);
         }
 
         $this->consultants = User::role('doctor')->get();
@@ -107,6 +114,7 @@ class PatientCheckIn extends Component
             'awaiting_vitals' => 1,
             'awaiting_doctor' => 1,
             'status' => Status::active->value,
+            'parent_id' => $this->appointment?->visit_id,
         ]);
 
         $visit->save();

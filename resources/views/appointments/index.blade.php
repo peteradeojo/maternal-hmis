@@ -3,6 +3,7 @@
 
 @section('content')
     <div class="container">
+        <x-back-link />
         <div class="card">
             <p class="card-header">Appointments</p>
 
@@ -41,8 +42,8 @@
                                 patient,
                                 id
                             }) =>
-                            `<a href="{{ route('records.appointments.show', ':id') }}" class='link'>${patient.name}</a>`
-                            .replace(':id', id),
+                            `<a href="{{ route('records.patient', ':id') }}" class='link'>${patient.name} (${patient.card_number})</a>`
+                            .replace(':id', patient.id),
                     },
                     {
                         data: 'patient.phone'
@@ -54,21 +55,45 @@
                 rowId: 'id',
             })
 
-            const pluse = (i) => {
-                return `<div class='p-2'>
-                    <p>${JSON.stringify(i)}</p>
-                    </div>`;
+            const format = async ({
+                id
+            }) => {
+                if (!id) return;
+                const res = await axios.get("{{ route('records.appointments.show', ':id') }}?mini".replace(
+                    ':id', id));
+                return res.data;
             };
 
-            table.on('click', 'tbody td.dt-control', function(e) {
+            table.on('click', 'tbody td.dt-control', async function(e) {
                 let tr = e.target.closest('tr');
                 let row = table.row(tr);
 
                 if (row.child.isShown()) {
                     row.child.hide();
                 } else {
-                    row.child(pluse(row.data())).show();
+                    try {
+                        const data = await format(row.data());
+                        row.child(data).show();
+                    } catch (err) {
+                        notifyError(err);
+                        row.child(err.message).show();
+                    }
                 }
+            });
+
+            $(document).on('click', '.subcheckin', function(e) {
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).html('Patient Appointment Check-In');
+                    const row = table.row(e.target.closest('tr'));
+                    const {
+                        patient, id
+                    } = row.data();
+
+                    axios.get(`{{ route('records.start-visit', ':id') }}?appointment=${id}`.replace(':id', patient
+                        .id)).then((res) => {
+                            a.find(MODAL_CONTENT).html(res.data);
+                        }).catch((err) => console.error(error));
+                });
             });
         });
     </script>
