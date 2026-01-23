@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use App\Traits\Auditable;
 use App\Traits\CastsStatus;
 use App\Traits\NeedsRecorderInfo;
@@ -35,5 +36,9 @@ class TreatmentPlan extends Model
     public function __toString()
     {
         return $this->plan;
+    }
+
+    public function scopeStatus($query, Status $status) {
+        return $query->where('status', $status);
     }
 }

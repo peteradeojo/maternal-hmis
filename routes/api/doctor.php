@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdmissionsController;
+use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Doctor\PatientsController;
 use App\Http\Controllers\LabController;
 use App\Http\Controllers\RadiologyController;
@@ -25,4 +26,6 @@ Route::prefix('doctor')->name('api.doctor.')->middleware(['datalog'])->group(fun
     Route::post('/admission/{admission}/discharge', [AdmissionsController::class, 'setForDischarge'])->name('discharge');
 
     Route::get('/consultations', [VisitsController::class, 'index'])->name('consultations');
+
+    Route::post('/appointments', [AppointmentsController::class, 'store'])->name('save-appointment');
 });

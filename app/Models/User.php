@@ -53,6 +53,8 @@ class User extends Authenticatable
         'status' => Status::class,
     ];
 
+    protected $with = ['department'];
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');

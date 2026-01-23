@@ -19,6 +19,10 @@ Broadcast::channel('department.{departmentId}', function (User $user, int $depar
     return $user->department_id === $departmentId;
 });
 
+Broadcast::channel('role.{roleName}', function (User $user, string $role) {
+    return $user->hasRole($role);
+});
+
 Broadcast::channel('logs', function (User $user) {
     return $user->department_id === Department::IT->value;
 });

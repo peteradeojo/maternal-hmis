@@ -62,7 +62,7 @@ window.asyncForm = (form, route, callback = (e, data) => { }) => {
     });
 }
 
-window.submitForm = async (el, route) => {
+window.submitForm = async (el, route, notify = true) => {
     const formData = new FormData(el);
     return axios.post(route, formData, {
         headers: {
@@ -71,8 +71,10 @@ window.submitForm = async (el, route) => {
         },
     }).then((res) => res)
         .catch(err => {
-            console.error(err.message);
-            notifyError(err.message);
+            // console.error(err);
+            if (notify)
+                notifyError(err.message);
+            return { data: null, message: err.response?.data.message || err.message };
         });
 }
 

@@ -113,6 +113,6 @@ trait HasVisitData
     }
 
     public function treatment_plans() {
-        return $this->morphMany(TreatmentPlan::class, 'origin');
+        return $this->morphMany(TreatmentPlan::class, 'origin')->latest();
     }
 }

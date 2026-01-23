@@ -50,9 +50,61 @@
     <x-overlay-modal id='scan-result-modal' title="Scan Result">
         <div id="display"></div>
     </x-overlay-modal>
+
+    <x-modal id="closing">
+        <p class="text-2xl font-semibold">Schedule an appointment</p>
+
+        <div x-data class="grid gap-y-4">
+            <div class="py-4">
+                <form id="appointment-form"
+                    @submit.prevent="submitForm($event.target, '{{ route('api.doctor.save-appointment') }}', false).then((res) => {
+                    if (res.data) {
+                        $event.target.reset();
+                        return;
+                    }
+                    notifyError(res.message);
+                    })">
+                    @csrf
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="datetime-local" name="appointment_date" id="" required class="form-control"
+                            min="{{ date('Y-m-d H:i') }}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea name="note" class="form-control"></textarea>
+                    </div>
+                    <input type="hidden" name="visit_id" value="{{ $visit->id }}" />
+                    <input type="hidden" name="source" value="doctor_scheduled" />
+                    <div class="form-group">
+                        <button class="btn bg-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+            <p>Upcoming Appointments</p>
+            @forelse ($visit->patient->appointments->where('status', Status::active)->where('appointment_date', '>', now()) as $app)
+                <div class="p-2 border rounded-md flex justify-between">
+                    <p>{{ $app->appointment_date }}</p>
+                    <p>{{ ucfirst($app->status->name) }}</p>
+                </div>
+            @empty
+                <p>No upcoming appointments scheduled.</p>
+            @endforelse
+        </div>
+    </x-modal>
 @endsection
 
 @pushOnce('scripts')
+    @if (app()->environment('production'))
+        <script>
+            window.onbeforeunload = function(e) {
+                e.preventDefault();
+                const v = confirm("are you sure you want to leave this page? You may lose unsaved changes.");
+            }
+        </script>
+    @endif
+
     <script>
         $(document).ready(function() {
             initTab(document.querySelector('#notes-tabs'));
