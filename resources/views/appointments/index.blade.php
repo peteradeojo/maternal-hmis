@@ -92,7 +92,7 @@
                     axios.get(`{{ route('records.start-visit', ':id') }}?appointment=${id}`.replace(':id', patient
                         .id)).then((res) => {
                             a.find(MODAL_CONTENT).html(res.data);
-                        }).catch((err) => console.error(error));
+                        }).catch((err) => console.error(err));
                 });
             });
         });
