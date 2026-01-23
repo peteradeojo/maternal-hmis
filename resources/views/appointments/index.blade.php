@@ -9,10 +9,11 @@
             <table id="table" class="table">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Date</th>
-                        <th></th>
+                        {{-- <th></th> --}}
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -24,13 +25,18 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $("#table").DataTable({
+            const table = $("#table").DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('api.records.appointments') }}"
                 },
                 columns: [{
+                        className: 'dt-control',
+                        orderable: false,
+                        data: null,
+                        defaultContent: ''
+                    }, {
                         data: ({
                                 patient,
                                 id
@@ -44,13 +50,26 @@
                     {
                         data: (row) => parseDateFromSource(row.appointment_date)
                     },
-                    {
-                        data: (row) => row.status == 1 ? `<div class='flex-center gap-x-2'>
-                                <button class='btn bg-blue-400 text-white'>Check In</button>
-                            </div>` : null
-                    },
                 ],
+                rowId: 'id',
             })
+
+            const pluse = (i) => {
+                return `<div class='p-2'>
+                    <p>${JSON.stringify(i)}</p>
+                    </div>`;
+            };
+
+            table.on('click', 'tbody td.dt-control', function(e) {
+                let tr = e.target.closest('tr');
+                let row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    row.child.hide();
+                } else {
+                    row.child(pluse(row.data())).show();
+                }
+            });
         });
     </script>
 @endpush
