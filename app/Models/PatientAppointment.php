@@ -24,4 +24,8 @@ class PatientAppointment extends Model
     {
         return $this->morphMany(ConsultationNote::class, 'visit');
     }
+
+    public function patient() {
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
 }

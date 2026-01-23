@@ -60,8 +60,10 @@
                     @submit.prevent="submitForm($event.target, '{{ route('api.doctor.save-appointment') }}', false).then((res) => {
                     if (res.data) {
                         $event.target.reset();
+                        notifySuccess('Appointment booked successfully.');
                         return;
                     }
+
                     notifyError(res.message);
                     })">
                     @csrf

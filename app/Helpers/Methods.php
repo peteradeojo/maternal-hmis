@@ -35,6 +35,7 @@ function getRouteMap()
             'routes' => [
                 'Patients' => [route('records.patients'), 'fa-person', null],
                 'Admissions' => [route('records.admissions'), 'fa-bed', null],
+                'Appointments' => [route('records.appointments'), 'fa-clock', null],
             ],
         ],
         [

@@ -12,11 +12,17 @@ use Illuminate\Http\Response;
 
 class AppointmentsController extends Controller
 {
-    public function index(Request $request) {}
+    public function index(Request $request)
+    {
+        return view('appointments.index');
+    }
 
     public function create(Request $request) {}
 
-    public function show(Request $request, PatientAppointment $appointment) {}
+    public function show(Request $request, PatientAppointment $appointment)
+    {
+        return view('appointments.show', compact('appointment'));
+    }
     public function edit(Request $request, PatientAppointment $appointment) {}
 
     public function store(Request $request)
@@ -54,5 +60,12 @@ class AppointmentsController extends Controller
         }
 
         return response()->json($request->all());
+    }
+
+    public function fetchAppointments(Request $request)
+    {
+        $query = PatientAppointment::with(['patient'])->active();
+
+        return $this->patientSearchDatatable($request, $query);
     }
 }
