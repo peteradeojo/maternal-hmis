@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DocumentationTest extends Model
 {
-    use HasFactory;
+    use HasFactory, NeedsRecorderInfo;
 
     protected $fillable = [
         'name',

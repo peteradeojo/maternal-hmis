@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BillPayment extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, Auditable;
 
     protected $touches = ['bill'];
 

@@ -1,11 +1,12 @@
-@import "colors";
+@use "sass:color";
+@use "colors";
 
-@each $color in $colors {
+@each $color in colors.$colors {
     .btn-#{"" + $color} {
         background-color: $color;
         color: #fff;
         &:hover {
-            background-color: lighten($color, 10%);
+            background-color: color.scale($color, $lightness: 10%);
         }
     }
     // a.btn-#{"" + $color} {

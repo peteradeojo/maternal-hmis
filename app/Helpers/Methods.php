@@ -35,6 +35,7 @@ function getRouteMap()
             'routes' => [
                 'Patients' => [route('records.patients'), 'fa-person', null],
                 'Admissions' => [route('records.admissions'), 'fa-bed', null],
+                'Appointments' => [route('records.appointments'), 'fa-clock', null],
             ],
         ],
         [
@@ -190,7 +191,7 @@ function sendUserMessage($message, User|int $userId, $options = [])
         Broadcast::private("user." . (is_a($userId, User::class) ? $userId->id : $userId))
             ->as("UserEvent")
             ->with($message)
-            ->sendNow();
+            ->send();
     } catch (\Exception $e) {
         // report($e);
         logger()->emergency("Error when trying to send notification: " . $e->getMessage());
@@ -207,6 +208,11 @@ function notifyDepartment($departmentId, $message, $options = [])
     }
 
     $message = array_merge($message, ['options' => $options]);
-    // broadcast(new NotificationSent($departmentId, $message))->toOthers();
-    Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->sendNow();
+
+    try {
+        Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->send();
+    } catch (\Throwable $th) {
+        report($th);
+        logger()->emergency($th->getMessage());
+    }
 }

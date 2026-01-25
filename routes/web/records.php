@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Antenatal;
+use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Records\AdmissionsController;
 use App\Http\Controllers\Records\HistoryController;
 use App\Http\Controllers\Records\PatientsController;
@@ -35,4 +36,10 @@ Route::name('records.')->prefix('/records')->middleware(['role:record|admin', 'd
 
     // Visits
     Route::get('/create-visit/{patient}', [PatientsController::class, 'checkIn'])->name('start-visit');
+
+    // Appointments
+    Route::prefix('/appointments')->name('appointments')->group(function () {
+        Route::get('/', [AppointmentsController::class, 'index']);
+        Route::get('/{appointment}', [AppointmentsController::class, 'show'])->name('.show');
+    });
 });

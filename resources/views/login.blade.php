@@ -11,7 +11,7 @@
                     {{ session('error') }}
                 </div>
             @endif
-            <form action="{{ route('login') }}" class="grid gap-y-3" method="post">
+            <form autocomplete="off" action="{{ route('login') }}" class="grid gap-y-3" method="post">
                 @csrf
                 <div class="form-group">
                     <label for="phone" class="form-label">Phone</label>

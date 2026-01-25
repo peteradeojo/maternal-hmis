@@ -168,5 +168,8 @@ class Patient extends Model
 
         return $query->whereRaw('1 = 0'); // No access
     }
-    
+
+    public function appointments() {
+        return $this->hasMany(PatientAppointment::class, 'patient_id');
+    }
 }

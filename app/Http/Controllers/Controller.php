@@ -46,4 +46,16 @@ class Controller extends BaseController
 
         return response()->json($data);
     }
+
+    protected function patientSearchDatatable(Request $request, Builder|QueryBuilder $builder, array $searchableColumns = [], ?Closure $orderFunction = null)
+    {
+        return $this->dataTable($request, $builder, [
+            function ($query, $search) {
+                return $query->whereHas('patient', function ($q) use (&$search) {
+                    return $q->where('name', 'ilike', "$search%")->orWhere('phone', 'ilike', "$search%")->orWhere('card_number', 'ilike', "$search%");
+                });
+            },
+            ...$searchableColumns
+        ], $orderFunction);
+    }
 }

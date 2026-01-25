@@ -10,6 +10,8 @@
         <a href="{{ route('records.patient.edit', $patient) }}" class="btn btn-red"><u>Edit this patient
                 information</u>.</a>
     </div> --}}
+
+    <x-back-link />
     <div class="p-8 bg-white">
         <div class="header">
             {{-- <a href="#" id="checkIn" data-id="{{ $patient->id }}" class="{{ $btnColor }}">Check In</a> --}}

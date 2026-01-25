@@ -8,6 +8,8 @@
                 <tr>
                     <th>Name</th>
                     <th>Department</th>
+                    <th>Phone/Username</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
             </x-slot:thead>
@@ -16,6 +18,8 @@
                     <tr>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->department->name }}</td>
+                        <td>{{ $user->phone }}</td>
+                        <td>{{ $user->status->name }}</td>
                         <td>
                             <a href="{{ route('iam.manage-user', $user) }}" class="link">Manage</a>
                         </td>

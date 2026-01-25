@@ -102,7 +102,7 @@ class Visit extends Model implements OperationalEvent
 
     public function scopeActive($query)
     {
-        $query->where('status', Status::active->value)->latest();
+        return $query->where('status', Status::active->value)->latest();
     }
 
     public function scopeAccessibleBy($query, User $user)

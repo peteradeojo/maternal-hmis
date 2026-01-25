@@ -179,7 +179,8 @@ class PatientsController extends Controller
 
     public function checkIn(Request $request, Patient $patient)
     {
-        return view('records.check-in', compact('patient'));
+        $appointmentId = $request->query('appointment');
+        return view('records.check-in', compact('patient', 'appointmentId'));
     }
 
     public function createAncProfile(Request $request, Patient $patient)

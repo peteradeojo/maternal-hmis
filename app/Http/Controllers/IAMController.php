@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\Datalog;
+use App\Models\Department;
 use App\Models\User;
 use Cloudinary\Api\HttpStatusCode;
 use Illuminate\Http\Request;
@@ -66,7 +67,8 @@ class IAMController extends Controller
     {
         $permissions = Permission::all();
         $roles = Role::all();
-        return view('iam.user', compact('user', 'roles', 'permissions'));
+        $departments = Department::all();
+        return view('iam.user', compact('user', 'roles', 'permissions', 'departments'));
     }
 
     public function saveUserRoles(Request $request, User $user)
