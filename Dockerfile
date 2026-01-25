@@ -1,39 +1,77 @@
-FROM ubuntu:22.04
+FROM php:8.4-fpm
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC+1
 
-RUN apt-get update && apt-get install -y software-properties-common
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    libxml2-dev \
+    libpq-dev \
+    # oniguruma-dev \
+    gettext \
+    # busybox-extras \
+    nginx \
+    supervisor zip curl
 
-RUN add-apt-repository ppa:ondrej/php -y && apt-get update
+# Install php extensions
+RUN install-php-extensions \
+    bcmath \
+    ctype \
+    dom \
+    ffi \
+    fileinfo \
+    mbstring \
+    pdo pdo_mysql \
+    pdo_pgsql \
+    tokenizer \
+    pcntl \
+    redis-stable \
+    ssh2 swoole \
+    gd zip curl
 
-RUN apt-get install -y \
-    php8.4-fpm \
-    php8.4-bcmath \
-    php8.4-mbstring \
-    php8.4-pdo \
-    php8.4-pgsql \
-    php8.4-curl \
-    php8.4-zip \
-    git curl unzip
+# Node (build-time only)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+ && apt-get install -y nodejs
 
-COPY --from=bitnami/laravel /opt/bitnami/php/bin/composer /usr/bin/composer
-COPY --from=node:24 /usr/local/bin/npm /usr/local/bin/node /usr/bin/
+RUN npm i -g yarn --force
 
-RUN git clone https://github.com/tursodatabase/libsql-php.git
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# ---- libSQL / Turso extension install ----
+RUN composer global require darkterminal/turso-php-installer
+RUN $(composer config --global home)/vendor/bin/turso-php-installer install -n --php-version=8.4
 
-RUN apt-get install php-dev -y
+WORKDIR /var/www/hmis
 
-RUN cd libsql-php \
-    && phpize \
-    && ./configure \
-    && make -j$(nproc) \
-    && make install \
-    && echo "extension=libsql" > /usr/local/etc/php/conf.d/libsql.ini
+# Dependency manifests
+COPY composer.json package.json *.lock /var/www/hmis/
+COPY artisan .
+COPY bootstrap/ ./bootstrap/
+COPY public/ ./public/
+COPY tests/ ./tests/
 
-WORKDIR /var/www
+RUN yarn
+RUN composer install --no-dev --no-autoloader
 
-COPY composer.json package.json *.lock /var/www/
+# Copy app
+COPY . /var/www/hmis/
 
-RUN npm i
-RUN composer install -n
+# Build assets
+# RUN yarn build
+# RUN composer dump-autoload -o
+
+# PHP config
+COPY infra/php-override.ini /usr/local/etc/php/conf.d/30-override.ini
+COPY infra/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
+
+EXPOSE 9000 8000 8001
+
+COPY infra/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# CMD ["php-fpm"]
+CMD ["/usr/local/bin/entrypoint.sh"]
