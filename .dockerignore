@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/logs/*.log
 /vendor
 .env
 .env.backup
@@ -21,4 +22,5 @@ Dockerfile
 docker-compose.yml
 
 .git
-storage/logs
+storage/debugbar
+storage/framework/view/*.php
