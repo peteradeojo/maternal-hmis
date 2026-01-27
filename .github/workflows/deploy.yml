@@ -41,7 +41,6 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
-          passphrase: ${{secrets.SSH_PASSPHRASE}}
           host: ${{secrets.TAILSCALE_HOST}}
           username: ${{secrets.REMOTE_USER}}
           script: |
