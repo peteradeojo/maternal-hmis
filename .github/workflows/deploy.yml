@@ -21,7 +21,7 @@ jobs:
       - name: Build & Push EMR Image
         run: |
           docker build -t ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-app:latest .
-          docker push ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-latest
+          docker push ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-app:latest
 
       - name: Build & Push Nginx Image
         run: |
