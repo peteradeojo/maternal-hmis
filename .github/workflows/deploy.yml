@@ -1,0 +1,60 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Build & Push EMR Image
+        run: |
+          docker build -t ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-app:latest .
+          docker push ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-latest
+
+      - name: Build & Push Nginx Image
+        run: |
+          docker build \
+            -f infra/Dockerfile.nginx \
+            -t ghcr.io/${{secrets.GHCR_USERNAME}}/emr-nginx:latest .
+          docker push ghcr.io/${{secrets.GHCR_USERNAME}}/emr-nginx:latest
+
+      - name: Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          authkey: ${{ secrets.TS_AUTH_KEY }}
+          hostname: github-actions-ci
+          tags: tag:productions
+
+      - name: SSH into server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
+          host: ${{secrets.TAILSCALE_HOST}}
+          username: ${{secrets.REMOTE_USER}}
+          script: |
+            set -e
+            docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}}
+
+            $DIR="/var/www/emr"
+            if [[ ! -d "/var/www/emr" ]]; then
+              mkdir -p /var/www/emr
+            fi
+
+            cd /var/www/emr
+
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+
+            docker image prune

@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/logs/*.log
 /vendor
 .env
 .env.backup
@@ -18,3 +19,7 @@ yarn-error.log
 /.idea
 /.vscode
 Dockerfile
+
+.git
+storage/debugbar
+storage/framework/view/*.php

@@ -22,3 +22,5 @@ yarn-error.log
 /public/post_uploads
 /public/posts
 .env*
+*.env
+supervisord.pid

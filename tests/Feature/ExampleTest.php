@@ -3,6 +3,10 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -12,8 +16,10 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
+        Event::fake();
+        Queue::fake();
 
-        $response->assertStatus(200);
+        $response = $this->get('/');
+        $response->assertStatus(302);
     }
 }

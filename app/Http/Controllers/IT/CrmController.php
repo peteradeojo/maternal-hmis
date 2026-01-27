@@ -19,13 +19,17 @@ class CrmController extends Controller
 {
     public function index(Request $request)
     {
-        $posts = Post::latest()->get();
+        try {
+            $posts = Post::latest()->get();
 
-        if ($request->expectsJson()) {
-            return response()->json($posts);
+            if ($request->expectsJson()) {
+                return response()->json($posts);
+            }
+
+            return view('it.crm.index', compact('posts'));
+        } catch (\Throwable $th) {
+            return abort(500, $th->getMessage());
         }
-
-        return view('it.crm.index', compact('posts'));
     }
 
     public function create(Request $request)
