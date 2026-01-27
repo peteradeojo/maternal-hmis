@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Enums\Department as EnumsDepartment;
-use App\Models\Department;
+use App\Enums\AppNotifications;
+use App\Enums\Department;
 use App\Models\Patient;
-use App\Notifications\StaffNotification;
 
 class PatientService
 {
@@ -13,10 +12,13 @@ class PatientService
     {
         $profile = $patient->insurance()->create($data);
 
-        Department::find(EnumsDepartment::NHI->value)?->notifyParticipants(new StaffNotification("New Registration: {$patient->name}"));
+        notifyDepartment(Department::NHI->value, [
+            'title' => 'New Patient Registration',
+            'message' => "New Registration: {$patient->name} #{$patient->card_number}",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
     }
 
-    public function registerPatient($data)
-    {
-    }
+    public function registerPatient($data) {}
 }

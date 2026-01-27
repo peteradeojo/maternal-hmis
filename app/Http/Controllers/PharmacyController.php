@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EventLookup;
 use App\Enums\Status;
+use App\Models\Admission;
+use App\Models\AdmissionPlan;
+use App\Models\Bill;
 use App\Models\Documentation;
-use App\Models\DocumentationPrescription;
+use App\Models\Prescription;
 use App\Models\Visit;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,72 +18,97 @@ class PharmacyController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Documentation::with(['patient'])->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::pending->value, Status::quoted->value]))->get();
-        return view('phm.prescriptions', compact('data'));
+        return view('phm.prescriptions');
     }
 
     public function getPrescriptions(Request $request)
     {
-        return $this->dataTable($request, DocumentationPrescription::query());
+        $this->authorize('viewAny', Prescription::class);
+        $query = Prescription::accessibleBy($request->user())->with(['patient'])->whereHasMorph('event', [Visit::class])->where('status', Status::active)->latest();
+
+        return $this->dataTable($request, $query, [
+            function ($query, $search) {
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'ilike', "%$search%")->orWhere('phone', 'ilike', "$search%");
+                });
+            }
+        ]);
     }
 
     public function show(Request $request, Documentation $doc)
     {
+        // Documentation doesn't have a policy yet, but it's a sub-resource.
+        // For now, we'll check if the user can view the patient.
+        $this->authorize('view', $doc->patient);
         $doc->load(['treatments', 'patient']);
         return view('phm.show-prescription', compact('doc'));
     }
 
     public function dispensaryIndex(Request $request)
     {
-        // $data = Visit::with(['patient'])->whereHas('visit', function ($query) {
-        //     $query->whereHas('treatments', fn ($q) => $q->whereIn('status', [Status::quoted->value, Status::closed->value, Status::completed->value]));
-        // })->get();
-        $data  = Visit::with(['patient', 'visit'])->whereHas('visit', function ($q) {
-            $q->has('treatments');
-        })->get();
-        return view('phm.prescriptions', compact('data'));
+        return view('phm.prescriptions');
     }
 
-    public function dispensaryShow(Request $request, Visit $visit)
+    public function dispensaryShow(Request $request)
     {
-        $doc = $visit->visit;
-        if ($request->method() == 'POST') {
-            $request->mergeIfMissing(['available' => []]);
+        $id = $request->input('id');
+        $type = $request->input('type');
 
-            $amount = $request->amount;
-            $available = $request->available;
-
-            DB::beginTransaction();
-
-            $available_ids = array_keys($available);
-
-            try {
-                foreach ($amount as $i => $amt) {
-                    if ($amt) $doc->treatments()->where('id', $i)->update(['amount' => $amt]);
-                }
-                $doc->treatments()->whereIn('id', $available_ids)->update(['available' => true]);
-                $doc->treatments()->whereNotIn('id', $available_ids)->update(['available' => false]);
-
-                if ($request->has('complete')) {
-                    $doc->treatments()->update(['status' => Status::quoted->value]);
-                    DB::commit();
-                    return redirect()->route('dis.index');
-                } else {
-                    $doc->treatments()->whereIn('status', [Status::quoted->value])->update(['status' => Status::pending->value]);
-                }
-                DB::commit();
-            } catch (\Throwable $th) {
-                DB::rollBack();
-            }
-            return redirect()->back();
-        }
-        $doc->load(['patient', 'treatments']);
-        return view('dis.show-prescription', compact('doc'));
+        $doc = EventLookup::fromName($type)->value::findOrFail($id)->load('treatments');
+        return view('dis.show-prescription', compact('doc', 'type', 'id'));
     }
 
     public function closePrescription(Request $request, Documentation $doc)
     {
+        $this->authorize('update', $doc->patient); // Assuming update patient permission for now
         $doc->treatments()->update(['status' => Status::completed->value]);
         return redirect()->route('phm.prescriptions');
+    }
+
+    public function getBill(Request $request, Bill $bill)
+    {
+        $bill->load(['entries']);
+        return view('dis.bill', compact('bill'));
+    }
+
+    public function viewPrescription(Request $request, Prescription $prescription)
+    {
+        $this->authorize('view', $prescription);
+        return view('phm.show-prescription', compact('prescription'));
+    }
+
+    public function admissions(Request $request)
+    {
+        $this->authorize('viewAny', Admission::class);
+        $admissions = Admission::accessibleBy($request->user())->valid()->latest()->get();
+        return view('phm.admissions.index', compact('admissions'));
+    }
+
+    public function showAdmissionTreatment(Request $request, Admission $admission)
+    {
+        $this->authorize('view', $admission);
+        $prescription = $admission->plan->prescription()->firstOrCreate([
+            'patient_id' => $admission->patient_id,
+        ]);
+
+        return view('phm.show-prescription', compact('prescription'));
+    }
+
+    public function reverseLookup(Request $request)
+    {
+        $searchTerm = $request->input('search', ['value' => null, 'regex' => false])['value'];
+        $query = Prescription::with(['patient.category'])->when(
+            $searchTerm,
+            function ($query) use ($searchTerm) {
+                return $query->whereHas('lines.item', function ($q) use ($searchTerm) {
+                    $q->where('name', 'ilike', "$searchTerm%");
+                });
+            },
+            function ($query) {
+                return $query->whereRaw("1 = 0");
+            }
+        )->latest();
+
+        return $this->dataTable($request, $query);
     }
 }

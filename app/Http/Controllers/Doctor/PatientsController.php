@@ -2,32 +2,21 @@
 
 namespace App\Http\Controllers\Doctor;
 
-use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
-use App\Models\Department;
 use App\Models\Documentation;
-use App\Models\DocumentationComplaints;
-use App\Models\DocumentationPrescription;
-use App\Models\DocumentationTest;
 use App\Models\DocumentedDiagnosis;
 use App\Models\Patient;
-use App\Models\PatientExaminations;
-use App\Models\PatientImaging;
-use App\Models\Product;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use App\Services\TreatmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
-    public function __construct(private TreatmentService $treatmentService)
-    {
-    }
+    public function __construct(private TreatmentService $treatmentService) {}
 
     public function index(Request $request)
     {
@@ -36,15 +25,6 @@ class PatientsController extends Controller
 
     private function loadAutoCompleteData()
     {
-        // $complaints = DocumentationComplaints::selectRaw('DISTINCT name')->get()->toArray();
-        // $prescriptions = Product::whereHas('category', function ($q) {
-        //     $q->where('department_id', 4);
-        // })->get()->pluck('name', 'id')->toArray();
-
-        // $tests = Product::whereHas('category', function ($q) {
-        //     $q->where('department_id', 5);
-        // })->get()->pluck('name', 'id')->toArray();
-
         $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
         $data = compact('diagnoses');
         return $data;
@@ -90,23 +70,29 @@ class PatientsController extends Controller
             'fundal_height' => 'nullable|string',
             'fetal_heart_rate' => 'nullable|string',
             'presentation' => 'nullable|string',
-            'lie' => 'nullable|string',
             'presentation_relationship' => 'nullable|string',
+            'edema' => 'nullable|string',
+            'note' => 'nullable|string',
             'return_visit' => 'nullable|date',
-            // 'complaints' => 'nullable|string',
-            // 'drugs' => 'nullable|string',
+            'ipt' => 'nullable',
+            'tt' => 'nullable'
         ]);
 
         try {
-            $visit->update($request->all());
+            $data['tt'] = intval(strtolower(($data['tt'] ?? '')) == 'on');
+            $data['ipt'] = intval(strtolower(($data['ipt'] ?? '')) == 'on');
+
+            $visit->update($data);
             $visit->visit->awaiting_doctor = false;
-            $visit->visit->status = Status::completed->value;
 
             $visit->visit->save();
-            return redirect()->route('dashboard');
+
+            return response()->json($visit->refresh());
         } catch (\Throwable $th) {
             report($th);
-            return redirect()->route('dashboard')->with('error', $th->getMessage());
+            return response()->json([
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 
@@ -114,14 +100,12 @@ class PatientsController extends Controller
     {
         if ($request->method() !== 'POST') return view('doctors.follow-up', compact('documentation'));
 
-
         $data = $request->except('_token');
         if (count(array_filter($data)) < 1) {
             return back()->withInput()->withErrors(['error' => 'Please fill at least one field']);
         }
 
         $request->mergeIfMissing(['tests' => [], 'admit' => false]);
-
         $visit = $documentation->visit;
 
         try {
@@ -164,8 +148,6 @@ class PatientsController extends Controller
             'duration.*' => 'string',
             'next_visit' => 'nullable|date',
         ]);
-
-        // dd($request->all());
 
         $user = $request->user();
         DB::beginTransaction();
@@ -263,7 +245,7 @@ class PatientsController extends Controller
     {
         return $this->dataTable($request, Patient::with(['category']), [
             function ($query, $search) {
-                $query->where('name', 'like', "$search%");
+                $query->where('name', 'ilike', "$search%");
             }
         ]);
     }
@@ -280,12 +262,13 @@ class PatientsController extends Controller
 
     public function getVisitsHistory(Request $request)
     {
-        $visits = Visit::with(['patient.category', 'visit'])->whereIn('status', [Status::completed->value, Status::closed->value, Status::ejected->value])->latest();
+        // $visits = Visit::with(['patient.category', 'visit'])->whereIn('status', [Status::completed->value, Status::closed->value, Status::ejected->value])->latest();
+        $visits = Visit::with(['patient.category', 'visit'])->latest();
 
         return $this->dataTable($request, $visits, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
-                    $q->where('name', 'like', "%$search%")->orWhere('card_number', 'like', "$search%");
+                    $q->where('name', 'ilike', "%$search%")->orWhere('card_number', 'ilike', "$search%");
                 });
             }
         ]);
@@ -303,21 +286,11 @@ class PatientsController extends Controller
         return view('doctors.visits.show', compact('visit'));
     }
 
-    // public function startAdmission(Request $request, Visit $visit)
-    // {
-    //     $visit->load(['patient']);
-    //     if (!$request->isMethod('POST')) {
-    //         return view('doctors.admissions.start', compact('visit'));
-    //     }
-
-    //     try {
-    //         $this->treatmentService->startAdmission($request->all(), $visit->patient);
-    //         return redirect()->route('dashboard');
-    //     } catch (\Throwable $th) {
-    //         report($th);
-    //         return redirect()->back()->with('error', $th->getMessage());
-    //     }
-    // }
+    public function getAncLog(Request $request, AncVisit $visit)
+    {
+        $profile = $visit->profile;
+        return view('doctors.antenatal.log', compact('visit', 'profile'));
+    }
 
     public function note(Request $request, Visit $visit)
     {
@@ -378,7 +351,12 @@ class PatientsController extends Controller
             ]);
         }
 
-
         return json_encode(compact('physical',  'other'));
+    }
+
+    public function viewAncProfile(Request $request, Patient $patient)
+    {
+        $profile = $patient->ancProfile;
+        return view('doctors.antenatal.profile', compact('profile', 'patient'));
     }
 }

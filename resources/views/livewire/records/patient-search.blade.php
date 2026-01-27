@@ -31,18 +31,19 @@
                             <th>Card Number</th>
                             <th>Gender</th>
                             <th>Phone Number</th>
-                            <th></th>
+                            {{-- <th></th> --}}
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($searchResults as $result)
                             <tr>
-                                <td>{{ $result->name }}</td>
+                                <td><a href="{{ route('records.patient', $result) }}"
+                                        class="link">{{ $result->name }}</a></td>
                                 <td>{{ $result->category->name }}</td>
                                 <td>{{ $result->card_number }}</td>
                                 <td>{{ $result->gender_value }}</td>
                                 <td>{{ $result->phone }}</td>
-                                <td><a class="link" href="{{ route('records.patient', $result) }}">View</a></td>
+                                {{-- <td>{{$result->created_at}}</td> --}}
                             </tr>
                         @empty
                             <tr>

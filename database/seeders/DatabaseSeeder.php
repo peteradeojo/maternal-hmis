@@ -17,11 +17,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (!App::environment('production')) {
-            (new UserSeeder)->run();
-        }
+        (new RoleAndPermissionSeeder)->run();
         (new CategorySeeder)->run();
         (new DepartmentSeeder)->run();
         (new WardSeeder)->run();
+        if (!App::environment('production')) {
+            (new UserSeeder)->run();
+        }
     }
 }

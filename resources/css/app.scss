@@ -20,6 +20,10 @@
         @apply border border-gray-500 p-[5px] rounded-md;
     }
 
+    .basic-header {
+        @apply text-lg font-semibold;
+    }
+
     .drag_drop {
         @apply hover:bg-gray-100 cursor-pointer w-full border-4 border-dashed p-3 grid place-items-center;
     }
@@ -27,19 +31,23 @@
     .table {
         @apply border border-[#ccc] border-collapse w-full;
 
+        thead th {
+            @apply min-w-[100px] sm:min-w-fit;
+        }
+
         thead th:not(:last-of-type) {
             border-right: 1px solid #ccc;
         }
 
-        tbody td {
-            padding: 4px 6px;
+        tbody td, tfoot td {
+            @apply px-1 w-fit;
 
             &:not(:last-of-type) {
                 border-right: 1px solid #ccc;
             }
         }
 
-        tbody tr {
+        tbody tr, tfoot tr {
             border-top: 1px solid #ccc;
         }
 
@@ -78,21 +86,29 @@
             td,
             th {
                 border: 1px solid #888;
-
             }
         }
     }
 
-    .active-tab {
-        @apply border-sky-500 text-sky-600;
-    }
-
-    .default-tab {
-        @apply border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700;
-    }
-
     .card {
-        @apply px-1 py-2;
+        @apply p-4 container bg-white;
+
+        &>.header {
+        padding: 8px 6px;
+        // background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        border-radius: 6px 6px 0 0;
+    }
+
+    &>.footer {
+        padding: 4px 6px;
+        font-size: 1.2em;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    & .card-header {
+        font-size: 2em;
+    }
     }
 
     .btn-sm {
@@ -129,11 +145,28 @@
     @import "components/forms";
     @import "components/buttons";
     @import "components/modals";
-    @import "components/spacings";
+    @import "components/_tabs";
+    // @import "components/spacings";
+
+    .app-notification {
+        @apply rounded-md p-3 shadow-md w-fit opacity-100 transform transition-all duration-300 max-w-[350px];
+    }
+
+    .app-notification.fade-out {
+        @apply opacity-0 translate-x-5
+    }
+
+    .error {
+        @apply text-red-500;
+    }
+
+    .flex-center {
+        @apply flex items-center;
+    }
 }
 
 ::root {
-    font-size: 16px;
+    font-size: 12px;
     scroll-behavior: smooth;
 }
 
@@ -148,41 +181,23 @@
         }
     }
 
-    .foldable-header *::after {
-        content: " (Click to view)";
-        font-size: small;
+    .foldable-header {
+
+        h1::after,
+        h2::after,
+        h3::after,
+        h4::after,
+        h5::after,
+        p::after {
+            content: " (Click to view)";
+            font-size: small;
+        }
+
         // vertical-align: middle;
     }
 
     .foldable-header {
         cursor: pointer;
-    }
-}
-
-p {
-    max-width: 100%;
-}
-
-.card {
-    // background-color: #fff;
-    @apply bg-white;
-    border-radius: 6px;
-
-    &>.header {
-        padding: 8px 6px;
-        // background-color: #fff;
-        border-bottom: 1px solid #ccc;
-        border-radius: 6px 6px 0 0;
-    }
-
-    &>.footer {
-        padding: 4px 6px;
-        font-size: 1.2em;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    & .card-header {
-        font-size: 2em;
     }
 }
 

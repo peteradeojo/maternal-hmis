@@ -5,10 +5,10 @@ use App\Enums\Department;
 use App\Enums\MaritalStatus;
 use App\Enums\Status;
 use App\Providers\HelperProvider;
+use App\Services\TreatmentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
-use Turso\Driver\Laravel\LibSQLDriverServiceProvider;
 
 return [
 
@@ -77,7 +77,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // 'timezone' => 'UTC',
+    'timezone' => 'Africa/Lagos',
 
     /*
     |--------------------------------------------------------------------------
@@ -172,10 +173,11 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         HelperProvider::class,
+        \Turso\Driver\Laravel\LibSQLDriverServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -196,7 +198,10 @@ return [
         'AncCardEnum' => AncCategory::class,
         'Carbon' => Carbon::class,
         'Status' => Status::class,
+        'TreatmentService' => TreatmentService::class,
     ])->toArray(),
 
-    'currency' => '₦'
+    'currency' => '₦',
+    'generic_doctor_id' => 'eheiuiauiauiue####',
+    'generic_doctor_profiles' => ['doctor001'],
 ];

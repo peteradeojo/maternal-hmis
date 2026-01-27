@@ -10,18 +10,18 @@ use Livewire\Component;
 class WaitingPatients extends Component
 {
     public User $user;
-    public $visits = [];
+    // public $visits = [];
 
     public function mount()
     {
-        $this->load();
+        // $this->load();
     }
 
     public function load()
     {
-        $this->visits = Visit::where(function ($query) {
-            $query->where('awaiting_doctor', true);
-        })->where('status', Status::active->value)->latest()->get();
+        // $this->visits = Visit::where(function ($query) {
+        //     $query->where('awaiting_doctor', true);
+        // })->where('status', Status::active->value)->latest()->get();
     }
 
     public function render()

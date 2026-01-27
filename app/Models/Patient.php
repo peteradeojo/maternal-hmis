@@ -3,20 +3,41 @@
 namespace App\Models;
 
 use App\Enums\Gender;
+use App\Enums\MaritalStatus;
+use App\Enums\Religion;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class Patient extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Auditable;
 
     protected $fillable = [
-        'card_number', 'name', 'gender', 'phone', 'email', 'address', 'dob', 'marital_status',
-        'occupation', 'religion', 'tribe', 'place_of_origin', 'nok_name', 'nok_phone',
-        'nok_address', 'spouse_name', 'spouse_phone', 'spouse_occupation', 'spouse_educational_status', 'category_id'
+        'card_number',
+        'name',
+        'gender',
+        'phone',
+        'email',
+        'address',
+        'dob',
+        'marital_status',
+        'occupation',
+        'religion',
+        'tribe',
+        'place_of_origin',
+        'nok_name',
+        'nok_phone',
+        'nok_address',
+        'spouse_name',
+        'spouse_phone',
+        'spouse_occupation',
+        'spouse_educational_status',
+        'category_id'
     ];
 
     protected $casts = [
@@ -33,8 +54,39 @@ class Patient extends Model
         });
     }
 
-    public function getAncProfileAttribute() {
-        return $this->antenatalProfiles[0];
+    public function getAncProfileAttribute()
+    {
+        return $this->antenatalProfiles->count() > 0 ? $this->antenatalProfiles[0] : null;
+    }
+
+    protected function maritalstatus(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value != 0 ? MaritalStatus::tryFrom($value)?->name ?? "Unknown" : "Unknown",
+        );
+    }
+
+    protected function religion(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value != 0 ? Religion::tryFrom($value)?->name ?? "Unknown" : "Unknown",
+        );
+    }
+
+    protected function gender(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                return Gender::tryFrom($value)?->name ?? "Unknown";
+            },
+        );
+    }
+
+    protected function age(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, $attributes) => !empty($attributes['dob']) ? (int) Carbon::parse($attributes['dob'])->diffInYears(Carbon::now()) : null,
+        );
     }
 
     public static function generateCardNumber($category)
@@ -51,12 +103,12 @@ class Patient extends Model
 
     public function getGenderValueAttribute()
     {
-        return Gender::tryFrom($this->gender)?->name;
+        return $this->gender; // Gender::tryFrom($this->gender)?->name;
     }
 
     public function antenatalProfiles()
     {
-        return $this->hasMany(AntenatalProfile::class, 'patient_id')->latest();
+        return $this->hasMany(AntenatalProfile::class, 'patient_id')->where('status', Status::active->value)->latest();
     }
 
     public function tests()
@@ -72,19 +124,52 @@ class Patient extends Model
         return $this->hasMany(Documentation::class)->limit(10)->latest();
     }
 
-    public function insurance() {
-        return $this->hasOne(InsuranceProfiles::class, 'patient_id');
+    public function insurance()
+    {
+        return $this->hasMany(InsuranceProfiles::class, 'patient_id');
     }
 
-    public function visits() {
+    public function visits()
+    {
         return $this->hasMany(Visit::class, 'patient_id')->latest();
     }
 
-    public function notes () {
+    public function notes()
+    {
         return $this->hasMany(ConsultationNote::class, 'patient_id');
     }
 
-    public function scans() {
+    public function scans()
+    {
         return $this->hasMany(PatientImaging::class, 'patient_id');
+    }
+
+    public function scopeActiveInsurance()
+    {
+        $this->insurance()->where('status', Status::active);
+    }
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class, 'patient_id');
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        // For now, all medical and records staff can see all patients.
+        // This can be further restricted if needed (e.g., by department).
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'pharmacy', 'lab', 'radiology', 'billing'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0'); // No access
+    }
+
+    public function appointments() {
+        return $this->hasMany(PatientAppointment::class, 'patient_id');
     }
 }

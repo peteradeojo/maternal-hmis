@@ -2,38 +2,27 @@
 
 namespace App\Services;
 
+use App\Enums\AppNotifications;
 use App\Enums\Status;
 use App\Models\Visit;
-use App\Models\Department;
 use App\Models\Documentation;
-use App\Models\PatientImaging;
 use Illuminate\Support\Facades\DB;
 use App\Models\PatientExaminations;
-use App\Notifications\StaffNotification;
-use App\Enums\Department as EnumsDepartment;
+use App\Enums\Department;
 use App\Interfaces\Documentable;
 use App\Models\Admission;
 use App\Models\AncVisit;
-use App\Models\Patient;
+use App\Models\StockItemPrice;
 use App\Models\User;
 
 class TreatmentService
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     private function saveDiagnoses(Documentable|Documentation|AncVisit &$doc, $data, $doctor_id)
     {
-        // if (isset($data['prognosis'])) {
-        //     $doc->diagnoses()->create([
-        //         'diagnoses' => $data['prognosis'],
-        //         'patient_id' => $doc->patient_id,
-        //         'user_id' => $doctor_id
-        //     ]);
-        // }
         if (isset($data['diagnosis'])) {
-            foreach($data['diagnosis'] as $d) {
+            foreach ($data['diagnosis'] as $d) {
                 $doc->diagnoses()->create([
                     'diagnoses' => $d,
                     'patient_id' => $doc->patient_id,
@@ -47,7 +36,7 @@ class TreatmentService
     {
         // Save complaints
         foreach ($complaints as $c) {
-            $doc->complaints()->create(['name' => $c['name'], 'duration' => $c['duration'] ]);
+            $doc->complaints()->create(['name' => $c['name'], 'duration' => $c['duration']]);
         }
 
         // Save history of complaints
@@ -93,7 +82,7 @@ class TreatmentService
         }
     }
 
-    public function saveTreatment(Visit $visit, $data, User $treater, Documentation $doc = null)
+    public function saveTreatment(Visit $visit, $data, User $treater, ?Documentation $doc = null)
     {
         $data['tests'] = array_unique($data['tests'] ?? []);
         $complaints = $data['complaints'] ?? [];
@@ -114,20 +103,34 @@ class TreatmentService
 
             if (count($data['tests']) > 0) {
                 $this->saveTests($doc, $data['tests']);
-                Department::find(EnumsDepartment::LAB->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+                notifyDepartment(Department::LAB->value, [
+                    'title' => 'New Lab Tests Requested',
+                    'message' => "<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them",
+                ], [
+                    'mode' => AppNotifications::$IN_APP,
+                ]);
                 $visit->awaiting_lab_results = true;
             }
 
             if (count($data['imgs'] ?? []) > 0) {
                 $this->saveImagings($doc, $data['imgs'], $treater->id);
-                Department::find(EnumsDepartment::RAD->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them"));
+                notifyDepartment(Department::RAD->value, [
+                    'title' => 'New Radiology Requests',
+                    'message' => "<u>{$visit->patient->name}</u> has left the consulting room and has some scans to be performed. Please attend to them",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
                 $visit->awaiting_radiology = true;
             }
 
             if (count($data['treatments'] ?? []) > 0) {
                 $this->savePrescriptions($doc, $data, $treater->id);
-                Department::find(EnumsDepartment::PHA->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
-                Department::find(EnumsDepartment::DIS->value)?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has been prescribed some medication. Please submit a quote."));
+                notifyDepartment(Department::DIS->value, [
+                    'title' => 'New Prescription',
+                    'message' => "<u>{$visit->patient->name}</u> has left the consulting room and requires your attention.",
+                ], [
+                    'mode' => AppNotifications::$BOTH,
+                ]);
                 $visit->awaiting_pharmacy = true;
             }
 
@@ -185,8 +188,12 @@ class TreatmentService
         if (count($data['treatments'] ?? []) > 0) {
             $this->savePrescriptions($ancVisit, $data, $doctor_id);
 
-            $pharmacy = Department::find(EnumsDepartment::PHA->value);
-            $pharmacy?->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+            notifyDepartment(Department::DIS->value, [
+                'title' => 'New Prescription',
+                'message' => "<u>{$visit->patient->name}</u> has left the consulting room and requires your attention.",
+            ], [
+                'mode' => AppNotifications::$BOTH,
+            ]);
         }
 
         if (count($data['imgs'] ?? []) > 0) {
@@ -197,9 +204,104 @@ class TreatmentService
             $this->saveTests($ancVisit, $data['tests']);
         }
 
-        $records = Department::find(EnumsDepartment::REC->value);
-        $records->notifyParticipants(new StaffNotification("<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them"));
+        notifyDepartment(Department::REC->value, [
+            'title' => "Update: {$visit->patient->name}",
+            'message' => "<u>{$visit->patient->name}</u> has left the consulting room. Please attend to them",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
 
         return $ancVisit;
+    }
+
+    public static function getCount($item, $data, $options = ['exact' => false])
+    {
+        if (empty($item)) return;
+        try {
+            if (!$item['weight']) {
+                return is_numeric($data->dosage) ? $data->dosage : 0;
+            }
+
+            $freq = $data->frequency;
+            $dosage = $data->dosage;
+            $days = $data->duration ?? 1;
+
+            if (!is_numeric($dosage)) {
+                $dosage = self::translateDosage($item['si_unit'], $data->dosage);
+                $delta = round($dosage / $item['weight'], 5);
+            } else {
+                $delta = $dosage;
+            }
+
+            $freq = self::analyzeFreqeuency($freq);
+            $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
+
+            if ($options['exact']) return $count;
+
+            return ceil($count);
+        } catch (\Throwable $th) {
+            report($th);
+            return 0;
+        }
+    }
+
+    private static function translateDosage($si_unit, $dosage)
+    {
+        $si_unit = strtolower($si_unit);
+        $matches = null;
+        preg_match("/^((\d+)(\.(\d+))?)([a-zA-Z]+)?/", $dosage, $matches);
+
+        $count = floatval($matches[1]);
+        $si = isset($matches[5]) ? strtolower($matches[5]) : null;
+
+        if ($si == null || $si == $si_unit) {
+            return $count;
+        }
+
+        if ($si_unit == "m{$si}") {
+            return $count * 1000;
+        }
+        if ($si == "m{$si_unit}") {
+            return $count / 1000;
+        }
+
+        if ($si_unit == "k{$si}") {
+            return $count / 1000;
+        }
+        if ($si == "k{$si_unit}") {
+            return $count * 1000;
+        }
+
+        return $count;
+    }
+
+    private static function analyzeFreqeuency($freq)
+    {
+        return match ($freq) {
+            'stat' => 1,
+            'immediately' => 1,
+            'od' => 1,
+            'bd' => 2,
+            'tds' => 3,
+            'qds' => 4,
+            '3hourly' => 8,
+            '8hourly' => 3,
+            '12hourly' => 2,
+            '6hourly' => 4,
+            '4hourly' => 6,
+            default => 1,
+        };
+    }
+
+    public static function getPrice($id, $profile = 'RETAIL') {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+
+        return $prices->first()?->price ?? 0;
+    }
+
+    public static function getPriceData($id, $profile = 'RETAIL') {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+
+        return $prices->first() ?? null;
     }
 }

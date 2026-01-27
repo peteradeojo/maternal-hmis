@@ -16,19 +16,29 @@ class Datalog
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $routeList = [];
-
-        if (!$request->method() !== 'GET') {
-            $path = url($request->path());
-
-            $data = new ModelsDatalog();
-
-            $data->action = $routeList[$path] ?? $request->path();
-            $data->user_id = $request->user()->id ?? "API";
-            $data->data = json_encode($request->all());
-
-            $data->save();
+        try {
+            $response = $next($request);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $this->logAction($request, 'AUTHORIZATION_FAILURE', [
+                'message' => $e->getMessage(),
+                'url' => $request->fullUrl(),
+            ]);
+            throw $e;
         }
-        return $next($request);
+
+        if ($request->method() !== 'GET') {
+            $this->logAction($request, $request->path());
+        }
+
+        return $response;
+    }
+
+    private function logAction(Request $request, string $action, array $extraData = []): void
+    {
+        $data = new ModelsDatalog();
+        $data->action = $action;
+        $data->user_id = $request->user()->id ?? null;
+        $data->data = json_encode(array_merge($request->all(), $extraData));
+        $data->save();
     }
 }

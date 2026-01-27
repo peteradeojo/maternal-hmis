@@ -14,7 +14,7 @@ class DynamicProductSearch extends Component
     public $queryString;
     public $results;
 
-    public $display = true;
+    public $display = false;
 
     public function mount($departmentId = null, $category = null)
     {
@@ -29,8 +29,11 @@ class DynamicProductSearch extends Component
 
     public function searchProducts()
     {
-        $query = Product::query()->limit(100)->where(function ($q) {
-            $q->where('name', 'like', '%' . $this->queryString  . '%')->orWhere('description', 'like', "%$this->queryString%");
+        if (strlen($this->queryString) == 0) return;
+
+        $str = trim($this->queryString);
+        $query = Product::query()->where('is_visible', 1)->limit(100)->where(function ($q) use ($str) {
+            $q->where('name', 'ilike', '%' . $str  . '%')->orWhere('description', 'ilike', "%$str%");
         });
 
         if ($this->departmentId) {
@@ -39,17 +42,17 @@ class DynamicProductSearch extends Component
             });
         }
 
-        // $this->results = [new Product([
-        //     'id' => null,
-        //     'name' => "Your item: $this->queryString",
-        //     'product_category_id' => $this->category?->id,
-        // ]), ...($query->get())];
         $this->results = $query->get();
         $this->display = true;
     }
 
-    public function select(Product $product)
+    public function select(?Product $product)
     {
+        if (empty($product) && count($this->results) >= 1) {
+            notifyUserError("Please select from the available results", request()->user());
+            return;
+        }
+
         $this->resetResults();
 
         $id = @$product['id'];
@@ -62,11 +65,12 @@ class DynamicProductSearch extends Component
                 'amount'  => 0,
             ]);
 
-            $this->dispatch('selected_temp', product: $product);
+            $this->dispatch('selected_temp', product: $product, name: $product->name, id: null);
             return;
         }
 
-        $this->dispatch('selected', id: $id, name: $product['name']);
+        $this->reset('queryString', 'results');
+        $this->dispatch('selected', id: $id, name: $product['name'], product: $product);
     }
 
     public function render()

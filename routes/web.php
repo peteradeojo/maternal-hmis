@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\IT\CrmController;
+use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/health-check', function () {
+    return response()->json(['status' => 'ok'], 200);
+})->middleware('throttle:10,1');
 
 Route::get('/login', function () {
     return view('login');
@@ -31,7 +38,9 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     });
 
-    Route::get('/radiology/{path}',function (Request $request, $path) {
+    Route::match(['GET', 'POST'], '/whoami', [AuthController::class, 'whoami'])->name('whoami');
+
+    Route::get('/radiology/{path}', function (Request $request, $path) {
         return response()->file(storage_path('app/radiology/' . $path));
     });
 
@@ -48,4 +57,13 @@ Route::middleware(['auth'])->group(function () {
     include __DIR__ . '/web/phm.php';
     include __DIR__ . '/web/dis.php';
     include __DIR__ . '/web/nhi.php';
+    include __DIR__ . '/web/billing.php';
+    include __DIR__ . '/web/iam.php';
+    include __DIR__ . '/web/finance.php';
+
+    Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
+    Route::match(['GET', 'POST'], '/dropbox', [CrmController::class, 'dropbox'])->name('dropbox');
+    Route::get('/dropbox/{entry}', [CrmController::class, 'downloadMedia'])->name('dropbox.download');
 });
+
+Route::get('/inv', [InventoryController::class, 'getInventory']);

@@ -1,0 +1,23 @@
+FROM nginx:alpine
+
+# Copy custom Nginx configuration
+# -----------------------------------------------------------
+# Replace the default Nginx configuration with our custom one
+# that is optimized for serving a Laravel application.
+# -----------------------------------------------------------
+
+# COPY ./infra/nginx.conf /etc/nginx/conf.d/emr.conf
+
+
+# Copy Laravel's public assets from the builder stage
+# -----------------------------------------------------------
+# We only need the 'public' directory from our Laravel app.
+# -----------------------------------------------------------
+# COPY --from=builder /var/www/public /var/www/public
+
+# Set the working directory to the public folder
+# WORKDIR /var/www/public
+
+# Expose port 80 and start Nginx
+EXPOSE 80 8000 8001 2002
+CMD ["nginx", "-g", "daemon off;"]

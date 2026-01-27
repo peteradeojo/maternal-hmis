@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,7 +13,12 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        return view('dashboard', compact('user'));
+        $visits = [];
+        if ($user->hasRole('record')) {
+            $visits = Visit::where("status", "=", Status::active->value)->latest()->limit(50)->get();
+        }
+
+        return view('dashboard', compact('user', 'visits'));
     }
 
     public function profile(Request $request)

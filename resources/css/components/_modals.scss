@@ -1,16 +1,13 @@
 .modal {
-    @apply min-w-full min-h-full md:p-8;
+    @apply w-screen h-screen grid place-items-center;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.1);
 
     .content {
-        @apply border-4 border-fuchsia-500;
-        min-width: 70%;
-        margin: 100px 0;
-        @apply overflow-y-auto;
+        @apply overflow-y-auto shadow-lg px-4 rounded border-black sm:min-w-[40%] h-[70%];
 
         @media print {
             width: 100%;

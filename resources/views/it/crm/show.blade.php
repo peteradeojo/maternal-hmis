@@ -8,5 +8,20 @@
                     <u>{{ $post->user }}</u></small></p>
             <div>{!! $data !!}</div>
         </div>
+
+        <form action="{{route('it.crm-status', $post)}}" method="post">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <select name="status" class="form-control">
+                    <option @selected($post->status == 1) value="1">Active</option>
+                    <option @selected($post->status == 0) value="0">Disable</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-primary text-white">Submit</button>
+            </div>
+        </form>
     </div>
 @endsection

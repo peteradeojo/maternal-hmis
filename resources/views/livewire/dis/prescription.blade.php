@@ -1,35 +1,46 @@
-<div>
+<div x-on:quote-saved="window.location.href=''">
     @php
-        $editable = $doc->treatments->every(fn($t) => $t->status !== Status::quoted->value);
+        $editable = !$quoteDone;
     @endphp
-    <form action="" method="post">
+    <p>#{{ $bill->bill_number }}</p>
+    <form wire:submit.prevent="save">
         @csrf
         <table class="table table-list" id="p-table">
             <thead>
                 <tr>
-                    <th>Prescription</th>
+                    <th>Name</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Duration (in days)</th>
                     <th>Available</th>
                     <th>Amount ({{ config('app.currency') }})</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $total = 0;
-                @endphp
-                @foreach ($doc->treatments as $t)
-                    @php
-                        $total += $t->amount;
-                    @endphp
+                @foreach ($items as $i => $t)
+                    @if ($bill->status == Status::PAID->value and $t->amount == 0)
+                        @continue
+                    @endif
+
                     <tr>
-                        <td>{{ $t->name }} {{ $t->dosage }} {{ $t->frequency }} {{ $t->duration }}</td>
-                        <td><input type="checkbox" name="available[{{ $t->id }}]" data-id="{{ $t->id }}"
-                                class="availability" @if ($t->available) checked @endif
-                                @unless ($editable) disabled @endunless>
+                        <td>{{ $t->description }}</td>
+                        <td>{{ $t->meta['data']['dosage'] }}</td>
+                        <td>{{ $t->meta['data']['frequency'] }}</td>
+                        <td>{{ $t->meta['data']['duration'] }}</td>
+                        <td>
+                            @if ($t->status == Status::blocked->value)
+                                <i>Do not dispense.</i>
+                            @else
+                                <input type="checkbox" wire:model="items.{{ $i }}.available"
+                                    data-id="{{ $t->id }}" class="availability"
+                                    @if ($t->available) checked @endif
+                                    @unless ($editable) disabled @endunless>
+                            @endif
                         </td>
                         <td>
-                            <input type="number" name="amount[{{ $t->id }}]" step="0.01" min="0"
-                                data-id="{{ $t->id }}" class="amount form-control" value="{{ $t->amount }}"
-                                @unless ($editable) readonly @endunless />
+                            <input type="number" wire:model="items.{{ $i }}.amount" step="0.01"
+                                min="0" data-id="{{ $t->id }}" class="amount form-control"
+                                value="{{ $t->amount }}" @unless ($editable) readonly @endunless />
                         </td>
                     </tr>
                 @endforeach
@@ -37,57 +48,26 @@
             <tfoot>
                 <tr>
                     <td colspan="2">Total</td>
-                    <td id="total">{{ $total }}</td>
+                    <td>{{ collect($items)->where('status', '!=', Status::blocked->value)->sum('amount') }}</td>
                 </tr>
                 <tr>
-                    @unless ($doc->all_prescriptions_available)
-                        <td colspan="2">Are you done with this quote? <input type="checkbox" name="complete" /></td>
-                    @endunless
+                    <td colspan="2">Are you done with this quote? <input type="checkbox" wire:change="$refresh"
+                            wire:model="quoteDone" />
+                    </td>
                 </tr>
             </tfoot>
         </table>
 
-        <div class="pt-1"></div>
-        @if ($editable)
-            <button class="form-control btn btn-blue">Submit</button>
-        @endif
+        <div class="form-group flex justify-end gap-x-2 items-center">
+            @if ($pendingUpdate)
+                <span>
+                    <p class="text-red-500"><i class="fa fa-exclamation-circle"></i> This bill has been updated. Please
+                        refresh.</p>
+                </span>
+                <button type="button" class="btn bg-red-500 text-white" wire:click.prevent="reload">Refresh</button>
+            @endif
+            <button class="btn bg-blue-400 hover:bg-green-400 text-white"
+                @if ($bill->status == 6 && $quoteDone) disabled @endif>Save <i class="fa fa-save"></i></button>
+        </div>
     </form>
-
-    @push('scripts')
-        <script>
-            $(() => {
-                const totals = [];
-                const totalEl = document.querySelector("#total");
-
-                const checkAvailable = (id) => {
-                    const checked = document.querySelector(`.availability[data-id="${id}"]`);
-
-                    return checked.checked;
-                }
-
-                const updateTotal = (el) => {
-                    const sum = totals.reduce((a, b) => {
-                        const id = b.getAttribute('data-id');
-
-                        if (checkAvailable(id))
-                            return parseFloat(a) + parseFloat(b.value || 0);
-
-                        return a;
-                    }, 0);
-                    totalEl.innerHTML = parseFloat(sum);
-                }
-
-                document.querySelectorAll('.availability').forEach(function(el) {
-                    el.addEventListener('change', updateTotal);
-                });
-
-                document.querySelectorAll('.amount').forEach(function(el) {
-                    totals.push(el);
-                    el.addEventListener('change', updateTotal);
-                });
-
-                updateTotal();
-            });
-        </script>
-    @endpush
 </div>

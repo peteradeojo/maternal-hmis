@@ -1,34 +1,21 @@
 <div>
     <div class="card py px foldable">
         <div class="header foldable-header">
-            <p class="card-header">Pending Tests</p>
+            <p class="card-header">Tests</p>
         </div>
         <div class="body foldable-body unfolded">
             <div class="py">
-                <table id="tests-table">
-                    <thead>
+                <x-datatables id="tests-table">
+                    <x-slot:thead>
                         <tr>
                             <th>Name</th>
                             <th>Card Number</th>
                             <th>Date</th>
-                            <th>Gender</th>
+                            <th>Category</th>
                             <th></th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($documentations as $doc)
-                            <tr>
-                                <td>{{ $doc->patient->name }}</td>
-                                <td>{{ $doc->patient->card_number }}</td>
-                                <td>{{ $doc->created_at }}</td>
-                                <td>{{ $doc->patient->gender_value[0] }}</td>
-                                <td>
-                                    <a href="{{ route('lab.view-tests', $doc->patient_id) }}">View Tests</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                    </x-slot:thead>
+                </x-datatables>
             </div>
         </div>
     </div>
@@ -38,11 +25,31 @@
 @pushOnce('scripts')
     <script>
         $("#tests-table").DataTable({
+            serverSide: true,
+            processing: true,
+            ordering: false,
+            ajax: "{{ route('api.lab.tests') }}",
             columns: [{
-                orderable: false,
-            }, {}, {}, {orderable: false,}, {orderable: false,}],
-            order: [
-                [2, 'desc']
+                    data: 'patient.name'
+                },
+                {
+                    data: 'patient.card_number'
+                },
+                {
+                    data: ({
+                        created_at
+                    }) => parseDateFromSource(created_at),
+                },
+                {
+                    data: 'patient.category.name'
+                },
+                {
+                    data: 'patient.gender'
+                },
+                {
+                    data: (row) => `<a href='{{ route('lab.view-tests', ':id') }}' class='link'>View Tests</a>`
+                        .replace(':id', row.id)
+                },
             ],
             responsive: true,
         });

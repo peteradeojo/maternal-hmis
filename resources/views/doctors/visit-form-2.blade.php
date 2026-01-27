@@ -2,109 +2,151 @@
 @section('title', $visit->patient->name . " | Doctor's Visit")
 
 @section('content')
+    <x-back-link />
     <livewire:doctor.visit-form :visit="$visit" @anc-profile-refresh="refreshProfile" />
 
-    <div class="modal hide" id="diagnosis-modal">
-        <div class="content bg-white p-2">
-            <p class="text-xl bold">Add a Diagnosis</p>
-            <div class="py-1"></div>
-            <form id="diagnosis-form">
-                @csrf
-                <div class="form-group">
-                    <label>Diagnosis</label>
-                    <input type="text" placeholder="Enter your diagnosis" name="diagnosis" class="form-control" required
-                        list="diagnosis-list" />
-                    <datalist id="diagnosis-list">
-                        @foreach ($diagnoses as $d)
-                            <option>{{ $d['name'] }}</option>
-                        @endforeach
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <button class="btn bg-blue-500 text-white">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <x-overlay-modal id="diagnosis-modal">
+        <p class="text-xl bold">Add a Diagnosis</p>
+        <div class="py-1"></div>
+        <form id="diagnosis-form">
+            @csrf
+            <div class="form-group">
+                <label>Diagnosis</label>
+                <input type="text" placeholder="Enter your diagnosis" name="diagnosis" class="form-control" required
+                    list="diagnosis-list" />
+                <datalist id="diagnosis-list">
+                    @foreach ($diagnoses as $d)
+                        <option>{{ $d['name'] }}</option>
+                    @endforeach
+                </datalist>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-blue-500 text-white">Submit</button>
+            </div>
+        </form>
+    </x-overlay-modal>
 
-    <div class="modal hide" id="notes-modal">
-        <div class="content p-2 bg-white">
-            <p class="bold">Add Note</p>
-            <div class="py-1"></div>
-
-            <div id="notes-tabs" data-tablist="#bose">
-                @include('components.tabs', ['options' => ['Add', 'Edit']])
-
-                <div id="bose" class="p-1">
-                    <div class="tab">
-                        <form id="note-form">
-                            @csrf
-                            <div class="form-group">
-                                <label>Note</label>
-                                <textarea name="note" class="w-full resize-y border border-gray-400 rounded-none form-textarea" rows="5"
-                                    required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn bg-blue-500 text-white">Submit</button>
-                            </div>
-                        </form>
-
-                    </div>
+    <x-overlay-modal id="notes-modal" title="Add/Edit Notes">
+        <div id="notes-tabs" data-tablist="#bose">
+            @include('components.tabs', ['options' => ['Add', 'Edit']])
+            <div id="bose" class="p-1">
+                <div class="tab">
+                    <form id="note-form">
+                        @csrf
+                        <div class="form-group">
+                            <label>Note</label>
+                            <textarea name="note" class="w-full resize-y border border-gray-400 rounded-none form-textarea" rows="5"
+                                required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn bg-blue-500 text-white">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
+    </x-overlay-modal>
 
-    <div class="modal hide" id="scan-result-modal">
-        <div class="content p-3 bg-white">
-            <p class="text-3xl font-semibold">Scan Result</p>
+    <x-overlay-modal id='scan-result-modal' title="Scan Result">
+        <div id="display"></div>
+    </x-overlay-modal>
 
-            <div id="display"></div>
+    <x-modal id="closing">
+        <p class="text-2xl font-semibold">Schedule an appointment</p>
+
+        <div x-data class="grid gap-y-4">
+            <div class="py-4">
+                <form id="appointment-form"
+                    @submit.prevent="submitForm($event.target, '{{ route('api.doctor.save-appointment') }}', false).then((res) => {
+                    if (res.data) {
+                        $event.target.reset();
+                        notifySuccess('Appointment booked successfully.');
+                        return;
+                    }
+
+                    notifyError(res.message);
+                    })">
+                    @csrf
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="datetime-local" name="appointment_date" id="" required class="form-control"
+                            min="{{ date('Y-m-d H:i') }}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea name="note" class="form-control"></textarea>
+                    </div>
+                    <input type="hidden" name="visit_id" value="{{ $visit->id }}" />
+                    <input type="hidden" name="source" value="doctor_scheduled" />
+                    <div class="form-group">
+                        <button class="btn bg-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+            <p>Upcoming Appointments</p>
+            @forelse ($visit->patient->appointments->where('status', Status::active)->where('appointment_date', '>', now()) as $app)
+                <div class="p-2 border rounded-md flex justify-between">
+                    <p>{{ $app->appointment_date }}</p>
+                    <p>{{ ucfirst($app->status->name) }}</p>
+                </div>
+            @empty
+                <p>No upcoming appointments scheduled.</p>
+            @endforelse
         </div>
-    </div>
+    </x-modal>
 @endsection
 
 @pushOnce('scripts')
+    @if (app()->environment('production'))
+        <script>
+            window.onbeforeunload = function(e) {
+                e.preventDefault();
+                const v = confirm("are you sure you want to leave this page? You may lose unsaved changes.");
+            }
+        </script>
+    @endif
+
     <script>
-        // initTab(document.querySelector('#nav-tab'));
-        initTab(document.querySelector('#actions-tab'));
-        initTab(document.querySelector('#notes-tabs'));
-        initTab(document.querySelector('#tests-tabs'));
-        initTab(document.querySelector('#anc-visit-tests-2'));
+        $(document).ready(function() {
+            initTab(document.querySelector('#notes-tabs'));
+            $(() => {
+                $("#note-form").on('submit', (e) => {
+                    e.preventDefault();
+                    fetch("{{ route('api.doctor.note', ['visit' => $visit->id]) }}", {
+                        method: 'POST',
+                        body: new FormData(e.currentTarget),
+                    }).then((res) => {
+                        e.currentTarget.reset();
+                        notifySuccess("Note saved!");
+                    }).catch((err) => {
+                        notifyError(err.message);
+                    });
+                });
 
-        $(() => {
-            $("#note-form").on('submit', (e) => {
-                e.preventDefault();
-                fetch("{{ route('api.doctor.note', ['visit' => $visit->id]) }}", {
-                    method: 'POST',
-                    body: new FormData(e.currentTarget),
-                }).then((res) => e.currentTarget.closest(".modal").classList.add("hide")).catch((
-                    err) => {
-                    console.error(err);
+                $("#diagnosis-form").on('submit', (e) => {
+                    e.preventDefault();
+                    fetch("{{ route('api.doctor.diagnosis', ['visit' => $visit->id]) }}", {
+                        method: 'POST',
+                        body: new FormData(e.currentTarget),
+                    }).then((res) => {
+                        e.currentTarget.reset();
+                        notifySuccess("Diagnosis saved!");
+                    }).catch((err) => {
+                        console.error(err);
+                    });
                 });
             });
 
-            $("#diagnosis-form").on('submit', (e) => {
-                e.preventDefault();
-                fetch("{{ route('api.doctor.diagnosis', ['visit' => $visit->id]) }}", {
-                    method: 'POST',
-                    body: new FormData(e.currentTarget),
-                }).then((res) => {
-                    e.currentTarget.closest(".modal").classList.add("hide");
-                }).catch((err) => {
-                    console.error(err);
+            function loadVisitReport(id) {
+                const display = document.querySelector("#previous-visit-report");
+
+                fetch("{{ route('doctor.visit', ['visit' => ':id']) }}?brief".replace(":id", id)).then((res) => {
+                    res.text().then((text) => {
+                        display.innerHTML = text;
+                    }).catch(err => console.error(err));
                 });
-            });
+            }
         });
-
-        function loadVisitReport(id) {
-            const display = document.querySelector("#previous-visit-report");
-
-            fetch("{{ route('doctor.visit', ['visit' => ':id']) }}?brief".replace(":id", id)).then((res) => {
-                res.text().then((text) => {
-                    display.innerHTML = text;
-                }).catch(err => console.error(err));
-            });
-        }
     </script>
 @endpushOnce

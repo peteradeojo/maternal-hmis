@@ -19,6 +19,15 @@ class Vitals extends Model
         'pulse',
         'respiration',
         'recording_user_id',
+        'recorded_date',
+        'spo2',
+        'fetal_heart_rate',
+        'extra',
+    ];
+
+    protected $casts = [
+        'recorded_date' => 'datetime',
+        'extra' => 'array',
     ];
 
     public function recordable()
@@ -35,10 +44,6 @@ class Vitals extends Model
     {
         return Visit::with(['patient.category', 'visit'])
         // ->whereNotIn('status', [Status::closed->value, Status::ejected->value, Status::completed->value, Status::blocked->value])
-        ->where(function ($query) {
-            $query->whereHas('visit', function ($query) {
-                $query->doesntHave('vitals');
-            });
-        })->latest();
+        ->doesntHave('vitals')->latest();
     }
 }

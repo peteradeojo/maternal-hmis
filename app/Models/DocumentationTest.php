@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DocumentationTest extends Model
 {
-    use HasFactory;
+    use HasFactory, NeedsRecorderInfo;
 
     protected $fillable = [
         'name',
@@ -17,6 +18,8 @@ class DocumentationTest extends Model
         'results',
         'describable_type',
         'describable_id',
+        'testable_type',
+        'testable_id',
     ];
 
     public function patient()
@@ -27,11 +30,6 @@ class DocumentationTest extends Model
     protected $casts = [
         'results' => 'object',
     ];
-
-    public function documentation()
-    {
-        return $this->belongsTo(Documentation::class);
-    }
 
     // The event, visit or admission
     public function testable()
@@ -63,5 +61,47 @@ class DocumentationTest extends Model
     public function __toString()
     {
         return $this->name;
+    }
+
+    public function getSampleResults()
+    {
+        $query = static::where('name', $this->name)->where('id', '<', $this->id)->where('results', '!=', NULL)->latest();
+
+        $test = $query->first();
+        if (!$test)
+            return;
+
+        $results = array_map(function ($r) {
+            $r->result = null;
+            return $r;
+        }, (array) $test->results);
+
+        return $results;
+    }
+
+    public function getResult($result)
+    {
+        return object_get($this->results, $result, "not available");
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('lab')) {
+            return $query; // Lab can see all tests they might need to process
+        }
+
+        if ($user->hasRole('radiology')) {
+            return $query; // Radiology can see all tests they might need to process
+        }
+
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'billing'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 }

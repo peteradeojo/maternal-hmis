@@ -15,15 +15,19 @@ class PatientsController extends Controller
 {
     public function ancBookings(Request $request)
     {
+        $this->authorize('viewAny', AntenatalProfile::class);
         return view('nursing.anc-bookings');
     }
 
     public function getPendingVitals(Request $request)
     {
-        return $this->dataTable($request, Vitals::getPendingVitalVisits(), [
+        $this->authorize('viewAny', Visit::class);
+        return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category'])->active()->where(function ($query) {
+            $query->doesntHave('vitals')->orWhere('awaiting_vitals', true);
+        }), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
-                    $query->where('name', 'like', "$search%")->orWhere('card_number', "like", "$search%");
+                    $query->where('name', 'ilike', "$search%")->orWhere('card_number', "like", "$search%");
                 });
             },
         ]);
@@ -31,34 +35,39 @@ class PatientsController extends Controller
 
     public function getAncBookings(Request $request)
     {
+        $this->authorize('viewAny', AntenatalProfile::class);
         $user = $request->user();
         $query = AntenatalProfile::with('patient');
 
         if (!$request->has('admin')) {
-            if ($user->department_id == Department::LAB->value) {
+            if ($user->hasRole('lab')) {
                 $query = $query->where('awaiting_lab', true)->orWhere('tests', null);
             }
 
-            if ($user->department_id == Department::NUR->value) $query = $query->where('awaiting_vitals', true);
-            if ($user->department_id == Department::DOC->value) $query = $query->where('awaiting_doctor', true);
+            if ($user->hasRole('nurse'))
+                $query = $query->where('awaiting_vitals', true);
+            if ($user->hasRole('doctor'))
+                $query = $query->where('awaiting_doctor', true);
         }
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
-                    $query->where('name', 'like', "{$search}%");
+                    $query->where('name', 'ilike', "{$search}%");
                 });
             }
         ]);
     }
 
-    public function  viewAncBooking(Request  $request, AntenatalProfile $profile)
+    public function viewAncBooking(Request $request, AntenatalProfile $profile)
     {
+        $this->authorize('view', $profile);
         return view('nursing.anc-booking', ['profile' => $profile]);
     }
 
     public function submitAncBooking(VitalsRequest $request, AntenatalProfile $profile)
     {
+        $this->authorize('update', $profile);
         $validated = $request->safe();
 
         // $profile->vitals = array_merge($profile->vitals ?? []);

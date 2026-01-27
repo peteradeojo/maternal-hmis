@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- @dump($adm[0]) --}}
     <div class="container">
         <div class="card">
             <div class="card-header">
@@ -20,7 +19,7 @@
                     <tbody>
                         @foreach ($adm as $a)
                             <tr>
-                                <td>{{ $a->patient->name }}</td>
+                                <td><a class="link" href="{{route('lab.admission-test', $a)}}">{{ $a->patient->name }}</a></td>
                                 <td>{{ $a->created_at?->format('Y-m-d h:i A') }}</td>
                                 <td>{{ $a->ward?->name }}</td>
                                 <td></td>

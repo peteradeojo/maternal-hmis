@@ -1,149 +1,353 @@
 @extends('layouts.app')
+@section('title', 'Portal')
 
 @section('content')
-    {{-- @dd($admission) --}}
-    <div class="card py px">
+    <div class="container bg-white p-2 sm:p-4 mb-2">
         <div class="header">
-            <p>{{ $admission->patient->name }} (Admitted: {{ $admission->created_at->format('Y-m-d') }})</p>
+            <x-patient-profile :patient="$admission->patient">
+                <p><b>Admitted:</b> {{ $admission->created_at->format('Y-m-d h:i A') }}</p>
+            </x-patient-profile>
         </div>
-        <div class="header">
-            <div class="row">
-                <div class="col-6">
-                    <p><b>Patient:</b> {{ $admission->patient->name }}</p>
-                    <p><b>Age:</b> {{ $admission->patient->dob?->diffInYears() }}</p>
-                    <p><b>Category:</b> {{$admission->patient->category->name}}</p>
-                    <p><b>Gender:</b> {{ $admission->patient->gender_value }}</p>
-                    <p><b>Ward:</b> @unless ($admission->ward)
-                        <a href="{{route('nurses.admissions.assign-ward', $admission)}}">Assign to Ward</a>
-                    @else
-                        {{$admission->ward->name}}
-                    @endunless</p>
-                    <p><b>Insurance: </b> {{$admission->patient->insurance?->hmo_name ?? "None"}}</p>
+    </div>
+
+    <div class="container bg-white p-4">
+        <div class="body py">
+            <div id="actions-tab" data-tablist="#list">
+                @include('components.tabs', [
+                    'options' => [
+                        'Admission Plan',
+                        'Vitals Chart',
+                        'Reviews',
+                        'Operation Notes',
+                        'Delivery Note',
+                        'Discharge',
+                        'Consent Form',
+                    ],
+                ])
+
+                <div id="list">
+                    {{-- Plan --}}
+                    <div id="admission-plan" class="tab p-1">
+                        <h2>Admission Plan</h2>
+                        <p class="p-1"><b>Indication for admission:</b> {{ $admission->plan->indication }}</p>
+                        <div class="py-2">
+                            <h2 class="header">Drugs</h2>
+                            <p><i><b>NB:</b> Tick boxes to submit administration</i></p>
+                            <form action="?submit=treatment-log" method="post">
+                                @csrf
+                                <table class="table-list">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Dosage</th>
+                                            <th>Frequency</th>
+                                            <th>Duration</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($admission->plan->prescription?->lines ?? [] as $p)
+                                            <tr>
+                                                <td>{{ $p->item?->name ?? $p->description }}</td>
+                                                <td>{{ $p->dosage }}</td>
+                                                <td>{{ $p->frequency }}</td>
+                                                <td>{{ $p->duration }}</td>
+                                                <td><input type="checkbox" name="ministered[{{ $p->id }}]"></td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6">No treatments</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                                @if ($admission->plan->prescription?->lines->count() > 0 && $admission->in_ward)
+                                    <div class="pt-1"></div>
+                                    <button type="submit" class="btn btn-red">Submit</button>
+                                @endif
+                            </form>
+                        </div>
+
+                        <h2 class="header">History</h2>
+                        @include('nursing.components.admission-treatments', ['admission' => $admission])
+                    </div>
+
+                    {{-- Vitals --}}
+                    <div class="tab p-1">
+                        <h2>Vitals Chart</h2>
+
+                        <div class="pt-1"></div>
+                        {{-- <form action="?submit=vitals" method="post">
+                            @csrf
+                            <div class="row">
+                                @include('nursing.components.vitals-form')
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-blue">Submit</button>
+                            </div>
+                        </form> --}}
+                        <livewire:nurses.vitals :event="$admission" />
+
+                        <div class="py-1"></div>
+                        {{-- <table class="table-list">
+                            <thead>
+                                <tr>
+                                    <th>Date/Time</th>
+                                    <th>Blood Pressure (mmHg)</th>
+                                    <th>Temperature (&deg;C)</th>
+                                    <th>Pulse (b/m)</th>
+                                    <th>Respiration (c/m)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($admission->vitals ?? [] as $vital)
+                                    <tr>
+                                        <td>{{ $vital->created_at->format('d/m/Y h:i A') }}</td>
+                                        <td>{{ $vital->blood_pressure }}</td>
+                                        <td>{{ $vital->temperature }}</td>
+                                        <td>{{ $vital->pulse }}</td>
+                                        <td>{{ $vital->respiration }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" align="center">No vitals recorded.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table> --}}
+                    </div>
+
+                    {{-- Reviews --}}
+                    <div class="tab p-1">
+                        <h2 class="header">Reviews</h2>
+
+                        <div class="grid gap-y-2">
+                            @forelse ($admission->reviews as $review)
+                                <x-doctors-note :note="$review"></x-doctors-note>
+                            @empty
+                                <p>No reviews posted for this admission.</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="tab p-1">
+                        <h2 class="header">Operation Notes</h2>
+
+                        <div class="grid gap-y-2">
+                            @forelse ($admission->operation_notes as $note)
+                                <div data-id="{{ $note->id }}" class="p-2 rounded border hover:bg-gray-100 opnote">
+                                    <p><b>Procedure: </b> {{ $note->procedure }}</p>
+                                    <p><b>Operation Date: </b> {{ $note->operation_date }}</p>
+                                    <p class="text-sm"><b>Date: </b> {{ $note->created_at->format('Y-m-d h:i A') }}</p>
+                                </div>
+                            @empty
+                                <p>No operation notes have been added.</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    {{-- Delivery note --}}
+                    <div class="tab p-2">
+                        <h2 class="header">Delivery note</h2>
+
+                        @if ($admission->patient->anc_profile)
+                            @unless ($admission->delivery_note)
+                                <livewire:admission.delivery-note :admission="$admission" />
+                            @else
+                                <div class="border p-2">
+                                    <p>{{ $admission->delivery_note->note }}</p>
+                                    <p><b>Taken: </b> {{ $admission->delivery_note->consultant?->name }}</p>
+                                    <p>{{ $admission->delivery_note->created_at->format('Y-m-d h:i A') }}</p>
+                                </div>
+                            @endunless
+                        @endif
+                    </div>
+
+                    <div class="tab p-1">
+                        <h2>Discharge</h2>
+
+                        <form action="{{ route('nurses.admissions.discharge', $admission) }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label>Discharge Date</label>
+                                <x-input-datetime name="discharged_on" class="form-control"
+                                    value="{{ $admission->discharged_on }}" />
+                            </div>
+                            <div class="form-group">
+                                <label>Discharge summary</label>
+                                <x-input-textarea name="discharge_summary" rows="5" class="form-control"
+                                    value="{{ $admission->discharge_summary }}" />
+                            </div>
+                            <div class="form-group flex justify-end">
+                                <button type="submit" class="btn bg-blue-400 text-white">Discharge <i
+                                        class="fa fa-wheelchair-move"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {{-- Consent Form --}}
+                    <div class="tab p-1" x-data="{ name: '', procedure: '', patient: '', relationship: '', }">
+                        <x-consent-form :patient="$admission->patient" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="body py">
-            <div class="tabs" data-list="#list">
+
+            {{-- <nav class="tabs">
                 <button class="tab-item btn btn-blue" data-target="#admission-plan">Admission Plan</button>
                 <button class="tab-item btn btn-blue" data-target="#vitals-tab">Vitals Chart</button>
                 <button class="tab-item btn btn-blue" data-target="#treatments-tab">Drug Charts</button>
                 <button class="tab-item btn btn-blue">Operation Notes</button>
-            </div>
-            <div class="tab-list" id="list">
-                <div id="admission-plan" class="tab p-1">
-                    <h2>Admission Plan</h2>
-                    <div class="pb-1"></div>
-                    <div>
-                        <h3>Drugs</h3>
-                        <div class="pt-1"></div>
-                        <p><b>Tick boxes to submit administration</b></p>
-                        <form action="?submit=treatment-log" method="post">
-                            @csrf
-                            <table class="table-list">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        {{-- <th>Route</th> --}}
-                                        <th>Dosage</th>
-                                        <th>Frequency</th>
-                                        <th>Duration</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($admission->plan->treatments ?? [] as $p)
-                                        <tr>
-                                            <td>{{ $p->name }}</td>
-                                            {{-- <td>{{ $p->route }}</td> --}}
-                                            <td>{{ $p->dosage }}</td>
-                                            <td>{{ $p->frequency }}</td>
-                                            <td>{{ $p->duration }}</td>
-                                            <td><input type="checkbox" name="ministered[{{ $p->id }}]"></td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6">No treatments</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                            @if ($admission->plan->treatments?->count() > 0 && $admission->in_ward)
-                                <div class="pt-1"></div>
-                                <button type="submit" class="btn btn-red">Submit</button>
-                            @endif
-                        </form>
-                    </div>
-                    <div class="pb-1"></div>
-                    <h3>History</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Treatments</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Administered By</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($admission->administrations as $adm)
-                                <tr>
-                                    <td>{{$adm->treatments}}</td>
-                                    <td>{{$adm->created_at?->format('Y-m-d')}}</td>
-                                    <td>{{$adm->created_at?->format('h:i A')}}</td>
-                                    <td>{{$adm->minister->name}}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="tab p-1 hide" id="vitals-tab">
-                    <h2>Vitals Chart</h2>
-
-                    <div class="pt-1"></div>
-                    <form action="?submit=vitals" method="post">
-                        @csrf
-                        <div class="row">
-                            @include('nursing.components.vitals-form')
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-blue">Submit</button>
-                        </div>
-                    </form>
-
-                    <div class="py-1"></div>
-                    <table class="table-list">
-                        <thead>
-                            <tr>
-                                <th>Date/Time</th>
-                                <th>Blood Pressure (mmHg)</th>
-                                <th>Temperature (&deg;C)</th>
-                                <th>Pulse (b/m)</th>
-                                <th>Respiration (c/m)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($admission->vitals as $vital)
-                                <tr>
-                                    <td>{{ $vital->created_at->format('d/m/Y h:i A') }}</td>
-                                    <td>{{ $vital->blood_pressure }}</td>
-                                    <td>{{ $vital->temperature }}</td>
-                                    <td>{{ $vital->pulse }}</td>
-                                    <td>{{ $vital->respiration }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" align="center">No vitals recorded.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="tab hide" id="treatments-tab">
-                    <h3>Treatments</h3>
-                </div>
-            </div>
-
+            </nav> --}}
         </div>
     </div>
 @endsection
+
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            initTab(document.querySelector('#actions-tab'));
+
+            $(document).on('click', '.opnote', (e) => {
+                const {
+                    id
+                } = $(e.currentTarget).data();
+
+                axios.get("{{ route('doctor.admission.op-note', ':id') }}".replace(':id', id)).then((
+                    res) => {
+                    useGlobalModal((a) => {
+                        a.find(MODAL_TITLE).text('Operation Note');
+                        a.find(MODAL_BODY).html(res.data);
+                    });
+                }).catch((err) => {
+                    notifyError(err.message);
+                })
+            });
+        });
+
+        $(document).ready(function() {
+            // const canvas = document.getElementById('signature');
+            // const ctx = canvas.getContext('2d');
+            // let painting = false;
+
+            // console.log(ctx);
+
+
+            // function startPosition(e) {
+            //     console.log(e);
+            //     painting = true;
+            //     draw(e);
+            // }
+
+            // function finishedPosition() {
+            //     painting = false;
+            //     ctx.beginPath();
+            // }
+
+            // function draw(e) {
+            //     console.log(painting);
+            //     if (!painting) return;
+            //     console.log(e);
+
+            //     // Set brush styles
+            //     ctx.lineWidth = 5;
+            //     ctx.lineCap = 'round';
+            //     ctx.strokeStyle = 'black';
+
+            //     // Draw line based on mouse coordinates
+            //     ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            //     ctx.stroke();
+            //     ctx.beginPath();
+            //     ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            // }
+
+            // // Event Listeners for mouse interaction
+            // canvas.addEventListener('mousedown', startPosition);
+            // canvas.addEventListener('mouseup', finishedPosition);
+            // canvas.addEventListener('mousemove', draw);
+
+            // // Event Listeners for mouse interaction
+            // canvas.addEventListener('touchstart', startPosition);
+            // canvas.addEventListener('touchend', finishedPosition);
+            // canvas.addEventListener('touchmove', draw);
+            const canvas = document.querySelector('#signature');
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+
+            // Line Style
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+
+            function startDrawing(e) {
+                drawing = true;
+                ctx.beginPath();
+                ctx.moveTo(e.offsetX, e.offsetY);
+            }
+
+            function draw(e) {
+                if (drawing) {
+                    ctx.lineTo(e.offsetX, e.offsetY);
+                    ctx.stroke(); // This draws the line as you move
+                }
+            }
+
+            function endDraw() {
+                drawing = false;
+            }
+
+            function resetCanvas() {
+                ctx.reset();
+                canvas.removeEventListener('mousedown', startDrawing);
+                canvas.removeEventListener('touchstart', startDrawing);
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('touchstart', startDrawing);
+            }
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', endDraw);
+
+            // Pro tip: Event Listeners for touch interaction
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchend', endDraw);
+            canvas.addEventListener('touchmove', draw);
+
+            document.querySelector("#clear-signature").addEventListener('click', resetCanvas);
+
+            document.querySelector("#save-signature").addEventListener('click', (e) => {
+                drawing = false;
+                canvas.removeEventListener('mousedown', startDrawing);
+                canvas.removeEventListener('touchstart', startDrawing);
+            });
+
+            document.querySelector("#consent-form").addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const data = (form.serializeArray());
+                data.push({
+                    name: 'signature',
+                    value: canvas.toDataURL()
+                });
+
+                const serialized = $.param(data);
+                console.log(serialized);
+
+                axios.post("{{ route('nurses.admissions.consent-form', $admission) }}", serialized, {
+                        headers: {
+                            'Content-type': 'application/x-www-form-urlencoded'
+                        },
+                    })
+                    .then((res) => {
+                        notifySuccess("Consent saved successfully");
+                        this.reset();
+                        resetCanvas();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        notifyError(err.response.data.message);
+                    });
+            });
+        });
+    </script>
+@endpush

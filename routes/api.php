@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'auth:sanctum'])->group(function () {
     Route::prefix('records')->name('api.records.')->group(base_path('routes/api/records.php'));
 
     Route::prefix('rad')->group(base_path('routes/api/rad.php'));
@@ -28,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
     // include_once __DIR__ . '/api/rad.php';
     include_once __DIR__ . '/api/doctor.php';
     include_once __DIR__ . '/api/nhi.php';
+    include_once __DIR__ . '/api/dispensary.php';
+    include_once __DIR__ . '/api/billing.php';
+    include_once __DIR__ . '/api/pharmacy.php';
 });
 // include_once __DIR__ . '/api/records.php';
 

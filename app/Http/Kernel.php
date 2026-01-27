@@ -3,7 +3,6 @@
 namespace App\Http;
 
 use App\Http\Middleware\Datalog;
-use App\Http\Middleware\RestrictDepartment;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Turso\Driver\Laravel\LibSQLDriverServiceProvider;
 
@@ -43,7 +42,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -68,6 +67,8 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'datalog' => Datalog::class,
-        'department' => RestrictDepartment::class,
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ];
 }

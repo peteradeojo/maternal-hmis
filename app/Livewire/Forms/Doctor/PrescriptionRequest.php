@@ -10,7 +10,7 @@ class PrescriptionRequest extends Form
     #[Validate('required|string')]
     public $dosage = '';
 
-    #[Validate('required|string')]
+    #[Validate('required|integer')]
     public $duration = '';
 
     #[Validate('required|string')]

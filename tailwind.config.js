@@ -6,7 +6,11 @@ export default {
         "./resources/**/*.{css,scss}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                'primary': '#3fbbc0',
+            },
+        },
     },
     plugins: [require("@tailwindcss/forms")],
 };

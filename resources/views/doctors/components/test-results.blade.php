@@ -5,18 +5,21 @@
             <th>Result</th>
             <th>Unit</th>
             <th>Ref. range</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach ($tests as $test)
+        @forelse ($tests as $test)
             <tr wire:key="test:{{ $test->name }}">
                 <td colspan="3"><b>{{ $test->name }}</b></td>
                 <td class="text-xs">
                     @if (@$cancellable === true && ($test->results == null && $test->name != 'ROUTINE ANTENATAL TESTS'))
-                        <button type="button" class="btn text-red-500 underline" wire:click="removeTest({{ $test->id }})">Cancel
+                        <button type="button" class="btn text-red-500 underline"
+                            wire:click="removeTest({{ $test->id }})">Cancel
                             Request</button>
                     @endif
                 </td>
+                <td>{{ $test->created_at?->format('Y-m-d h:i A') }}</td>
             </tr>
             @forelse ($test->results ?? [] as $result)
                 <tr wire:key="test:{{ $test->name }}">
@@ -30,6 +33,10 @@
                     <td colspan="4">No result provided.</td>
                 </tr>
             @endforelse
-        @endforeach
+        @empty
+            <tr>
+                <td colspan="4" class="text-center">No tests requested for this visit</td>
+            </tr>
+        @endforelse
     </tbody>
 </table>

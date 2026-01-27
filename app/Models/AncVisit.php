@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use App\Dto\PrescriptionDto;
+use App\Enums\Department;
 use App\Models\Visit;
 use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
+use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable as TraitsDocumentable;
 use App\Traits\HasVisitData;
 use App\Traits\Visit as VisitTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AncVisit extends Model implements Documentable, Visitation
+class AncVisit extends Model implements Documentable, Visitation, OperationalEvent
 {
     use HasFactory, VisitTrait, TraitsDocumentable, HasVisitData;
 
@@ -35,18 +36,20 @@ class AncVisit extends Model implements Documentable, Visitation
         'fundal_height',
         'fetal_heart_rate',
         'presentation',
-        'lie',
         'presentation_relationship',
+        'edema',
+        'note',
         'return_visit',
+        'lie',
         'complaints',
         'drugs',
-        'note',
         'antenatal_profile_id',
-        'edema',
         'pcv',
         'vdrl',
         'protein',
         'glucose',
+        'tt',
+        'ipt',
     ];
 
     protected $with = ['patient', 'doctor'];
@@ -68,20 +71,21 @@ class AncVisit extends Model implements Documentable, Visitation
         return $this->belongsTo(User::class, 'doctor_id');
     }
 
+    final public function visit()
+    {
+        return $this->morphOne(Visit::class, 'visit');
+    }
+
     protected static function booted()
     {
-        static::created(function (AncVisit $visit) {
-            $test = Product::where('name', 'like',  '%ROUTINE ANTENATAL %')->first();
-            if (!$test) {
-                return;
-            }
+        static::saving(function (Self $visit) {
+            if ($visit->isDirty('ipt') && $visit->ipt == true) {
+                notifyDepartment(Department::NUR->value, "Immunization [IPT] for {{$visit->patient->name}}");
+            } 
 
-            $visit->tests()->create([
-                'name' => $test->name,
-                'describable_type' => $test::class,
-                'describable_id' => $test->id,
-                'patient_id' => $visit->patient->id,
-            ]);
+            if ($visit->isDirty('tt') && $visit->tt == true) {
+                notifyDepartment(Department::NUR->value, "Immunization [TT] for {{$visit->patient->name}}");
+            }
         });
     }
 }

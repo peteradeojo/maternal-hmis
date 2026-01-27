@@ -1,3 +1,194 @@
+import axios from 'axios';
+import './app';
+
+window.initTab = function (el) {
+    if (!el) return;
+    const tabNav = el.querySelector("nav");
+    const tabSelect = el.querySelector("select");
+
+    const tabList = tabNav.querySelectorAll("a");
+
+    const tabContentList = el.querySelectorAll(
+        el.getAttribute("data-tablist") + " > .tab"
+    );
+
+    tabContentList.forEach((e, i) => {
+        i > 0 && e.classList.add("hidden");
+    });
+
+    const listener = (i) => {
+        return (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            tabContentList.forEach((elj) => elj.classList.add("hidden"));
+
+            tabList?.forEach((eli, j) => {
+                eli.classList.add("default-tab");
+                eli.classList.remove("active-tab");
+                eli.setAttribute("aria-current", "page");
+            });
+
+            tabList[i]?.classList.remove("default-tab");
+            tabList[i]?.classList.add("active-tab");
+
+            tabContentList[i]?.classList.remove("hidden");
+        };
+    };
+
+    tabSelect.addEventListener("change", (e) => {
+        // console.log(e.target.options.selectedIndex);
+        listener(e.target.options.selectedIndex)(e);
+    });
+    tabList?.forEach((element, i) => {
+        element.addEventListener("click", listener(i));
+    });
+}
+
+window.asyncForm = (form, route, callback = (e, data) => { }) => {
+    if (!form) return;
+
+    $(form).on("submit", (e) => {
+        e.preventDefault();
+        axios.post(route, new FormData(e.currentTarget), {
+            headers: {
+                Accept: "application/json",
+            }
+        }).then((res) => {
+            callback(e.currentTarget, res);
+        }).catch((err) => {
+            console.error(err);
+            notifyError(err.response.data.message || err.message);
+        });
+    });
+}
+
+window.submitForm = async (el, route, notify = true) => {
+    const formData = new FormData(el);
+    return axios.post(route, formData, {
+        headers: {
+            "Content-Type": 'multipart/form-data',
+            Accept: 'application/json',
+        },
+    }).then((res) => res)
+        .catch(err => {
+            // console.error(err);
+            if (notify)
+                notifyError(err.message);
+            return { data: null, message: err.response?.data.message || err.message };
+        });
+}
+
+window.MODAL_TITLE = ".modal-title";
+window.MODAL_CONTENT = ".modal-body";
+window.MODAL_BODY = ".modal-body";
+
+window.useGlobalModal = function (callback) {
+    $("#global-overlay").removeClass("hidden");
+    $("#global-modal").removeClass("translate-x-full");
+
+    callback($("#global-modal"));
+}
+
+window.removeGlobalModal = function () {
+    $("#global-modal").addClass("translate-x-full");
+    setTimeout(() => $("#global-overlay").addClass("hidden"), 300);
+}
+
+$('#closeGlobalModal, #global-overlay').on('click', function () {
+    removeGlobalModal();
+});
+
+/**
+ * @param {{message: string; bg: string; [key: string]: any}} data
+ */
+window.displayNotification = function (data) {
+    const { options, message, bg, meta } = data;
+
+    if (Notification.permission === 'granted' && ['both', 'desktop'].includes(options.mode)) {
+        const n = new Notification(data.title || 'New Notification', {
+            body: message,
+            icon: '/favicon.ico',
+            requireInteraction: (options?.priority || 0) >= 3,
+            data: meta,
+        });
+
+        n.addEventListener('click', function (e) {
+            const { url } = this.data || {};
+            if (url) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = "_blank";
+                link.rel = "noreferrer noopener";
+                link.click();
+                n.close();
+            }
+        });
+
+        setTimeout(() => n.close(), 30000);
+    }
+
+    if (!['both', 'in-app'].includes(options.mode)) {
+        return;
+    }
+
+    const el = document.createElement(`div`);
+    el.textContent = message;
+    el.classList.add(...(bg || ['bg-green-400', 'text-white']), 'app-notification');
+
+    document.querySelector("#notifications").appendChild(el);
+
+    if (options.close_modal) {
+        removeGlobalModal();
+    }
+
+    setTimeout(() => {
+        el.classList.add("fade-out");
+    }, Math.max(options.timeout || 5000));
+
+    setTimeout(() => {
+        el.remove();
+    }, Math.max(options.timeout || 5300));
+}
+
+window.notifyError = function (message) {
+    return displayNotification({
+        message,
+        bg: ['bg-red-500', 'text-white'],
+        options: {
+            mode: 'in-app',
+        }
+    })
+}
+
+window.notifySuccess = function (message) {
+    return displayNotification({
+        message,
+        bg: ['bg-blue-400', 'text-white'],
+        options: {
+            mode: 'in-app',
+        }
+    })
+}
+
+window.notifyAction = function (message) {
+    return displayNotification({
+        message,
+        bg: ['bg-green-500', 'text-white'],
+        options: {
+            mode: 'in-app',
+        }
+    })
+}
+
+window.parseDateFromSource = (date, second = false, hm = true) => new Date(date).toLocaleDateString('en-CA', {
+    ...(hm && {
+        minute: '2-digit',
+        hour: '2-digit',
+    }),
+    ...(second && { second: '2-digit' }),
+    timeZone: 'Africa/Lagos',
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     document
         .querySelectorAll(".foldable .foldable-header")
@@ -10,52 +201,32 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-    document.querySelectorAll(".modal").forEach((modal) => {
-        modal.addEventListener("click", (e) => {
-            e.preventDefault();
-            if (e.target.classList.contains("modal")) {
-                // console.log("got click");
-                e.target.classList.add("hide");
-            }
-        });
-
-        // Prevent propagation for clicks inside the modal
-        modal.querySelectorAll('.content').forEach((content) => {
-            content.addEventListener('click', (e) => e.stopPropagation());
-        });
-    });
-
-    document.querySelectorAll(".modal-trigger").forEach((trigger) => {
-        trigger.addEventListener("click", (e) => {
-            e.preventDefault();
-            const { target } = e.target.dataset;
-            const modal = document.querySelector(target);
-            modal?.classList.remove("hide");
-        });
-    });
-
     $("#nav-burger").on('click', (e) => {
         $("#mobile-nav-list").toggleClass("hidden");
     });
-
-    // document.querySelectorAll(".tabs").forEach((tabspace) => {
-    //     const tabList = document.querySelector(tabspace.dataset.list);
-    //     // tabList.querySelectorAll('.tab').forEach(t => t.classList.add('hide'));
-
-    //     tabspace.querySelectorAll(".tab-item").forEach((btn) => {
-    //         btn.addEventListener("click", function (e) {
-    //             tabspace
-    //                 .querySelectorAll(".tab-item")
-    //                 .forEach((t) => t.classList.remove("active"));
-
-    //             tabList
-    //                 .querySelectorAll(".tab")
-    //                 .forEach((t) => t.classList.add("hide"));
-    //             tabList
-    //                 .querySelector(`.tab${btn.dataset.target}`)
-    //                 ?.classList.remove("hide");
-    //             btn.classList.add("active");
-    //         });
-    //     });
-    // });
 });
+
+const PRIMARY_COLOR = '#3fbbc0';
+window.PRIMARY_COLOR = PRIMARY_COLOR;
+
+window.addChartData = function (chart, label, newData) {
+    chart.data.labels.push(...label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(...newData);
+    });
+    chart.update();
+}
+
+window.setChartData = function (chart, labels, data) {
+    chart.data.labels = labels;
+    chart.data.datasets = data;
+    chart.update('none');
+}
+
+window.removeChartData = function (chart) {
+    chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+    });
+    chart.update();
+}

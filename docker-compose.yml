@@ -1,0 +1,38 @@
+services:
+    app:
+        container_name: emr
+        build:
+            context: .
+        networks:
+            - laravel-production
+        volumes:
+            # 1. Bind mount for real-time development
+            - ./:/var/www/hmis/
+            - ./docker.env:/var/www/hmis/.env
+            # 2. Named volumes to "hide" permission changes from the host
+            - app-storage:/var/www/hmis/storage
+            - app-cache:/var/www/hmis/bootstrap/cache
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+
+    server:
+        depends_on:
+            - app
+        container_name: "emr-server"
+        networks:
+            - laravel-production
+        build:
+            context: .
+            dockerfile: infra/Dockerfile.nginx
+        volumes:
+            # Match the bind mount and named volumes here too
+            - ./:/var/www/hmis/:ro
+            - app-storage:/var/www/hmis/storage:ro
+            - app-cache:/var/www/hmis/bootstrap/cache:ro
+
+volumes:
+    app-storage:
+    app-cache:
+
+networks:
+    laravel-production:

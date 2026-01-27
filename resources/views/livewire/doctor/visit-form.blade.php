@@ -1,27 +1,35 @@
 <div>
     {{-- In work, do what you enjoy. --}}
-    <div class="container card">
-        <div class="card-header header">Profile</div>
+    <x-overlay-modal id="admit" title="Admitting: {{ $visit->patient->name }}">
+
+        <datalist id="patient-diagnoses">
+            @foreach ($visit->diagnoses as $d)
+                <option value="{{ $d->diagnoses }}">{{ $d->diagnoses }}</option>
+            @endforeach
+        </datalist>
+
+        <form action="{{ route('doctor.admit', $visit) }}" method="post" id="start-admission-form">
+            @csrf
+            <div class="form-group">
+                <label class="required">Indication for Admission</label>
+                <input type="text" name="indication" class="form-control" list="patient-diagnoses" required />
+            </div>
+            <div class="form-group">
+                <label>Notes/Further Instructions</label>
+                <textarea name="note" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-red-500 text-white">Submit</button>
+            </div>
+        </form>
+    </x-overlay-modal>
+
+    <div class="p-4 bg-white">
         <div id="nav-tab" data-tablist="#tablist">
             <div id="tablist" class="py-1">
-                <div class="tab">
-                    <div>
-                        {{ $visit->created_at?->format('Y-m-d h:i A') }}
-                    </div>
-                    <div class="grid grid-cols-3">
-                        <p><b>Name</b>: {{ $visit->patient->name }}</p>
-                        <p><b>Gender</b>: {{ $visit->patient->gender_value }}</p>
-                        <p><b>Date of Birth</b>: {{ $visit->patient->dob?->format('Y-m-d') }}</p>
-                        <p><b>Card Number</b>: {{ $visit->patient->card_number }}</p>
-                        <p><b>Card Type</b>: {{ $visit->patient->category->name }}</p>
-                        <p><b>Visit Type</b>: {{ $visit->type }}</p>
-                        <p><b></b></p>
-                        <p><b></b></p>
-                        <p><b></b></p>
-                        <p><b></b></p>
-                    </div>
-                </div>
-                @if ($visit->type == 'Antenatal')
+                <x-patient-profile :patient="$visit->patient"></x-patient-profile>
+
+                @if ($visit->type == 'Antenatal' || strtolower($visit->patient->category->name) == 'antenatal')
                     <div class="tab py-3 px-2">
                         <p class="text-3xl border-b border-gray-300">Antenatal Booking Details</p>
                         @isset($profile)
@@ -33,14 +41,18 @@
                 @else
                     <div class="tab">
                         <p class="bold mt-4 mb-1 text-xl header">Vitals</p>
-                        {{-- @dump($visit->visit->vitals) --}}
-                        @if($visit->vitals || $visit->visit->vitals)
+                        @if ($visit->vitals)
                             <div class="grid grid-cols-2">
-                                <p><b>Weight</b>: {{ $visit->svitals?->weight ?? $visit->visit->vitals->weight }} kg</p>
-                                <p><b>Blood Pressure</b>: {{ $visit->svitals?->blood_pressure ?? $visit->visit->vitals->blood_pressure }} mmHg</p>
-                                <p><b>Temperature</b>: {{ $visit->svitals?->temperature ?? $visit->visit->vitals->temperature }} &deg;C</p>
-                                <p><b>Pulse</b>: {{ $visit->svitals?->pulse ?? $visit->visit->vitals->pulse }} bpm</p>
-                                <p><b>Respiration</b>: {{ $visit->svitals?->respiration ?? $visit->visit->vitals->respiration }} bpm</p>
+                                <p><b>Weight</b>: {{ $visit->vitals?->weight }} kg</p>
+                                <p><b>Blood Pressure</b>: {{ $visit->vitals?->blood_pressure }} mmHg</p>
+                                <p><b>Temperature</b>: {{ $visit->vitals?->temperature }} &deg;C</p>
+                                <p><b>Pulse</b>: {{ $visit->vitals?->pulse }} bpm</p>
+                                <p><b>Respiration</b>: {{ $visit->vitals?->respiration }} bpm</p>
+
+                                @foreach ($visit->vitals->extra ?? [] as $k => $v)
+                                    <p><b>{{ ucfirst(unslug($k)) }}:</b>
+                                        {{ is_bool($v) ? ($v == true ? 'Yes' : 'No') : $v }}</p>
+                                @endforeach
                             </div>
                         @else
                             <p>No vitals have been recorded for this visit.</p>
@@ -54,47 +66,53 @@
     <div class="py-1"></div>
 
     <div class="container card">
-        <div id="actions-tab" data-tablist="#actions">
+        <div wire:ignore.self id="actions-tab" data-tablist="#actions">
             <div class="flex justify-between items-center">
                 @include('components.tabs', [
                     'options' =>
                         $visit->type == 'Antenatal'
-                            ? ['Follow Up', 'First Visit', 'Medical Records']
+                            ? // ? ['First Visit', 'Follow Up', 'Medical Records']
+                            [$visit->first_visit ? 'First Visit' : 'Follow Up', 'Medical Records']
                             : ['Medical Records'],
                 ])
 
-                <button class="btn btn-blue btn-sm modal-trigger" data-target="#previous-history-modal">View
+                <button class="btn bg-blue-500 text-white btn-sm" id="view-history">View
                     History</button>
             </div>
 
-            <div id="actions" class="py-1">
+            <div id="actions" class="p-2">
                 @if ($visit->type == 'Antenatal')
-                    <div class="tab">
-                        @livewire('doctor.anc-visit', ['visit' => $visit])
-                    </div>
-                    <div class="tab">
-                        <livewire:doctor.anc-booking :profile="$profile" :visit="$visit" />
-                    </div>
+                    @if ($visit->first_visit)
+                        <div class="tab">
+                            <livewire:doctor.anc-booking :profile="$profile" :visit="$visit->visit" />
+                        </div>
+                    @else
+                        <div class="tab">
+                            @livewire('doctor.anc-visit', ['visit' => $visit->visit])
+                        </div>
+                    @endif
                 @endif
 
                 <div class="tab">
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#history-modal">Add History</button>
+                    <button class="btn btn-blue" @click="$dispatch('open-history-modal')">Presenting
+                        Complaints</button>
 
+                    <button class="btn btn-blue" @click="$dispatch('open-notes-modal')">History of Presenting
+                        Complaints</button>
                     @if ($visit->examination)
-                        <button class="btn btn-green btn-sm modal-trigger" data-target="#exams-modal">Edit
+                        <button class="btn btn-green" @click="$dispatch('open-exams-modal')">Edit
                             Examination</button>
                     @else
-                        <button class="btn btn-blue btn-sm modal-trigger" data-target="#exams-modal">Add
+                        <button class="btn btn-blue" @click="$dispatch('open-exams-modal')">Add
                             Examination</button>
                     @endif
 
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#notes-modal">Add Note</button>
-
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#diagnosis-modal">Add
-                        Diagnosis</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#tests-modal">Add
+                    <button class="btn btn-blue" @click="$dispatch('open-tests-modal')">Add
                         Investigation</button>
-                    <button class="btn btn-blue btn-sm modal-trigger" data-target="#prescriptions-modal">Add
+                    <button class="btn btn-blue" @click="$dispatch('open-diagnosis-modal')">Add
+                        Diagnosis</button>
+                    <button class="btn bg-blue-400" @click="$dispatch('open-treatment-plan')">Create Plan</button>
+                    <button class="btn btn-blue" @click="$dispatch('open-prescriptions-modal')">Add
                         Prescription</button>
 
                     <livewire:doctor.medical-records :visit="$visit" />
@@ -103,108 +121,117 @@
         </div>
     </div>
 
-    <div class="modal hide" id="prescriptions-modal">
-        <div class="content p-3 bg-white">
-            @livewire('doctor.add-presciption', ['visit' => $visit])
-        </div>
-    </div>
+    <x-overlay-modal id="treatment-plan" title="Treatment Plans">
+        <livewire:doctor.treatment-plans :event="$visit" />
+    </x-overlay-modal>
 
-    <div class="modal hide" id="tests-modal">
-        <div class="content p-3 bg-white">
-            <p class="text-xl bold">Add Investigation</p>
+    <x-overlay-modal id="history-modal" title="History/Presentation">
+        {{-- Add History --}}
+        <form wire:submit.prevent="addHistory">
+            <div class="flex gap-x-3">
+                <div>
+                    <input type="text" class="form-control" list="histories" placeholder="Presentation"
+                        wire:model="historyForm.presentation" />
+                    @error('historyForm.presentation')
+                        <span class="error text-xs text-red-600">{{ $message }}</span>
+                    @enderror
+                </div>
 
-            <div class="tablist" id="tests-tabs" data-tablist="#investigations">
-                @include('components.tabs', ['options' => ['Lab', 'Radiology']])
-
-                <div id="investigations" class="py-1">
-                    <div class="tab">
-                        <div class="form-group">
-                            <label>Select Test</label>
-                            <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail.id)" />
-                        </div>
-                    </div>
-                    <div class="tab">
-                        <div class="form-group">
-                            <label>Request Scan</label>
-                            <livewire:dynamic-product-search departmentId='7' @selected="addScan($event.detail.id)" />
-                        </div>
-                    </div>
+                <div>
+                    <input type="text" class="form-control" placeholder="Duration"
+                        wire:model="historyForm.duration" />
+                    @error('historyForm.duration')
+                        <span class="error text-xs text-red-600">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
+            <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
+        </form>
+    </x-overlay-modal>
+
+    <x-overlay-modal id="exams-modal" title="Patient Examination">
+        <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
+            @csrf
+            @include('components.examinations-form', ['exam' => $visit->examination])
+
+            <button type="submit" class="btn btn-blue">Submit &triangleright;</button>
+        </form>
+    </x-overlay-modal>
+
+    <x-overlay-modal id="prescriptions-modal" title="Add Prescription">
+        @livewire('doctor.add-prescription', ['visit' => $visit])
+    </x-overlay-modal>
+
+    <x-overlay-modal id="tests-modal" title="Request Investigations">
+        <div class="">
+            <p class="text-lg font-semibold">Lab Tests</p>
+            <div class="form-group">
+                <label>Select Test</label>
+                <livewire:dynamic-product-search departmentId='5' @selected="addTest($event.detail)"
+                    @selected_temp="addTest($event.detail)" />
+            </div>
         </div>
-    </div>
 
-    <div class="modal hide" id="history-modal">
-        <div class="content p-3 bg-white">
-            <p class="text-xl bold">Add History</p>
-            <form wire:submit.prevent="addHistory" class="py-3">
-                <div class="flex gap-x-3 py-3">
-                    <div>
-                        <input type="text" class="form-control" list="histories" placeholder="Presentation"
-                            wire:model="historyForm.presentation" />
-                        @error('historyForm.presentation')
-                            <span class="error text-xs text-red-600">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <input type="text" class="form-control" placeholder="Duration"
-                            wire:model="historyForm.duration" />
-                        @error('historyForm.duration')
-                            <span class="error text-xs text-red-600">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <button class="btn btn-blue" wire:click="addHistory">&plus; Add</button>
-            </form>
+        <div class="">
+            <p class="text-lg font-semibold">Radiology</p>
+            <div class="form-group">
+                <label>Request Scan</label>
+                <livewire:doctor.add-scan :event="$visit" />
+            </div>
         </div>
-    </div>
-
-    <div class="modal hide" id="exams-modal">
-        <div class="content bg-white p-1 overflow-y-auto">
-            <p class="text-xl bold">Examination</p>
-            <form action="{{ route('doctor.examine', ['visit' => $visit->visit]) }}" id="exams-form" method="post">
-                @csrf
-                @include('components.examinations-form', ['exam' => $visit->examination])
-
-                <button type="submit" class="btn btn-blue">Submit &triangleright;</button>
-            </form>
-        </div>
-    </div>
+    </x-overlay-modal>
 
     <datalist id="histories">
         @foreach ($histories as $history)
             <option value="{{ $history->presentation }}">{{ $history->presentation }}</option>
         @endforeach
     </datalist>
-
-    <div class="modal hide" id="previous-history-modal">
-        <div class="content max-w-full p-3 bg-white">
-            <p class="text-xl bold">Previous Visits</p>
-
-            <div class="py-4 grid grid-cols-2">
-                <div>
-                    @foreach ($visit->patient->visits as $previous_visit)
-                        <button onClick="loadVisitReport({{ $previous_visit->id }})"
-                            class="flex w-full justify-between py-2 px-3 bg-gray-200 hover:bg-gray-300">
-                            <p class="text-xl bold">{{ $previous_visit->created_at->format('Y-m-d') }}</p>
-                        </button>
-                    @endforeach
-                </div>
-                <div class="border-2 border-l-0 overflow-y-auto p-3" id="previous-visit-report">
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @script
     <script>
-        asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
-            const data = await res.json();
-            console.log(data);
+        initTab(document.querySelector('#actions-tab'));
 
-            $("#exams-modal").addClass("hide");
+        asyncForm("#exams-form", "{{ route('doctor.examine', ['visit' => $visit]) }}", async (e, res) => {
+            const {
+                data
+            } = res;
+            notifySuccess("Examination saved for visit #{{ $visit->id }}");
+        });
+
+        asyncForm("#start-admission-form", "{{ route('doctor.admit', $visit) }}", (e, res) => {
+            const {
+                data
+            } = res;
+
+            if (!data.ok) {
+                notifyError(data.message);
+                return;
+            }
+
+            notifySuccess(`Admission process started for ${data.patient.name}`);
+            $wire.dispatch('close-admit');
+        });
+
+        $(document).ready(() => {
+            $(document).on("click", "#view-history", (e) => {
+                axios.get(`{{ route('patient.medical-history', ':id') }}`.replace(':id',
+                    {{ $visit->patient->id }})).then((res) => {
+                    useGlobalModal((a) => {
+                        a.find(".modal-title").text("Medical History")
+                        a.find(".modal-body").html(res.data);
+                    });
+                }).catch((err) => {
+                    console.log(err.response.data);
+                    displayNotification({
+                        message: err.response.data,
+                        bg: ['bg-red-500', 'text-white'],
+                        options: {
+                            mode: 'in-app'
+                        }
+                    })
+                })
+            });
         });
     </script>
 @endscript

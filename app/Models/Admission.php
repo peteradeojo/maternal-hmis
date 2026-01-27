@@ -2,16 +2,27 @@
 
 namespace App\Models;
 
-use App\Interfaces\Documentable as InterfacesDocumentable;
+use App\Enums\NoteCodes;
+use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Traits\Auditable;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 
-class Admission extends Model implements InterfacesDocumentable
+class Admission extends Model implements OperationalEvent
 {
-    use HasFactory, Documentable, HasVisitData;
+    use HasFactory,
+        Documentable,
+        HasVisitData,
+        SoftDeletes,
+        Auditable,
+        NeedsRecorderInfo;
 
     protected $guarded = [];
 
@@ -19,7 +30,12 @@ class Admission extends Model implements InterfacesDocumentable
 
     protected $appends = ['in_ward'];
 
-    public function visit() {
+    protected $casts = [
+        'discharged_on' => 'datetime',
+    ];
+
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id');
     }
 
@@ -35,7 +51,7 @@ class Admission extends Model implements InterfacesDocumentable
 
     public function inWard(): Attribute
     {
-        return Attribute::make(get: fn () => isset($this->ward_id));
+        return Attribute::make(get: fn() => isset($this->ward_id));
     }
 
     public function admittable()
@@ -43,14 +59,13 @@ class Admission extends Model implements InterfacesDocumentable
         return $this->morphTo();
     }
 
-    public function vitals()
-    {
-        return $this->morphMany(Vitals::class, 'recordable');
-    }
+    // final public function vitals() {
+    //     return $this->morphMany(Vitals::class, 'recordable');
+    // }
 
     public function administrations()
     {
-        return  $this->hasMany(AdmissionTreatments::class)->latest();
+        return $this->hasMany(AdmissionTreatments::class)->latest();
     }
 
     public function plans()
@@ -58,12 +73,63 @@ class Admission extends Model implements InterfacesDocumentable
         return $this->hasMany(AdmissionPlan::class)->latest();
     }
 
-    public function tests() {
-        return $this->morphMany(DocumentationTest::class, 'testable');
-    }
-
     public function plan()
     {
         return $this->hasOne(AdmissionPlan::class)->latest();
+    }
+
+    public function reviews()
+    {
+        $query = $this->notes()->where(function ($q) {
+            $q->where('code', '=', NoteCodes::AdmissionReview->value)->orWhereNull('code');
+        });
+
+        return $query;
+    }
+
+    public function operation_notes()
+    {
+        return $this->hasMany(OperationNote::class, 'admission_id')->latest();
+    }
+
+    public function delivery_note()
+    {
+        return $this->morphOne(ConsultationNote::class, 'visit')->latest()->where('code', NoteCodes::Delivery);
+    }
+
+    #[Override]
+    public function scopeActive($query)
+    {
+        return $query->whereNotIn('status', [Status::closed->value, Status::cancelled->value, Status::ejected->value]);
+    }
+
+    public function scopeValid($query)
+    {
+        return $query->whereNotIn('status', [Status::cancelled->value, Status::ejected->value]);
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasAnyRole(['doctor', 'nurse', 'record', 'pharmacy'])) {
+            return $query;
+        }
+
+        if ($user->hasRole('lab')) {
+            return $query->where(function ($q) {
+                $q->has('tests')->orWhere(function ($q) {
+                    $q->has('plan.tests');
+                });
+            })->where('status', '!=', Status::closed->value);
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
+
+    public function consent_forms() {
+        return $this->hasMany(ProcedureConsent::class, 'admission_id');
     }
 }

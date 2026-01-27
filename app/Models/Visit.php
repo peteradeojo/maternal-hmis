@@ -2,25 +2,30 @@
 
 namespace App\Models;
 
+use App\Enums\Department;
 use App\Enums\Status;
+use App\Http\Controllers\LabController;
+use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property AncVisit|GeneralVisit $visit
  */
-class Visit extends Model
+class Visit extends Model implements OperationalEvent
 {
-    use HasFactory, HasVisitData, Documentable;
+    use HasFactory, HasVisitData, Documentable, Auditable;
 
     protected $fillable = [
         'visit_type',
         'visit_id',
         'status',
         'patient_id',
+        'consultant_id',
         'awaiting_vitals',
         'awaiting_doctor',
         'awaiting_lab_results',
@@ -31,11 +36,9 @@ class Visit extends Model
 
     protected $with = ['visit'];
 
-    protected $appends = ['vital_staff', 'can_check_out'];
+    protected $appends = ['can_check_out', 'type'];
 
-    protected $casts = [
-        'vitals' => 'object',
-    ];
+    protected $casts = [];
 
     // Relationships
     public function patient()
@@ -48,38 +51,33 @@ class Visit extends Model
         return $this->morphTo();
     }
 
+    public function doctor()
+    {
+        return $this->belongsTo(User::class, 'consultant_id');
+    }
+
     // Methods
     public function getReadableVisitTypeAttribute()
     {
         return $this->visit?->getType();
     }
 
-    public function setVitals($data, User $user)
+    public function type(): Attribute
     {
-        $vitals = [
-            'data' => $data,
-            'staff' => $user->id,
-            'time' => now(),
-        ];
-        $this->vitals = $vitals;
-        $this->save();
-    }
-
-    public function getVitalStaffAttribute()
-    {
-        if (isset($this->vitals?->staff))
-            return User::find($this->vitals?->staff);
+        return Attribute::make(
+            get: fn() => $this->visit->type,
+        );
     }
 
     public function canCheckOut(): Attribute
     {
-        return Attribute::make(fn () =>  !$this->awaiting_pharmacy && !$this->awaiting_doctor);
+        return Attribute::make(fn() => !$this->awaiting_pharmacy && !$this->awaiting_doctor);
     }
 
     // Scopes
     public function scopeAwaitingDoctor($query)
     {
-        $query->whereNotNull('vitals')->where('awaiting_doctor', true);
+        $query->has('vitals')->where('awaiting_doctor', true);
     }
 
     public function scopeCompleted($query)
@@ -102,6 +100,48 @@ class Visit extends Model
         $query->where('awaiting_doctor', true)->orWhere('awaiting_vitals', true)->orWhere('awaiting_pharmacy', true);
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', Status::active->value)->latest();
+    }
+
+    public function scopeAccessibleBy($query, User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return $query;
+        }
+
+        if ($user->hasRole('doctor')) {
+            return $query->where('consultant_id', $user->id);
+        }
+
+        if ($user->hasRole('nurse')) {
+            return $query->where(function ($q) {
+                $q->where('awaiting_vitals', true)->orWhere('awaiting_doctor', true);
+            });
+        }
+
+        if ($user->hasRole('lab')) {
+            return $query->where(function ($query) {
+                $query->has('tests')->orWhere('awaiting_lab_results', true);
+            });
+        }
+
+        if ($user->hasRole('radiology')) {
+            return $query; // TODO: ->where('awaiting_radiology', true);
+        }
+
+        if ($user->hasRole('pharmacy')) {
+            return $query; //TODO: ->where('awaiting_pharmacy', true);
+        }
+
+        if ($user->hasAnyRole(['billing', 'record'])) {
+            return $query;
+        }
+
+        return $query->whereRaw('1 = 0');
+    }
+
     public function checkOut($force = false)
     {
         if ($force) {
@@ -120,36 +160,53 @@ class Visit extends Model
 
     public function svitals()
     {
-        return $this->vitals();
+        return $this->morphMany(Vitals::class, 'recordable');
     }
 
-    // public function notes()
-    // {
-    //     return $this->morphMany(ConsultationNote::class, 'visit');
-    // }
-
-    // public function diagnoses()
-    // {
-    //     return $this->morphMany(DocumentedDiagnosis::class, 'diagnosable');
-    // }
-
-    // public function tests()
-    // {
-    //     return $this->morphMany(DocumentationTest::class, 'testable');
-    // }
-
-    // public function prescriptions()
-    // {
-    //     return $this->morphMany(DocumentationPrescription::class, 'event');
-    // }
-
-    // public function imagings()
-    // {
-    //     return $this->morphMany(PatientImaging::class, 'documentable');
-    // }
-
-    public function getWaitingForDoctorAttribute() {
+    public function getWaitingForDoctorAttribute()
+    {
         $b = ($this->visit->tests()->where('results', '!=', null)->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
         return $b;
+    }
+
+    public function bills()
+    {
+        return $this->morphMany(Bill::class, 'billable')->latest();
+    }
+
+    public function admission()
+    {
+        return $this->hasOne(Admission::class);
+    }
+
+    public function active_bills()
+    {
+        return $this->bills()->where('status', '!=', Status::cancelled->value);
+    }
+
+    protected static function booted()
+    {
+        static::created(function (self $visit) {
+            if ($visit->visit_type == AncVisit::class) {
+                $tests = Product::whereIn('name', LabController::$ancFollowupTests)->orderByDesc('amount')->get()->unique('name');
+                if ($tests->isEmpty()) {
+                    return;
+                }
+
+                foreach ($tests as $test) {
+                    if ($visit->tests()->where('name', $test->name)->exists())
+                        continue;
+
+                    $visit->tests()->create([
+                        'name' => $test->name,
+                        'describable_type' => $test::class,
+                        'describable_id' => $test->id,
+                        'patient_id' => $visit->patient->id,
+                    ]);
+                }
+
+                notifyDepartment(Department::LAB->value, "Antenatal visit started for {$visit->patient->name}", ['timeout' => 10000]);
+            }
+        });
     }
 }

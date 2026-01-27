@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Wards')
 
 @section('content')
     <div class="card p-1">
@@ -14,13 +15,13 @@
                         <th>Ward</th>
                         <th>Status</th>
                         <th>Date Admitted</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($admissions as $a)
                         <tr>
-                            <td>{{ $a->patient->name }}</td>
+                            <td><a href="{{ route('doctor.show-admission', $a) }}" class="link">{{ $a->patient->name }}</a>
+                            </td>
                             <td>{{ $a->patient->card_number }}</td>
                             <td>
                                 @if ($a->ward)
@@ -31,9 +32,6 @@
                             </td>
                             <td>{{ Status::tryFrom($a->status)->name }}</td>
                             <td>{{ $a->created_at->format('Y-m-d h:i A') }}</td>
-                            <td>
-                                <a class="link" href="{{ route('doctor.show-admission', $a) }}">View</a>
-                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -43,9 +41,12 @@
 @endsection
 
 @push('scripts')
-<script>
-    $(() => {
-        $("#admissions").DataTable();
-    });
-</script>
+    <script>
+        $(() => {
+            $("#admissions").DataTable({
+                responsive: true,
+                ordering: false,
+            });
+        });
+    </script>
 @endpush

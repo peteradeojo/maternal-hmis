@@ -1,51 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
+    <x-back-link />
     <div class="container">
-        <div class="card foldable p-1">
-            <div class="header foldable-header">
-                <p>Pending tests: <b>{{ $patient->name }}</b></p>
-            </div>
-            <div class="body foldable-body">
-                <p><b>Name: </b> {{ $patient->name }} </p>
-                <p><b>Card Number: </b> {{ $patient->card_number }} </p>
-                <p><b>Category: </b> {{ $patient->category->name }} </p>
-                <p><b>Gender: </b> {{ $patient->gender_value }} </p>
-                <p><b>Age: </b> {{ $patient->dob?->diffInYears() }} </p>
+        <div class="bg-white p-1">
+            <div class="body">
+                <x-patient-profile :patient="$patient" />
             </div>
         </div>
     </div>
 
     <div class="container">
-        <div class="card p-2 mt-2">
-            <div class="body">
+        <div class="bg-white p-4 mt-2">
+            <div class="grid gap-y-2">
                 @forelse ($tests as $i => $test)
-                    <form method="post" data-key="{{ $test->id }}" class="test-form"">
-                        <table class="table-list mb-2" key="{{ $test->id }}">
+                    <form method="post" data-key="{{ $test->id }}" class="test-form">
+                        <p>Date ordered: {{ $test->created_at }}</p>
+                        <table class="table table-list mb-2" key="{{ $test->id }}">
                             <thead>
                                 <tr class="test-description">
                                     <td colspan="3">Test: <b>{{ Str::upper($test->name) }}</b></td>
                                     <td colspan="2">
-                                        <label for="test-done-{{ $i }}">
+                                        {{-- <label for="test-done-{{ $i }}">
                                             <input type="checkbox" name="completed[{{ $i }}]"
                                                 id="test-done-{{ $i }}"
                                                 @if ($test->status == Status::completed->value) checked disabled @endif>
                                             Mark Test Completed
-                                        </label>
+                                        </label> --}}
+                                        <select @match(Status::closed->value, $test->status) readonly="readonly" @endmatch
+                                            name="status" class="w-1/2 p-0.5 text-sm">
+                                            <option @match(Status::pending->value, $test->status) selected="selected"
+                                                @endmatch value="{{ Status::pending->value }}">Pending
+                                            </option>
+                                            <option @match(Status::active->value, $test->status) selected="selected"
+                                                @endmatch value="{{ Status::active->value }}">Sample
+                                                Collected</option>
+                                            <option @match(Status::completed->value, $test->status) selected="selected"
+                                                @endmatch value="{{ Status::completed->value }}">Tests
+                                                Done</option>
+                                            <option @match(Status::closed->value, $test->status) selected="selected"
+                                                @endmatch value="{{ Status::closed->value }}">Delivered
+                                            </option>
+                                            <option @match(Status::cancelled->value, $test->status) selected="selected"
+                                                @endmatch value="{{ Status::cancelled->value }}">Rejected
+                                            </option>
+                                        </select>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th>Description</th>
-                                    <th>Result</th>
-                                    <th>Unit</th>
-                                    <th>Reference Range</th>
-                                    <td>
-                                        @unless ($test->status == Status::completed->value)
+                                @unless ($test->status == Status::closed->value)
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Result</th>
+                                        <th>Unit</th>
+                                        <th>Reference Range</th>
+                                        <td>
                                             <button class="add-result btn bg-blue-700 text-white" type="button">Add
                                                 Result</button>
-                                        @endunless
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                @endunless
                             </thead>
                             <tbody>
                                 @foreach ($test->results ?? [] as $j => $result)
@@ -71,7 +84,9 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <button type="submit" class="btn btn-green">Submit</button>
+                        @unless (Status::closed->value == $test->status)
+                            <button type="submit" class="btn btn-green">Submit</button>
+                        @endunless
                     </form>
                 @empty
                     <p>No pending tests for this patient.</p>
@@ -120,19 +135,19 @@
                 } = form.dataset;
 
                 const rows = $(form).find("tbody tr");
-                const completed = $(form).find("thead input").is(":checked");
+                const status = $(form).find("thead select").val(); //.is(":checked");
                 const submitter = $(form).find("button[type='submit']");
 
                 $(submitter).prop('disabled', true);
 
                 const data = {
                     results: [],
-                    completed
+                    status
                 };
-                if (rows.length < 1) {
-                    alert("No result added. Add at least one result to submit.");
-                    return;
-                }
+                // if (rows.length < 1) {
+                //     alert("No result added. Add at least one result to submit.");
+                //     return;
+                // }
 
                 rows.each((_, r) => {
                     const inputs = $(r).find("input");
@@ -146,10 +161,8 @@
                     data.results.push(rData);
                 });
 
-                console.table(data);
-
                 axios.get('/sanctum/csrf-cookie').then(() => {
-                    console.log(submitter);
+                    // return;
                     axios.post(`/api/laboratory/save-test/${key}`, data).then((response) => {
                         console.log(response.data);
 

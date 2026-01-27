@@ -2,27 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
+use App\Enums\Status;
 use App\Jobs\UploadPatientScans;
-use App\Models\Department;
-use App\Models\Documentation;
-use App\Models\Patient;
 use App\Models\PatientImaging;
 use App\Models\Visit;
-use App\Notifications\StaffNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class RadiologyController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', PatientImaging::class);
         return view('rad.scans', ['patientId' => $request->query('patient_id')]);
     }
 
     public function show(Request $request, PatientImaging $scan)
     {
+        $this->authorize('view', $scan);
         $scan->load(['patient']);
 
         return view('rad.scan', ['doc' => $scan]);
@@ -30,13 +28,9 @@ class RadiologyController extends Controller
 
     public function getScans(Request $request)
     {
-        // $query = DB::table('patient_imagings', 'pi')->selectRaw("GROUP_CONCAT(pi.name SEPARATOR ',') scans, d.created_at, d.id, p.name")
-        //     ->leftJoin(DB::raw("documentations d"), "d.id", "=", 'pi.documentation_id')
-        //     ->leftJoin(DB::raw("patients p"), "p.id", "=", "d.patient_id")
-        //     ->groupBy('d.created_at', 'd.id');
-
+        $this->authorize('viewAny', PatientImaging::class);
         $visitId = $request->query('patient_id');
-        $query = PatientImaging::query()->with(['patient', 'requester'])->where('path', null);
+        $query = PatientImaging::accessibleBy($request->user())->with(['patient', 'requester'])->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) use ($visitId) {
@@ -45,7 +39,7 @@ class RadiologyController extends Controller
                 } else {
                     $query->where(function ($query) use (&$search, &$visitId) {
                         $query->whereHas('patient', function ($q) use (&$search) {
-                            $q->where('name', 'like', "%$search%");
+                            $q->where('name', 'ilike', "%$search%");
                         });
                     });
                 }
@@ -55,6 +49,7 @@ class RadiologyController extends Controller
 
     public function store(Request $request, Visit $visit)
     {
+        $this->authorize('create', PatientImaging::class);
         $request->validate([
             'scan' => 'required|string',
         ]);
@@ -65,8 +60,12 @@ class RadiologyController extends Controller
             'name' => $request->scan,
         ]);
 
-        $dept = Department::where('id', EnumsDepartment::RAD->value)->first();
-        $dept->notifyParticipants(new StaffNotification("Imaging request for {$visit->patient->name}"));
+        notifyDepartment(EnumsDepartment::RAD->value, [
+            'title' => 'New Imaging Request',
+            'message' => "Imaging request for {$visit->patient->name}",
+        ], [
+            'mode' => AppNotifications::$BOTH,
+        ]);
 
         return response()->json([
             'ok' => true,
@@ -75,29 +74,20 @@ class RadiologyController extends Controller
 
     public function storeResult(Request $request, PatientImaging $scan)
     {
-        $request->validate([
-            'result_file' => 'nullable|file|mimes:png,jpg,pdf,docx',
-            'comment' => 'nullable|string|required_without:result_file',
-        ]);
+        $this->authorize('update', $scan);
+        $scan->results = $request->except('_token');
+        $scan->uploaded_by = $request->user()->id;
+        $scan->uploaded_at = now();
 
-        $file = $request->file('result_file');
-
-        if ($file) {
-            $filepath = $file->store('radiology');
-            $scan->path = $filepath;
-
-            dispatch(new UploadPatientScans($scan))->delay(30);
-        }
-
-        $scan->comment ??= $request->comment;
-        $scan->uploaded_by = auth()->user()->id;
+        $scan->status = Status::completed->value;
         $scan->save();
 
-        return back();
+        return response()->json($scan->refresh());
     }
 
     public function scanResult(Request $request, PatientImaging $scan)
     {
+        $this->authorize('view', $scan);
         return response()->json([
             'path' => $scan->secure_path,
             'name' => $scan->name,
@@ -107,12 +97,34 @@ class RadiologyController extends Controller
 
     public function history()
     {
+        $this->authorize('viewAny', PatientImaging::class);
         // $history = PatientImaging::where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest()->get();
         return view('rad.history');
     }
 
     public function getScansHistory(Request $request)
     {
-        return $this->dataTable($request, PatientImaging::with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
+        $this->authorize('viewAny', PatientImaging::class);
+        return $this->dataTable($request, PatientImaging::accessibleBy($request->user())->with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
+    }
+
+    public function getScanResult(Request $request, PatientImaging $scan)
+    {
+        $this->authorize('view', $scan);
+        $results = $scan->results;
+
+        if (!$results) {
+            return response()->json()->status(404);
+        }
+
+        if ($results->report_type == 'obstetric') {
+            return view('rad.results.obstetric', compact('scan'));
+        }
+        if ($results->report_type == 'general') {
+            return view('rad.results.general', compact('scan'));
+        }
+        if ($results->report_type == 'echo') {
+            return view('rad.results.echo', compact('scan'));
+        }
     }
 }

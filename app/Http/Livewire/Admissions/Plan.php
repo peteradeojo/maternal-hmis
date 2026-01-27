@@ -2,13 +2,11 @@
 
 namespace App\Http\Livewire\Admissions;
 
-use App\Models\Admission;
-use App\Models\AdmissionPlan;
+use App\Enums\Status;
 use App\Models\DocumentationTest;
 use App\Models\Product;
-use App\Models\Surgery;
-use App\Models\SurgeryNote;
-use Illuminate\Support\Facades\DB;
+use App\Services\Comms;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class Plan extends Component
@@ -29,6 +27,8 @@ class Plan extends Component
     public $operationNote;
     public $admissionNote;
     public $surgery = '';
+
+    #[Validate('required|string')]
     public $indication = '';
 
     public $admission;
@@ -41,7 +41,7 @@ class Plan extends Component
     public function mount($visit, $admission = null)
     {
         if (!empty($admission)) {
-            $this->tests = $admission->plan->tests;
+            $this->tests = $admission->plan->tests()->status(Status::pending)->get();
             $this->investigations = $admission->plan->scans;
 
             $this->plans = $admission->plan->treatments;
@@ -57,106 +57,110 @@ class Plan extends Component
 
     public function addPrescription($data)
     {
-        $this->plans[] = $data;
+        if (empty($this->admission)) {
+            $this->plans[] = $data;
+            return;
+        }
+
+        $product = null;
+        if (isset($data['product']['id'])) {
+            $product = Product::find($data['product']['id']);
+        }
+        if (empty($product)) {
+            $product = (object) ($data['product']);
+        }
+
+        logger()->info("Adding product: " . var_export($product, true));
+
+        $this->admission->plan->addPrescription($this->admission->patient, $product, (object) $data, $this->admission->plan);
+
+        $this->admission->refresh();
+        $this->plans = $this->admission->plan->treatments;
     }
 
-    public function removePlanItem($id)
+    public function removePlanItem($id, $index = null)
     {
-        $this->plans = array_slice($this->plans, 0, $id) + array_slice($this->plans, $id + 1, count($this->plans));
+        if (empty($this->admission)) {
+            unset($this->plans[$id]);
+            $this->plans = array_values($this->plans);
+            return;
+        }
+
+        $this->admission->plan->treatments()->where('id', $index)->delete();
+
+        $this->admission->refresh();
+        $this->plans = $this->admission->plan->treatments;
     }
 
     public function savePlan()
     {
-        if (empty($this->admission)) {
-            DB::beginTransaction();
-            try {
-                $admission = Admission::create([
-                    'patient_id' => $this->visit->patient_id,
-                    'visit_id' => $this->visit->visit->id,
-                    'admittable_type' => $this->visit->visit::class,
-                    'admittable_id' => $this->visit->visit->id,
-                ]);
+        $this->validate();
 
-                $plan = AdmissionPlan::create([
-                    'admission_id' => $admission->id,
-                    'user_id' => auth()->user()->id,
-                    'indication' => $this->indication,
-                    'note' => $this->admissionNote,
-                ]);
+        $this->admission->plan->update([
+            'indication' => $this->indication,
+        ]);
 
-                foreach ($this->plans as $p) {
-                    if (empty($p['productId'])) {
-                        $prd = Product::create($p['product']);
-                        $p['productId'] = $prd->id;
-                    }
-
-                    $plan->treatments()->create([
-                        'prescriptionable_type' => Product::class,
-                        'prescriptionable_id' => $p['productId'],
-                        'patient_id' => $this->visit->patient_id,
-                        'name' => $p['name'],
-                        'dosage' => $p['dosage'],
-                        'duration' => $p['duration'],
-                        'requested_by' => auth()->user()->id,
-                        'frequency' => $p['frequency'],
-                        'route' => $p['route'],
-                    ]);
-                }
-
-                $this->tests->each(fn($test) => $admission->tests()->create([
-                    'name' => $test['name'],
-                    'describable_type' => Product::class,
-                    'describable_id' => $test['id'],
-                    'patient_id' => $this->visit->patient_id,
-                ]));
-
-                $this->investigations->each(fn($s) => $plan->scans()->create([
-                    'name' => $s['name'],
-                    'describable_type' => Product::class,
-                    'describable_id' => $s['id'],
-                    'patient_id' => $this->visit->patient_id,
-                    'requested_by' => auth()->user()->id,
-                ]));
-
-                if (!empty($this->surgery)) {
-                    $surgery = Surgery::create([
-                        'procedure' => $this->surgery,
-                        'admission_plan_id' => $plan->id,
-                        'patient_id' => $this->visit->patient_id,
-                    ]);
-
-                    $note = SurgeryNote::create([
-                        'user_id' => auth()->user()->id,
-                        'note' => $this->operationNote,
-                        'surgery_id' => $surgery->id,
-                    ]);
-                }
-
-                DB::commit();
-                $this->redirect(route('dashboard'), true);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                report($e);
-            }
-        }
+        Comms::notifyUserSuccess("Admission updated successfully", auth()->user()->id);
     }
 
-    public function addTest($data)
-    {
-        if ($this->tests->doesntContain("id", '=', $data['id'])) {
-            $this->tests->add($data);
-        }
-    }
+    // public function addTest($data)
+    // {
+    //     if (empty($this->admission)) {
+    //         if ($this->tests->doesntContain("id", '=', $data['id'])) {
+    //             $this->tests->add($data);
+    //         }
+
+    //         return;
+    //     } else {
+    //         $this->admission->plan->tests()->firstOrCreate([
+    //             'describable_type' => Product::class,
+    //             'describable_id' => $data['id'],
+    //             'patient_id' => $this->admission->patient_id,
+    //             'name' => $data['name'],
+    //             'status' => Status::pending->value,
+    //         ], [
+    //             'describable_type' => Product::class,
+    //             'describable_id' => $data['id'],
+    //             'patient_id' => $this->admission->patient_id,
+    //             'name' => $data['name'],
+    //         ]);
+
+    //         $this->admission->refresh();
+    //         $this->tests = $this->admission->plan->tests;
+    //     }
+    // }
 
     public function addInvestigation($data)
     {
-        if ($this->investigations->doesntContain("id", "=", $data["id"])) {
-            $this->investigations->add($data);
+        return;
+        if (empty($this->admission)) {
+            if ($this->investigations->doesntContain("id", "=", $data['id'])) {
+                $this->investigations->add($data);
+            }
+            return;
         }
+
+        $this->admission->plan->scans()->firstOrCreate([
+            'describable_type' => Product::class,
+            'describable_id' => $data['id'],
+            'patient_id' => $this->admission->patient_id,
+            'name' => $data['name'],
+            'status' => Status::pending->value,
+        ], [
+            'describable_type' => Product::class,
+            'describable_id' => $data['id'],
+            'patient_id' => $this->admission->patient_id,
+            'name' => $data['name'],
+            'requested_by' => auth()->user()->id,
+        ]);
+
+        $this->admission->refresh();
+        $this->investigations = $this->admission->plan->scans;
     }
 
     public function removeTest($id)
     {
+        DocumentationTest::where('id', $id)->update(['status' => Status::cancelled->value]);
         $this->tests = $this->tests->filter(fn($i) => $i['id'] != $id);
     }
 

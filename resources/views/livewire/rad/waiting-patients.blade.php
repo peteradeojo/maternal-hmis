@@ -11,6 +11,7 @@
                     <th>Card Number</th>
                     <th>Category</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +20,7 @@
                         <td>{{ $visit->patient->name }}</td>
                         <td>{{ $visit->patient->card_number }}</td>
                         <td>{{ $visit->patient->category->name }}</td>
+                        <td>{{ $visit->created_at?->format('Y-m-d h:i A') }}</td>
                         <td><a href="{{ route('rad.scans', ['patient_id' => $visit->patient_id]) }}"
                                 class="text-blue-600 hover:underline">View</a></td>
                     </tr>
@@ -30,6 +32,9 @@
 
 @script
     <script>
-        $("#waitlist").DataTable();
+        $("#waitlist").DataTable({
+            responsive: true,
+            ordering: false
+        });
     </script>
 @endscript
