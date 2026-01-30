@@ -77,22 +77,3 @@ jobs:
             set -e
             # Login to GHCR on the remote server
             # echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-
-            # Navigate to project directory and build
-            cd /var/www/hmis
-            git pull
-            composer install
-            composer dump-autoload -o
-            npm ci
-            npm run build
-            ./cloudflare-purge.sh
-            sudo supervisorctl restart all
-
-            # # Pull latest images
-            # docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
-
-            # # Restart services (fixed .yml typo here)
-            # docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
-
-            # # Optional: Clean up old images to save disk space
-            # docker image prune -f
