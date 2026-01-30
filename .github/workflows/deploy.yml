@@ -37,44 +37,44 @@ jobs:
           hostname: github-actions-ci
           tags: tag:productions
 
-      # - name: SSH into server
-      #   run: |
-      #         # Create the key file and set permissions
-      #         echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
-      #         chmod 600 ./_mcadmin.ssh
+      - name: SSH into server
+        run: |
+              # Create the key file and set permissions
+              echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
+              chmod 600 ./_mcadmin.ssh
 
-      #         # SSH with StrictHostKeyChecking disabled for automation
-      #         ssh -vvv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ./_mcadmin_ssh mcadmin@100.114.76.111 "
-      #           set -e;
-      #           docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}};
-      #           cd /var/www/hmis;
-      #           docker compose -f docker-compose.yml -f docker-compose-prod.yml pull;
-      #           docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d;
-      #           docker image prune -f
-      #           "
-      #         # Cleanup ssh file
-      #         rm ./_mcadmin_ssh;
+              # SSH with StrictHostKeyChecking disabled for automation
+              ssh -vvv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ./_mcadmin_ssh mcadmin@100.114.76.111 "
+                set -e;
+                docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}};
+                cd /var/www/hmis;
+                docker compose -f docker-compose.yml -f docker-compose-prod.yml pull;
+                docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d;
+                docker image prune -f
+                "
+              # Cleanup ssh file
+              rm ./_mcadmin_ssh;
 
-      - name: SSH Into Server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 100.114.76.111
-          key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
-          fingerprint: ""
-          debug: true
-          script: |
-            set -e
-            # Login to GHCR on the remote server
-            echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+      # - name: SSH Into Server
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: 100.114.76.111
+      #     key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
+      #     fingerprint: ""
+      #     debug: true
+      #     script: |
+      #       set -e
+      #       # Login to GHCR on the remote server
+      #       echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-            # Navigate to project directory
-            cd /var/www/hmis
+      #       # Navigate to project directory
+      #       cd /var/www/hmis
 
-            # Pull latest images
-            docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+      #       # Pull latest images
+      #       docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
 
-            # Restart services (fixed .yml typo here)
-            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+      #       # Restart services (fixed .yml typo here)
+      #       docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
 
-            # Optional: Clean up old images to save disk space
-            docker image prune -f
+      #       # Optional: Clean up old images to save disk space
+      #       docker image prune -f
