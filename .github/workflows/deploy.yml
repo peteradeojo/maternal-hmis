@@ -77,4 +77,26 @@ jobs:
             set -e
             # Login to GHCR on the remote server
             # echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-            /usr/bin/bash deploy.sh
+            # Navigate to project directory and build
+            # 1. Load NVM into this session
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            cd /var/www/hmis
+            git pull
+
+            composer install
+            composer dump-autoload -o
+
+            if php artisan migrate:status | grep -q "Pending"; then
+                echo "Found pending migrations. Running migrate..."
+                php artisan migrate --force -n --isolated
+            else
+                echo "No pending migrations to run."
+            fi
+
+            npm ci
+
+            npm run build
+            ./cloudflare-purge.sh
+            sudo supervisorctl restart all
