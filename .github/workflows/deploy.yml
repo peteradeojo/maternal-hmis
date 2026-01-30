@@ -77,3 +77,4 @@ jobs:
             set -e
             # Login to GHCR on the remote server
             # echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            /usr/bin/bash deploy.sh
