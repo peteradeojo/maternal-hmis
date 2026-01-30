@@ -61,6 +61,7 @@ jobs:
           host: 100.114.76.111
           key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
           fingerprint: ""
+          debug: true
           script: |
             set -e
             # Login to GHCR on the remote server
