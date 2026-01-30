@@ -43,44 +43,48 @@ jobs:
       - name: Ping Server
         run: tailscale status && ping -c 3 100.114.76.111
 
-      - name: SSH into server
-        run: |
-              # Create the key file and set permissions
-              echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
-              chmod 600 ./_mcadmin_ssh
+      # - name: SSH into server
+      #   run: |
+      #     # Create the key file and set permissions
+      #     echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
+      #     chmod 600 ./_mcadmin_ssh
 
-              # SSH with StrictHostKeyChecking disabled for automation
-              ssh -vvv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ./_mcadmin_ssh mcadmin@100.114.76.111 "
-                set -e;
-                docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}};
-                cd /var/www/hmis;
-                docker compose -f docker-compose.yml -f docker-compose-prod.yml pull;
-                docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d;
-                docker image prune -f;
-                "
-              # Cleanup ssh file
-              rm ./_mcadmin_ssh;
+      #     # SSH with StrictHostKeyChecking disabled for automation
+      #     ssh -vvv -o StrictHostKeyChecking=no \
+      #         -o UserKnownHostsFile=/dev/null \
+      #         -i ./_mcadmin_ssh \
+      #         mcadmin@100.114.76.111 << 'EOF'
+      #       set -e;
+      #       docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}};
+      #       cd /var/www/hmis;
+      #       docker compose -f docker-compose.yml -f docker-compose-prod.yml pull;
+      #       docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d;
+      #       docker image prune -f;
+      #     EOF
 
-      # - name: SSH Into Server
-      #   uses: appleboy/ssh-action@v1.0.3
-      #   with:
-      #     host: 100.114.76.111
-      #     key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
-      #     fingerprint: ""
-      #     debug: true
-      #     script: |
-      #       set -e
-      #       # Login to GHCR on the remote server
-      #       echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+      #     # Cleanup ssh file
+      #     rm ./_mcadmin_ssh;
 
-      #       # Navigate to project directory
-      #       cd /var/www/hmis
+      - name: SSH Into Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 100.114.76.111
+          key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
+          fingerprint: ""
+          debug: true
+          script: |
+            set -e
+            # Login to GHCR on the remote server
+            echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-      #       # Pull latest images
-      #       docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+            # Navigate to project directory
+            cd /var/www/hmis
 
-      #       # Restart services (fixed .yml typo here)
-      #       docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+            # Pull latest images
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
 
-      #       # Optional: Clean up old images to save disk space
-      #       docker image prune -f
+            # Restart services (fixed .yml typo here)
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+
+            # Optional: Clean up old images to save disk space
+            docker image prune -f
