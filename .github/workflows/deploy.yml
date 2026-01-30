@@ -38,25 +38,26 @@ jobs:
           tags: tag:productions
 
       - name: SSH into server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
-          host: ${{secrets.TAILSCALE_HOST}}
-          username: ${{secrets.REMOTE_USER}}
-          script: |
-            set -e
-            docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}}
+        # uses: appleboy/ssh-action@v1.0.3
+        # with:
+        #   key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
+        #   host: ${{secrets.TAILSCALE_HOST}}
+        #   username: ${{secrets.REMOTE_USER}}
+        #   script: |
+        #     set -e
+        #     docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}}
 
-            $DIR="/var/www/emr"
-            if [[ ! -d "/var/www/emr" ]]; then
-              mkdir -p /var/www/emr
-            fi
+        #     $DIR="/var/www/emr"
+        #     if [[ ! -d "/var/www/emr" ]]; then
+        #       mkdir -p /var/www/emr
+        #     fi
 
-            cd /var/www/emr
+        #     cd /var/www/emr
 
-            docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
-            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+        #     docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
+        #     docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
 
-            docker image prune -f
+        #     docker image prune -f
+        run: ssh -vvv mcadmin@100.114.76.111
 
 
