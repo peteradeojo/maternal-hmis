@@ -37,34 +37,43 @@ jobs:
           hostname: github-actions-ci
           tags: tag:productions
 
-      - name: SSH into server
-        # uses: appleboy/ssh-action@v1.0.3
-        # with:
-        #   key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
-        #   host: ${{secrets.TAILSCALE_HOST}}
-        #   username: ${{secrets.REMOTE_USER}}
-        #   script: |
-        #     set -e
-        #     docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}}
+      # - name: SSH into server
+      #   run: |
+      #         # Create the key file and set permissions
+      #         echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
+      #         chmod 600 ./_mcadmin.ssh
 
-        #     $DIR="/var/www/emr"
-        #     if [[ ! -d "/var/www/emr" ]]; then
-        #       mkdir -p /var/www/emr
-        #     fi
+      #         # SSH with StrictHostKeyChecking disabled for automation
+      #         ssh -vvv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ./_mcadmin_ssh mcadmin@100.114.76.111 "
+      #           set -e;
+      #           docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}};
+      #           cd /var/www/hmis;
+      #           docker compose -f docker-compose.yml -f docker-compose-prod.yml pull;
+      #           docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d;
+      #           docker image prune -f
+      #           "
+      #         # Cleanup ssh file
+      #         rm ./_mcadmin_ssh;
 
-        #     cd /var/www/emr
+      - name: SSH Into Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 100.114.76.111
+          key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
+          fingerprint: ""
+          script: |
+            set -e
+            # Login to GHCR on the remote server
+            echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
-        #     docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
-        #     docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+            # Navigate to project directory
+            cd /var/www/hmis
 
-        #     docker image prune -f
-        run: |
-              echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
-              ssh -vvv -i ./_mcadmin_ssh mcadmin@100.114.76.111 "set -e;
-              docker login ghcr.io -u ${{secrets.GHCR_USERNAME}} --password ${{secrets.ACCESS_TOKEN}};
-              cd /var/www/hmis;
-              docker compose -f docker-compose.yml -f docker-compose-prod.yml pull;
-              docker compose -f docker-compose.ylm -f docker-compose-prod.yml up -d;
-              rm ./_mcadmin_ssh"
+            # Pull latest images
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml pull
 
+            # Restart services (fixed .yml typo here)
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
 
+            # Optional: Clean up old images to save disk space
+            docker image prune -f
