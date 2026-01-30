@@ -32,6 +32,7 @@
                 <th>System Value</th>
                 <th>Count value</th>
                 <th>Discrepancy</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -45,6 +46,9 @@
                             class="form-control p-0.5" min=0 @readonly($take->status == Status::closed) required />
                     </td>
                     <td>{{ $_count['quantity'] - $_count['system'] }}</td>
+                    <td>
+                        <button wire:click="removeItem({{$i}}, {{$_count['id']}})" class="btn btn-sm bg-red-500 text-white">&times;</button>
+                    </td>
                 </tr>
             @empty
                 <tr>

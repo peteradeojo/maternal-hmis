@@ -69,7 +69,8 @@ class StockTake extends Component
                     'balance' => $item->get('balance'),
                     'unit_cost' => $data['unit_cost'],
                     'base_unit' => $item->get('base_unit'),
-                    'quantity' => $item->get('balance'),
+                    'system' => $item->get('balance'),
+                    'quantity' => 0,
                     'name' => $item->get('name'),
                     'item' => array_merge($data['item'], [
                         'quantity' => $data['item']['balance'],
@@ -196,5 +197,22 @@ class StockTake extends Component
 
             notifyUserError($th->getMessage(), $userId);
         }
+    }
+
+    public function removeItem($index, $id) {
+        // dump($index);
+        // return;
+        DB::beginTransaction();
+
+        try {
+            StockCountLine::where('id', $id)->delete();
+            array_splice($this->counted, $index, 1);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            report($th);
+            notifyUserError($th->getMessage(), request()->user()->id);
+        }
+
     }
 }
