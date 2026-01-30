@@ -99,4 +99,4 @@ jobs:
 
             npm run build
             ./cloudflare_purge.sh
-            sudo supervisorctl restart all
+            sudo supervisorctl reload
