@@ -47,7 +47,7 @@ jobs:
         run: |
               # Create the key file and set permissions
               echo "${{secrets.HOST_PRIVATE_SSH_KEY}}" > ./_mcadmin_ssh
-              chmod 600 ./_mcadmin.ssh
+              chmod 600 ./_mcadmin_ssh
 
               # SSH with StrictHostKeyChecking disabled for automation
               ssh -vvv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ./_mcadmin_ssh mcadmin@100.114.76.111 "
