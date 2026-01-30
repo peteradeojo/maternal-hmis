@@ -1,10 +1,12 @@
 services:
   app:
     ports:
+      - "8080:8080"
+      - "8000:8000"
       - "9000:9000"
     volumes:
       # 1. Bind mount for real-time development
-      - ./:/var/www/hmis/
+      # - ./:/var/www/hmis/
       - ./docker.env:/var/www/hmis/.env
       # 2. Named volumes to "hide" permission changes from the host
       - app-storage:/var/www/hmis/storage
@@ -13,7 +15,7 @@ services:
   server:
     volumes:
       # Match the bind mount and named volumes here too
-      - ./:/var/www/hmis/
+      # - ./:/var/www/hmis/
       - app-storage:/var/www/hmis/storage:ro
       - app-cache:/var/www/hmis/bootstrap/cache:ro
       - ./infra/nginx_prod/sites_enabled/:/etc/nginx/conf.d/
