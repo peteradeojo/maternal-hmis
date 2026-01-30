@@ -83,8 +83,8 @@ jobs:
             git pull
             composer install
             composer dump-autoload -o
-            yarn
-            yarn build
+            npm ci
+            npm run build
             ./cloudflare-purge.sh
             sudo supervisorctl restart all
 
