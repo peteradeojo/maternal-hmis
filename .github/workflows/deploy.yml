@@ -4,12 +4,6 @@ on:
   push:
     branches:
       - main
-    workflow_dispatch:
-      inputs:
-        logLevel:
-          description: 'Log level'
-          required: true
-          default: 'warning'
 
 jobs:
   deploy:
@@ -77,6 +71,7 @@ jobs:
           host: 100.114.76.111
           key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
           fingerprint: ""
+          username: mcadmin
           debug: true
           script: |
             set -e
