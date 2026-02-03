@@ -48,7 +48,8 @@
                         data: 'patient.gender'
                     },
                     {
-                        data: (row) => `<a href='{{ route('lab.view-tests', ':id') }}' class='link'>View Tests</a>`
+                        data: (row) =>
+                            `<a href='{{ route('lab.view-tests', ':id') }}' class='link'>View Tests</a>`
                             .replace(':id', row.id)
                     },
                 ],
