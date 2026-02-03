@@ -15,7 +15,7 @@ class VisitsController extends Controller
                 Status::cancelled->value,
                 Status::completed->value,
                 Status::ejected->value,
-            ])->latest();
+            ])->limit(100)->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
