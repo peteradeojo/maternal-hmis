@@ -56,7 +56,6 @@
         @endrole
 
         @role('admin')
-            @livewire('it.statistics')
             @livewire('it.departments')
         @endrole
 

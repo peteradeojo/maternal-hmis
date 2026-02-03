@@ -1,5 +1,5 @@
-import axios from 'axios';
 import './app';
+import { $ } from 'jquery';
 
 window.initTab = function (el) {
     if (!el) return;

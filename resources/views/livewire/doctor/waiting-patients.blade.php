@@ -5,14 +5,14 @@
         </div>
         <div class="body py">
             <x-datatables id="patients">
-                <x-datatables-thead>
+                <x-slot:thead>
                     <th>Name</th>
                     <th>Card Number</th>
                     <th>Card type</th>
                     <th>Visit Type</th>
                     <th>Date & Time</th>
                     <th></th>
-                </x-datatables-thead>
+                </x-slot:thead>
                 <tbody></tbody>
             </x-datatables>
         </div>

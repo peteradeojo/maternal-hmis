@@ -24,34 +24,36 @@
 
 @pushOnce('scripts')
     <script>
-        $("#tests-table").DataTable({
-            serverSide: true,
-            processing: true,
-            ordering: false,
-            ajax: "{{ route('api.lab.tests') }}",
-            columns: [{
-                    data: 'patient.name'
-                },
-                {
-                    data: 'patient.card_number'
-                },
-                {
-                    data: ({
-                        created_at
-                    }) => parseDateFromSource(created_at),
-                },
-                {
-                    data: 'patient.category.name'
-                },
-                {
-                    data: 'patient.gender'
-                },
-                {
-                    data: (row) => `<a href='{{ route('lab.view-tests', ':id') }}' class='link'>View Tests</a>`
-                        .replace(':id', row.id)
-                },
-            ],
-            responsive: true,
+        $(() => {
+            $("#tests-table").DataTable({
+                serverSide: true,
+                processing: true,
+                ordering: false,
+                ajax: "{{ route('api.lab.tests') }}",
+                columns: [{
+                        data: 'patient.name'
+                    },
+                    {
+                        data: 'patient.card_number'
+                    },
+                    {
+                        data: ({
+                            created_at
+                        }) => parseDateFromSource(created_at),
+                    },
+                    {
+                        data: 'patient.category.name'
+                    },
+                    {
+                        data: 'patient.gender'
+                    },
+                    {
+                        data: (row) => `<a href='{{ route('lab.view-tests', ':id') }}' class='link'>View Tests</a>`
+                            .replace(':id', row.id)
+                    },
+                ],
+                responsive: true,
+            });
         });
     </script>
 @endpushOnce

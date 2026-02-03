@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{asset('summernote/summernote-lite.min.css')}}">
+@endpush
+
 @section('content')
     <div class="container">
         <div class="card p-2">
@@ -13,7 +17,7 @@
                     {{-- <label>Title</label> --}}
                     <input type="text" name="title" class="form-control my-1" id="title" required placeholder="Title" />
                 </div>
-                <textarea name="post" id="summernote">{{old('post')}}</textarea>
+                <textarea name="post" id="summernote-field">{{old('post')}}</textarea>
 
                 <button class="btn btn-green my-1">Publish</button>
             </form>
@@ -22,10 +26,10 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
-    <script>
+    <script src="{{asset('summernote/summernote-lite.min.js')}}"></script>
+    <script type="module">
         $(() => {
-            $("#summernote").summernote({
+            $("#summernote-field").summernote({
                 height: 300,
             });
         });
