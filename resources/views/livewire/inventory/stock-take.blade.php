@@ -12,7 +12,7 @@
                 @if ($take->status != Status::completed)
                     Approve
                 @else
-                    Unapprove
+                    Approved
                 @endif
                 <i class="fa fa-check"></i>
             </button>
@@ -22,6 +22,16 @@
 
     @unless ($take->status == Status::closed)
         <livewire:inventory-product-search @handle-select="addItem($event.detail.product)" />
+    @else
+        <div wire:poll.1s="checkReportStatus">
+            @if ($this->reportGenerating == null)
+                <button class="btn bg-primary" wire:click="generateReport">Generate Report</button>
+            @elseif ($this->reportGenerating == Status::active->value)
+                <button class="btn bg-orange-500">Working...</button>
+            @elseif ($this->reportGenerating == Status::completed->value)
+                <button class="btn bg-green-400" wire:click="downloadReport">Download Report</button>
+            @endif
+        </div>
     @endunless
 
     <table class="table py-4 my-2">

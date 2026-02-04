@@ -3,11 +3,14 @@
 namespace App\Http\Livewire\Inventory;
 
 use App\Enums\Status;
+use App\Jobs\StockTakeReport;
 use App\Models\Location;
 use App\Models\StockCount;
 use App\Models\StockCountLine;
 use App\Models\StockTransaction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -15,6 +18,10 @@ class StockTake extends Component
 {
     public StockCount $take;
     public $counted = [];
+
+    public $report = null;
+    public $reportGenerating = null;
+    private $redis;
 
     #[Validate('required|integer')]
     public $status = Status::completed->value;
@@ -42,6 +49,8 @@ class StockTake extends Component
                 'item' => $line->item->toArray(),
             ];
         })->toArray();
+
+        $this->redis = Redis::client();
     }
 
     public function addItem($data)
@@ -200,8 +209,6 @@ class StockTake extends Component
     }
 
     public function removeItem($index, $id) {
-        // dump($index);
-        // return;
         DB::beginTransaction();
 
         try {
@@ -213,6 +220,28 @@ class StockTake extends Component
             report($th);
             notifyUserError($th->getMessage(), request()->user()->id);
         }
+    }
 
+    public function checkReportStatus() {
+        if ($this->take->status !== Status::closed) {
+            return;
+        }
+
+        // get the data from the cache
+        $this->reportGenerating = StockTakeReport::getReportStatus($this->take->id);
+
+        if ($this->reportGenerating == Status::completed->value) {
+            $this->report = StockTakeReport::getReportFile($this->take->id);
+        }
+    }
+
+    public function generateReport() {
+        dispatch(new StockTakeReport($this->take->id));
+    }
+
+    public function downloadReport() {
+        if ($this->report) {
+            return Storage::download($this->report);
+        }
     }
 }
