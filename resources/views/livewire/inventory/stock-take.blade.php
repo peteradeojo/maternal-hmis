@@ -9,7 +9,7 @@
                     $take->status != Status::completed && $take->status != Status::closed,
                 'btn text-white',
             ])>
-                @if ($take->status == Status::active)
+                @if ($take->status != Status::completed)
                     Approve
                 @else
                     Unapprove
@@ -47,7 +47,10 @@
                     </td>
                     <td>{{ $_count['quantity'] - $_count['system'] }}</td>
                     <td>
-                        <button wire:click="removeItem({{$i}}, {{$_count['id']}})" class="btn btn-sm bg-red-500 text-white">&times;</button>
+                        @if ($take->status == Status::active)
+                            <button wire:click="removeItem({{ $i }}, {{ $_count['id'] }})"
+                                class="btn btn-sm bg-red-500 text-white">&times;</button>
+                        @endif
                     </td>
                 </tr>
             @empty
