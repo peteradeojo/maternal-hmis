@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - develop
 
 jobs:
   test:
@@ -14,9 +17,7 @@ jobs:
         username: ${{github.actor}}
         password: ${{secrets.ACCESS_TOKEN}}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          node-version: 20
+      - uses: actions/checkout@v5
       - run: yarn
       - run: composer install --prefer-dist --no-interaction
       - name: Build Static Assets
