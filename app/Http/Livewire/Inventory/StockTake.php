@@ -51,6 +51,7 @@ class StockTake extends Component
         })->toArray();
 
         $this->redis = Redis::client();
+        $this->checkReportStatus();
     }
 
     public function addItem($data)
