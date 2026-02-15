@@ -4,32 +4,37 @@
     }
 @endphp
 
-<div class="form-group">
-    <label for="card_number">Card Number</label>
-    <input type="text" name="card_number" id="card_number" value="{{ old('card_number') ?? $patient?->card_number }}"
-        @isset($patient)
-        readonly
-    @endisset class="form-control" />
-</div>
+<div class="grid md:grid-cols-3 gap-x-4">
+    <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{ old('name') ?? $patient?->name }}"
+            required />
+    </div>
+    <div class="form-group">
+        <label for="card_number">Card Number</label>
+        <input type="text" name="card_number" id="card_number"
+            value="{{ old('card_number') ?? $patient?->card_number }}"
+            @isset($patient)
+            readonly
+        @endisset class="form-control" />
+    </div>
 
-@if (!isset($mode) || $mode !== 'anc')
     <div class="form-group">
         <label>Category</label>
-        <x-input-select name="category_id">
-            @foreach ($categories as $category)
-                <option value="{{ $category->id }}" @if ($category->id == $patient?->category_id) selected @endif>
-                    {{ $category->name }}
-                </option>
-            @endforeach
-        </x-input-select>
+        <select name="category_id" id="" class="form-control" @readonly($mode && $mode == 'anc')>
+            @if ($mode == 'anc')
+                <option value="{{ $ancCategory?->id }}">Antenatal</option>
+            @else
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" @if ($category->id == $patient?->category_id) selected @endif>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            @endif
+        </select>
     </div>
-@endif
-
-<div class="form-group">
-    <label for="name">Name *</label>
-    <input type="text" name="name" id="name" class="form-control"
-        value="{{ old('name') ?? $patient?->name }}" required />
 </div>
+
 <div class="form-group">
     <label for="gender">Gender</label>
     <select name="gender" id="gender" class="form-control" required="required">
