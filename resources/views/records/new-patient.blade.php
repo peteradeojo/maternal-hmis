@@ -7,14 +7,14 @@
 
             <form action="" method="post">
                 @csrf
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="category">Category *</label>
                     <select name="category_id" id="category" class="form-control" required>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="mb-2">
                     <h2>Biodata</h2>

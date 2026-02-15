@@ -9,11 +9,6 @@
                 @csrf
                 <div class="mb-2">
                     <h2>Biodata</h2>
-                    <div class="form-group">
-                        <select name="category_id" class="form-control" readonly>
-                            <option value="{{ $ancCategory->id }}" selected>Antenatal</option>
-                        </select>
-                    </div>
                     @include('records.components.patient-form-basic', ['mode' => $mode, 'categories' => $categories])
                 </div>
                 <div class="form-group">
@@ -41,7 +36,7 @@
                 <h2>Health Insurance</h2>
                 @include('records.components.hmi-form')
                 <div class="form-group">
-                    <button class="btn btn-blue">Submit</button>
+                    <button class="btn bg-primary">Submit <i class="fa fa-save"></i></button>
                 </div>
             </form>
         </div>
