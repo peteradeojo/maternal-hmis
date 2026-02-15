@@ -2,18 +2,13 @@
     @unless ($form == false)
         <form wire:submit.prevent="save" x-data="{
             vitals: @entangle('vitals'),
-            show_more: false,
+            show_more: true,
         }">
             <div class="grid gap-x-3 grid-cols-3">
                 <div class="form-group">
                     <label>Date *</label>
-
                     <x-input-datetime name="vitals.recorded_date" x-model="vitals.recorded_date" class="form-control"
                         required />
-                    {{-- @error('vitals.recorded_date')
-                        <p class="text-red-500">{{ $message }}</p>
-                    @enderror --}}
-
                 </div>
                 <div class="form-group">
                     <label for="temperature">Temperature (&deg;C)</label>
@@ -86,10 +81,10 @@
                                 <input type="checkbox" wire:model="extra.tuberculosis" />
                             </label>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label>TB Score</label>
                             <input type="number" wire:model="extra.tuberculosis_score" class="form-control" />
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </fieldset>

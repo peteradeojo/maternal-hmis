@@ -30,4 +30,4 @@ jobs:
           echo "APP_KEY=" >> .env
           php artisan key:generate
       - name: Run tests
-        run: BROADCAST_CONNECTION=null QUEUE_CONNECTION=null EVENT_DRIVER=null ./vendor/bin/phpunit
+        run: BROADCAST_CONNECTION=null QUEUE_CONNECTION=null EVENT_DRIVER=null php artisan test
