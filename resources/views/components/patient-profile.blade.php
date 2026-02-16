@@ -4,6 +4,7 @@
     <p><b>Gender:</b> {{ $patient->gender }}</p>
     <p><b>Phone number:</b> {{ $patient->phone }}</p>
     <p><b>Date of birth:</b> {{ $patient->dob?->format('Y-m-d') }}</p>
+    <p><b>Age: </b> {{ floor($patient->dob?->diffInYears()) }} year(s)</p>
     <p>
         <b>Insurance:</b>
         <span>{{ $patient->insurance[0]->hmo_name ?? 'No insurance' }}</span>
