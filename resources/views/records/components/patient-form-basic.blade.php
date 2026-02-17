@@ -21,8 +21,8 @@
 
     <div class="form-group">
         <label>Category</label>
-        <select name="category_id" id="" class="form-control" @readonly($mode && $mode == 'anc')>
-            @if ($mode == 'anc')
+        <select name="category_id" id="" class="form-control" @readonly(@$mode && @$mode == 'anc')>
+            @if (@$mode == 'anc')
                 <option value="{{ $ancCategory?->id }}">Antenatal</option>
             @else
                 @foreach ($categories as $category)
