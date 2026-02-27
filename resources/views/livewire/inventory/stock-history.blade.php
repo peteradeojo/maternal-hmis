@@ -28,7 +28,7 @@
                             <td>{{ $txn->from->name }}</td>
                             <td>{{ $txn->to->name }}</td>
                             <td>{{ $txn->quantity }}</td>
-                            <td>{{ $txn->created_at }}</td>
+                            <td>{{ $txn->created_at?->format('Y-m-d h:i A') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
