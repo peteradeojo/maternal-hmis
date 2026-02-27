@@ -26,4 +26,19 @@ class StockTransaction extends Model
         'reason',
         'performed_by',
     ];
+
+    public function item()
+    {
+        return $this->belongsTo(StockItem::class, 'item_id');
+    }
+
+    public function from()
+    {
+        return $this->belongsTo(Location::class, 'from_location_id');
+    }
+
+    public function to()
+    {
+        return $this->belongsTo(Location::class, 'to_location_id');
+    }
 }

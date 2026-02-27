@@ -37,6 +37,8 @@ Route::prefix('phm')->name('phm.')->middleware(['role:pharmacy', 'datalog'])->gr
             Route::get('/new', [InventoryController::class, 'newStockTake'])->name('.new-stock-take');
             Route::get('/{take}', [InventoryController::class, 'stockCount'])->name('.stock-count')->whereNumber(['take']);
         });
+
+        Route::match(['get', 'post'], '/stock-history', [InventoryController::class, 'stockHistory'])->name('.stock-history');
     });
 
     Route::prefix('admissions')->group(function () {

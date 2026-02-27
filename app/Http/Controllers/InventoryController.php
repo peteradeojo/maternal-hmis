@@ -475,4 +475,8 @@ class InventoryController extends Controller
     {
         return view('inventory.stock-take', compact('take'));
     }
+
+    public function stockHistory(Request $request) {
+        return view('inventory.stock-history');
+    }
 }

@@ -27,6 +27,9 @@
             <a href="{{ route('phm.inventory.stock-take') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
                 <p>Stock Take <i class="fa fa-check text-blue-500"></i></p>
             </a>
+            <a href="{{ route('phm.inventory.stock-history') }}" class="p-2 border-2 border-blue-400 grid place-items-center">
+                <p>Stock History <i class="fa fa-clock text-blue-500"></i></p>
+            </a>
         </div>
     </div>
 
