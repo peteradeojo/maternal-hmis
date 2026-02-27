@@ -37,9 +37,6 @@ jobs:
           hostname: github-actions-ci
           tags: tag:productions
 
-      - name: Wait for Tailscale
-        run: sleep 5
-
       - name: Ping Server
         run: tailscale status && ping -c 3 100.114.76.111
 

@@ -13,7 +13,7 @@ class StockHistory extends Component
     public $search = '';
 
     public $cursor = null;
-    public $endOfResults = true;
+    public $endOfResults = false;
 
     public function mount()
     {
