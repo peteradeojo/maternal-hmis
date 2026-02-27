@@ -23,7 +23,7 @@
                     @foreach ($transactions as $txn)
                         <tr>
                             <td>{{ $txn->id }}</td>
-                            <td>{{ $txn->item->name }}</td>
+                            <td>{{ $txn->item?->name }}</td>
                             <td>{{ $txn->tx_type }}</td>
                             <td>{{ $txn->from->name }}</td>
                             <td>{{ $txn->to->name }}</td>
