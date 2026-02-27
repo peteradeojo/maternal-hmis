@@ -37,7 +37,7 @@
 
         <div class="flex justify-end gap-x-2">
             <button @disabled($cursor == 0) wire:click="previous" class="btn bg-gray-200">&larr;</button>
-            <button wire:click="next" class="btn bg-gray-200">&rarr;</button>
+            <button @disabled($endOfResults) wire:click="next" class="btn bg-gray-200">&rarr;</button>
         </div>
     </div>
 </div>

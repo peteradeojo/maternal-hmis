@@ -13,6 +13,7 @@ class StockHistory extends Component
     public $search = '';
 
     public $cursor = null;
+    public $endOfResults = true;
 
     public function mount()
     {
@@ -55,6 +56,7 @@ class StockHistory extends Component
 
         $this->transactions = $this->buildQuery($direction)->get();
         $this->cursor = $this->transactions->last()?->only('created_at', 'id');
+        $this->endOfResults = $this->cursor != null && $this->transactions->count() < 50;
     }
 
     public function render()
