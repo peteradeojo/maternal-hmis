@@ -3727,16 +3727,16 @@
         },
         {
             "name": "onezero/laas",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/peteradeojo/doppler-laravel.git",
-                "reference": "5dcca84e2baf531f2cbdab2f0f02d06aba0679a0"
+                "reference": "6655f4f6506c78cc1b4b012543accca72109b24e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/peteradeojo/doppler-laravel/zipball/5dcca84e2baf531f2cbdab2f0f02d06aba0679a0",
-                "reference": "5dcca84e2baf531f2cbdab2f0f02d06aba0679a0",
+                "url": "https://api.github.com/repos/peteradeojo/doppler-laravel/zipball/6655f4f6506c78cc1b4b012543accca72109b24e",
+                "reference": "6655f4f6506c78cc1b4b012543accca72109b24e",
                 "shasum": ""
             },
             "require-dev": {
@@ -3766,9 +3766,9 @@
             "description": "Laravel package for integrating the LAAS API",
             "support": {
                 "issues": "https://github.com/peteradeojo/doppler-laravel/issues",
-                "source": "https://github.com/peteradeojo/doppler-laravel/tree/1.2.0"
+                "source": "https://github.com/peteradeojo/doppler-laravel/tree/1.2.1"
             },
-            "time": "2026-03-02T12:42:54+00:00"
+            "time": "2026-03-02T13:03:42+00:00"
         },
         {
             "name": "openspout/openspout",
