@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b0b49911028faee04c239d64e76a8ed",
+    "content-hash": "777bd428a68176adb04f43f3da57dc6b",
     "packages": [
         {
             "name": "brick/math",
@@ -3727,16 +3727,16 @@
         },
         {
             "name": "onezero/laas",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/peteradeojo/laravel-laas-sdk.git",
-                "reference": "de0df5662901be55fc6c39a74e014e312297da15"
+                "url": "https://github.com/peteradeojo/doppler-laravel.git",
+                "reference": "5dcca84e2baf531f2cbdab2f0f02d06aba0679a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/peteradeojo/laravel-laas-sdk/zipball/de0df5662901be55fc6c39a74e014e312297da15",
-                "reference": "de0df5662901be55fc6c39a74e014e312297da15",
+                "url": "https://api.github.com/repos/peteradeojo/doppler-laravel/zipball/5dcca84e2baf531f2cbdab2f0f02d06aba0679a0",
+                "reference": "5dcca84e2baf531f2cbdab2f0f02d06aba0679a0",
                 "shasum": ""
             },
             "require-dev": {
@@ -3765,10 +3765,10 @@
             "notification-url": "https://packagist.org/downloads/",
             "description": "Laravel package for integrating the LAAS API",
             "support": {
-                "issues": "https://github.com/peteradeojo/laravel-laas-sdk/issues",
-                "source": "https://github.com/peteradeojo/laravel-laas-sdk/tree/1.1.2"
+                "issues": "https://github.com/peteradeojo/doppler-laravel/issues",
+                "source": "https://github.com/peteradeojo/doppler-laravel/tree/1.2.0"
             },
-            "time": "2024-02-27T11:55:54+00:00"
+            "time": "2026-03-02T12:42:54+00:00"
         },
         {
             "name": "openspout/openspout",

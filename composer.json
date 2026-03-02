@@ -18,7 +18,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.5",
-        "onezero/laas": "^1.1",
+        "onezero/laas": "^1.2",
         "predis/predis": "^2.2",
         "spatie/laravel-permission": "^6.24",
         "spatie/simple-excel": "^3.6",
