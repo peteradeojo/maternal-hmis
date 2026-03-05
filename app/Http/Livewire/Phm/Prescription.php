@@ -55,7 +55,7 @@ class Prescription extends Component
     {
         $this->totalAmt = array_reduce(
             $this->prescriptions,
-            fn($a, $b) => $a + (($b['quantity'] + $b['dispensed']) * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
+            fn($a, $b) => $a + ((intval($b['quantity']) + intval($b['dispensed'])) * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
                 $b['item_id'],
                 $b['profile'],
             ))),
