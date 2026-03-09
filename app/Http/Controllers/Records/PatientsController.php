@@ -51,7 +51,7 @@ class PatientsController extends Controller
 
         $rules = [
             'category_id' => 'required|integer|exists:patient_categories,id',
-            'card_number' => 'nullable|string',
+            'card_number' => 'nullable|string|unique:patients,card_number',
             'name' => 'required|string',
             'phone' => 'nullable|string',
             'dob' => 'nullable|date',

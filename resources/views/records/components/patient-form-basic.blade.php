@@ -15,7 +15,7 @@
         <input type="text" name="card_number" id="card_number"
             value="{{ old('card_number') ?? $patient?->card_number }}"
             @isset($patient)
-            readonly
+            {{-- readonly --}}
         @endisset class="form-control" />
     </div>
 

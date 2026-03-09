@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "870ca064826e77f61fe14128ff1bacbc",
+    "content-hash": "dc8eceafa6292f6041b7433df98511e1",
     "packages": [
         {
             "name": "brick/math",
@@ -3728,16 +3728,16 @@
         },
         {
             "name": "onezero/laas",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/peteradeojo/doppler-laravel.git",
-                "reference": "9fe1696a4aa03afb4310737d00ad29dbfdc84486"
+                "reference": "acd45fd4aa5b01c9469d69d02ad2723864112a06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/peteradeojo/doppler-laravel/zipball/9fe1696a4aa03afb4310737d00ad29dbfdc84486",
-                "reference": "9fe1696a4aa03afb4310737d00ad29dbfdc84486",
+                "url": "https://api.github.com/repos/peteradeojo/doppler-laravel/zipball/acd45fd4aa5b01c9469d69d02ad2723864112a06",
+                "reference": "acd45fd4aa5b01c9469d69d02ad2723864112a06",
                 "shasum": ""
             },
             "require-dev": {
@@ -3769,9 +3769,9 @@
             "description": "Laravel package for integrating the LAAS API",
             "support": {
                 "issues": "https://github.com/peteradeojo/doppler-laravel/issues",
-                "source": "https://github.com/peteradeojo/doppler-laravel/tree/1.2.2"
+                "source": "https://github.com/peteradeojo/doppler-laravel/tree/1.2.3"
             },
-            "time": "2026-03-05T10:18:23+00:00"
+            "time": "2026-03-09T22:20:57+00:00"
         },
         {
             "name": "openspout/openspout",
