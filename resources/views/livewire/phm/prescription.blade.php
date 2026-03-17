@@ -40,7 +40,7 @@
                     </td>
                     <td>
                         {{ config('app.currency') }}
-                        {{ number_format(($t['quantity'] + $t['dispensed']) * $t['price']) }}
+                        {{ number_format((floatVal($t['quantity']) + floatVal($t['dispensed'])) * floatVal($t['price'])) }}
                     </td>
                     <td>{{ $t['balance'] }}</td>
                     <td>

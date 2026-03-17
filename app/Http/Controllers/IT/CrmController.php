@@ -49,7 +49,7 @@ class CrmController extends Controller
         $filename = 'posts/' . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
 
         if (!is_dir('posts')) {
-            if (mkdir('posts') == false) {
+            if (@mkdir('posts') == false) {
                 return redirect()->back()->withErrors("Unable to create posts directory.");
             }
         }

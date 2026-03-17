@@ -69,11 +69,9 @@ trait Documentable
     public function treatments()
     {
         try {
-            //code...
             return $this->morphMany(DocumentationPrescription::class, 'event');
         } catch (\Throwable $th) {
-            //throw $th;
-
+            report($th);
             return null;
         }
     }

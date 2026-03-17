@@ -196,7 +196,7 @@ class Prescription extends Component
             if (empty($line['item_id']) || $line['quantity'] == 0) continue;
 
             $pLine = PrescriptionLine::find($line['id']);
-            $this->dispensing[] = $pLine->getDispensingReport();
+            $this->dispensing[] = $pLine?->getDispensingReport();
         }
 
         $this->dispatch('open-dispense-confirm');
