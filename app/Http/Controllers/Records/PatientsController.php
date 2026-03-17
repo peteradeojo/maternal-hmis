@@ -51,7 +51,7 @@ class PatientsController extends Controller
 
         $rules = [
             'category_id' => 'required|integer|exists:patient_categories,id',
-            'card_number' => ['nullable|string', function ($attr, $value, $fail) use (&$request) {
+            'card_number' => ['nullable', 'string', function ($attr, $value, $fail) use (&$request) {
                 if (Patient::where('category_id', $request->category_id)->where('card_number', $request->card_number)->exists()) {
                     $fail("A patient in this category already has the same card number.");
                 }
