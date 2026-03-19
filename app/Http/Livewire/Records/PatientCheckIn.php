@@ -98,7 +98,7 @@ class PatientCheckIn extends Component
         ]);
 
         if (is_a($subVisit, AncVisit::class)) {
-            if ($this->patient->anc_profile->status != Status::active->value) {
+            if ($this->patient->anc_profile?->status != Status::active->value) {
                 notifyUserError("Patient does not have an active antenatal profile. Please create one.", auth()->user(), ['mode' => AppNotifications::$IN_APP]);
                 return;
             }
