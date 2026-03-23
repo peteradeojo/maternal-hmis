@@ -81,10 +81,10 @@ class PrescriptionLine extends Model implements PatientRecord
     static function booted()
     {
         static::updating(function (Self $i) {
-            if ($this->qty_dispensed == "") {
-                $this->qty_dispensed = 0;
+            if ($i->qty_dispensed == "") {
+                $i->qty_dispensed = 0;
             }
-            $this->qty_dispensed = floatval($this->qty_dispensed);
+            $i->qty_dispensed = floatval($i->qty_dispensed);
         });
     }
 }
