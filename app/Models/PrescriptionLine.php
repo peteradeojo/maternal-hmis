@@ -46,7 +46,8 @@ class PrescriptionLine extends Model implements PatientRecord
         return $this->belongsTo(StockItem::class, 'item_id');
     }
 
-    public function dispenses() {
+    public function dispenses()
+    {
         return $this->morphMany(DispenseLine::class, 'source');
     }
 
@@ -75,5 +76,15 @@ class PrescriptionLine extends Model implements PatientRecord
     public function dispensed()
     {
         return $this->dispenses->sum('qty_dispensed');
+    }
+
+    static function booted()
+    {
+        static::updating(function (Self $i) {
+            if ($this->qty_dispensed == "") {
+                $this->qty_dispensed = 0;
+            }
+            $this->qty_dispensed = floatval($this->qty_dispensed);
+        });
     }
 }

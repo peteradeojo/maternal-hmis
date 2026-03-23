@@ -251,7 +251,7 @@ class TreatmentService
         $matches = null;
         preg_match("/^((\d+)(\.(\d+))?)([a-zA-Z]+)?/", $dosage, $matches);
 
-        $count = floatval($matches[1]);
+        $count = @floatval($matches[1]) ?? 0;
         $si = isset($matches[5]) ? strtolower($matches[5]) : null;
 
         if ($si == null || $si == $si_unit) {
