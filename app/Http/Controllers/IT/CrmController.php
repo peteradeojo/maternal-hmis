@@ -46,39 +46,45 @@ class CrmController extends Controller
             'image' => 'required|image'
         ]);
 
-        $filename = 'posts/' . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
+        try {
+            $filename = 'posts/' . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
 
-        if (!is_dir('posts')) {
-            if (@mkdir('posts') == false) {
-                return redirect()->back()->withErrors("Unable to create posts directory.");
+            if (!is_dir('posts')) {
+                if (mkdir('posts') === false) {
+                    return redirect()->back()->withErrors("Unable to create posts directory.");
+                }
             }
+
+            $fh = fopen($filename, "w+");
+            if (!$fh) {
+                return redirect()->back()->withErrors("Unable to write post content to temp file.");
+            }
+
+            $image = app()->isProduction() && !empty($request->file('image')) ? cloudinary()->uploadFile($request->file('image')->getRealPath())->getSecurePath() : $request->file('image')?->store('post_uploads');
+
+            $postText = $request->input('post');
+            $post = new Post([
+                'user' => auth()->user()->name,
+                'title' => $request->title,
+                'image' => $image,
+                'slug' => Str::slug($request->title),
+            ]);
+
+            fwrite($fh, $postText);
+            fclose($fh);
+
+            $postText = app()->isProduction() ? cloudinary()->uploadFile($filename)->getSecurePath() : Storage::putFileAs('posts', new File($filename, true), $post->slug . ".html");
+
+            $post->post = $postText;
+            $post->save();
+            unlink($filename);
+
+            return redirect()->route('it.crm-index');
+        } catch (\Throwable $th) {
+            report($th);
+            return redirect()->back()->withErrors($th->getMessage());
         }
 
-        $fh = fopen($filename, "w+");
-        if (!$fh) {
-            return redirect()->back()->withErrors("Unable to write post content to temp file.");
-        }
-
-        $image = app()->isProduction() && !empty($request->file('image')) ? cloudinary()->uploadFile($request->file('image')->getRealPath())->getSecurePath() : $request->file('image')?->store('post_uploads');
-
-        $postText = $request->input('post');
-        $post = new Post([
-            'user' => auth()->user()->name,
-            'title' => $request->title,
-            'image' => $image,
-            'slug' => Str::slug($request->title),
-        ]);
-
-        fwrite($fh, $postText);
-        fclose($fh);
-
-        $postText = app()->isProduction() ? cloudinary()->uploadFile($filename)->getSecurePath() : Storage::putFileAs('posts', new File($filename, true), $post->slug . ".html");
-
-        $post->post = $postText;
-        $post->save();
-        unlink($filename);
-
-        return redirect()->route('it.crm-index');
     }
 
     public function show(Request $request, Post $post)
