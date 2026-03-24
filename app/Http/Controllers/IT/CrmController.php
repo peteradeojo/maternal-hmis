@@ -72,7 +72,7 @@ class CrmController extends Controller
             fwrite($fh, $postText);
             fclose($fh);
 
-            $postText = app()->isProduction() ? cloudinary()->uploadFile($filename)->getSecurePath() : Storage::putFileAs('posts', new File($stored_filename, true), $post->slug . ".html");
+            $postText = app()->isProduction() ? cloudinary()->uploadFile($stored_filename)->getSecurePath() : Storage::putFileAs('posts', new File($stored_filename, true), $post->slug . ".html");
 
             $post->post = $postText;
             $post->save();
