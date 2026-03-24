@@ -47,15 +47,14 @@ class CrmController extends Controller
         ]);
 
         try {
-            $filename = 'posts/' . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
+            $filename = "posts/" . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
+            $stored_filename = storage_path('app/'.$filename);
 
-            if (!is_dir('posts')) {
-                if (mkdir('posts') === false) {
-                    return redirect()->back()->withErrors("Unable to create posts directory.");
-                }
+            if (!Storage::directoryExists('posts')) {
+                Storage::makeDirectory('posts');
             }
 
-            $fh = fopen($filename, "w+");
+            $fh = fopen($stored_filename, "w+");
             if (!$fh) {
                 return redirect()->back()->withErrors("Unable to write post content to temp file.");
             }
@@ -73,11 +72,11 @@ class CrmController extends Controller
             fwrite($fh, $postText);
             fclose($fh);
 
-            $postText = app()->isProduction() ? cloudinary()->uploadFile($filename)->getSecurePath() : Storage::putFileAs('posts', new File($filename, true), $post->slug . ".html");
+            $postText = app()->isProduction() ? cloudinary()->uploadFile($filename)->getSecurePath() : Storage::putFileAs('posts', new File($stored_filename, true), $post->slug . ".html");
 
             $post->post = $postText;
             $post->save();
-            unlink($filename);
+            Storage::delete($stored_filename);
 
             return redirect()->route('it.crm-index');
         } catch (\Throwable $th) {

@@ -82,7 +82,7 @@ return [
         public_path('storage') => storage_path('app/public'),
         // public_path('radiology') => storage_path('app/radiology')
         public_path('post_uploads') => storage_path('app/post_uploads'),
-        public_path('posts') => storage_path('app/posts'),
+        public_path('posts') => storage_path('app/posts/'),
     ],
 
 ];

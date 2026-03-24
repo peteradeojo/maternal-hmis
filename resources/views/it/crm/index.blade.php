@@ -41,7 +41,10 @@
 @push('scripts')
     <script>
         $(() => {
-            $("#table").DataTable();
+            $("#table").DataTable({
+                order: [[1, 'desc']],
+                ordering: false,
+            });
         });
     </script>
 @endpush
