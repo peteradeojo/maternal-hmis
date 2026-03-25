@@ -11,6 +11,7 @@ use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Visit extends Model implements OperationalEvent
 {
-    use HasFactory, HasVisitData, Documentable, Auditable;
+    use HasFactory, HasVisitData, Documentable, Auditable, SoftDeletes;
 
     protected $fillable = [
         'visit_type',

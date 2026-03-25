@@ -138,7 +138,7 @@ class CrmController extends Controller
 
         $request->validate([
             'to' => 'required|in:user,dept',
-            'file' => 'required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,odt|max:' . (20 * 1024),
+            'file' => 'required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,txt,odt|max:' . (20 * 1024),
             'phone' => 'required_if:to,user|exists:users,phone',
             'department' => 'required_if:to,dept',
         ]);
