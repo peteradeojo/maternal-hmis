@@ -47,6 +47,12 @@ class CrmController extends Controller
         ]);
 
         try {
+            $title = Str::slug($request->title);
+
+            if (Post::where('slug', $title)->exists()) {
+                $title .= '-' . Str::random(5);
+            }
+
             $filename = "posts/" . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
             $stored_filename = storage_path('app/'.$filename);
 
@@ -66,7 +72,7 @@ class CrmController extends Controller
                 'user' => auth()->user()->name,
                 'title' => $request->title,
                 'image' => $image,
-                'slug' => Str::slug($request->title),
+                'slug' => $title,
             ]);
 
             fwrite($fh, $postText);
