@@ -324,12 +324,18 @@ class PatientsController extends Controller
 
     public function getAntenatalAppointments(Request $request)
     {
+        // Either get AncVisit(s) or AntenatalProfile(s)
         $this->authorize('viewAny', AntenatalProfile::class);
-        $query = AntenatalProfile::accessibleBy($request->user())->with(['patient', 'visit'])->where('return_visit', '>=', now()->subDays(7))->select([
+        $query = AntenatalProfile::accessibleBy($request->user())->with(['patient', 'visit'])->where('next_visit', '>=', now()->subDays(7))->select([
             'patient_id',
-            'return_visit',
+            'next_visit',
             'id',
-        ])->orderBy('return_visit', 'desc');
+        ])->orderBy('next_visit', 'desc');
+        // $query = AncVisit::where('return_visit', '>=', now()->subDays(7))->select([
+        //     'patient_id',
+        //     'return_visit',
+        //     'id'
+        // ])->orderBy('return_visit', 'desc');
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
