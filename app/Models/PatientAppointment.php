@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Policies\PatientAppointmentPolicy;
 use App\Traits\CastsStatus;
 use App\Traits\NeedsRecorderInfo;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
+#[UsePolicy(PatientAppointmentPolicy::class)]
 class PatientAppointment extends Model
 {
     use NeedsRecorderInfo, CastsStatus;
@@ -26,6 +29,12 @@ class PatientAppointment extends Model
 
     protected $casts = [
         'appointment_date' => 'datetime',
+    ];
+
+    protected $with = [
+        'patient',
+        'notes',
+        'source_visit',
     ];
 
     public function notes()
@@ -49,5 +58,9 @@ class PatientAppointment extends Model
                 default => $value,
             };
         });
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'booked_by', 'id');
     }
 }

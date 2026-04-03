@@ -13,6 +13,7 @@
                         <th></th>
                         <th>Name</th>
                         <th>Phone</th>
+                        <th>Source</th>
                         <th>Date</th>
                         {{-- <th></th> --}}
                     </tr>
@@ -42,11 +43,15 @@
                                 patient,
                                 id
                             }) =>
-                            `<a href="{{ route('records.patient', ':id') }}" class='link'>${patient.name} (${patient.card_number})</a>`
-                            .replace(':id', patient.id),
+                            `<a href="{{ route('records.appointments.show', ':id') }}" class='link'>${patient.name} (${patient.card_number})</a>`
+                            .replace(':id', id),
+
                     },
                     {
                         data: 'patient.phone'
+                    },
+                    {
+                        data: 'source'
                     },
                     {
                         data: (row) => parseDateFromSource(row.appointment_date)
@@ -86,13 +91,15 @@
                     a.find(MODAL_TITLE).html('Patient Appointment Check-In');
                     const row = table.row(e.target.closest('tr'));
                     const {
-                        patient, id
+                        patient,
+                        id
                     } = row.data();
 
-                    axios.get(`{{ route('records.start-visit', ':id') }}?appointment=${id}`.replace(':id', patient
+                    axios.get(`{{ route('records.start-visit', ':id') }}?appointment=${id}`.replace(
+                        ':id', patient
                         .id)).then((res) => {
-                            a.find(MODAL_CONTENT).html(res.data);
-                        }).catch((err) => console.error(err));
+                        a.find(MODAL_CONTENT).html(res.data);
+                    }).catch((err) => console.error(err));
                 });
             });
         });
