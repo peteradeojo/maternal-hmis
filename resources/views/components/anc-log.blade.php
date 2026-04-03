@@ -84,6 +84,7 @@
                 <th>EGA</th>
                 <th>Fundal Height</th>
                 <th>Presentation</th>
+                <th>Lie</th>
                 <th>Weight (kg)</th>
                 <th>BP (mmHg)</th>
                 <th>PCV</th>
@@ -95,16 +96,13 @@
         <tbody>
             @foreach ($profile->ancVisits as $v)
                 @continue(empty($v->visit))
-                <tr>
-                    <td class="text-center">
-                        <button data-id="{{ $v->id }}" class="btn expand-i">
-                            <i class="fa text-blue-700 fa-magnifying-glass"></i>
-                        </button>
-                    </td>
+                <tr data-id="{{ $v->id }}">
+                    <td class="dt-control"></td>
                     <td>{{ $v->created_at->format('Y-m-d') }}</td>
                     <td>{{ $profile->maturity($v->created_at) }}</td>
                     <td>{{ $v->fundal_height }}</td>
                     <td>{{ $v->presentation }}</td>
+                    <td>{{ $v->presentation_relationship }}</td>
                     <td>{{ $v->visit?->vitals?->weight }}</td>
                     <td>{{ $v->visit?->vitals?->blood_pressure }}</td>
                     <td>{{ $v->visit?->getTestResults('PCV', 'PCV') }}</td>
@@ -132,18 +130,43 @@
                     });
                 });
 
-            $(document).on("click", ".expand-i", function(e) {
-                const id = $(e.currentTarget).data().id;
-                useGlobalModal((a) => {
-                    a.find(MODAL_TITLE).text('Visit Log');
+            // $(document).on("click", ".expand-i", function(e) {
+            //     const id = $(e.currentTarget).data().id;
+            // useGlobalModal((a) => {
+            //     a.find(MODAL_TITLE).text('Visit Log');
 
+            //     axios.get("{{ route('doctor.anc-log', ':id') }}".replace(':id', id)).then((
+            //         res) => {
+            //         a.find(MODAL_BODY).html(res.data);
+            //     }).catch(err => {
+            //         a.find(MODAL_CONTENT).html(err.response.data);
+            //     });
+            // });
+            // });
+            const table = $("#table").DataTable({
+                ordering: false,
+                searching: false,
+                paging: false,
+                info: false,
+            });
+
+            table.on('click', 'td.dt-control', function(e) {
+                const target = e.target.closest('tr');
+                const row = table.row(target);
+                const {
+                    id
+                } = $(target).data();
+
+                if (!row.child.isShown()) {
                     axios.get("{{ route('doctor.anc-log', ':id') }}".replace(':id', id)).then((
                         res) => {
-                        a.find(MODAL_BODY).html(res.data);
+                        row.child(res.data).show();
                     }).catch(err => {
-                        a.find(MODAL_CONTENT).html(err.response.data);
+                        row.child('An error occurred').show();
                     });
-                });
+                } else {
+                    row.child.hide();
+                }
             });
         });
     </script>
