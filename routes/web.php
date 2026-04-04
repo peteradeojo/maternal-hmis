@@ -33,7 +33,7 @@ Route::get('logout', function (Request $request) {
 })->name('logout');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'active_users'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('dashboard');
     });
@@ -64,6 +64,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
     Route::match(['GET', 'POST'], '/dropbox', [CrmController::class, 'dropbox'])->name('dropbox');
     Route::get('/dropbox/{entry}', [CrmController::class, 'downloadMedia'])->name('dropbox.download');
+    Route::get('/inv', [InventoryController::class, 'getInventory']);
 });
 
-Route::get('/inv', [InventoryController::class, 'getInventory']);
