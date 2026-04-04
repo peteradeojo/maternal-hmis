@@ -14,11 +14,12 @@ enum Permissions: string
     case CREATE_VISITS = 'create visits';
     case EDIT_VISITS = 'edit visits';
 
-        // nurse, doctor
+    // nurse, doctor
     case VIEW_ADMISSIONS = 'view admissions';
     case CREATE_ADMISSIONS = 'create admissions';
     case EDIT_ADMISSIONS = 'edit admissions';
     case ASSIGN_WARD = 'assign ward';
+    case DISCHARGE_PATIENT = 'discharge patient';
 
     case VIEW_BILLS = 'view bills';
     case CREATE_BILLS = 'create bills';

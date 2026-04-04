@@ -10,7 +10,8 @@
         <p class="col-span-2"><b>Indication:</b> {{ $opnote->indication }}</p>
         <p class="col-span-2"><b>Incision:</b> {{ $opnote->incision }}</p>
         <p class="col-span-2"><b>Findings:</b> {{ $opnote->findings }}</p>
-        <p class="col-span-2"><b>Procedure:</b> {{ $opnote->procedure }}</p>
+        <p class="col-span-2"><b>Procedure:</b> {{ $opnote->procedure_name ?? 'Not specified' }}</p>
+        <p class="col-span-2"><b>Procedure Details:</b> {{ $opnote->procedure }}</p>
     </div>
 
     <div class="py-5">

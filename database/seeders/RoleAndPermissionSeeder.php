@@ -38,12 +38,14 @@ class RoleAndPermissionSeeder extends Seeder
                 Permissions::CREATE_ADMISSIONS,
                 Permissions::VIEW_ADMISSIONS,
                 Permissions::EDIT_ADMISSIONS,
+                Permissions::DISCHARGE_PATIENT,
             ],
             'nurse' => [
                 Permissions::VIEW_ADMISSIONS,
                 Permissions::EDIT_ADMISSIONS,
                 Permissions::VIEW_PATIENTS,
                 Permissions::VIEW_VISITS,
+                Permissions::DISCHARGE_PATIENT,
             ],
             'record' => [
                 Permissions::VIEW_PATIENTS,

@@ -308,6 +308,7 @@ class AdmissionsController extends Controller
                 'user_id' => auth()->user()->id,
                 ...$data,
             ]);
+
             return response()->json(['op_note' => $note, 'message' => 'Success']);
         } catch (\Throwable $th) {
             report($th);

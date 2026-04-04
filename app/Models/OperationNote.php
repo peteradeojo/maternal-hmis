@@ -28,6 +28,7 @@ class OperationNote extends Model implements PatientRecord
         'patient_id',
         'admission_id',
         'user_id',
+        'procedure_name',
     ];
 
     protected $with = ['recorder'];
