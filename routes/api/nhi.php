@@ -7,4 +7,5 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('api')->middleware(['auth:sanctum', 'datalog'])->name('api.nhi.')->group(function () {
     Route::get('/patients', [InsuranceController::class, 'getPatients'])->name('patients');
     Route::get('/visits', [PatientsController::class, 'getVisits'])->name('visits');
+    Route::post('/cancel-profile', [InsuranceController::class, 'cancelInsuranceProfile'])->name('cancel-insurance-profile');
 });

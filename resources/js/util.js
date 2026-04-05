@@ -80,7 +80,7 @@ window.submitForm = async (el, route, notify = true) => {
 
 window.MODAL_TITLE = ".modal-title";
 window.MODAL_CONTENT = ".modal-body";
-window.MODAL_BODY = ".modal-body";
+window.MODAL_BODY = window.MODAL_CONTENT;
 
 window.useGlobalModal = function (callback) {
     $("#global-overlay").removeClass("hidden");
