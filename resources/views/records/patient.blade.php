@@ -34,30 +34,30 @@
                 </div>
 
                 @role('record')
-                <div class="grid grid-cols-2 p-2 gap-2 no-print">
-                    <button
-                        class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
-                        <span>Visits this year</span>
-                        <span class="text-xl font-semibold">
-                            {{ $patient->visits->where('created_at', '>=', date('Y-01-01'))->count() }}
-                        </span>
-                        <span>
-                            Last visit: {{ $patient->visits->last()?->created_at }}
-                        </span>
-                    </button>
-                    <button class="rounded bg-teal-400 hover:text-white hover:scale-[1.04] duration-200" id="edit-patient">
-                        Update patient details <i class="fa fa-edit"></i>
-                    </button>
-                    <button class="border rounded bg-green-400 hover:text-white hover:scale-[1.04] duration-200"
-                        id="start-visit">
-                        Start a visit <i class="fa fa-user-circle"></i>
-                    </button>
-                    <button class="border rounded bg-blue-200 hover:text-white hover:scale-[1.04] duration-200">
-                        Print patient profile <i class="fa fa-address-card"></i>
-                    </button>
-                    {{-- <button class="border rounded">
+                    <div class="grid grid-cols-2 p-2 gap-2 no-print">
+                        <button
+                            class="rounded border-4 flex flex-col justify-center items-center hover:scale-[1.04] duration-200">
+                            <span>Visits this year</span>
+                            <span class="text-xl font-semibold">
+                                {{ $patient->visits->where('created_at', '>=', date('Y-01-01'))->count() }}
+                            </span>
+                            <span>
+                                Last visit: {{ $patient->visits->last()?->created_at }}
+                            </span>
+                        </button>
+                        <button class="rounded bg-teal-400 hover:text-white hover:scale-[1.04] duration-200" id="edit-patient">
+                            Update patient details <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="border rounded bg-green-400 hover:text-white hover:scale-[1.04] duration-200"
+                            id="start-visit">
+                            Start a visit <i class="fa fa-user-circle"></i>
+                        </button>
+                        <button class="border rounded bg-blue-200 hover:text-white hover:scale-[1.04] duration-200">
+                            Print patient profile <i class="fa fa-address-card"></i>
+                        </button>
+                        {{-- <button class="border rounded">
                     </button> --}}
-                </div>
+                    </div>
                 @endrole
             </div>
         </div>
@@ -85,8 +85,9 @@
                         <p><b>Category:</b>
                             {{ preg_replace('/_/', ' ', $patient->antenatalProfiles[0]?->card_type ?? '') }}</p>
                         <p><b>Registration Date:</b> {{ $patient->antenatalProfiles[0]?->created_at->format('Y-m-d') }}</p>
-                        <p><b>Status: </b> {{ Status::tryFrom($patient->anc_profile->status)?->name }} | <a href="#" class="link"
-                                id="close-anc-profile" data-id="{{ $patient->antenatalProfiles[0]->id }}">Delete this profile</a>
+                        <p><b>Status: </b> {{ Status::tryFrom($patient->anc_profile->status)?->name }} | <a href="#"
+                                class="link" id="close-anc-profile"
+                                data-id="{{ $patient->antenatalProfiles[0]->id }}">Delete this profile</a>
                         </p>
                     @endif
                 </div>
@@ -121,13 +122,22 @@
                 </form>
             </x-overlay-modal>
         </div>
-        <div class="body grid">
+        <div class="grid grid-cols-2 gap-4">
             @forelse ($patient->insurance as $insurance)
-                <div class="p-2 bg-gray-100">
-                    <p><b>HMO:</b> {{ $insurance->hmo_name }}</p>
-                    <p><b>Company:</b> {{ $insurance->hmo_name }}</p>
-                    <p><b>ID No:</b> {{ $insurance->hmo_id_no }}</p>
-                    <p><b>Status:</b> {{ ucfirst($insurance->status) }}</p>
+                <div class="p-2 bg-gray-100 flex justify-between items-start">
+                    <span>
+                        <p><b>HMO:</b> {{ $insurance->hmo_name }}</p>
+                        <p><b>Company:</b> {{ $insurance->hmo_name }}</p>
+                        <p><b>ID No:</b> {{ $insurance->hmo_id_no }}</p>
+                        <p><b>Updated on:</b> {{ $insurance->updated_at?->format('Y-m-d h:i A') }}</p>
+                        <p><b>Status:</b> {{ ucfirst($insurance->status->name) }}</p>
+                    </span>
+                    @if ($insurance->status != Status::cancelled)
+                        @role(['record', 'admin', 'nhis'])
+                            <button data-id="{{ $insurance->id }}"
+                                class="cancel-insurance btn bg-red-500 text-white">Cancel</button>
+                        @endrole
+                    @endif
                 </div>
             @empty
                 <div class="p-2">
@@ -181,24 +191,46 @@
                 });
             });
 
-            $("#close-anc-profile").on("click", function () {
+            $("#close-anc-profile").on("click", function() {
                 useGlobalModal((a) => {
                     a.find("#global-modal-title").text("Close Antenatal Profile")
                     axios.get("{{ route('records.close-anc', ':profile') }}".replace(":profile", $(
                         this).attr('data-id'))).then(({
-                            data
-                        }) => {
-                            a.find("#global-modal-content").html(data);
-                        }).catch((err) => a.find("#global-modal-content").html(err.response.data))
+                        data
+                    }) => {
+                        a.find("#global-modal-content").html(data);
+                    }).catch((err) => a.find("#global-modal-content").html(err.response.data))
                 });
             })
 
-            asyncForm('#insurance-profile-form', "{{ route('api.records.insurance', $patient->id) }}", function (
+            asyncForm('#insurance-profile-form', "{{ route('api.records.insurance', $patient->id) }}", function(
                 e, {
                     data
                 }) {
-                console.log(data);
+                notifySuccess("HMO Profile created");
+                removeGlobalModal();
             });
+
+            $(".cancel-insurance").on('click', async function(e) {
+                const target = e.target;
+
+                const a = confirm('Are you sure? This action cannot be undone');
+                if (!a) return;
+
+                const {
+                    id
+                } = $(target).data();
+                const res = await axios.post("{{ route('api.nhi.cancel-insurance-profile') }}", {
+                    id,
+                });
+
+                if (res.status == 200) {
+                    window.location.reload();
+                    return;
+                }
+
+                notifyError("An error occurred. Please contact IT.");
+            })
         });
     </script>
 @endpush
