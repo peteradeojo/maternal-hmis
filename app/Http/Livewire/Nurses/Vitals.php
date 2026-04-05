@@ -7,17 +7,18 @@ use App\Interfaces\OperationalEvent;
 use App\Livewire\Forms\VitalsForm;
 use App\Models\Visit;
 use App\Models\Vitals as ModelsVitals;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Vitals extends Component
 {
     public $evt;
     public $form = true;
+    public $showResults = true;
 
     public VitalsForm $vitals;
 
-    public $extra = [
-    ];
+    public $extra = [];
 
     public function render()
     {
@@ -64,6 +65,14 @@ class Vitals extends Component
         if ($vital) {
             $vital->delete();
             $this->dispatch('saved');
+        }
+    }
+
+    #[On('saved')]
+    public function handleVitalsSaved()
+    {
+        if ($this->showResults) {
+            $this->evt->svitals->refresh();
         }
     }
 }

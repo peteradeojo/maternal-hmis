@@ -95,58 +95,59 @@
         </form>
     @endunless
 
-
-    <div class="py-1 overflow-x-auto">
-        <table class="table-list">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Blood Pressure (mmHg)</th>
-                    <th>Temperature (&deg;C)</th>
-                    <th>Pulse (b/m)</th>
-                    <th>Respiration (c/m)</th>
-                    <th>SPO<sub>2</sub></th>
-                    <th>FHR</th>
-                    @if ($form === false)
-                        <th></th>
-                    @endif
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($evt->svitals as $vital)
+    @unless (@$showResults === false)
+        <div class="py-1 overflow-x-auto">
+            <table class="table-list">
+                <thead>
                     <tr>
-                        <td>{{ ($vital->recorded_date ?? $vital->created_at)->format('d/m/Y h:i A') }}</td>
-                        <td>{{ $vital->blood_pressure }}</td>
-                        <td>{{ $vital->temperature }}</td>
-                        <td>{{ $vital->pulse }}</td>
-                        <td>{{ $vital->respiration }}</td>
-                        <td>{{ $vital->spo2 }}</td>
-                        <td>{{ $vital->fetal_heart_rate }}</td>
+                        <th>Date</th>
+                        <th>Blood Pressure (mmHg)</th>
+                        <th>Temp (&deg;C)</th>
+                        <th>Pulse (b/m)</th>
+                        <th>Respiration (c/m)</th>
+                        <th>SPO<sub>2</sub></th>
+                        <th>FHR</th>
                         @if ($form === false)
-                            <td>
-                                @if ($vital->recorder)
-                                    {{ $vital->recorder?->firstname[0] }}. {{ $vital->recorder?->lastname }}
-                                @endif
-                            </td>
+                            <th>By</th>
                         @endif
                     </tr>
-                    @if ($vital->extra)
+                </thead>
+                <tbody>
+                    @forelse ($evt->svitals as $vital)
                         <tr>
-                            <td>
-                                <p class="basic-header">Extra</p>
-                                @foreach ($vital->extra ?? [] as $k => $value)
-                                    <p><b>{{ ucfirst(unslug($k)) }}</b>:
-                                        {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
-                                @endforeach
-                            </td>
+                            <td>{{ ($vital->recorded_date ?? $vital->created_at)->format('d/m/y h:i a') }}</td>
+                            <td>{{ $vital->blood_pressure }}</td>
+                            <td>{{ $vital->temperature }}</td>
+                            <td>{{ $vital->pulse }}</td>
+                            <td>{{ $vital->respiration }}</td>
+                            <td>{{ $vital->spo2 }}</td>
+                            <td>{{ $vital->fetal_heart_rate }}</td>
+                            @if ($form === false)
+                                <td>
+                                    @if ($vital->recorder)
+                                        {{ $vital->recorder?->firstname[0] }}. {{ $vital->recorder?->lastname }}
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
-                    @endif
-                @empty
-                    <tr>
-                        <td colspan="6" align="center">No vitals recorded.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                        @if ($vital->extra)
+                            <tr>
+                                <td>
+                                    <p class="basic-header">Extra</p>
+                                    @foreach ($vital->extra ?? [] as $k => $value)
+                                        <p><b>{{ ucfirst(unslug($k)) }}</b>:
+                                            {{ is_bool($value) ? ($value == true ? 'Yes' : 'No') : $value }}</p>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endif
+                    @empty
+                        <tr>
+                            <td colspan="6" align="center">No vitals recorded.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    @endunless
 </div>
