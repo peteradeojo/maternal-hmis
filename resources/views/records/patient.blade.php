@@ -213,12 +213,23 @@
 
             $(".cancel-insurance").on('click', async function(e) {
                 const target = e.target;
+
+                const a = confirm('Are you sure? This action cannot be undone');
+                if (!a) return;
+
                 const {
                     id
                 } = $(target).data();
                 const res = await axios.post("{{ route('api.nhi.cancel-insurance-profile') }}", {
                     id,
                 });
+
+                if (res.status == 200) {
+                    window.location.reload();
+                    return;
+                }
+
+                notifyError("An error occurred. Please contact IT.");
             })
         });
     </script>
