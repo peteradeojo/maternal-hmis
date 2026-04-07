@@ -8,10 +8,11 @@ use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ConsultationNote extends Model implements PatientRecord
 {
-    use HasFactory, NeedsRecorderInfo;
+    use HasFactory, NeedsRecorderInfo, SoftDeletes;
 
     protected $fillable =  [
         'patient_id',
