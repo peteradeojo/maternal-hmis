@@ -386,7 +386,7 @@
                 const serialized = $.param(data);
                 console.log(serialized);
 
-                axios.post("{{ route('nurses.admissions.consent-form', $admission) }}", serialized, {
+                axios.post("{{ route('nurses.admissions.consent-form', $data) }}", serialized, {
                         headers: {
                             'Content-type': 'application/x-www-form-urlencoded'
                         },
