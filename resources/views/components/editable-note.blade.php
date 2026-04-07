@@ -4,8 +4,10 @@
         <p><b>Attending:</b> <span x-text="note.recorder?.recorder ?? note.consultant?.name"></span></p>
         <p><small><span x-text="new Date(note.created_at).toLocaleString('en-CA')"></span></small></p>
         <div class="flex gap-x-2">
-            <button class="btn btn-sm bg-green-400 text-white" @click="editing = true">Edit <i
-                    class="fa fa-pencil"></i></button>
+            @can('edit', $note)
+                <button class="btn btn-sm bg-green-400 text-white" @click="editing = true">Edit <i
+                        class="fa fa-pencil"></i></button>
+            @endcan
         </div>
     </div>
 

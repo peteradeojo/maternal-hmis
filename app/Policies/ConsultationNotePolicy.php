@@ -26,7 +26,7 @@ class ConsultationNotePolicy
             return Session::getId() === $note->recorder->session_id;
         }
 
-        return $user->id == $note->consultant_id;
+        return $user->id == $note->consultant_id || $user->hasRole('admin');
     }
 
     public function delete(User $user, ConsultationNote $note)
