@@ -22,22 +22,25 @@ class Comms
 
     static function sendUserMessage($message, User|int $userId, $options = [])
     {
-        $options['mode'] ??= AppNotifications::$BOTH;
+        $default = [
+            'mode' => AppNotifications::$BOTH,
+            ...$options,
+        ];
 
-        $message = array_merge($message, ['options' => $options]);
+        $message = array_merge($message, ['options' => $default]);
         try {
             Broadcast::private("user." . (is_a($userId, User::class) ? $userId->id : $userId))
                 ->as("UserEvent")
                 ->with($message)
-                ->sendNow();
+                ->send();
         } catch (\Exception $e) {
+            // report($e);
             logger()->emergency("Error when trying to send notification: " . $e->getMessage());
         }
     }
 
     static function notifyDepartment($departmentId, $message, $options = [])
     {
-        $options['mode'] ??= 'both';
         $options['timeout'] ??= 5000;
 
         if (is_string($message)) {
@@ -45,6 +48,12 @@ class Comms
         }
 
         $message = array_merge($message, ['options' => $options]);
-        Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->sendNow();
+
+        try {
+            Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->send();
+        } catch (\Throwable $th) {
+            report($th);
+            logger()->emergency($th->getMessage());
+        }
     }
 }

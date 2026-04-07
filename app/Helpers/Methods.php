@@ -5,6 +5,7 @@ use App\Enums\AppNotifications;
 use App\Enums\Department;
 use App\Enums\Roles;
 use App\Models\User;
+use App\Services\Comms;
 use Illuminate\Support\Facades\Broadcast;
 
 const T1 = 0.3;
@@ -169,50 +170,20 @@ function resolve_render($value, $mode = null)
 
 function notifyUserSuccess(string $message, User|int $user, $options = [])
 {
-    $options['mode'] ??= AppNotifications::$IN_APP;
-    sendUserMessage(['message' => $message, 'bg' => $options['bg'] ?? ['bg-blue-400', 'text-white']], $user, $options);
+    return Comms::notifyUserSuccess($message, $user, $options);
 }
 
 function notifyUserError(string $message, User|int $user, $options = [])
 {
-    $options['mode'] ??= AppNotifications::$IN_APP;
-    sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $user, $options);
+    return Comms::notifyUserError($message, $user, $options);
 }
 
 function sendUserMessage($message, User|int $userId, $options = [])
 {
-    $default = [
-        'mode' => AppNotifications::$BOTH,
-        ...$options,
-    ];
-
-    $message = array_merge($message, ['options' => $default]);
-    try {
-        Broadcast::private("user." . (is_a($userId, User::class) ? $userId->id : $userId))
-            ->as("UserEvent")
-            ->with($message)
-            ->send();
-    } catch (\Exception $e) {
-        // report($e);
-        logger()->emergency("Error when trying to send notification: " . $e->getMessage());
-    }
+    return Comms::sendUserMessage($message, $userId, $options);
 }
 
 function notifyDepartment($departmentId, $message, $options = [])
 {
-    $options['mode'] ??= 'both';
-    $options['timeout'] ??= 5000;
-
-    if (is_string($message)) {
-        $message = ['message' => $message];
-    }
-
-    $message = array_merge($message, ['options' => $options]);
-
-    try {
-        Broadcast::on("department.{$departmentId}")->as('GroupUpdate')->with($message)->send();
-    } catch (\Throwable $th) {
-        report($th);
-        logger()->emergency($th->getMessage());
-    }
+    Comms::notifyDepartment($departmentId, $message, $options);
 }
