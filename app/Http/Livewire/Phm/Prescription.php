@@ -146,8 +146,6 @@ class Prescription extends Component
 
         try {
             $bill = $event?->bills->where('status', Status::pending->value)->first();
-
-
             foreach ($this->prescriptions as $i => $line) {
                 if ($line['status'] == Status::completed) continue;
 
@@ -156,7 +154,7 @@ class Prescription extends Component
                 PrescriptionLine::where('id', $line['id'])->update([
                     'status' => $line['status'],
                     'profile' => $line['profile'],
-                    'qty_dispensed' => $line['quantity'],
+                    'qty_dispensed' => empty($line['quantity']) ? 0 : $line['quantity'],
                 ]);
 
                 if (!empty($bill)) {
@@ -214,7 +212,7 @@ class Prescription extends Component
                     'source_type' => PrescriptionLine::class,
                     'source_id' => $d['id'],
                     'user_id' => $userId,
-                    'qty_dispensed' => $d['quantity'],
+                    'qty_dispensed' => empty($d['quantity']) ? 0 : $d['quantity'],
                 ]);
 
                 StockTransaction::create([

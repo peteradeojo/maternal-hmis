@@ -31,7 +31,14 @@ class DispenseLine extends Model
         );
     }
 
-    public function stock_transaction() {
-        
+    public function stock_transaction() {}
+
+    protected static function booted()
+    {
+        static::updating(function (Self $line) {
+            $line->qty_dispensed = (float) $line->qty_dispensed;
+            // if ($line->isDirty('qty_dispensed')) {
+            // }
+        });
     }
 }
