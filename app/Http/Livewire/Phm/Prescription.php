@@ -167,7 +167,7 @@ class Prescription extends Component
                         'description' => "{$line['name']} {$line['dosage']} {$line['frequency']} for {$line['duration']} days(s)",
                         'quantity' => floatval($line['quantity'] ??  TreatmentService::getCount($line, (object) $line)) + $line['dispensed'],
                         'unit_price' => $price,
-                        'total_price' => $price * ($line['quantity'] + $line['dispensed']),
+                        'total_price' => (float) $price * ((float) $line['quantity'] + (float) $line['dispensed']),
                         'status' => $line['status']->value,
                         'tag' => 'drug',
                     ]);
