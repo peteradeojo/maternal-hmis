@@ -16,18 +16,20 @@ class PrescriptionDto
 
     public function __construct($data = null)
     {
-        $this->name = $data['name'] ?? '';
-        $this->productId = $data['productId'] ?? '';
-        $this->duration = $data['duration'] ?? '';
-        $this->dosage = $data['dosage'] ?? '';
-        $this->route = $data['route'] ?? '';
-        $this->frequency = $data['frequency'] ?? '';
+        if ($data) {
+            $this->name = $data['name'] ?? '';
+            $this->productId = $data['productId'] ?? '';
+            $this->duration = $data['duration'] ?? '';
+            $this->dosage = $data['dosage'] ?? '';
+            $this->route = $data['route'] ?? '';
+            $this->frequency = $data['frequency'] ?? '';
+        }
     }
 
     public function setProduct($product)
     {
         $this->product = $product;
-        $this->name = $product->name;
+        $this->name = $product?->name;
     }
 
     public function setDuration($duration)
