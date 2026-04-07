@@ -58,6 +58,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
             cd /var/www/hmis
+            git checkout main
             git pull
 
             composer install
