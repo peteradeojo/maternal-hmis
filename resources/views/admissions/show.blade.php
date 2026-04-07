@@ -372,34 +372,46 @@
 
         $(document).ready(() => {
             initTab(document.querySelector("#tablist"));
+
+            $(document).on('click', '.review-btn', (e) => {
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text("Review")
+                    axios.get("{{ route('doctor.admissions.review', $data) }}").then((res) => {
+                        a.find(MODAL_BODY).html(res.data);
+                    }).catch((err) => {
+                        a.find(MODAL_BODY).html(err.response.data);
+                    });
+                });
+            });
+
+            document.querySelector("#consent-form")?.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const form = $(this);
+                    const data = (form.serializeArray());
+                    data.push({
+                        name: 'signature',
+                        value: canvas.toDataURL()
+                    });
+
+                    const serialized = $.param(data);
+                    console.log(serialized);
+
+                    axios.post("{{ route('nurses.admissions.consent-form', $data) }}", serialized, {
+                            headers: {
+                                'Content-type': 'application/x-www-form-urlencoded'
+                            },
+                        })
+                        .then((res) => {
+                            notifySuccess("Consent saved successfully");
+                            this.reset();
+                            resetCanvas();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            notifyError(err.response.data.message);
+                        });
+                });
         });
 
-        document.querySelector("#consent-form")?.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const form = $(this);
-                const data = (form.serializeArray());
-                data.push({
-                    name: 'signature',
-                    value: canvas.toDataURL()
-                });
-
-                const serialized = $.param(data);
-                console.log(serialized);
-
-                axios.post("{{ route('nurses.admissions.consent-form', $data) }}", serialized, {
-                        headers: {
-                            'Content-type': 'application/x-www-form-urlencoded'
-                        },
-                    })
-                    .then((res) => {
-                        notifySuccess("Consent saved successfully");
-                        this.reset();
-                        resetCanvas();
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        notifyError(err.response.data.message);
-                    });
-            });
     </script>
 @endpush
