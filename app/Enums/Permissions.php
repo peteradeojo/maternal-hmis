@@ -58,4 +58,6 @@ enum Permissions: string
     case VIEW_ACCOUNTS = 'finance.view-accounts';
     case VIEW_PAYMENTS = 'finance.view-payments';
     case GET_PAYMENT_REPORTS = 'finance.export-payment-reports';
+
+    case PRINT_VISIT = 'reports.print-visit';
 }

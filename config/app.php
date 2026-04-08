@@ -4,6 +4,7 @@ use App\Enums\AncCategory;
 use App\Enums\Department;
 use App\Enums\MaritalStatus;
 use App\Enums\Permissions;
+use App\Enums\Roles;
 use App\Enums\Status;
 use App\Providers\HelperProvider;
 use App\Services\TreatmentService;
@@ -201,6 +202,7 @@ return [
         'Status' => Status::class,
         'TreatmentService' => TreatmentService::class,
         'Permissions' => Permissions::class,
+        'Roles' => Roles::class,
     ])->toArray(),
 
     'currency' => '₦',

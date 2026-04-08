@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Enums\Permissions;
+use App\Enums\Roles;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Auth\Access\Response;
@@ -106,5 +108,10 @@ class VisitPolicy
     public function forceDelete(User $user, Visit $visit): bool
     {
         return $user->hasRole('admin');
+    }
+
+    public function print(User $user, Visit $visit)
+    {
+        return $user->hasRole([Roles::Admin, Roles::Doctor]) || $user->checkPermissionTo(Permissions::PRINT_VISIT);
     }
 }

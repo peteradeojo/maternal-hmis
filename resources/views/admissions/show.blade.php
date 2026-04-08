@@ -27,7 +27,7 @@
     </x-modal>
 
     <div class="container">
-        <div class="grid md:grid-cols-6 gap-6">
+        <div class="grid sm:grid-cols-6 gap-6">
             <div class="card col-span-full">
                 <x-patient-profile :patient="$data->patient" />
             </div>
@@ -123,7 +123,7 @@
                 <div class="flex-center justify-between">
                     <p class="card-header">Vitals</p>
 
-                    @role('nurse')
+                    @role(['nurse', Roles::RegisteredNurse])
                         <button @click="$dispatch('open-vitals-form')" class="btn bg-blue-500 text-white">Add <i
                                 class="fa fa-plus"></i></button>
                     @endrole
@@ -133,7 +133,8 @@
 
             <div class="card col-span-full">
                 <x-tabs_v2 :options="[
-                    $user->hasRole('doctor') ? 'History & Plan' : 'Admission Plan',
+                    $user->hasRole('doctor') ? 'History & Plan' : null,
+                    $user->hasRole('nurse') ? 'Admission Plan' : null,
                     $user->hasRole('doctor') ? 'Drug Chart' : null,
                     'Continuation notes',
                     'Operation Notes',
@@ -144,7 +145,7 @@
 
 
                     {{-- History & Plan / Admission Plan --}}
-                    @role('doctor')
+                    @role(Roles::Doctor)
                         <div class="tab p-2">
                             <p class="basic-header">Patient History</p>
 
@@ -196,14 +197,16 @@
                             <p class="basic-header">Admission Plan</p>
                             <livewire:admissions.plan :visit="$data->visit->visit" :admission="$data" />
                         </div>
-                    @else
+                    @endrole
+
+                    @role([Roles::Nurse, Roles::RegisteredNurse])
                         <div class="tab p-2">
                             <h2>Admission Plan</h2>
                             <p class="p-1"><b>Indication for admission:</b> {{ $data->plan->indication }}</p>
                             <div class="py-2">
                                 <h2 class="header">Drugs</h2>
                                 <p><i><b>NB:</b> Tick boxes to submit administration</i></p>
-                                <form action="?submit=treatment-log" method="post">
+                                <form action="{{route('nurses.admissions.show', $data)}}?submit=treatment-log" method="post">
                                     @csrf
                                     <table class="table-list">
                                         <thead>

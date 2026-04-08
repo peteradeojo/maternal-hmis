@@ -9,7 +9,7 @@
             @livewire('doctor.waiting-patients', ['user' => $user])
         @endrole
 
-        @role('nurse')
+        @role(['nurse', Roles::RegisteredNurse])
             @livewire('nursing.vital-list')
         @endrole
 

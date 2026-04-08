@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\AppNotifications;
 use App\Enums\Department;
+use App\Enums\Roles;
 use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionTreatments;
 use App\Models\ConsultationNote;
 use App\Models\OperationNote;
 use App\Models\ProcedureConsent;
+use App\Models\User;
 use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
@@ -169,6 +171,7 @@ class AdmissionsController extends Controller
     {
         $this->authorize('update', $admission);
         if (!$request->isMethod('POST')) {
+            $allowedUsers = User::role([Roles::RegisteredNurse])->get();
             $ministered = explode(',', $request->query('treatments'));
             $treatments = $admission->plan->prescription?->lines()->whereIn('id', $ministered)->get();
 
@@ -176,14 +179,28 @@ class AdmissionsController extends Controller
                 return redirect()->back()->withErrors("Malformed request.");
             }
 
-            return view('nursing.admissions.log-treatment', ['treatments' => $treatments, 'admission' => $admission]);
+            return view('nursing.admissions.log-treatment', [
+                'treatments' => $treatments,
+                'admission' => $admission,
+                'allowedUsers' => $allowedUsers
+            ]);
         }
 
         if ($request->has('confirm')) {
-            $user = $request->user();
+            // Logic to verify authorizing user.
+            $request->validate([
+                'authorized_by' => 'nullable|exists:users,id',
+            ]);
+
+            $user = $request->authorized_by ? User::find($request->authorized_by) : $request->user();
+            if (!$user || !$user->hasRole([Roles::Doctor, Roles::RegisteredNurse])) {
+                return redirect()->back()->withErrors("Cannot authorize the treatment.");
+            }
+
             $records = array_map(function ($t) use (&$user, &$admission) {
                 return ['treatment_id' => $t, 'minister_id' => $user->id, 'admission_id' => $admission->id];
             }, $request->treatments);
+
             try {
                 foreach ($records as $r) {
                     AdmissionTreatments::create($r);

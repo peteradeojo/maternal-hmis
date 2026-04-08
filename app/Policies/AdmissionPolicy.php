@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Roles;
 use App\Models\Admission;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -37,7 +38,7 @@ class AdmissionPolicy
      */
     public function update(User $user, Admission $admission): bool
     {
-        return $user->hasAnyRole(['admin', 'doctor', 'nurse']);
+        return $user->hasAnyRole(['admin', 'doctor', 'nurse', Roles::RegisteredNurse]);
     }
 
     /**

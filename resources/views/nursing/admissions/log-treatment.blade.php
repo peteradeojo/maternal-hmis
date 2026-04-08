@@ -6,7 +6,6 @@
             {{ $admission->patient->name }} ({{ $admission->ward->name }})
         </div>
         <div class="body py">
-            {{-- @dump($treatments) --}}
             <p class="bold pb-1">Confirm administration for the following medication for {{ $admission->patient->name }}?</p>
             <form action="?confirm" method="post">
                 @csrf
@@ -18,6 +17,18 @@
                         {{ $t->duration }}</p>
                     <input type="hidden" name="treatments[]" value="{{ $t->id }}">
                 @endforeach
+
+                @cannot('update', $admission)
+                    <div class="form-group">
+                        <label>Select authorizing officer</label>
+                        <select name="authorized_by" class="form-control" required>
+                            <option disabled selected>Select</option>
+                            @foreach ($allowedUsers as $aU)
+                                <option value="{{ $aU->id }}">{{ $aU->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endcannot
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-red">Confirm</button>

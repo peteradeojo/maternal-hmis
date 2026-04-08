@@ -1,12 +1,10 @@
 <?php
 
 use App\Enums\AncCategory;
-use App\Enums\AppNotifications;
-use App\Enums\Department;
 use App\Enums\Roles;
 use App\Models\User;
 use App\Services\Comms;
-use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Arr;
 
 const T1 = 0.3;
 
@@ -25,10 +23,7 @@ function getRouteMap()
         [
             'role' => Roles::RegisteredNurse->value,
             'label' => ['Nursing', 'fa-user-nurse'],
-            'routes' => [
-                'Admissions' => [route('nurses.admissions.get'), 'fa-bed', null],
-                'Antenatal Bookings' => [route('nurses.anc-bookings'), 'fa-female', null],
-            ],
+            'routes' => [],
         ],
         [
             'role' => 'nurse',
@@ -130,10 +125,22 @@ function authorizedRoutes()
 
     foreach ($routeMap as $map) {
         if ($user->hasAnyRole('superadmin', $map['role'])) {
+
             unset($map['role']);
-            $routes[] = $map;
+
+            if ($match = array_filter($routes, fn($r) => $r['label'][0] == $map['label'][0])) {
+                $key = (array_keys($match))[0] ?? null;
+                if ($key === null) continue;
+
+                $map['routes'] = array_merge($map['routes'], $match[$key]['routes']);
+                $routes[$key] = $map;
+            } else {
+                $routes[] = $map;
+            }
         }
     }
+
+    // dd($routes);
 
     return $routes;
 }
