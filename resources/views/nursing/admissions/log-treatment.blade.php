@@ -18,7 +18,7 @@
                     <input type="hidden" name="treatments[]" value="{{ $t->id }}">
                 @endforeach
 
-                @cannot('update', $admission)
+                @cannot('administerTreatment', $admission)
                     <div class="form-group">
                         <label>Select authorizing officer</label>
                         <select name="authorized_by" class="form-control" required>

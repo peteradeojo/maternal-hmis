@@ -38,7 +38,7 @@ class AdmissionPolicy
      */
     public function update(User $user, Admission $admission): bool
     {
-        return $user->hasAnyRole(['admin', 'doctor', 'nurse', Roles::RegisteredNurse]);
+        return $user->hasAnyRole(['admin', 'doctor', 'nurse', Roles::RegisteredNurse->value]);
     }
 
     /**
@@ -63,5 +63,9 @@ class AdmissionPolicy
     public function forceDelete(User $user, Admission $admission): bool
     {
         return $user->hasRole('admin');
+    }
+
+    public function administerTreatment(User $user, Admission $admission): bool {
+        return $user->hasRole([Roles::Doctor->value, Roles::RegisteredNurse->value]);
     }
 }
