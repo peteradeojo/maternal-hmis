@@ -7,6 +7,7 @@ enum Roles: string
     case Admin = 'admin';
     case Doctor = 'doctor';
     case Nurse = 'nurse';
+    case RegisteredNurse = 'registered_nurse';
     case Record = 'record';
     case Pharmacy = 'pharmacy';
     case Lab = 'lab';

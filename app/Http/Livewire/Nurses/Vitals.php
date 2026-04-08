@@ -71,8 +71,8 @@ class Vitals extends Component
     #[On('saved')]
     public function handleVitalsSaved()
     {
-        if ($this->showResults) {
-            $this->evt->svitals->refresh();
-        }
+        // if ($this->showResults) {
+            // $this->evt->svitals->refresh();
+        // }
     }
 }

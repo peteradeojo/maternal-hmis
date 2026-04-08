@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\Department;
 use App\Enums\Permissions;
+use App\Enums\Roles;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -27,8 +28,8 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create roles and assign existing permissions
         $roles = [
-            'admin' => array_map(fn($p) => $p->value, $permissions),
-            'doctor' => [
+            Roles::Admin->value => array_map(fn($p) => $p->value, $permissions),
+            Roles::Doctor->value => [
                 Permissions::VIEW_PATIENTS,
                 Permissions::VIEW_VISITS,
                 Permissions::EDIT_VISITS,
@@ -46,6 +47,14 @@ class RoleAndPermissionSeeder extends Seeder
                 Permissions::VIEW_PATIENTS,
                 Permissions::VIEW_VISITS,
                 Permissions::DISCHARGE_PATIENT,
+            ],
+            Roles::RegisteredNurse->value => [
+                Permissions::VIEW_ADMISSIONS,
+                Permissions::EDIT_ADMISSIONS,
+                Permissions::VIEW_PATIENTS,
+                Permissions::VIEW_VISITS,
+                Permissions::DISCHARGE_PATIENT,
+                Permissions::GIVE_TREATMENT,
             ],
             'record' => [
                 Permissions::VIEW_PATIENTS,

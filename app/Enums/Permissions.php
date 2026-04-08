@@ -20,6 +20,7 @@ enum Permissions: string
     case EDIT_ADMISSIONS = 'edit admissions';
     case ASSIGN_WARD = 'assign ward';
     case DISCHARGE_PATIENT = 'discharge patient';
+    case GIVE_TREATMENT = 'administer treatment';
 
     case VIEW_BILLS = 'view bills';
     case CREATE_BILLS = 'create bills';

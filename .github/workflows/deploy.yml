@@ -74,5 +74,6 @@ jobs:
             npm ci
 
             npm run build
+            php artisan db:seed --class=RoleAndPermissionSeeder
             ./cloudflare_purge.sh
             sudo supervisorctl reload
