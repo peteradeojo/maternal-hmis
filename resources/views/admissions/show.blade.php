@@ -350,6 +350,95 @@
             </div>
         </div>
     </div>
+
+    <x-overlay-modal id="op-note-form" title="New Operation Note">
+        <form id="op-note" method="post">
+            <div class="grid gap-x-2 grid-cols-2">
+                <div class="form-group">
+                    <label>Unit</label>
+                    <input type="text" name="unit" id="" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Consultant</label>
+                    <input type="text" name="consultant" value="{{ auth()->user()->name }}" id=""
+                        class="form-control">
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-x-2 mt-5">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="operation_date" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Surgeon(s)</label>
+                    <input type="text" name="surgeons" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Assistant(s)</label>
+                    <input type="text" name="assistants" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Scrub Nurse</label>
+                    <input type="text" name="scrub_nurse" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Circulating Nurse</label>
+                    <input type="text" name="circulating_nurse" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Indications for Operation</label>
+                    <textarea name="indication" required class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Anaesthesist(s)</label>
+                    <input type="text" name="anaesthesists" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Type of Anaesthesia</label>
+                    <input type="text" name="anaesthesia_type" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Incision</label>
+                <input type="text" name="incision" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Findings</label>
+                <textarea name="findings" rows="5" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Procedure</label>
+                <x-input-text name="procedure_name" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label>Procedure Details</label>
+                <textarea name="procedure" rows="15" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn bg-blue-400 text-white">Submit</button>
+            </div>
+        </form>
+    </x-overlay-modal>
+
+    <x-modal id="discharge-form" title="Discharge Patient">
+        <form
+            @submit.prevent="submitForm($event.target, '{{ route('api.doctor.discharge', $data) }}').then((res) => {notifySuccess('Patient discharged successfully.');})">
+            <div class="form-group">
+                <label>Discharge Date</label>
+                <x-input-datetime name="discharged_on" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Discharge Note</label>
+                <x-input-textarea name="discharge_summary" class="form-control" rows="5" />
+            </div>
+            <div class="form-group">
+                <button class="btn bg-blue-400 text-white">Submit</button>
+            </div>
+        </form>
+    </x-modal>
 @endsection
 
 @push('scripts')
@@ -375,6 +464,10 @@
 
         $(document).ready(() => {
             initTab(document.querySelector("#tablist"));
+
+            asyncForm("#op-note", "{{ route('api.doctor.save-op-note', $data) }}", (e, data) => {
+                window.location.reload()
+            });
 
             $(document).on('click', '.review-btn', (e) => {
                 useGlobalModal((a) => {

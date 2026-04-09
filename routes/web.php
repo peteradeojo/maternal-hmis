@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\IT\CrmController;
 use App\Http\Controllers\Records\PatientsController;
+use App\Http\Controllers\VisitsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,5 +66,6 @@ Route::middleware(['auth', 'active_users'])->group(function () {
     Route::match(['GET', 'POST'], '/dropbox', [CrmController::class, 'dropbox'])->name('dropbox');
     Route::get('/dropbox/{entry}', [CrmController::class, 'downloadMedia'])->name('dropbox.download');
     Route::get('/inv', [InventoryController::class, 'getInventory']);
-});
 
+    Route::get('visit-report/{visit}', [VisitsController::class, 'generateReport'])->name('generate-visit-report');
+});
