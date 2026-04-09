@@ -23,7 +23,10 @@ function getRouteMap()
         [
             'role' => Roles::RegisteredNurse->value,
             'label' => ['Nursing', 'fa-user-nurse'],
-            'routes' => [],
+            'routes' => [
+                'Admissions' => [route('nurses.admissions.get'), 'fa-bed', null],
+                'Antenatal Bookings' => [route('nurses.anc-bookings'), 'fa-female', null],
+            ],
         ],
         [
             'role' => 'nurse',
@@ -47,6 +50,7 @@ function getRouteMap()
             'label' => ['Administration', 'fa-user-tie'],
             'routes' => [
                 'Staff' => [route('it.staff'), 'fa-people', null],
+                'History' => [route('doctor.history'), 'fa-clock', null],
                 'Wards' => [route('it.wards'), 'fa-bed', null],
                 'Products' => [route('it.products'), 'fa-item', null],
                 'CRM' => [route('it.crm-index'), 'fa-list', null],

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permissions;
 use App\Enums\Roles;
 use App\Models\Admission;
 use App\Models\User;
@@ -65,7 +66,8 @@ class AdmissionPolicy
         return $user->hasRole('admin');
     }
 
-    public function administerTreatment(User $user, Admission $admission): bool {
-        return $user->hasRole([Roles::Doctor->value, Roles::RegisteredNurse->value]);
+    public function administerTreatment(User $user, Admission $admission): bool
+    {
+        return $user->hasRole([Roles::Doctor->value, Roles::RegisteredNurse->value]) && $user->checkPermissionTo(Permissions::GIVE_TREATMENT->value);
     }
 }

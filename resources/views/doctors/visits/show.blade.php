@@ -2,7 +2,8 @@
 
 @section('content')
     <div class="container p-4 bg-white">
-        <button onclick="window.print()" class="btn btn-green btn-sm no-print">Print</button>
+        <button class="report btn btn-green btn-sm no-print">Download Report</button>
+        <a class="btn bg-blue-500 text-white no-print" href="{{route('generate-visit-report', $visit)}}">View Report</a>
         <div class="body">
             <x-patient-profile :patient="$visit->patient" />
 
@@ -23,3 +24,15 @@
         <x-reports.encounter.admission :visit="$visit" />
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(() => {
+            $('.btn.report').on('click', async function(e) {
+                const res = await axios.get("{{ route('generate-visit-report', $visit) }}", {
+                    Accept: 'application/json'
+                });
+            });
+        });
+    </script>
+@endpush

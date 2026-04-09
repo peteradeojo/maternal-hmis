@@ -19,7 +19,7 @@ trait HasVisitData
 {
     public function notes()
     {
-        return $this->morphMany(ConsultationNote::class, 'visit')->latest();
+        return $this->morphMany(ConsultationNote::class, 'visit')->orderBy('created_at'); //->latest();
     }
 
     public function patient()

@@ -171,7 +171,7 @@ class AdmissionsController extends Controller
     {
         $this->authorize('update', $admission);
         if (!$request->isMethod('POST')) {
-            $allowedUsers = User::role([Roles::RegisteredNurse])->get();
+            $allowedUsers = User::role([Roles::RegisteredNurse->value])->get();
             $ministered = explode(',', $request->query('treatments'));
             $treatments = $admission->plan->prescription?->lines()->whereIn('id', $ministered)->get();
 

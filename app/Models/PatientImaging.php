@@ -80,7 +80,7 @@ class PatientImaging extends Model
     public function getResults()
     {
         if (empty($this->results)) {
-            return;
+            return 'No result recorded.';
         }
 
         if ($this->results->report_type == 'obstetric') {
