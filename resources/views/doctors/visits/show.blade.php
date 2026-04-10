@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container p-4 bg-white">
-        <button class="report btn btn-green btn-sm no-print">Download Report</button>
+        {{-- <button class="report btn btn-green btn-sm no-print">Download Report</button> --}}
         <a class="btn bg-blue-500 text-white no-print" href="{{route('generate-visit-report', $visit)}}">View Report</a>
         <div class="body">
             <x-patient-profile :patient="$visit->patient" />
