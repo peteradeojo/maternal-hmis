@@ -18,7 +18,7 @@
             <tbody>
                 @forelse($visit->svitals as $vital)
                     <tr>
-                        <td>{{ $vital->created_at->format('d M Y H:i') }}</td>
+                        <td>{{ ($vitals->recorded_date ?? $vital->created_at)->format('d M Y H:i') }}</td>
                         <td>{{ $vital->blood_pressure ?? '-' }}</td>
                         <td>{{ $vital->weight ?? '-' }}</td>
                         <td>{{ $vital->temperature ?? '-' }}</td>
