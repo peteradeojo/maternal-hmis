@@ -22,7 +22,7 @@
 
     <script>
         (async () => {
-            if (["portal.maternalchildhosp.com"].includes(location.hostname)) {
+            if (location.hostname == 'portal.maternalchildhosp.com')) {
                 try {
                     const res = await fetch("http://localhost:8000/health-check");
                     if (res.ok) {
