@@ -38,11 +38,12 @@
                             <td>
                                 @if ($count > 0)
                                     @foreach ($slots as $administration)
-                                        <x-tooltip :content="$administration->created_at->format('h:i A') .
+                                        {{-- <x-tooltip :content="$administration->created_at->format('h:i A') .
                                             ' - ' .
                                             $administration->minister?->name">
                                             <i class="fa fa-square text-green-500"></i>
-                                        </x-tooltip>
+                                        </x-tooltip> --}}
+                                        <span>&times;</span>
                                     @endforeach
                                 @endif
                             </td>
