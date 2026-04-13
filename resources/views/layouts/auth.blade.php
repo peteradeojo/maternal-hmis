@@ -13,10 +13,35 @@
     @vite(['resources/css/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-green-100 w-dvw h-dvh">
-    <main class="grid place-items-center w-full h-full">
+<body class="bg-green-100 w-dvw h-dvh grid place-items-center">
+    <x-loader />
+
+    <main class="hidden place-items-center w-full h-full">
         @yield('content')
     </main>
+
+    <script>
+        (async () => {
+            if (["portal.maternalchildhosp.com"].includes(location.hostname)) {
+                try {
+                    const res = await fetch("http://localhost:8000/health-check");
+                    if (res.ok) {
+                        window.location.href = "https://portal.lan";
+                    }
+                } catch (error) {
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded' , () => {
+            document.querySelector("body").classList.remove("grid", "place-items-center");
+            document.querySelector("#page-loader").remove();
+            document.querySelector("main").classList.remove("hidden");
+            document.querySelector("main").classList.add("grid");
+        });
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"
         integrity="sha512-6BTOlkauINO65nLhXhthZMtepgJSghyimIalb+crKRPhvhmsCdnIuGcVbR5/aQY2A+260iC1OPy1oCdB6pSSwQ=="
@@ -34,7 +59,7 @@
             };
             plausible.init()
         </script>
-    @elseif (str_ends_with(request()->host(), "maternalchildhosp.com"))
+    @elseif (str_ends_with(request()->host(), 'maternalchildhosp.com'))
         <!-- Privacy-friendly analytics by Plausible -->
         <script async src="https://analytics.maternalchildhosp.com/js/pa-j72StbS78esaf_3yXCg9m.js"></script>
         <script>
@@ -46,7 +71,6 @@
             plausible.init()
         </script>
     @endif
-
 </body>
 
 </html>
