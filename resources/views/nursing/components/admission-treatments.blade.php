@@ -1,3 +1,5 @@
+@props(['treatment_chart_mode' => 'report'])
+
 <div class="overflow-x-auto">
     <table class="table min-w-fit">
         <thead>
@@ -37,14 +39,21 @@
                             @endphp
                             <td>
                                 @if ($count > 0)
-                                    @foreach ($slots as $administration)
-                                        {{-- <x-tooltip :content="$administration->created_at->format('h:i A') .
-                                            ' - ' .
-                                            $administration->minister?->name">
-                                            <i class="fa fa-square text-green-500"></i>
-                                        </x-tooltip> --}}
-                                        <span>&times;</span>
-                                    @endforeach
+                                    @switch($treatment_chart_mode)
+                                        @case('report')
+                                        @case('reporting')
+                                            <span>{{ join(' / ', $slots->map(fn($a) => $a->created_at->format('H:i'))->toArray()) }}</span>
+                                        @break
+
+                                        @default
+                                            @foreach ($slots as $administration)
+                                                <x-tooltip :content="$administration->created_at->format('h:i A') .
+                                                    ' - ' .
+                                                    $administration->minister?->name">
+                                                    <i class="fa fa-square text-green-500"></i>
+                                                </x-tooltip>
+                                            @endforeach
+                                    @endswitch
                                 @endif
                             </td>
                         @endforeach
