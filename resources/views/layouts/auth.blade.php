@@ -24,7 +24,7 @@
         (async () => {
             if (location.hostname == 'portal.maternalchildhosp.com') {
                 try {
-                    const res = await fetch("https://portal.lan/health-check");
+                    const res = await fetch("https://portal.lan/api/health-check");
                     if (res.ok) {
                         window.location.href = "https://portal.lan";
                     }

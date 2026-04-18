@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // });
+Route::get('/health-check', function () {
+    return response()->json(['status' => 'ok'], 200);
+})->middleware('throttle:10,1');
 
 Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
     Route::prefix('records')->name('api.records.')->group(base_path('routes/api/records.php'));
