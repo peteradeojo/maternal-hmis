@@ -126,7 +126,7 @@ class Patient extends Model
 
     public function insurance()
     {
-        return $this->hasMany(InsuranceProfiles::class, 'patient_id');
+        return $this->hasMany(InsuranceProfiles::class, 'patient_id')->active()->latest();
     }
 
     public function visits()
