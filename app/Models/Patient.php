@@ -126,7 +126,8 @@ class Patient extends Model
 
     public function insurance()
     {
-        return $this->hasMany(InsuranceProfiles::class, 'patient_id')->active()->latest();
+        // TODO: Will need to re-scope this when NHIS functionality for verifying insurance information is implemented
+        return $this->hasMany(InsuranceProfiles::class, 'patient_id')->pending(); //->active();
     }
 
     public function visits()
@@ -175,7 +176,7 @@ class Patient extends Model
 
     public function getAge() {
         return $this->dob?->diff(skip: [
-            
+
         ]);
     }
 }
