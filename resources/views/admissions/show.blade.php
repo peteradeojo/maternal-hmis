@@ -324,7 +324,7 @@
                         {{-- Discharge --}}
                         <div class="tab p-2">
                             <form action="{{ route('nurses.admissions.discharge', $data) }}" method="post"
-                                x-data="{ dama: true }">
+                                x-data="{ dama: false }">
                                 @csrf
                                 <template x-if="!dama">
                                     <span>
