@@ -230,3 +230,63 @@ window.removeChartData = function (chart) {
     });
     chart.update();
 }
+
+window.initSignatureCanvas = function () {
+    const canvases = document.querySelectorAll(".signature");
+
+    canvases?.forEach((canvas) => {
+        const parent = canvas.parentElement;
+        const canvasInput = parent.querySelector("input.signature-value");
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        // Line Style
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
+        ctx.lineCap = 'round';
+
+        function startDrawing(e) {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function draw(e) {
+            if (drawing) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke(); // This draws the line as you move
+            }
+        }
+
+        function endDraw() {
+            drawing = false;
+        }
+
+        function resetCanvas() {
+            ctx.reset();
+            canvas.removeEventListener('mousedown', startDrawing);
+            canvas.removeEventListener('touchstart', startDrawing);
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('touchstart', startDrawing);
+            canvasInput.value = "";
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', endDraw);
+
+        // Pro tip: Event Listeners for touch interaction
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchend', endDraw);
+        canvas.addEventListener('touchmove', draw);
+
+        parent.querySelector(".btn.clear-signature")?.addEventListener('click', resetCanvas);
+
+        parent.querySelector(".btn.save-signature").addEventListener('click', (e) => {
+            drawing = false;
+            canvas.removeEventListener('mousedown', startDrawing);
+            canvas.removeEventListener('touchstart', startDrawing);
+            canvasInput.value = canvas.toDataURL(); canvas.classList.add('bg-gray-400');
+        });
+    });
+}
