@@ -4,7 +4,7 @@
     <div class="card py px">
         <div class="header">{{ $patient->name }}</div>
         <div class="body">
-            <p><b>Admitted by:</b> {{ $admission->plan->user->name }}</p>
+            <p><b>Admitted by:</b> {{ $admission->plan?->user->name }}</p>
             <p><b>Date/Time:</b> {{ $admission->created_at }}</p>
 
             <p class="bold">Admission Plan</p>
