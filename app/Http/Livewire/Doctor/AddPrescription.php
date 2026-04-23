@@ -14,7 +14,7 @@ class AddPrescription extends Component
     /**
      * @var Visit
      */
-    public $visit;
+    public $event;
     public $search;
 
     public $dispatchEvent;
@@ -35,7 +35,9 @@ class AddPrescription extends Component
 
     public function mount($visit, $dispatch = false, $display = true)
     {
-        $this->visit = $visit->load(['prescriptions.prescriptionable', 'prescription']);
+        if ($visit) {
+            $this->event = $visit->load(['prescriptions.prescriptionable', 'prescription']);
+        }
         $this->dispatchEvent = $dispatch;
         $this->display = $display;
 
@@ -73,8 +75,8 @@ class AddPrescription extends Component
             return;
         }
 
-        $this->visit->addPrescription($this->visit->patient, $this->selections, $dto, $this->visit);
-        $this->visit->refresh();
+        $this->event->addPrescription($this->event->patient, $this->selections, $dto, $this->event);
+        $this->event->refresh();
 
         $this->selections = null;
 
@@ -83,7 +85,7 @@ class AddPrescription extends Component
 
     public function edit($id)
     {
-        $this->updating = $this->visit->prescriptions()->where('id', $id)->first();
+        $this->updating = $this->event->prescriptions()->where('id', $id)->first();
 
         $this->requestForm->dosage = $this->updating->dosage;
         $this->requestForm->duration = $this->updating->duration;
@@ -100,7 +102,7 @@ class AddPrescription extends Component
     public function saveUpdate()
     {
         $this->updating->update($this->requestForm->all());
-        $this->visit->refresh();
+        $this->event->refresh();
         $this->updating = null;
     }
 
@@ -111,8 +113,8 @@ class AddPrescription extends Component
 
     public function deleteRequestItem($id)
     {
-        $this->visit->prescription?->lines()->where('id', $id)->delete();
-        $this->visit->refresh();
+        $this->event->prescription?->lines()->where('id', $id)->delete();
+        $this->event->refresh();
         $this->dispatch('treatments_updated');
     }
 

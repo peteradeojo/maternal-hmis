@@ -142,7 +142,22 @@
                     @endif --}}
 
                     @if ($display)
-                        @forelse ($visit->prescription?->lines ?? [] as $prescription)
+                        @php
+                            $_prescriptions = collect()->merge($event?->prescription?->lines ?? []);
+
+                            if (!empty($event->visit)) {
+                                $_prescriptions = $_prescriptions->merge($event->visit?->prescription?->lines);
+                            }
+
+                            if (!empty($event->treatments)) {
+                                $prescriptions = $_prescriptions->merge($event->treatments);
+                            }
+
+                            if ($event && $event::class == '\App\Models\AdmissionPlan') {
+                                $_prescriptions = $_prescriptions->merge($event->admission->visit->prescription?->lines);
+                            }
+                        @endphp
+                        @forelse ($_prescriptions ?? [] as $prescription)
                             <tr>
                                 <td>{{ $prescription->item?->name ?? $prescription->description }}</td>
                                 <td>{{ $prescription->dosage }}</td>

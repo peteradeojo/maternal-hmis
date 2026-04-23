@@ -203,7 +203,7 @@
                     @role([Roles::Nurse, Roles::RegisteredNurse])
                         <div class="tab p-2">
                             <h2>Admission Plan</h2>
-                            <p class="p-1"><b>Indication for admission:</b> {{ $data->plan->indication }}</p>
+                            <p class="p-1"><b>Indication for admission:</b> {{ $data->plan?->indication }}</p>
                             <div class="py-2">
                                 <h2 class="header">Drugs</h2>
                                 <p><i><b>NB:</b> Tick boxes to submit administration</i></p>
@@ -221,7 +221,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data->plan->prescription?->lines ?? [] as $p)
+                                            @forelse ($data->plan?->prescription?->lines ?? [] as $p)
                                                 <tr>
                                                     <td>{{ $p->item?->name ?? $p->description }}</td>
                                                     <td>{{ $p->dosage }}</td>
@@ -236,7 +236,7 @@
                                             @endforelse
                                         </tbody>
                                     </table>
-                                    @if ($data->plan->prescription?->lines->count() > 0 && $data->in_ward)
+                                    @if ($data->plan?->prescription?->lines->count() > 0 && $data->in_ward)
                                         <div class="pt-1"></div>
                                         <button type="submit" class="btn btn-red">Submit</button>
                                     @endif
