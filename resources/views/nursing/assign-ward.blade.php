@@ -12,8 +12,9 @@
             @include('components.admission-plan', ['data' => $admission])
         </div>
     </div>
-    </div>
+
     <div class="pt-2"></div>
+
     <div class="card py px">
         <div class="header">Assign Ward</div>
         <form action="" method="post">
@@ -21,9 +22,8 @@
             <div class="form-group">
                 <select name="ward" class="form-control">
                     @foreach ($wards as $ward)
-                        <option value="{{ $ward->id }}" @if ($ward->available_beds == 0)
-                            disabled
-                        @endif >{{ $ward->name }} ({{ $ward->beds - $ward->filled_beds }})
+                        <option value="{{ $ward->id }}" @if ($ward->available_beds == 0) disabled @endif>
+                            {{ $ward->name }} ({{ $ward->beds - $ward->filled_beds }})
                             ({{ $ward->type }})
                         </option>
                     @endforeach
