@@ -44,7 +44,7 @@
                             </tr>
                             <tr>
                                 <td>Admitted by:</td>
-                                <td>{{ $data->plan->user->name }}</td>
+                                <td>{{ $data->plan?->user->name }}</td>
                             </tr>
                             <tr>
                                 <td>Admitted on:</td>
@@ -52,7 +52,7 @@
                             </tr>
                             <tr>
                                 <td>Indication</td>
-                                <td>{{ $data->plan->indication ?? 'No indication' }}</td>
+                                <td>{{ $data->plan?->indication ?? 'No indication' }}</td>
                             </tr>
                             <tr>
                                 <td>Treatment Plan</td>
