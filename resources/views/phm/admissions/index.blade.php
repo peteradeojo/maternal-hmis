@@ -36,6 +36,7 @@
         $(() => {
             $("#table").DataTable({
                 ordering: false,
+                processing: true,
             });
         });
     </script>

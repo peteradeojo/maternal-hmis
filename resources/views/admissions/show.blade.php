@@ -186,7 +186,8 @@
 
                                         @foreach ($exam->specifics as $k => $sp)
                                             <div class="bg-gray-100 p-2">
-                                                <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b></p>
+                                                <p><b>{{ unslug($k, fn($str) => ucwords(str_replace('digital', '/', $str))) }}</b>
+                                                </p>
                                                 <p>{{ $sp ?? '-' }}</p>
                                             </div>
                                         @endforeach
@@ -206,7 +207,8 @@
                             <div class="py-2">
                                 <h2 class="header">Drugs</h2>
                                 <p><i><b>NB:</b> Tick boxes to submit administration</i></p>
-                                <form action="{{route('nurses.admissions.show', $data)}}?submit=treatment-log" method="post">
+                                <form action="{{ route('nurses.admissions.show', $data) }}?submit=treatment-log"
+                                    method="post">
                                     @csrf
                                     <table class="table-list">
                                         <thead>
@@ -321,19 +323,78 @@
                     @role('nurse')
                         {{-- Discharge --}}
                         <div class="tab p-2">
-                            <form action="{{ route('nurses.admissions.discharge', $data) }}" method="post">
+                            <form action="{{ route('nurses.admissions.discharge', $data) }}" method="post"
+                                x-data="{ dama: true }">
                                 @csrf
+                                <template x-if="!dama">
+                                    <span>
+                                        <div class="form-group">
+                                            <label>Discharge Date</label>
+                                            <x-input-datetime name="discharged_on" class="form-control"
+                                                value="{{ $data->discharged_on }}" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Discharge summary</label>
+                                            <x-input-textarea name="discharge_summary" rows="5" class="form-control"
+                                                value="{{ $data->discharge_summary }}" />
+                                        </div>
+                                    </span>
+                                </template>
+
+                                <template x-if="dama">
+                                    <span>
+                                        <p class="uppercase text-center basic-header">Discharge Against Medical Advice</p>
+                                        <input type="hidden" name="dama" />
+
+                                        <div>
+                                            <p>This is to certify that I, <x-input-text required name="name" />. discharged
+                                                my <x-input-text name="relationship" required />.
+                                                against the advice of the attending physician and of the hospital
+                                                administration. I acknowledged that I have been informed of the risks involved
+                                                and hereby release the attending physician and hospital from all
+                                                responsibilities for ill effects which may result from such discharge.
+                                            </p>
+                                        </div>
+                                        <div class="py-8 grid grid-cols-2 gap-8">
+                                            <div>
+                                                <label>Patient name</label>
+                                                <x-input-text readonly class="form-control" name="patient" placeholder="Patient name"
+                                                    value="{{ $data->patient->name }}" required />
+                                            </div>
+                                            <div>
+                                                <label>Patient signature</label>
+                                                <x-signature-input name="patient_signature" />
+                                            </div>
+                                            <div>
+                                                <label>Relative name</label>
+                                                <x-input-text name="relative_name" />
+                                            </div>
+                                            <div>
+                                                <label>Relationship to patient</label>
+                                                <x-input-text name="relative_relationship" />
+                                            </div>
+                                            <div>
+                                                <label>Relative signature</label>
+                                                <x-signature-input name="relative_signature" />
+                                            </div>
+                                            <div></div>
+                                            <div>
+                                                <label>Nurse</label>
+                                                <x-input-text name="nurse" />
+                                            </div>
+                                            <div>
+                                                <label>Nurse Signature</label>
+                                                <x-signature-input name="nurse_signature" />
+                                            </div>
+                                        </div>
+                                    </span>
+                                </template>
+                                <label>
+                                    <input type="checkbox" x-on:change="dama = $event.target.checked"
+                                        :checked="dama ? 'checked' : ''">
+                                    DAMA?
+                                </label>
                                 <div class="form-group">
-                                    <label>Discharge Date</label>
-                                    <x-input-datetime name="discharged_on" class="form-control"
-                                        value="{{ $data->discharged_on }}" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Discharge summary</label>
-                                    <x-input-textarea name="discharge_summary" rows="5" class="form-control"
-                                        value="{{ $data->discharge_summary }}" />
-                                </div>
-                                <div class="form-group flex justify-end">
                                     <button type="submit" class="btn bg-blue-400 text-white">Discharge <i
                                             class="fa fa-wheelchair-move"></i></button>
                                 </div>
@@ -434,6 +495,8 @@
                 <label>Discharge Note</label>
                 <x-input-textarea name="discharge_summary" class="form-control" rows="5" />
             </div>
+
+
             <div class="form-group">
                 <button class="btn bg-blue-400 text-white">Submit</button>
             </div>
@@ -464,9 +527,34 @@
 
         $(document).ready(() => {
             initTab(document.querySelector("#tablist"));
+            initSignatureCanvas();
 
             asyncForm("#op-note", "{{ route('api.doctor.save-op-note', $data) }}", (e, data) => {
                 window.location.reload()
+            });
+
+            $(document).on('click', '.opnote', (e) => {
+                const {
+                    id
+                } = $(e.currentTarget).data();
+
+                useGlobalModal((a) => {
+                    a.find(MODAL_TITLE).text('Operation Note');
+                    a.find(MODAL_BODY).html(`@include('components.spinner')`);
+                    axios.get("{{ route('doctor.admission.op-note', ':op') }}".replace(':op', id))
+                        .then((res) => {
+                            a.find(MODAL_BODY).html(res.data);
+                        })
+                        .catch(err => {
+                            displayNotification({
+                                message: "An error occurred",
+                                bg: ['bg-red-500', 'text-white'],
+                                options: {
+                                    mode: 'in-app',
+                                }
+                            })
+                        });
+                });
             });
 
             $(document).on('click', '.review-btn', (e) => {
@@ -481,33 +569,32 @@
             });
 
             document.querySelector("#consent-form")?.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const form = $(this);
-                    const data = (form.serializeArray());
-                    data.push({
-                        name: 'signature',
-                        value: canvas.toDataURL()
-                    });
-
-                    const serialized = $.param(data);
-                    console.log(serialized);
-
-                    axios.post("{{ route('nurses.admissions.consent-form', $data) }}", serialized, {
-                            headers: {
-                                'Content-type': 'application/x-www-form-urlencoded'
-                            },
-                        })
-                        .then((res) => {
-                            notifySuccess("Consent saved successfully");
-                            this.reset();
-                            resetCanvas();
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            notifyError(err.response.data.message);
-                        });
+                e.preventDefault();
+                const form = $(this);
+                const data = (form.serializeArray());
+                data.push({
+                    name: 'signature',
+                    value: canvas.toDataURL()
                 });
-        });
 
+                const serialized = $.param(data);
+                console.log(serialized);
+
+                axios.post("{{ route('nurses.admissions.consent-form', $data) }}", serialized, {
+                        headers: {
+                            'Content-type': 'application/x-www-form-urlencoded'
+                        },
+                    })
+                    .then((res) => {
+                        notifySuccess("Consent saved successfully");
+                        this.reset();
+                        resetCanvas();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        notifyError(err.response.data.message);
+                    });
+            });
+        });
     </script>
 @endpush
