@@ -40,7 +40,7 @@ class Plan extends Component
 
     public function mount($visit, $admission = null)
     {
-        if (!empty($admission)) {
+        if ($admission && $admission->plan != null) {
             $this->tests = $admission->plan->tests()->status(Status::pending)->get();
             $this->investigations = $admission->plan->scans;
 
