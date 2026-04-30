@@ -221,7 +221,7 @@ class AdmissionsController extends Controller
             'note' => 'nullable|string',
         ]);
 
-        if (!empty($visit->admission) && ($visit->admission->status != Status::cancelled->value || $visit->admission->status != Status::closed->value)) {
+        if ($visit->admission != null && ($visit->admission->status == Status::cancelled->value || $visit->admission->status == Status::closed->value) == false) {
             return response()->json([
                 'message' => "There is still an ongoing admission for this patient",
                 'ok' => false,
@@ -253,6 +253,12 @@ class AdmissionsController extends Controller
             'event_type' => $plan::class,
             'event_id' => $plan->id,
         ]));
+
+        if ($visit->prescription) {
+            $prescription = $visit->prescription;
+            $prescription->event()->associate($plan);
+            $prescription->save();
+        }
 
         // TODO: Redirect all scan requests to Radiology
         // * $visit->radios->each(fn ($scan) => $scan->update([]));
