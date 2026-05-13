@@ -50,7 +50,7 @@ class PatientsController extends Controller
                 $query = $query->where('awaiting_doctor', true);
         }
 
-        return $this->dataTable($request, $query, [
+        return $this->dataTable($request, $query->latest(), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
                     $query->where('name', 'ilike', "{$search}%");

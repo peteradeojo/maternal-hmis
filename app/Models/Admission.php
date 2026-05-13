@@ -132,4 +132,8 @@ class Admission extends Model implements OperationalEvent
     public function consent_forms() {
         return $this->hasMany(ProcedureConsent::class, 'admission_id');
     }
+
+    public function dama() {
+        return $this->hasOne(Dama::class);
+    }
 }

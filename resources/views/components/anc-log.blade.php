@@ -27,6 +27,11 @@
                         value="{{ $visit?->presentation }}" />
                 </div>
                 <div class="form-group">
+                    <label>Lie</label>
+                    <x-input-text name="lie" placeholder="Lie" class="form-control"
+                        value="{{ $visit?->lie }}" />
+                </div>
+                <div class="form-group">
                     <label>Relationship of presenting part to birth</label>
                     <x-input-text name="presentation_relationship" placeholder="Relation" class="form-control"
                         value="{{ $visit?->presentation_relationship }}" />
@@ -84,6 +89,7 @@
                 <th>EGA</th>
                 <th>Fundal Height</th>
                 <th>Presentation</th>
+                <th>Presenting relationship</th>
                 <th>Lie</th>
                 <th>Weight (kg)</th>
                 <th>BP (mmHg)</th>
@@ -103,6 +109,7 @@
                     <td>{{ $v->fundal_height }}</td>
                     <td>{{ $v->presentation }}</td>
                     <td>{{ $v->presentation_relationship }}</td>
+                    <td>{{ $v->lie }}</td>
                     <td>{{ $v->visit?->vitals?->weight }}</td>
                     <td>{{ $v->visit?->vitals?->blood_pressure }}</td>
                     <td>{{ $v->visit?->getTestResults('PCV', 'PCV') }}</td>

@@ -8,6 +8,10 @@ use Illuminate\Support\Arr;
 
 const T1 = 0.3;
 
+if (!defined('DAMA_SIGNATURES_DIR')) {
+    define('DAMA_SIGNATURES_DIR', 'app/public/dama_signatures/');
+}
+
 function getRouteMap()
 {
     $routeMap = [
@@ -205,4 +209,25 @@ function sendUserMessage($message, User|int $userId, $options = [])
 function notifyDepartment($departmentId, $message, $options = [])
 {
     Comms::notifyDepartment($departmentId, $message, $options);
+}
+
+
+function clean_data_image($data)
+{
+    $signature = str_replace("data:image/png;base64,", "", $data);
+    return base64_decode($signature);
+}
+
+function save_signature_to_local($filename, $data)
+{
+    $file = DAMA_SIGNATURES_DIR . "/$filename";
+    $f = file_put_contents(storage_path($file), clean_data_image($data));
+
+    if ($f !== false) {
+        $savedFilename = basename(DAMA_SIGNATURES_DIR) . '/' . $filename;
+
+        return $savedFilename;
+    }
+
+    return null;
 }

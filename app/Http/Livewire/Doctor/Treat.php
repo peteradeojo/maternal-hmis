@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Doctor;
 
 use App\Models\ConsultationNote;
 use App\Models\Product;
+use App\Services\Comms;
 use Illuminate\Support\Facades\Broadcast;
 use Livewire\Attributes\Validate;
 use Livewire\Component;

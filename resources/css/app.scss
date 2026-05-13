@@ -15,6 +15,11 @@
     }
 }
 
+// @theme {
+//     --sidebar-width: 216px;
+//     --topbar-height: 52px;
+// }
+
 @layer components {
     .input {
         @apply border border-gray-500 p-[5px] rounded-md;
@@ -162,6 +167,24 @@
 
     .flex-center {
         @apply flex items-center;
+    }
+
+    .layout-shell {
+        @apply flex h-screen overflow-hidden;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        @apply flex-shrink-0 flex flex-col h-full overflow-y-auto;
+        background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1))
+    }
+
+    .main-area {
+        @apply flex flex-col flex-1 overflow-hidden;
+    }
+
+    .page-content {
+        @apply flex-1 overflow-y-auto p-6;
     }
 }
 

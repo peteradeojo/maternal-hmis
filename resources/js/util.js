@@ -234,6 +234,8 @@ window.removeChartData = function (chart) {
 window.initSignatureCanvas = function () {
     const canvases = document.querySelectorAll(".signature");
 
+    console.log(canvases);
+
     canvases?.forEach((canvas) => {
         const parent = canvas.parentElement;
         const canvasInput = parent.querySelector("input.signature-value");

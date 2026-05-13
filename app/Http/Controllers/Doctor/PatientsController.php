@@ -70,6 +70,7 @@ class PatientsController extends Controller
             'fundal_height' => 'nullable|string',
             'fetal_heart_rate' => 'nullable|string',
             'presentation' => 'nullable|string',
+            'lie' => 'nullable|string',
             'presentation_relationship' => 'nullable|string',
             'edema' => 'nullable|string',
             'note' => 'nullable|string',

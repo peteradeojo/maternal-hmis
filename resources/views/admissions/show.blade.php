@@ -105,15 +105,12 @@
                                 <td>Note</td>
                                 <td>{{ $data->plan->note ?? 'nil' }}</td>
                             </tr>
-                            <tr>
-                                {{-- <td>
-                                <a href="{{ route('doctor.show-admission-plan', $data) }}" class="link">View Plan</a>
-                            </td> --}}
+                            {{-- <tr>
                                 <td>
                                     <a href="#" @click.prevent="$dispatch('open-discharge-form')"
                                         class="link">Discharge</a>
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
@@ -389,8 +386,9 @@
                                         </div>
                                     </span>
                                 </template>
+
                                 <label>
-                                    <input type="checkbox" x-on:change="dama = $event.target.checked"
+                                    <input type="checkbox" x-on:change="dama = $event.target.checked;setTimeout(() => initSignatureCanvas(), 150)"
                                         :checked="dama ? 'checked' : ''">
                                     DAMA?
                                 </label>

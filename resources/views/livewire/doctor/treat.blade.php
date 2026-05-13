@@ -124,7 +124,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($visit->treatments as $t)
+                        @forelse ($visit->prescription?->lines ?? [] as $t)
                             <tr>
                                 <td>{{ $t }}</td>
                             </tr>

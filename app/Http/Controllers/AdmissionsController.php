@@ -9,6 +9,7 @@ use App\Enums\Status;
 use App\Models\Admission;
 use App\Models\AdmissionTreatments;
 use App\Models\ConsultationNote;
+use App\Models\Dama;
 use App\Models\OperationNote;
 use App\Models\ProcedureConsent;
 use App\Models\User;
@@ -16,6 +17,7 @@ use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use function Illuminate\Filesystem\join_paths;
 
@@ -25,9 +27,11 @@ class AdmissionsController extends Controller
     {
         $this->authorize('viewAny', Admission::class);
         $admissions = Admission::accessibleBy($request->user())->active()->latest()->get();
+
         if (request()->user()->hasRole('doctor')) {
             return view('doctors.admissions.index', ['admissions' => $admissions]);
         }
+
         return view('nursing.admissions.index', ['admissions' => $admissions]);
     }
 
@@ -280,14 +284,35 @@ class AdmissionsController extends Controller
     public function discharge(Request $request, Admission $admission)
     {
         $this->authorize('update', $admission);
-        $request->validate([
-            'discharge_summary' => 'required|string',
-            'discharged_on' => 'required',
-        ]);
 
-        $admission->discharged_on ??= $request->input('discharged_on');
+        if ($request->has('dama') == false) {
+            $request->validate([
+                'discharge_summary' => 'required|string',
+                'discharged_on' => 'required',
+            ]);
+        } else {
+            // dd($request->all());
+            $data = $request->validate([
+                'name' => 'required|string',
+                'relationship' => 'required|string',
+                'patient' => 'required|string',
+                'patient_signature' => 'required|string',
+                'nurse' => 'required|string',
+                'nurse_signature' => 'required|string',
+                'relative_name' => 'required|string',
+                'relative_relationship' => 'required|string',
+                'relative_signature' => 'required|string',
+            ]);
+
+            $dama = $this->saveDama($admission, $data, $request);
+            if ($dama !== true) {
+                return redirect()->back()->withErrors($dama);
+            }
+        }
+
+        $admission->discharged_on ??= $request->input('discharged_on', now());
         $admission->status = Status::closed->value;
-        $admission->discharge_summary ??= $request->input('discharge_summary');
+        $admission->discharge_summary ??= $request->input('discharge_summary', $request->has('dama') ? 'DAMA' : null);
         $admission->save();
 
         $ward = $admission->ward;
@@ -364,17 +389,25 @@ class AdmissionsController extends Controller
 
     public function setForDischarge(Request $request, Admission $admission)
     {
-        $request->validate([
-            'discharged_on' => 'required|string',
-            'discharge_summary' => 'nullable|string',
-        ]);
-
-        if ($request->input('discharge_summary')) {
-            $admission->status = Status::closed->value;
-            $admission->discharge_summary = $request->input('discharge_summary');
+        dd($request->all());
+        if ($request->has('dama')) {
+            // return
+            $request->validate([]);
+            $dama = Dama::create([]);
         } else {
-            $admission->status = Status::ejected->value;
+            $request->validate([
+                'discharged_on' => 'required|string',
+                'discharge_summary' => 'nullable|string',
+            ]);
+
+            if ($request->input('discharge_summary')) {
+                $admission->status = Status::closed->value;
+                $admission->discharge_summary = $request->input('discharge_summary');
+            } else {
+                $admission->status = Status::ejected->value;
+            }
         }
+
 
         $admission->discharged_on = $request->input('discharged_on');
         $admission->ward->filled_beds--;
@@ -446,6 +479,51 @@ class AdmissionsController extends Controller
             return response()->json([
                 'message' => "Error occured",
             ], 500);
+        }
+    }
+
+    private function saveDama(Admission $admission, $data, Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            if (!is_dir(storage_path(DAMA_SIGNATURES_DIR))) {
+                mkdir(storage_path(DAMA_SIGNATURES_DIR));
+            }
+
+            $data = collect($data);
+            $dama = $admission->dama()->create([
+                ...$data->only(['name', 'patient', 'relationship', 'relative', 'relative_relationship', 'nurse', 'relative_name']),
+                'patient_id' => $admission->patient_id,
+                'user_id' => $request->user()->id,
+            ]);
+
+            if ($data->has('patient_signature')) {
+                $filename = save_signature_to_local("dama_{$admission->id}_patient_signature.png", $data['patient_signature']);
+
+                $dama->patient_signature()->create([
+                    'location' => $filename,
+                    'tag' => 'patient_signature',
+                ]);
+            }
+
+            $dama->relative_signature()->create([
+                'location' => save_signature_to_local("dama_{$admission->id}_relative_signature.png", $data['relative_signature']),
+                'tag' => 'relative_signature',
+            ]);
+
+            $dama->nurse_signature()->create([
+                'location' => save_signature_to_local("dama_{$admission->id}_nurse_signature.png", $data['nurse_signature']),
+                'tag' => 'nurse_signature',
+            ]);
+
+            DB::commit();
+
+            return true;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            report($th);
+            return $th->getMessage();
         }
     }
 }
