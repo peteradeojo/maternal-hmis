@@ -4,6 +4,7 @@
         <p><b>EGA:</b> {{ $profile->maturity($visit->created_at) }}</p>
         <p><b>Height of fundus:</b> {{ $visit->fundal_height }} </p>
         <p><b>Presentation:</b> {{ $visit->presentation }} </p>
+        <p><b>Presentation:</b> {{ $visit->lie }} </p>
         <p><b>Relations of presenting part to birth:</b> {{ $visit->presentation_relationship }} </p>
         <p><b>Foetal Heart Rate:</b> {{ $visit->fetal_heart_rate }} </p>
         <p><b>Oedema:</b> {{ $visit->edema }} </p>
