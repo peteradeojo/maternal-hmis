@@ -186,6 +186,17 @@
     .page-content {
         @apply flex-1 overflow-y-auto p-6;
     }
+
+    table.ui-table {
+        @apply border border-[#ccc] border-collapse w-full text-sm;
+
+        & th, & td {
+            @apply border border-black;
+        }
+        & td {
+            @apply p-1;
+        }
+    }
 }
 
 ::root {

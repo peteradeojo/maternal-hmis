@@ -41,7 +41,9 @@ class PatientsController extends Controller
 
         if (!$request->has('admin')) {
             if ($user->hasRole('lab')) {
-                $query = $query->where('awaiting_lab', true)->orWhere('tests', null);
+                $query = $query->where('awaiting_lab', true)->orWhereHas('tests', function ($query) {
+                    $query->where('status', Status::pending->value);
+                });
             }
 
             if ($user->hasRole('nurse'))
@@ -77,7 +79,9 @@ class PatientsController extends Controller
         $profile->edd = $validated->edd;
         $profile->awaiting_vitals = false;
 
-        // $profile->risk_assessment = $validated->risk_assessment;
+        $profile->obj_history = $validated->obj_history;
+        $profile->present_pregnancy = $validated->present_pregnancy;
+
         $profile->save();
 
         return redirect()->route('nurses.anc-bookings')->with('success', 'Vitals submitted successfully');

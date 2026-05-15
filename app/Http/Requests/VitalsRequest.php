@@ -41,6 +41,8 @@ class VitalsRequest extends FormRequest
             'gravida' => 'required|integer',
             'parity' => 'required|integer',
             'risk_assessment' => 'nullable|array',
+            'obj_history' => 'nullable|array',
+            'present_pregnancy' => 'nullable|array',
         ];
     }
 }

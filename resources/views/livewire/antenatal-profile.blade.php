@@ -8,7 +8,7 @@
             <b>LMP: </b>
             @if ($editingLmp)
                 <input type="date" wire:model="lmpEdit" />
-                <a href="#" wire:click.prevent="updateLmp">Update</a>
+                <a href="#" class="btn bg-primary text-white" wire:click.prevent="updateLmp">Update</a>
             @else
                 <span>{{ $profile->lmp?->format('Y-m-d') }}</span>
                 <a href="#" class="text-blue-600 underline" wire:click.prevent="editLmp">Edit</a>
@@ -19,7 +19,7 @@
             <b>EDD: </b>
             @if ($editingEdd || empty($profile->edd))
                 <input type="date" wire:model="editEdd" />
-                <a href="#" wire:click.prevent="updateEdd">Update</a>
+                <a href="#" class="btn bg-primary text-white" wire:click.prevent="updateEdd">Update</a>
             @else
                 <span>{{ $profile->edd?->format('Y-m-d') }}</span>
                 <a href="#" wire:click.prevent="setEditingEdd" class="text-blue-600 underline">Edit</a>
@@ -32,14 +32,61 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-3 gap-x-2 gap-y-0">
+    <div class="grid grid-cols-3 gap-x-2 gap-y-4 py-4">
+        <p class="col-span-full text-xl font-semibold">Obstetric History</p>
         @unless ($obsEdit)
             <p><b>Gravida: </b> {{ $profile->gravida }}</p>
             <p><b>Parity: </b> {{ $profile->parity }}</p>
+
+            <div class="col-span-full p-2 bg-gray-100">
+                @if ($profile->obj_history)
+                    <table class="ui-table">
+                        <thead>
+                            <tr>
+                                <th>Date of delivery</th>
+                                <th>Duration of pregnancy</th>
+                                <th>Pregnancy, Labour Puerperium</th>
+                                <th>Type of delivery</th>
+                                <th>Place of delivery</th>
+                                <th>Baby's condition</th>
+                                <th>Gender</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($profile->obj_history as $oHistory)
+                                <tr>
+                                    <td>{{ $oHistory['date_of_birth'] ?? '' }}</td>
+                                    <td>{{ $oHistory['duration_of_pregnancy'] ?? '' }}</td>
+                                    <td>{{ $oHistory['pregnancy_labour_and_puerperium'] ?? '' }}</td>
+                                    <td>{{ $oHistory['type_of_delivery'] ?? '' }}</td>
+                                    <td>{{ $oHistory['place_of_delivery'] ?? '' }}</td>
+                                    <td>{{ $oHistory['baby_condition'] ?? '' }}</td>
+                                    <td>{{ $oHistory['gender_of_baby'] ?? '' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p>No obstetric history recorded.</p>
+                @endif
+            </div>
+
+            <div class="col-span-full p-2 flex flex-col gap-y-2 bg-gray-100">
+                <p class="text-lg font-semibold">History of present pregnancy</p>
+                @if ($profile->present_pregnancy)
+                    @foreach ($profile->present_pregnancy as $k => $_v)
+                        <p><b>{{ ucfirst(unslug($k)) }}:</b> {{ $_v }}</p>
+                    @endforeach
+                @else
+                    <p>No present history of pregnancy recorded.</p>
+                @endif
+            </div>
+
+
             <p><b>Special consideration: </b> {{ $profile->risk_assessment }}</p>
 
             <div class="col-span-3">
-                <a href="#" wire:click.prevent="toggleEditObsData" class="link underline">Edit Obstetric Data</a>
+                <a href="#" class="btn bg-primary text-white" wire:click.prevent="toggleEditObsData" class="link underline">Edit Obstetric Data</a>
             </div>
         @else
             <p><b>Gravida: </b> <input type="text" wire:model="obsData.gravida" id=""></p>
@@ -48,7 +95,7 @@
                     name="obsData.risk_assessment" /></p>
 
             <div class="col-span-3">
-                <a href="#" wire:click.prevent="updateObsData" class="link underline">Update</a>
+                <a href="#" class="btn bg-primary text-white" wire:click.prevent="updateObsData" class="link underline">Update</a>
             </div>
         @endunless
 

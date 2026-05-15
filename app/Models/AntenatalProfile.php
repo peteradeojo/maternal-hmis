@@ -5,16 +5,19 @@ namespace App\Models;
 use App\Enums\AncCategory;
 use App\Enums\Status;
 use App\Http\Controllers\LabController;
+use App\Interfaces\OperationalEvent;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\Auditable;
+use App\Traits\Documentable;
+use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
-class AntenatalProfile extends Model
+class AntenatalProfile extends Model implements OperationalEvent
 {
-    use HasFactory, Auditable;
+    use HasFactory, Auditable, Documentable, HasVisitData;
 
     protected $fillable = [
         'patient_id',
@@ -49,6 +52,8 @@ class AntenatalProfile extends Model
         'edd' => 'datetime',
         'vitals' => 'array',
         'examination' => 'array',
+        'obj_history' => 'array',
+        'present_pregnancy' => 'array',
     ];
 
     protected $with = ['tests'];
@@ -66,11 +71,6 @@ class AntenatalProfile extends Model
     public function cardType(): Attribute
     {
         return Attribute::make(get: fn($value) => AncCategory::tryFrom($value)->name);
-    }
-
-    public function tests()
-    {
-        return $this->morphMany(DocumentationTest::class, 'testable');
     }
 
     public function getVitals()
