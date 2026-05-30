@@ -101,7 +101,7 @@ class PharmacyController extends Controller
             $searchTerm,
             function ($query) use ($searchTerm) {
                 return $query->whereHas('lines.item', function ($q) use ($searchTerm) {
-                    $q->where('name', 'ilike', "$searchTerm%");
+                    $q->where('name', 'ilike', "$searchTerm%")->orWhere('description', 'ilike', "$searchTerm%");
                 });
             },
             function ($query) {
