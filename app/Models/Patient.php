@@ -62,7 +62,7 @@ class Patient extends Model
     protected function maritalstatus(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value != 0 ? MaritalStatus::tryFrom($value)?->name ?? "Unknown" : "Unknown",
+            get: fn($value) => MaritalStatus::tryFrom($value)?->name ?? "Unknown",
         );
     }
 
@@ -79,6 +79,7 @@ class Patient extends Model
             get: function ($value) {
                 return Gender::tryFrom($value)?->name ?? "Unknown";
             },
+            set: fn($value) => $value,
         );
     }
 
@@ -170,13 +171,13 @@ class Patient extends Model
         return $query->whereRaw('1 = 0'); // No access
     }
 
-    public function appointments() {
+    public function appointments()
+    {
         return $this->hasMany(PatientAppointment::class, 'patient_id');
     }
 
-    public function getAge() {
-        return $this->dob?->diff(skip: [
-
-        ]);
+    public function getAge()
+    {
+        return $this->dob?->diff(skip: []);
     }
 }

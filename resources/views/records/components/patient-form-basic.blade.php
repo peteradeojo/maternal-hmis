@@ -16,7 +16,8 @@
             value="{{ old('card_number') ?? $patient?->card_number }}"
             @isset($patient)
             {{-- readonly --}}
-        @endisset class="form-control" />
+        @endisset
+            class="form-control" />
     </div>
 
     <div class="form-group">
@@ -26,7 +27,7 @@
                 <option value="{{ $ancCategory?->id }}">Antenatal</option>
             @else
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" @if ($category->id == $patient?->category_id) selected @endif>
+                    <option value="{{ $category->id }}" @selected($category->id == $patient?->category_id)>
                         {{ $category->name }}
                     </option>
                 @endforeach
@@ -38,8 +39,8 @@
 <div class="form-group">
     <label for="gender">Gender</label>
     <select name="gender" id="gender" class="form-control" required="required">
-        <option value="0" @if ($patient?->gender == 0) selected @endif>Female</option>
-        <option value="1" @if ($patient?->gender == 1) selected @endif>Male</option>
+        <option value="0" @selected($patient?->gender_value == 'Female')>Female</option>
+        <option value="1" @selected($patient?->gender_value == 'Male')>Male</option>
     </select>
 </div>
 <div class="form-group">
@@ -72,12 +73,13 @@
         value="{{ old('tribe') ?? $patient?->tribe }}" />
 </div>
 <div class="form-group">
+    @dump($patient?->marital_status)
     <label for="marital_status">Marital Status</label>
     <select name="marital_status" id="marital_status" class="form-control">
-        <option value="1" @if ($patient?->marital_status == 1) selected @endif>Married</option>
-        <option value="2" @if ($patient?->marital_status == 2) selected @endif>Single</option>
-        <option value="3" @if ($patient?->marital_status == 3) selected @endif>Divorced</option>
-        <option value="4" @if ($patient?->marital_status == 4) selected @endif>Widowed</option>
+        <option value="{{ MarriageEnum::Single->value }}" @selected($patient?->marital_status == 'Single')>Single</option>
+        <option value="{{ MarriageEnum::Married->value }}" @selected($patient?->marital_status == 'Married')>Married</option>
+        <option value="{{ MarriageEnum::Divorced->value }}" @selected($patient?->marital_status == 'Divorced')>Divorced</option>
+        <option value="{{ MarriageEnum::Widowed->value }}" @selected($patient?->marital_status == 'Widowed')>Widowed</option>
     </select>
 </div>
 <div class="form-group">
@@ -88,8 +90,8 @@
 <div class="form-group">
     <label for="religion">Religion</label>
     <select name="religion" id="religion" class="form-control">
-        <option value="1" @if ($patient?->marital_status == 1) selected @endif>Christianity</option>
-        <option value="2" @if ($patient?->marital_status == 2) selected @endif>Islam</option>
-        <option value="3" @if ($patient?->marital_status == 3) selected @endif>Other</option>
+        <option value="1" @if ($patient?->religion == 1) selected @endif>Christianity</option>
+        <option value="2" @if ($patient?->religion == 2) selected @endif>Islam</option>
+        <option value="3" @if ($patient?->religion == 3) selected @endif>Other</option>
     </select>
 </div>
