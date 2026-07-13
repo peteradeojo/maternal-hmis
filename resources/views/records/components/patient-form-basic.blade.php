@@ -73,7 +73,6 @@
         value="{{ old('tribe') ?? $patient?->tribe }}" />
 </div>
 <div class="form-group">
-    @dump($patient?->marital_status)
     <label for="marital_status">Marital Status</label>
     <select name="marital_status" id="marital_status" class="form-control">
         <option value="{{ MarriageEnum::Single->value }}" @selected($patient?->marital_status == 'Single')>Single</option>
