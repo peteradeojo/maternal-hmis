@@ -32,6 +32,7 @@ Route::get('logout', function (Request $request) {
     $request->session()->invalidate();
     return redirect()->route('login');
 })->name('logout');
+
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth', 'active_users'])->group(function () {

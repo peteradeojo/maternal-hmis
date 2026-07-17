@@ -10,6 +10,7 @@ use App\Models\DocumentationPrescription;
 use App\Models\PrescriptionLine;
 use App\Models\Product;
 use App\Models\StockItem;
+use App\Services\BillingService;
 use App\Services\TreatmentService;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
@@ -32,57 +33,24 @@ class BillReport extends Component
     public $others = [];
     public $otherAmt = 0;
 
+    public $bills = [];
+
     public function mount($visit)
     {
         $this->visit = $visit;
 
         $this->drugs = $this->tests = $this->scans = [];
 
-        $this->loadBillData($this->visit->admission);
-        $this->loadBillData($this->visit->admission?->plan);
-        $this->loadBillData($this->visit->visit);
-        $this->loadBillData($this->visit);
+        $service =  new BillingService();
 
-        $this->others = [];
-    }
+        $this->bills = $service->getVisitBill($this->visit);
 
-    public function loadBillData(?OperationalEvent $evt)
-    {
-        if (empty($evt)) return;
-
-        $drugs = $evt->prescription?->lines ?? collect([]);
-        $tests = $evt->valid_tests;
-        $scans = $evt->radios;
-
-        $drugs = $drugs->map(function ($line) {
-            $dispensed = $line->dispensed();
-
-            return [
+        $this->others = [
+            [
                 'saved' => true,
-                'product' => $line->item?->load(['prices'])->toArray(),
-                'data' => $line->toArray() + [
-                    'status' => $line['qty_dispensed'] > $line['balance'] ? Status::blocked->value : Status::active->value,
-                ],
-                'unit_price' => (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
-                'total_amt' => ($dispensed + ($line['qty_dispensed'] ?? TreatmentService::getCount($line->item?->toArray(), $line))) * (TreatmentService::getPrice($line->item_id, $line->profile ?? 'RETAIL')),
-            ];
-        })->toArray();
 
-        $tests = $tests->map(fn($test) => [
-            'saved' => true,
-            'product' => $test->describable->toArray(),
-            'data' => $test->toArray()
-        ])->toArray();
-
-        $scans = $this->visit->imagings->load('describable')->map(fn($item) => [
-            'saved' => true,
-            'product' => $item->describable->toArray(),
-            'data' => $item->toArray(),
-        ])->toArray();
-
-        $this->drugs = array_merge($this->drugs, $drugs);
-        $this->scans = array_merge($this->scans, $scans);
-        $this->tests = array_merge($this->tests, $tests);
+            ]
+        ];
     }
 
     public function render()

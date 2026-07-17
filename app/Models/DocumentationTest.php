@@ -3,13 +3,17 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
+use App\Interfaces\ShouldBeBillable;
+use App\Traits\Billable;
 use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
-class DocumentationTest extends Model
+class DocumentationTest extends Model implements ShouldBeBillable
 {
-    use HasFactory, NeedsRecorderInfo;
+    use HasFactory, NeedsRecorderInfo, Billable;
 
     protected $fillable = [
         'name',
@@ -103,5 +107,23 @@ class DocumentationTest extends Model
         }
 
         return $query->whereRaw('1 = 0');
+    }
+
+    #[Override]
+    public function getVisit(): Visit
+    {
+        return ($this->testable instanceof Visit) ? $this->testable : $this->testable->visit;
+    }
+
+    #[Override]
+    public function getEvent(): OperationalEvent
+    {
+        return $this->testable;
+    }
+
+    #[Override]
+    public function getChargeFor(OperationalEvent $evt): array
+    {
+        return [];
     }
 }

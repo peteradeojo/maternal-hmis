@@ -24,7 +24,8 @@ class BillPayment extends Model
         'user_id',
     ];
 
-    public function bill() {
+    public function bill()
+    {
         return $this->belongsTo(Bill::class, 'bill_id');
     }
 

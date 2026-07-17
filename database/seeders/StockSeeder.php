@@ -27,7 +27,7 @@ class StockSeeder extends Seeder
             ]
         ];
 
-        foreach($locations as $loc) {
+        foreach ($locations as $loc) {
             Location::updateOrCreate($loc, $loc);
         }
 

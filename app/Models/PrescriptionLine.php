@@ -3,14 +3,19 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
 use App\Interfaces\PatientRecord;
+use App\Interfaces\ShouldBeBillable;
 use App\Services\TreatmentService;
+use App\Traits\Billable;
+use App\Traits\CastsStatus;
 use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
-class PrescriptionLine extends Model implements PatientRecord
+class PrescriptionLine extends Model implements PatientRecord, ShouldBeBillable
 {
-    use NeedsRecorderInfo;
+    use NeedsRecorderInfo, Billable, CastsStatus;
 
     protected $fillable = [
         'item_id',
@@ -25,9 +30,9 @@ class PrescriptionLine extends Model implements PatientRecord
         'qty_dispensed',
     ];
 
-    protected $casts = [
-        'status' => Status::class,
-    ];
+    // protected $casts = [
+    //     'status' => Status::class,
+    // ];
 
     protected $with = ['item', 'recorder'];
 
@@ -86,5 +91,23 @@ class PrescriptionLine extends Model implements PatientRecord
             }
             $i->qty_dispensed = floatval($i->qty_dispensed);
         });
+    }
+
+    #[Override]
+    public function getVisit(): Visit
+    {
+        return $this->prescription->event;
+    }
+
+    #[Override]
+    public function getEvent(): OperationalEvent
+    {
+        return $this->prescription->event;
+    }
+
+    #[Override]
+    public function getChargeFor(OperationalEvent $evt): array
+    {
+        return [];
     }
 }

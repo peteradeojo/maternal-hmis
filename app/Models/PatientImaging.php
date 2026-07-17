@@ -3,13 +3,21 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
+use App\Interfaces\PatientRecord;
+use App\Interfaces\ShouldBeBillable;
+use App\Traits\Auditable;
+use App\Traits\Billable;
+use App\Traits\CastsStatus;
+use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 
-class PatientImaging extends Model
+class PatientImaging extends Model implements ShouldBeBillable, PatientRecord
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Auditable, Billable, NeedsRecorderInfo, CastsStatus;
 
     protected $fillable = [
         'patient_id',
@@ -109,5 +117,23 @@ class PatientImaging extends Model
         }
 
         return $query->whereRaw('1 = 0');
+    }
+
+    #[Override]
+    public function getVisit(): Visit
+    {
+        return $this->documentable instanceof Visit ? $this->documentable : $this->documentable->visit;
+    }
+
+    #[Override]
+    public function getEvent(): OperationalEvent
+    {
+        return $this->documentable;
+    }
+
+    #[Override]
+    public function getChargeFor(OperationalEvent $evt): array
+    {
+        return [];
     }
 }
