@@ -68,11 +68,11 @@ class BillingService
         ])->toArray();
 
         return [
-            'drugs' => $drugs,
-            'imagings' => $scans,
-            'laboratory' => $tests,
+            'phm' => ['items' => $drugs, 'total' => array_reduce($drugs, fn($a, $b) => $a + $b['total_amt'], 0)],
+            'radio' => ['items' => $scans, 'total' => array_reduce($scans, fn($a, $b) => $a + $b['total_amt'], 0)],
+            'lab' => ['items' => $tests, 'total' => array_reduce($tests, fn($a, $b) => $a + $b['total_amt'], 0)],
             'other' => [
-                $evt instanceof Visit && !empty($evt->consultant_id)  ? [
+                ($evt instanceof Visit) && !empty($evt->consultant_id) ? [
                     'saved' => true,
                     'description' => 'Consultation fee',
                     'quantity' => null,

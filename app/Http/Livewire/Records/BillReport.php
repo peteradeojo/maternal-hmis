@@ -62,7 +62,7 @@ class BillReport extends Component
     {
         $pdt = Product::find($id);
         $comp = ['saved' => true, 'data' => null, 'product' => $pdt->toArray()];
-        $this->{$prop}[] = $comp;
+        $this->bills['consultation']['lab']['items'] = $comp;
         $this->subTotal($prop);
     }
 
