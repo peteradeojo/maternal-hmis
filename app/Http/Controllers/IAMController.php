@@ -47,7 +47,16 @@ class IAMController extends Controller
     {
         $query = AuditLog::with(['user', 'auditable'])->latest();
 
-        return $this->dataTable($request, $query);
+        return $this->dataTable($request, $query, [
+            function ($query, $search) {
+                $searchFrames = explode(":", $search);
+                if (count($searchFrames) > 1) {
+                    $query->where('auditable_type', 'ilike', "%$searchFrames[0]")->where('auditable_id', $searchFrames[1]);
+                } else {
+                    $query->where('auditable_type', 'ilike', "%$search"); //->where('auditable_id', $searchFrames[1]);
+                }
+            }
+        ]);
     }
 
     public function getDatalogs(Request $request)
