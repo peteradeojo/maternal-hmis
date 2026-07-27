@@ -17,17 +17,39 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($adm as $a)
-                            <tr>
-                                <td><a class="link" href="{{route('lab.admission-test', $a)}}">{{ $a->patient->name }}</a></td>
-                                <td>{{ $a->created_at?->format('Y-m-d h:i A') }}</td>
-                                <td>{{ $a->ward?->name }}</td>
-                                <td></td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 @endsection
+
+@pushOnce('scripts')
+    <script>
+        $(() => {
+            $("#table").DataTable({
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('api.lab.admissions') }}",
+                },
+                columns: [{
+                        data: 'patient.name'
+                    },
+                    {
+                        data: (row) => parseDateFromSource(row.created_at)
+                    },
+                    {
+                        data: 'ward.name'
+                    },
+                    {
+                        data: (row) =>
+                            `<a href="{{ route('lab.admission-test', ':id') }}" class='btn btn-primary'>View</a>`
+                            .replace(':id', row
+                                .id),
+                    }
+                ],
+            });
+        });
+    </script>
+@endPushOnce

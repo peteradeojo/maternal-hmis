@@ -156,8 +156,18 @@ class LabController extends Controller
     public function admissions()
     {
         $this->authorize('viewAny', Admission::class);
-        $adm = Admission::accessibleBy(auth()->user())->latest()->get();
-        return view('lab.admissions', compact('adm'));
+        return view('lab.admissions');
+    }
+
+    public function getAdmissions(Request $request)
+    {
+        $this->authorize('viewAny', Admission::class);
+        $adm = Admission::accessibleBy($request->user())->with(['ward'])->latest();
+        return $this->dataTable($request, $adm, [
+            function ($query, $search) {
+                $query->whereHas('patient', fn($q) => $q->where('name', 'ilike', "%$search%"));
+            },
+        ]);
     }
 
     public function saveTest(Request $request, DocumentationTest $test)

@@ -9,4 +9,6 @@ Route::name('api.lab.')->prefix('laboratory')->middleware(['datalog'])->group(fu
     Route::get('/anc-patients', [LabController::class, 'getAncVisits'])->name('antenatal-tests');
 
     Route::post('/save-test/{test}', [LabController::class, 'saveTest'])->name('save-test');
+
+    Route::get('/admissions', [LabController::class, 'getAdmissions'])->name('admissions');
 });
