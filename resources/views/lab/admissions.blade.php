@@ -44,7 +44,7 @@
                     },
                     {
                         data: (row) =>
-                            `<a href="{{ route('lab.admission-test', ':id') }}" class='btn btn-primary'>View</a>`
+                            `<a href="{{ route('lab.admission-test', ':id') }}" class='btn ${row.has_pending_tests ? 'bg-green-500' : 'bg-blue-500 text-white'}'>${row.has_pending_tests ? 'View Tests' : 'Order A Test'}</a>`
                             .replace(':id', row
                                 .id),
                     }

@@ -28,7 +28,7 @@ class Admission extends Model implements OperationalEvent
 
     protected $with = ['patient', 'plan'];
 
-    protected $appends = ['in_ward'];
+    protected $appends = ['in_ward', 'has_pending_tests'];
 
     protected $casts = [
         'discharged_on' => 'datetime',
@@ -52,6 +52,11 @@ class Admission extends Model implements OperationalEvent
     public function inWard(): Attribute
     {
         return Attribute::make(get: fn() => isset($this->ward_id));
+    }
+
+    public function hasPendingTests(): Attribute
+    {
+        return Attribute::make(get: fn() => $this->tests()->pending()->count() > 0);
     }
 
     public function admittable()
@@ -129,11 +134,13 @@ class Admission extends Model implements OperationalEvent
         return $query->whereRaw('1 = 0');
     }
 
-    public function consent_forms() {
+    public function consent_forms()
+    {
         return $this->hasMany(ProcedureConsent::class, 'admission_id');
     }
 
-    public function dama() {
+    public function dama()
+    {
         return $this->hasOne(Dama::class);
     }
 }
