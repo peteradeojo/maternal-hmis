@@ -50,7 +50,7 @@ class IAMController extends Controller
         return $this->dataTable($request, $query, [
             function ($query, $search) {
                 $searchFrames = explode(":", $search);
-                if (count($searchFrames) > 1) {
+                if (count($searchFrames) > 1 and !empty($searchFrames[1])) {
                     $query->where('auditable_type', 'ilike', "%$searchFrames[0]")->where('auditable_id', $searchFrames[1]);
                 } else {
                     $query->where('auditable_type', 'ilike', "%$search"); //->where('auditable_id', $searchFrames[1]);
