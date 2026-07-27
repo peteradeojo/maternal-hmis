@@ -3,11 +3,17 @@
         <thead>
             <tr>
                 <td class="flex items-center gap-x-4">
-                    <b>{{ Str::upper($test->name) }}</b>
+                    <b>{{ Str::upper($test->name) }}</b> [#{{ $test->id }}]
                 </td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>
+                    <b>Ordered by:</b> {{ $test->activity->first()?->user->name }}
+                </td>
+                <td>
+                    <b>Ordered on:</b> {{ $test->created_at?->format('Y-m-d h:i:s A') }}
+                </td>
+                <td>
+                    <b>Last Updated:</b> {{ $test->updated_at?->format('Y-m-d h:i:s A') }}
+                </td>
                 <td>
                     <span x-cloak class="flex justify-end items-center gap-x-2 w-full">
                         <label>Status</label>

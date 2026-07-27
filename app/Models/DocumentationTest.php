@@ -104,4 +104,9 @@ class DocumentationTest extends Model
 
         return $query->whereRaw('1 = 0');
     }
+
+    public function activity()
+    {
+        return $this->morphMany(AuditLog::class, 'auditable')->orderBy('created_at');
+    }
 }
