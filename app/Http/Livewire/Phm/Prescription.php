@@ -175,7 +175,12 @@ class Prescription extends Component
             }
 
             DB::commit();
+
             notifyUserSuccess("Bill saved for patient {$this->doc->patient->name}", auth()->user()->id);
+            notifyDepartment(Department::REC->value, "Bill updated created for {$this->doc->patient->name}.", [
+                'timeout' => 10000,
+                'mode' => \App\Enums\AppNotifications::IN_APP,
+            ]);
         } catch (\Throwable $th) {
             report($th);
             DB::rollBack();
