@@ -1,18 +1,27 @@
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
     base: '/build/',
     plugins: [
         laravel({
             input: [
+                // "public/css/auth.css",
                 "resources/css/app.css",
                 "resources/css/app.scss",
-                "public/css/auth.css",
-                "resources/js/app.js",
+                // "resources/js/app.js",
                 "resources/js/util.js",
+                "resources/js/inertia.jsx",
             ],
             refresh: true,
         }),
+        react(),
     ],
+    resolve: {
+        alias: {
+            '@': path.resolve(import.meta.dirname, 'resources/js'),
+        }
+    },
 });

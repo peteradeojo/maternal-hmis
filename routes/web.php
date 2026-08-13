@@ -68,4 +68,6 @@ Route::middleware(['auth', 'active_users'])->group(function () {
     Route::get('/inv', [InventoryController::class, 'getInventory']);
 
     Route::get('visit-report/{visit}', [VisitsController::class, 'generateReport'])->name('generate-visit-report');
+
+    Route::inertia('/inert', 'Test');
 });
