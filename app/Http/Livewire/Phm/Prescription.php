@@ -179,7 +179,7 @@ class Prescription extends Component
             notifyUserSuccess("Bill saved for patient {$this->doc->patient->name}", auth()->user()->id);
             notifyDepartment(\App\Enums\Department::REC->value, "Bill updated created for {$this->doc->patient->name}.", [
                 'timeout' => 10000,
-                'mode' => \App\Enums\AppNotifications::IN_APP,
+                'mode' => \App\Enums\AppNotifications::$IN_APP,
             ]);
         } catch (\Throwable $th) {
             report($th);
