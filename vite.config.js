@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
+import inertia from "@inertiajs/vite";
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import path from "path";
 
 export default defineConfig({
-    base: '/build/',
+    base: "/build/",
     plugins: [
         laravel({
             input: [
@@ -17,11 +18,14 @@ export default defineConfig({
             ],
             refresh: true,
         }),
+        // inertia({
+        //     ssr: false,
+        // }),
         react(),
     ],
     resolve: {
         alias: {
-            '@': path.resolve(import.meta.dirname, 'resources/js'),
-        }
+            "@": path.resolve(import.meta.dirname, "resources/js"),
+        },
     },
 });

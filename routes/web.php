@@ -7,6 +7,7 @@ use App\Http\Controllers\IT\CrmController;
 use App\Http\Controllers\Records\PatientsController;
 use App\Http\Controllers\VisitsController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,5 +70,18 @@ Route::middleware(['auth', 'active_users'])->group(function () {
 
     Route::get('visit-report/{visit}', [VisitsController::class, 'generateReport'])->name('generate-visit-report');
 
-    Route::inertia('/inert', 'Test');
+    Route::inertia('/resources', 'Resources')->name('resources');
+    Route::inertia('/resources/NHIS-Portals', 'Resources/NHIS')->name('resource.nhis');
+    Route::post("/resources/NHIS-Portals", function (Request $request) {
+        $file = $request->file('portals');
+        // dump($file);
+        $file->storeAs("nhis-portals.xlsx");
+
+        dispatch(function () {
+            Artisan::call('parse-nhis-portals');
+        })->delay(5);
+
+        // return response()->json(['ok' => true]);
+        return to_route('resource.nhis');
+    });
 });

@@ -40,6 +40,14 @@
         @endforeach
 
         <li class="nav-item border-b-2 last-of-type:border-b-0" :class="aside ? 'py-1' : 'py-2 text-lg'">
+            <a href="{{ route('resources') }}"
+                class="flex-center gap-x-2 hover:text-blue-300 duration-200 p-[4px] text-[#fff]"
+                :class="!aside ? 'justify-center transform hover:scale-125' : ''">
+                <i class="fa fa-gear"></i>
+                <span x-show="aside">Resource Center</span>
+            </a>
+        </li>
+        <li class="nav-item border-b-2 last-of-type:border-b-0" :class="aside ? 'py-1' : 'py-2 text-lg'">
             <a href="{{ route('user-profile') }}"
                 class="flex-center gap-x-2 hover:text-blue-300 duration-200 p-[4px] text-[#fff]"
                 :class="!aside ? 'justify-center transform hover:scale-125' : ''">
