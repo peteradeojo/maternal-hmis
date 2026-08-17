@@ -54,6 +54,7 @@ const NHIS = () => {
                                         <Link
                                             className="link"
                                             href={portal.website}
+                                            target="_blank"
                                         >
                                             {portal.website}
                                             <i className="fa fa-link"></i>
