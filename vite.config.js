@@ -12,7 +12,7 @@ export default defineConfig({
                 // "public/css/auth.css",
                 "resources/css/app.css",
                 "resources/css/app.scss",
-                // "resources/js/app.js",
+                "resources/js/app.js",
                 "resources/js/util.js",
                 "resources/js/inertia.jsx",
             ],
