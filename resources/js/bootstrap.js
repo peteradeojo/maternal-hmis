@@ -4,22 +4,50 @@
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-import axios from 'axios';
-window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-window.axios.defaults.baseURL = import.meta.env.VITE_APP_URL;
-window.axios.defaults.withCredentials = true;
-window.axios.defaults.withXSRFToken = true;
+import axios from "axios";
 
 import {
-    Chart, Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController,
-    ArcElement, Tooltip, LineController, PointElement, LineElement,
+    Chart,
+    Colors,
+    BarController,
+    PieController,
+    LinearScale,
+    BarElement,
+    Legend,
+    CategoryScale,
+    DoughnutController,
+    ArcElement,
+    Tooltip,
+    LineController,
+    PointElement,
+    LineElement,
 } from "chart.js";
-Chart.register(Colors, BarController, PieController, LinearScale, BarElement, Legend, CategoryScale, DoughnutController, ArcElement, Tooltip, LineController, PointElement, LineElement);
+Chart.register(
+    Colors,
+    BarController,
+    PieController,
+    LinearScale,
+    BarElement,
+    Legend,
+    CategoryScale,
+    DoughnutController,
+    ArcElement,
+    Tooltip,
+    LineController,
+    PointElement,
+    LineElement,
+);
 
-window.Chart = Chart;
+if (typeof window !== "undefined") {
+    window.axios = axios;
+    window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
+    window.axios.defaults.baseURL = import.meta.env.VITE_APP_URL;
+    window.axios.defaults.withCredentials = true;
+    window.axios.defaults.withXSRFToken = true;
+
+    window.Chart = Chart;
+}
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -27,4 +55,4 @@ window.Chart = Chart;
  * allow your team to quickly build robust real-time web applications.
  */
 
-import './echo';
+import "./echo";
