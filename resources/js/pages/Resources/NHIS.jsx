@@ -63,7 +63,7 @@ const NHIS = () => {
                                 )}
                             </td>
                             <td>{portal.email}</td>
-                            <td>{portal.tel}</td>
+                            <td>{portal.phone}</td>
                         </tr>
                     ))}
                 </tbody>
