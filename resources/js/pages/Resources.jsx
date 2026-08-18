@@ -11,14 +11,14 @@ const ResourceLink = ({ title, link }) => {
     );
 };
 
-const Resources = () => {
+const Resources = ({ auth }) => {
     return (
         <>
             <div className="card grid grid-cols-4 gap-8">
-                <ResourceLink
+                {auth.roles.includes('insurance') && <ResourceLink
                     title={"NHIS Portals"}
                     link={"/resources/NHIS-Portals"}
-                />
+                />}
             </div>
         </>
     );
