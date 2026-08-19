@@ -1,8 +1,10 @@
-import { Form, Link, useForm, router } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-// import portals from "./nhis-portals.json";
+import { useRoles } from "../../hooks/useRoles";
 
-const NHIS = ({ auth }) => {
+const NHIS = () => {
+    const auth = useRoles();
+
     const { data, setData, post } = useForm({
         portals: null,
     });
@@ -22,7 +24,7 @@ const NHIS = ({ auth }) => {
 
     return (
         <div className="card">
-            {auth.roles.includes('admin', 'insurance') &&
+            {auth.hasRole('admin') &&
                 <div>
                     <form onSubmit={onSubmit}>
                         <input type="file" onChange={(e) => setData('portals', e.target.files[0])} name="portals" />

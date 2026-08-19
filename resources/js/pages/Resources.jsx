@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import { useRoles } from "../hooks/useRoles";
 
 const ResourceLink = ({ title, link }) => {
     return (
@@ -11,11 +12,12 @@ const ResourceLink = ({ title, link }) => {
     );
 };
 
-const Resources = ({ auth }) => {
+const Resources = () => {
+    const auth = useRoles();
     return (
         <>
             <div className="card grid grid-cols-4 gap-8">
-                {auth.roles.includes('insurance') && <ResourceLink
+                {auth.hasRole('insurance') && <ResourceLink
                     title={"NHIS Portals"}
                     link={"/resources/NHIS-Portals"}
                 />}
