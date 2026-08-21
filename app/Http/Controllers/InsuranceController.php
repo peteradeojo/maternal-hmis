@@ -53,4 +53,24 @@ class InsuranceController extends Controller
             'data' => $profile,
         ]);
     }
+
+    public function editProfile(Request $request, InsuranceProfiles $profile)
+    {
+        if ($request->isMethod('GET')) {
+            return view('nhi.edit-insurance', ['profile' => $profile]);
+        }
+
+        $data = $request->validate([
+            'hmo_name' => 'required|string',
+            'hmo_company' => 'required|string',
+            'hmo_id_no' => 'required|string',
+            'status' => 'nullable|integer',
+            'validity_from' => 'nullable|date',
+            'validity_to' => 'nullable|date',
+        ]);
+
+        $profile->update($data);
+
+        return redirect()->back();
+    }
 }

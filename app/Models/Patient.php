@@ -128,7 +128,7 @@ class Patient extends Model
     public function insurance()
     {
         // TODO: Will need to re-scope this when NHIS functionality for verifying insurance information is implemented
-        return $this->hasMany(InsuranceProfiles::class, 'patient_id')->pending(); //->active();
+        return $this->hasMany(InsuranceProfiles::class, 'patient_id'); //->pending(); //->active();
     }
 
     public function visits()

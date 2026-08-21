@@ -7,23 +7,18 @@ use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
-use App\Models\AncVisit;
 use App\Models\AntenatalProfile;
-use App\Models\GeneralVisit;
 use App\Models\Patient;
 use App\Models\PatientCategory;
 use App\Models\Visit;
 use App\Services\PatientService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PatientsController extends Controller
 {
-    public function __construct(private PatientService $patientService)
-    {
-    }
+    public function __construct(private PatientService $patientService) {}
 
     public function index()
     {
@@ -265,7 +260,6 @@ class PatientsController extends Controller
         ], ['mode' => AppNotifications::$BOTH]);
 
         notifyUserSuccess("Insurance profile added successfully", $request->user(), ['mode' => 'in-app']);
-
         return response()->json($profile);
     }
 

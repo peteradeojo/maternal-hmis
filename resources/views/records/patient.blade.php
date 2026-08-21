@@ -104,25 +104,39 @@
             </div>
             <x-overlay-modal id="set-insurance" title="Insurance Profile">
                 <form action="{{ route('api.records.insurance', $patient) }}" id="insurance-profile-form" method="post">
-                    <div class="form-group">
-                        <label>Provider Name</label>
-                        <input type="text" name="hmo_name" class="form-control" required />
-                    </div>
-                    <div class="form-group">
-                        <label>Company Name</label>
-                        <input type="text" name="hmo_company" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Insurance ID. Number</label>
-                        <input type="text" name="hmo_id_no" class="form-control" required />
-                    </div>
+                    {{-- <div class="form-group"> --}}
+                    {{--     <label>Provider Name</label> --}}
+                    {{--     <input type="text" name="hmo_name" class="form-control" required /> --}}
+                    {{-- </div> --}}
+                    {{-- <div class="form-group"> --}}
+                    {{--     <label>Company Name</label> --}}
+                    {{--     <input type="text" name="hmo_company" class="form-control" /> --}}
+                    {{-- </div> --}}
+                    {{-- <div class="form-group"> --}}
+                    {{--     <label>Insurance Policy Number</label> --}}
+                    {{--     <input type="text" name="hmo_id_no" class="form-control" required /> --}}
+                    {{-- </div> --}}
+                    {{-- --}}
+                    {{-- <p>Authentication</p> --}}
+                    {{-- <div class="flex items-center gap-x-8"> --}}
+                    {{--     <div class="form-group"> --}}
+                    {{--         <label>From</label> --}}
+                    {{--         <input type="date" name="auth_from" class='form-control w-full' --}}
+                    {{--             min="{{ now()->format('Y-m-d') }}" /> --}}
+                    {{--     </div> --}}
+                    {{--     <div class="form-group"> --}}
+                    {{--         <label>To</label> --}}
+                    {{--         <input type="date" name-"auth_to" class='form-control' min="{{ now()->format('Y-m-d') }}" /> --}}
+                    {{--     </div> --}}
+                    {{-- </div> --}}
+                    @include('records.components.hmi-form')
                     <div class="form-group">
                         <button class="btn bg-blue-400 text-white">Save <i class="fa fa-save"></i></button>
                     </div>
                 </form>
             </x-overlay-modal>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-3 gap-4">
             @forelse ($patient->insurance as $insurance)
                 <div class="p-2 bg-gray-100 flex justify-between items-start">
                     <span>
@@ -133,10 +147,15 @@
                         <p><b>Status:</b> {{ ucfirst($insurance->status->name) }}</p>
                     </span>
                     @if ($insurance->status != Status::cancelled)
-                        @role(['record', 'admin', 'nhis'])
-                            <button data-id="{{ $insurance->id }}"
-                                class="cancel-insurance btn bg-red-500 text-white">Cancel</button>
-                        @endrole
+                        <span>
+                            @role(['record', 'admin', 'nhis'])
+                                <button data-id="{{ $insurance->id }}"
+                                    class="cancel-insurance btn bg-red-500 text-white">Cancel <i
+                                        class="fa fa-trash"></i></button>
+                                <button data-id="{{ $insurance->id }}" class="edit-insurance btn bg-blue-500 text-white">Edit
+                                    <i class="fa fa-edit"></i></button>
+                            @endrole
+                        </span>
                     @endif
                 </div>
             @empty
@@ -230,6 +249,23 @@
                 }
 
                 notifyError("An error occurred. Please contact IT.");
+            })
+
+            $(".edit-insurance").on('click', async function(e) {
+                const {
+                    id
+                } = $(this).data();
+                useGlobalModal((a) => {
+                    a.find("#global-modal-title").text("Check-In for Consultation");
+                    axios.get("{{ route('nhi.edit-insurance', ':id') }}".replace(':id', id))
+                        .then(({
+                            data
+                        }) => {
+                            a.find("#global-modal-content").html(data);
+                        }).catch((err) => {
+                            a.find("#global-modal-content").html(err.response.data);
+                        })
+                });
             })
         });
     </script>

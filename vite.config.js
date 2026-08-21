@@ -18,9 +18,6 @@ export default defineConfig({
             ],
             refresh: true,
         }),
-        // inertia({
-        //     ssr: false,
-        // }),
         react(),
     ],
     resolve: {
