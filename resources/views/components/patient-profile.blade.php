@@ -5,7 +5,7 @@
     <p><b>Phone number:</b> {{ $patient->phone }}</p>
     <p><b>Date of birth:</b> {{ $patient->dob?->format('Y-m-d') }}</p>
     <p><b>Age: </b> {{ $patient->getAge() }}</p>
-    @if ($insurance = $patient->insurance()->active()->first())
+    @if ($insurance = $patient->insurance()->whereIn('status', [Status::active, Status::pending])->first())
         <p>
             <b>Insurance:</b>
             <span>{{ $insurance->hmo_name ?? 'No insurance' }}</span>

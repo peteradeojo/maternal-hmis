@@ -35,7 +35,9 @@
                         data: 'patient.card_number'
                     },
                     {
-                        data: ({created_at}) => new Date(created_at).toLocaleString('en-CA')
+                        data: ({
+                            created_at
+                        }) => new Date(created_at).toLocaleString('en-CA')
                     },
                     {
                         data: ({
@@ -52,19 +54,23 @@
             });
 
             $(document).on('click', '.visit-link', (e) => {
-                const {id} = $(e.currentTarget).data();
+                const {
+                    id
+                } = $(e.currentTarget).data();
                 useGlobalModal((a) => {
                     a.find(MODAL_TITLE).text('Patient Encounter');
 
-                    axios.get("{{route('nhi.show-encounter', ':id')}}".replace(':id', id))
-                    .then(({data}) => {
-                        a.find(MODAL_BODY).html(data);
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        a.find(MODAL_BODY).html(`<p class='text-red-500 font-semibold text-2xl tracking-wide
+                    axios.get("{{ route('nhi.show-encounter', ':id') }}".replace(':id', id))
+                        .then(({
+                            data
+                        }) => {
+                            a.find(MODAL_BODY).html(data);
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            a.find(MODAL_BODY).html(`<p class='text-red-500 font-semibold text-2xl tracking-wide
                         '>Oops</p>`);
-                    });
+                        });
                 });
             });
         });
