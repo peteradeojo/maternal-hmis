@@ -148,7 +148,7 @@ class Patient extends Model
 
     public function scopeActiveInsurance()
     {
-        $this->insurance()->where('status', Status::active);
+        $this->insurance()->where('status', Status::active->value);
     }
 
     public function bills()

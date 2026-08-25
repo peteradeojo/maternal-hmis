@@ -266,11 +266,13 @@ class PatientsController extends Controller
     public function getVisits(Request $request)
     {
         $this->authorize('viewAny', Visit::class);
-        $query = Visit::accessibleBy($request->user())->with(['patient.insurance'])->latest();
+        $query = Visit::accessibleBy($request->user())->with([
+            'patient.insurance' => fn($q) => $q->whereIn('status', [Status::active, Status::pending])
+        ])->latest();
 
         if ($request->has('insured')) {
             $query = $query->whereHas('patient', function ($q) {
-                $q->has('insurance');
+                $q->whereHas('insurance', fn($q2) => $q2->whereIn('status', [Status::active, Status::pending]));
             });
         }
 
