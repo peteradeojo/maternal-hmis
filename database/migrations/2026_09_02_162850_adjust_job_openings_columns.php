@@ -29,8 +29,8 @@ return new class extends Migration
         //
         Schema::table('job_openings', function (Blueprint $table) {
             $table->string('description', 512);
-            $table->string('responsibilities', 512);
-            $table->string('requirements', 512);
+            $table->json('responsibilities')->default('[]');
+            $table->json('requirements')->default('[]');
             $table->string('summary', 512);
             $table->string('footer', 512);
         });
