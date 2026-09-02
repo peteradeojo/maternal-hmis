@@ -14,8 +14,8 @@ return new class extends Migration
         //
         Schema::table('job_openings', function (Blueprint $table) {
             $table->string('description', 512)->change();
-            $table->string('responsibilities', 512)->change();
-            $table->string('requirements', 512)->change();
+            // $table->string('responsibilities', 512)->change();
+            // $table->string('requirements', 512)->change();
             $table->string('summary', 512)->change();
             $table->string('footer', 512)->change();
         });
