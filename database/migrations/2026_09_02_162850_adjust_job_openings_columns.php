@@ -28,11 +28,11 @@ return new class extends Migration
     {
         //
         Schema::table('job_openings', function (Blueprint $table) {
-            $table->string('description', 512);
+            $table->string('description', 512)->change();
             $table->json('responsibilities')->default('[]')->change();
             $table->json('requirements')->default('[]')->change();
-            $table->string('summary', 512);
-            $table->string('footer', 512);
+            $table->string('summary', 512)->change();
+            $table->string('footer', 512)->change();
         });
     }
 };
