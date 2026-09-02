@@ -26,7 +26,7 @@ class CrmController extends Controller
                 return response()->json($posts);
             }
 
-            return view('it.crm.index', compact('posts'));
+            return view("it.crm.index", compact("posts"));
         } catch (\Throwable $th) {
             return abort(500, $th->getMessage());
         }
@@ -34,97 +34,113 @@ class CrmController extends Controller
 
     public function create(Request $request)
     {
-        return view('it.crm.create');
+        return view("it.crm.create");
     }
 
     public function publish(Request $request)
     {
         $request->validate([
-            'title' => 'required|string',
-            'description' => 'string|nullable',
-            'post' => 'required|string',
-            'image' => 'required|image'
+            "title" => "required|string",
+            "description" => "string|nullable",
+            "post" => "required|string",
+            "image" => "required|image",
         ]);
 
         try {
             $title = Str::slug($request->title);
 
-            if (Post::where('slug', $title)->exists()) {
-                $title .= '-' . Str::random(5);
+            if (Post::where("slug", $title)->exists()) {
+                $title .= "-" . Str::random(5);
             }
 
-            $filename = "posts/" . strtolower(str_replace(" ", "_", $request->title)) . "_" . date('YmdHis') . '.html';
-            $stored_filename = storage_path('app/'.$filename);
+            $filename =
+                "posts/" .
+                strtolower(str_replace(" ", "_", $request->title)) .
+                "_" .
+                date("YmdHis") .
+                ".html";
+            $stored_filename = storage_path("app/" . $filename);
 
-            if (!Storage::directoryExists('posts')) {
-                Storage::makeDirectory('posts');
+            if (!Storage::directoryExists("posts")) {
+                Storage::makeDirectory("posts");
             }
 
             $fh = fopen($stored_filename, "w+");
             if (!$fh) {
-                return redirect()->back()->withErrors("Unable to write post content to temp file.");
+                return redirect()
+                    ->back()
+                    ->withErrors("Unable to write post content to temp file.");
             }
 
-            $image = app()->isProduction() && !empty($request->file('image')) ? cloudinary()->uploadFile($request->file('image')->getRealPath())->getSecurePath() : $request->file('image')?->store('post_uploads');
+            $image =
+                app()->isProduction() && !empty($request->file("image"))
+                    ? cloudinary()
+                        ->uploadFile($request->file("image")->getRealPath())
+                        ->getSecurePath()
+                    : $request->file("image")?->store("post_uploads");
 
-            $postText = $request->input('post');
+            $postText = $request->input("post");
             $post = new Post([
-                'user' => auth()->user()->name,
-                'title' => $request->title,
-                'image' => $image,
-                'slug' => $title,
+                "user" => auth()->user()->name,
+                "title" => $request->title,
+                "image" => $image,
+                "slug" => $title,
             ]);
 
             fwrite($fh, $postText);
             fclose($fh);
 
-            $postText = app()->isProduction() ? cloudinary()->uploadFile($stored_filename)->getSecurePath() : Storage::putFileAs('posts', new File($stored_filename, true), $post->slug . ".html");
+            $postText = app()->isProduction()
+                ? cloudinary()->uploadFile($stored_filename)->getSecurePath()
+                : Storage::putFileAs(
+                    "posts",
+                    new File($stored_filename, true),
+                    $post->slug . ".html",
+                );
 
             $post->post = $postText;
             $post->save();
             Storage::delete($stored_filename);
 
-            return redirect()->route('it.crm-index');
+            return redirect()->route("it.crm-index");
         } catch (\Throwable $th) {
             report($th);
             return redirect()->back()->withErrors($th->getMessage());
         }
-
     }
 
     public function show(Request $request, Post $post)
     {
-        $post->load(['user']);
+        $post->load(["user"]);
 
         $postText = file_get_contents($post->post); // : Storage::read($post->post);
 
         if ($request->expectsJson()) {
             return response()->json([
-                'post' => collect($post->toArray())->only([
-                    'id',
-                    'title',
-                    'user.name',
-                    'image',
-                    'created_at',
-                ])->merge(['by' => $post->user->name]),
-                'data' => $postText,
+                "post" => collect($post->toArray())
+                    ->only(["id", "title", "user.name", "image", "created_at"])
+                    ->merge(["by" => $post->user->name]),
+                "data" => $postText,
             ]);
         }
 
-        return view('it.crm.show', ['post' => $post, 'data' => $postText]);
+        return view("it.crm.show", ["post" => $post, "data" => $postText]);
     }
 
     public function updatePostStatus(Request $request, Post $post)
     {
-        if ($request->user()->can(Permissions::EDIT_POSTS->value, $post) == false) {
+        if (
+            $request->user()->can(Permissions::EDIT_POSTS->value, $post) ==
+            false
+        ) {
             return abort(403);
         }
 
         $data = $request->validate([
-            'status' => 'required|integer',
+            "status" => "required|integer",
         ]);
 
-        $post->status = $data['status'];
+        $post->status = $data["status"];
         $post->save();
 
         return redirect()->back();
@@ -132,49 +148,56 @@ class CrmController extends Controller
 
     public function dropbox(Request $request)
     {
-        if (!$request->isMethod('POST')) {
+        if (!$request->isMethod("POST")) {
             $departments = Department::all()->toArray();
-            if ($request->has('fetch')) {
-                $query = Media::accessible($request->user())->active()->latest();
+            if ($request->has("fetch")) {
+                $query = Media::accessible($request->user())
+                    ->active()
+                    ->latest();
                 return $this->dataTable($request, $query);
             }
 
-            return view('dropbox', compact('departments'));
+            return view("dropbox", compact("departments"));
         }
 
         $request->validate([
-            'to' => 'required|in:user,dept',
-            'file' => 'required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,txt,odt|max:' . (20 * 1024),
-            'phone' => 'required_if:to,user|exists:users,phone',
-            'department' => 'required_if:to,dept',
+            "to" => "required|in:user,dept",
+            "file" =>
+                "required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,txt,odt|max:" .
+                20 * 1024,
+            "phone" => "required_if:to,user|exists:users,phone",
+            "department" => "required_if:to,dept",
         ]);
 
-        if ($request->input('to') == 'user') {
-            $receiver = User::where('phone', $request->input('phone'))->first();
+        if ($request->input("to") == "user") {
+            $receiver = User::where("phone", $request->input("phone"))->first();
         } else {
-            if ($request->input('department') == 'all') {
+            if ($request->input("department") == "all") {
                 $receiver = null;
             } else {
-                $receiver = Department::where('name', $request->input('dept'))->first();
+                $receiver = Department::where(
+                    "name",
+                    $request->input("dept"),
+                )->first();
             }
         }
 
-        $file = $request->file('file');
+        $file = $request->file("file");
 
         DB::beginTransaction();
 
         try {
             $entry = new Media([
-                'user_id' => $request->user()->id,
-                'size' => $file->getSize(),
-                'file_type' => $file->getClientMimeType(),
-                'file_name' => $file->getClientOriginalName(),
-                'medially_type' => User::class,
-                'medially_id' => $request->user()->id,
-                'expires_at' => null,
-                'receiver_type' => !empty($receiver) ? $receiver::class : null,
-                'receiver_id' => !empty($receiver) ? $receiver->id : null,
-                'file_url' => $file->store('media'),
+                "user_id" => $request->user()->id,
+                "size" => $file->getSize(),
+                "file_type" => $file->getClientMimeType(),
+                "file_name" => $file->getClientOriginalName(),
+                "medially_type" => User::class,
+                "medially_id" => $request->user()->id,
+                "expires_at" => null,
+                "receiver_type" => !empty($receiver) ? $receiver::class : null,
+                "receiver_id" => !empty($receiver) ? $receiver->id : null,
+                "file_url" => $file->store("media"),
             ]);
             $entry->save();
 
@@ -189,5 +212,56 @@ class CrmController extends Controller
     public function downloadMedia(Request $request, Media $entry)
     {
         return Storage::download($entry->file_url, $entry->file_name);
+    }
+
+    public function getJobs(Request $request) {
+        $jobs = DB::table('job_openings')->select(['title', 'slug', 'description'])->get();
+        return response()->json($jobs);
+    }
+
+    public function showJobOpening(Request $request, $opening) {
+        $job = DB::table('job_openings')->where('slug', $opening)->firstOrFail();
+        return response()->json($job);
+    }
+
+    public function createJobOpening(Request $request) {
+        $data = $request->validate([
+            'slug' => 'required|string',
+            'title' => 'required|string',
+            'summary' => 'required|string',
+            'description' => 'required|string',
+            'responsibilities' => 'string|nullable',
+            'requirements' => 'string|nullable',
+            'footer' => 'string|nullable',
+        ]);
+
+        try {
+            $job = DB::table('job_openings')->insert([...$data,
+                "requirements" => json_encode(explode("\n", $data["requirements"])),
+                "responsibilities" => json_encode(explode("\n", $data["responsibilities"])),
+            ]);
+            return response()->json(['ok' => true], 201);
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function toggleJobOpening(Request $request, $opening) {
+        try {
+            $i = DB::table('job_openings')->where('id', $opening)->update([
+                'is_active' => DB::raw("NOT is_active"),
+            ]);
+
+            return response()->json(['ok' => true, 'i' => $i]);
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'error' => $e->getMessage(),]);
+        }
+    }
+
+    public function getJobsAdmin(Request $request) {
+        $jobs = DB::table('job_openings')->get();
+        return inertia('HR/Jobs', [
+            'jobs' => $jobs
+        ]);
     }
 }

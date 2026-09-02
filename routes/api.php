@@ -34,5 +34,11 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
     include_once __DIR__ . '/api/dispensary.php';
     include_once __DIR__ . '/api/billing.php';
     include_once __DIR__ . '/api/pharmacy.php';
+
+    Route::post('/job-openings', [CrmController::class, 'createJobOpening']);
+    Route::patch('/job-openings/{opening}', [CrmController::class, 'toggleJobOpening']);
 });
 // include_once __DIR__ . '/api/records.php';
+
+Route::get('/job-openings', [CrmController::class, 'getJobs']);
+Route::get('/job-openings/{opening}', [CrmController::class, 'showJobOpening']);

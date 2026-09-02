@@ -40,4 +40,7 @@ Route::name('it.')->group(function () {
         Route::put('/{post}/status', [CrmController::class, 'updatePostStatus'])->name('crm-status');
     });
 
+    Route::prefix('/hr')->middleware(['role:admin'])->group(function () {
+        Route::get('/jobs', [CrmController::class, 'getJobsAdmin']);
+    });
 });
