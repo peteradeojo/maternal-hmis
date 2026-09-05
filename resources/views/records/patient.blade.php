@@ -141,7 +141,7 @@
                 <div class="p-2 bg-gray-100 flex justify-between items-start">
                     <span>
                         <p><b>HMO:</b> {{ $insurance->hmo_name }}</p>
-                        <p><b>Company:</b> {{ $insurance->hmo_name }}</p>
+                        <p><b>Company:</b> {{ $insurance->hmo_company }}</p>
                         <p><b>ID No:</b> {{ $insurance->hmo_id_no }}</p>
                         <p><b>Updated on:</b> {{ $insurance->updated_at?->format('Y-m-d h:i A') }}</p>
                         <p><b>Status:</b> {{ ucfirst($insurance->status->name) }}</p>
