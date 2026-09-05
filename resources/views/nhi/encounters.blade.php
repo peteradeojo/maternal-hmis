@@ -3,6 +3,16 @@
 
 @section('content')
     <div class="p-4 bg-white">
+        <div class="flex justify-end gap-x-4">
+            <div class="form-group">
+                <label>From</label>
+                <input type="date" id="search_from" />
+            </div>
+            <div class="form-group">
+                <label>To</label>
+                <input type="date" max="{{ now()->format('Y-m-d') }}" id="search_to" />
+            </div>
+        </div>
         <table id="table" class="table">
             <thead>
                 <tr>
@@ -21,9 +31,15 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $("#table").DataTable({
+            const table = $("#table").DataTable({
                 serverSide: true,
-                ajax: "{{ route('api.nhi.visits') }}?insured",
+                ajax: {
+                    url: "{{ route('api.nhi.visits') }}?insured",
+                    data: (d) => {
+                        d.from_date = document.getElementById('search_from')?.value;
+                        d.to_date = document.getElementById('search_to')?.value;
+                    },
+                },
                 columns: [{
                         data: ({
                                 id,
@@ -52,6 +68,9 @@
                 ],
                 ordering: false,
             });
+
+            $("#search_from").on("change", (e) => table.draw());
+            $("#search_to").on("change", (e) => table.draw());
 
             $(document).on('click', '.visit-link', (e) => {
                 const {

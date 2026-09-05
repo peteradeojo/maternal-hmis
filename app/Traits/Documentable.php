@@ -10,6 +10,7 @@ use App\Models\DocumentedDiagnosis;
 use App\Models\PatientExaminations;
 use App\Models\DocumentationComplaints;
 use App\Models\DocumentationPrescription;
+use App\Models\InsuranceAuthorization;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -79,5 +80,10 @@ trait Documentable
     public function scopeActive($query)
     {
         throw new \Exception("Not implemented");
+    }
+
+    public function authorizations()
+    {
+        return $this->morphMany(InsuranceAuthorization::class, 'entity');
     }
 }

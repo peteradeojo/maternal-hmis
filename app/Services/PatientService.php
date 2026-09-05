@@ -18,6 +18,8 @@ class PatientService
         ], [
             'mode' => AppNotifications::$BOTH,
         ]);
+
+        return $profile;
     }
 
     public function registerPatient($data) {}

@@ -252,7 +252,8 @@ class PatientsController extends Controller
 
     public function addInsuranceProfile(Request $request, Patient $patient)
     {
-        $profile = $patient->insurance()->create($request->except('_token'));
+        // $profile = $patient->insurance()->create($request->except('_token'));
+        $profile = $this->patientService->createInsuranceProfile($patient, $request->except('_token'));
 
         notifyDepartment(EnumsDepartment::NHI->value, [
             'message' => "New patient profile has been added for patient #{$patient->card_number}",

@@ -23,6 +23,17 @@ class Controller extends BaseController
 
         $order = $request->input('order');
         $results = $builder->clone();
+
+        // Time filters
+        $results = $results->when($request->from_date, function ($query, $fromDate) {
+            $query->where('created_at', '>=', $fromDate);
+        });
+
+        $results = $results->when($request->to_date, function ($query, $date) {
+            $query->where('created_at', '<=', $date);
+        });
+
+
         $results = $results->where(function ($query) use ($search, $searchableColumns) {
             foreach ($searchableColumns as $column) {
                 $column($query, $search);
