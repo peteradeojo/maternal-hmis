@@ -94,6 +94,7 @@ function getRouteMap()
                 'Billing' => [route('billing.index'), 'fa-money-bill-wave', null],
                 'Patients' => [route('nhi.index'), 'fa-person', null],
                 'Encounters' => [route('nhi.encounters'), 'fa-walk', null],
+                'HMOs' => [route('nhi.orgs.index'), 'fa-walk', null],
             ],
         ],
         [

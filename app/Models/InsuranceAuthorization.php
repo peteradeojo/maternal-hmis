@@ -17,7 +17,7 @@ class InsuranceAuthorization extends Model
         'authorization_code',
     ];
 
-    public function entity()
+    public function authorizable()
     {
         return $this->morphTo();
     }

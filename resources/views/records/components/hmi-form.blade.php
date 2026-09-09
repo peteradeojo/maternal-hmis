@@ -2,8 +2,14 @@
     <div class="col-3">
         <div class="form-group">
             <label for="hmo_name">HMO Name</label>
-            <input type="text" @isset($profile) value="{{ $profile->hmo_name }}" @endisset
-                name="hmo_name" id="hmo_name" class="form-control">
+            {{-- <input type="text" @isset($profile) value="{{ $profile->hmo_name }}" @endisset --}}
+            {{-- name="hmo_name" id="hmo_name" class="form-control"> --}}
+            <select name="orgid" id="hmo_name" class="form-control">
+                @foreach ($orgs as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }} -
+                        {{ $item->is_public ? 'Public' : 'Private' }}</option>
+                @endforeach
+            </select>
         </div>
     </div>
     <div class="px-1"></div>

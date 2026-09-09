@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Models\InsuranceOrganization;
 use App\Models\InsuranceProfiles;
 use App\Models\Patient;
 use App\Models\Visit;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class InsuranceController extends Controller
 {
@@ -57,11 +59,12 @@ class InsuranceController extends Controller
     public function editProfile(Request $request, InsuranceProfiles $profile)
     {
         if ($request->isMethod('GET')) {
-            return view('nhi.edit-insurance', ['profile' => $profile]);
+            $orgs = InsuranceOrganization::all();
+            return view('nhi.edit-insurance', ['profile' => $profile, 'orgs' => $orgs]);
         }
 
         $data = $request->validate([
-            'hmo_name' => 'required|string',
+            'orgid' => 'required|integer',
             'hmo_company' => 'required|string',
             'hmo_id_no' => 'required|string',
             'status' => 'nullable|integer',
@@ -72,5 +75,37 @@ class InsuranceController extends Controller
         $profile->update($data);
 
         return redirect()->back();
+    }
+
+    public function getOrganizations(Request $request)
+    {
+        $orgs = InsuranceOrganization::all();
+
+        if (!$request->acceptsJson()) {
+            return response()->json($orgs);
+        }
+
+        return Inertia::render('NHI/Organizations', [
+            'orgs' => $orgs,
+        ]);
+    }
+
+    public function createOrganization(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'contact_details' => 'array',
+            'portal_url' => 'nullable|string',
+            'contact_details.*' => 'required|string',
+            'is_public' => 'boolean',
+        ]);
+
+        $org = InsuranceOrganization::create($data);
+        return redirect()->route('nhi.orgs.index');
+    }
+
+    public function showOrganization(Request $request, InsuranceOrganization $org)
+    {
+        return Inertia::render('NHI/ShowOrganization', compact('org'));
     }
 }

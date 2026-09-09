@@ -8,6 +8,7 @@ use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\AntenatalProfile;
+use App\Models\InsuranceOrganization;
 use App\Models\Patient;
 use App\Models\PatientCategory;
 use App\Models\Visit;
@@ -31,6 +32,7 @@ class PatientsController extends Controller
         $categories = PatientCategory::all();
 
         $ancCategory = $categories->where('name', 'Antenatal')->first();
+        $orgs = InsuranceOrganization::all();
 
         if ($request->method() !== 'POST') {
             $this->authorize('create', Patient::class);
@@ -39,8 +41,9 @@ class PatientsController extends Controller
                 null => view('records.new-patient', [
                     'categories' => $categories->where('name', '!=', 'Antenatal'),
                     'mode' => null,
+                    'orgs' => $orgs,
                 ]),
-                'anc' => view('records.new-anc', compact('ancCategory', 'mode', 'categories')),
+                'anc' => view('records.new-anc', compact('ancCategory', 'mode', 'categories', 'orgs')),
             };
         }
 
@@ -85,7 +88,7 @@ class PatientsController extends Controller
         try {
             $patient = Patient::create($data);
 
-            if ($request->anyFilled(['hmo_name', 'hmo_company', 'hmo_id_no'])) {
+            if ($request->anyFilled(['orgid', 'hmo_company', 'hmo_id_no'])) {
                 $this->patientService->createInsuranceProfile($patient, $request->only(['hmo_name', 'hmo_company', 'hmo_id_no']));
             }
 
@@ -151,7 +154,9 @@ class PatientsController extends Controller
         $this->authorize('view', $patient);
         $patient->load('antenatalProfiles');
 
-        return view('records.patient', compact('patient'));
+        $orgs = InsuranceOrganization::all();
+
+        return view('records.patient', compact('patient', 'orgs'));
     }
 
     public function edit(Request $request, Patient $patient)

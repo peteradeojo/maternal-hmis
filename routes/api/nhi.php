@@ -9,4 +9,6 @@ Route::prefix('api')->middleware(['auth:sanctum', 'datalog'])->name('api.nhi.')-
     Route::get('/visits', [PatientsController::class, 'getVisits'])->name('visits');
     Route::post('/cancel-profile', [InsuranceController::class, 'cancelInsuranceProfile'])->name('cancel-insurance-profile');
     Route::post('/edit-profile', [InsuranceController::class, 'editInsuranceProfile'])->name('edit-insurance-profile');
+
+    Route::post('/add-authorization', [InsuranceController::class, 'addAuthorizationCode'])->name('update-authorization');
 });
