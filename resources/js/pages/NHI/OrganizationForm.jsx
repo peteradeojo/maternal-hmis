@@ -15,7 +15,7 @@ const OrganizationForm = ({ formData, onSubmit, data, setData }) => {
 			</div>
 			<div className="form-group">
 				<label>Portal URL</label>
-				<input type="text" value={data.portal_url || ''} onChange={(e) => setData('portal_url', e.target.value)} className="form-control" required />
+				<input type="text" value={data.portal_url || ''} onChange={(e) => setData('portal_url', e.target.value)} className="form-control" />
 			</div>
 			<div className="form-group">
 				<label>Is Public? <input type="checkbox" checked={data.is_public} onChange={(e) => setData('is_public', e.target.checked)} /></label>
