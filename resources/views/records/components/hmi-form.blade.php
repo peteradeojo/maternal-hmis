@@ -5,8 +5,9 @@
             {{-- <input type="text" @isset($profile) value="{{ $profile->hmo_name }}" @endisset --}}
             {{-- name="hmo_name" id="hmo_name" class="form-control"> --}}
             <select name="orgid" id="hmo_name" class="form-control">
+                <option disabled selected>Select HMO</option>
                 @foreach ($orgs as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }} -
+                    <option @selected(isset($profile) && $profile?->orgid == $item->id) value="{{ $item->id }}">{{ $item->name }} -
                         {{ $item->is_public ? 'Public' : 'Private' }}</option>
                 @endforeach
             </select>

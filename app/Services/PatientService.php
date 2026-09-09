@@ -13,7 +13,6 @@ class PatientService
 
     public function createInsuranceProfile(Patient $patient, $data)
     {
-
         $hmo_name = InsuranceOrganization::find($data['orgid']);
         $profile = $patient->insurance()->create([...$data, 'hmo_name' => $hmo_name->name]);
 

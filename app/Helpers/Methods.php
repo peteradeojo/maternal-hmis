@@ -25,15 +25,7 @@ function getRouteMap()
             ],
         ],
         [
-            'role' => Roles::RegisteredNurse->value,
-            'label' => ['Nursing', 'fa-user-nurse'],
-            'routes' => [
-                'Admissions' => [route('nurses.admissions.get'), 'fa-bed', null],
-                'Antenatal Bookings' => [route('nurses.anc-bookings'), 'fa-female', null],
-            ],
-        ],
-        [
-            'role' => 'nurse',
+            'role' => ['nurse', Roles::RegisteredNurse->value],
             'label' => ['Nursing', 'fa-user-nurse'],
             'routes' => [
                 'Admissions' => [route('nurses.admissions.get'), 'fa-bed', null],
@@ -88,11 +80,18 @@ function getRouteMap()
             ],
         ],
         [
-            'role' => 'billing',
+            'role' => ['record', 'billing'],
             'label' => ['Billing & NHI', 'fa-file-invoice-dollar'],
             'routes' => [
                 'Billing' => [route('billing.index'), 'fa-money-bill-wave', null],
                 'Patients' => [route('nhi.index'), 'fa-person', null],
+                'HMOs' => [route('nhi.orgs.index'), 'fa-walk', null],
+            ],
+        ],
+        [
+            'role' => ['insurance', 'record'],
+            'label' => ['Insurance Management', 'fa-file-invoice-dollar'],
+            'routes' => [
                 'Encounters' => [route('nhi.encounters'), 'fa-walk', null],
                 'HMOs' => [route('nhi.orgs.index'), 'fa-walk', null],
             ],
@@ -132,8 +131,16 @@ function authorizedRoutes()
     $user = auth()->user();
     $routes = [];
 
+
     foreach ($routeMap as $map) {
-        if ($user->hasAnyRole('superadmin', $map['role'])) {
+        $roles = [];
+        if (is_string($map['role'])) {
+            $roles[] = $map['role'];
+        } else {
+            array_push($roles, ...$map['role']);
+        }
+
+        if ($user->hasAnyRole('superadmin', ...$roles)) {
 
             unset($map['role']);
 
@@ -148,8 +155,6 @@ function authorizedRoutes()
             }
         }
     }
-
-    // dd($routes);
 
     return $routes;
 }

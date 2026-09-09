@@ -29,8 +29,8 @@
 <body class="h-dvh grid place-items-center">
     <x-loader />
 
-    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false }" @closeModal.window="removeGlobalModal"
-    x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
+    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false }"
+        @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
         {{-- Navigations --}}
         {{-- Mobile nav --}}
         <div class="sticky top-0 w-full z-[50] sm:hidden">
@@ -82,18 +82,6 @@
         <aside
             class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800 overflow-auto"
             x-cloak :class="{ 'w-[16%]': aside, 'w-[5%]': !aside }" x-transition>
-            {{-- <div class="sticky top-0">
-                    <div class="bg-white p-2 flex" :class="aside ? 'justify-end' : 'justify-center'">
-                        <button x-show="!aside" x-on:click="aside = true;localStorage.setItem('aside', aside)"
-                            class="btn btn-sm rounded-full" title="Open">
-                            <span class="text-xl"><i class="fa fa-book-open"></i></span>
-                        </button>
-                        <button x-show="aside" x-on:click="aside = false;localStorage.setItem('aside', aside)"
-                            class="btn btn-sm rounded-full" title="Close">
-                            <span class="text-xl"><i class="fa fa-xmark"></i></span>
-                        </button>
-                    </div>
-                </div> --}}
             <div class="bg-white p-2 text-center">
                 <img src="https://ui-avatars.com/api/?name={{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}"
                     alt="" class="rounded-full w-12 m-auto">

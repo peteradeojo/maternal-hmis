@@ -68,6 +68,9 @@ class PatientsController extends Controller
             'nok_name' => 'nullable|string',
             'nok_phone' => 'nullable|string',
             'nok_address' => 'nullable|string',
+            'orgid' => 'nullable|integer',
+            'hmo_company' => 'required_with:orgid',
+            'hmo_id_no' => 'required_with:orgid',
         ];
 
         if ($request->query('mode') === 'anc') {
@@ -89,7 +92,7 @@ class PatientsController extends Controller
             $patient = Patient::create($data);
 
             if ($request->anyFilled(['orgid', 'hmo_company', 'hmo_id_no'])) {
-                $this->patientService->createInsuranceProfile($patient, $request->only(['hmo_name', 'hmo_company', 'hmo_id_no']));
+                $this->patientService->createInsuranceProfile($patient, $request->only(['orgid', 'hmo_name', 'hmo_company', 'hmo_id_no']));
             }
 
             if ($request->query('mode') == 'anc') {

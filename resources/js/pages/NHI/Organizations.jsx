@@ -3,12 +3,12 @@ import { Link, useForm } from '@inertiajs/react';
 export default function Organizations({ orgs }) {
     const { data, setData, post, errors, reset } = useForm({
         name: '',
+        portal_url: '',
         is_public: false,
         contact_details: { email: null, phone: null },
     });
 
     const createNew = () => {
-
         post("/nhis/organizations", {
             headers: {
                 'Accept': 'text/html',
@@ -25,6 +25,10 @@ export default function Organizations({ orgs }) {
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} className="form-control" required />
+                </div>
+                <div className="form-group">
+                    <label>Portal URL</label>
+                    <input type="text" value={data.portal_url} onChange={(e) => setData('portal_url', e.target.value)} className="form-control" required />
                 </div>
                 <div className="form-group">
                     <label>Is Public? <input type="checkbox" checked={data.is_public} onChange={(e) => setData('is_public', e.target.checked)} /></label>
@@ -51,16 +55,14 @@ export default function Organizations({ orgs }) {
                         <th>Name</th>
                         <th>Type</th>
                         <th>Portal</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {orgs.map((org) => <>
                         <tr key={org.id}>
-                            <td>{org.name}</td>
+                            <td><Link className='link' href={`/nhis/organizations/${org.id}`}>{org.name}</Link></td>
                             <td>{org.is_public ? 'Public' : 'Private'}</td>
                             <td>{org.portal_url}</td>
-                            <td><Link href={`/nhis/organizations/${org.id}`}>View</Link></td>
                         </tr>
                     </>)}
                 </tbody>

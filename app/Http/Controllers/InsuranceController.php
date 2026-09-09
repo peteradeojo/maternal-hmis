@@ -81,7 +81,7 @@ class InsuranceController extends Controller
     {
         $orgs = InsuranceOrganization::all();
 
-        if (!$request->acceptsJson()) {
+        if ($request->expectsJson()) {
             return response()->json($orgs);
         }
 
@@ -94,18 +94,34 @@ class InsuranceController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'contact_details' => 'array',
+            'contact_details' => 'nullable|array',
             'portal_url' => 'nullable|string',
-            'contact_details.*' => 'required|string',
+            'contact_details.email' => 'nullable|string',
+            'contact_details.phone' => 'nullable|string',
             'is_public' => 'boolean',
         ]);
 
-        $org = InsuranceOrganization::create($data);
-        return redirect()->route('nhi.orgs.index');
+        InsuranceOrganization::create($data);
+        return to_route('nhi.orgs.index');
     }
 
     public function showOrganization(Request $request, InsuranceOrganization $org)
     {
         return Inertia::render('NHI/ShowOrganization', compact('org'));
+    }
+
+    public function editOrganization(Request $request, InsuranceOrganization $org)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'contact_details' => 'nullable|array',
+            'portal_url' => 'nullable|string',
+            'contact_details.email' => 'nullable|string',
+            'contact_details.phone' => 'nullable|string',
+            'is_public' => 'boolean',
+        ]);
+
+        $org->update($data);
+        return to_route('nhi.orgs.index');
     }
 }
