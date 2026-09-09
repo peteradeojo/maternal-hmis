@@ -38,7 +38,7 @@ export default function Organizations({ orgs }) {
                         <tr key={org.id}>
                             <td><Link className='link' href={`/nhis/organizations/${org.id}`}>{org.name}</Link></td>
                             <td>{org.is_public ? 'Public' : 'Private'}</td>
-                            <td>{org.portal_url}</td>
+                            <td>{org.portal_url ? <a href={org.portal_url} className='link' target="_blank">{org.portal_url}</a> : "No link"}</td>
                         </tr>
                     </>)}
                 </tbody>
