@@ -7,16 +7,16 @@
     <div class="py-4">
         <h3 class="text-lg font-semibold">Authorization Codes</h3>
 
-        <form action="{{ route('api.nhi.update-authorization') }}" class="flex items-end gap-x-4">
-            @csrf
-            <div class="form-group w-full">
-                {{-- <label>Authorization Code</label> --}}
-                <input type="text" class="form-control" name="authorization_code" required />
-            </div>
-            <div class="form-group">
-                <button class="btn bg-blue-400">Submit</button>
-            </div>
-        </form>
+        {{-- <form action="{{ route('api.nhi.update-authorization') }}" class="flex items-end gap-x-4"> --}}
+        {{--     @csrf --}}
+        {{--     <div class="form-group w-full"> --}}
+        {{--         {{-- <label>Authorization Code</label> --}} --}}
+        {{--         <input type="text" class="form-control" name="authorization_code" required /> --}}
+        {{--     </div> --}}
+        {{--     <div class="form-group"> --}}
+        {{--         <button class="btn bg-blue-400">Submit</button> --}}
+        {{--     </div> --}}
+        {{-- </form> --}}
 
         <table class="table">
             @forelse ($visit->authorizations as $auth)
