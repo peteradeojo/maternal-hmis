@@ -13,7 +13,7 @@ class InsuranceProfiles extends Model
 {
     use HasFactory, Auditable, CastsStatus;
 
-    protected $fillable = ['hmo_name', 'hmo_company', 'hmo_id_no', 'status', 'validity_from', 'validity_to'];
+    protected $fillable = ['hmo_name', 'hmo_company', 'hmo_id_no', 'status', 'validity_from', 'validity_to', 'orgid'];
 
     public function patient()
     {

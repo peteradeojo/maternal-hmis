@@ -84,6 +84,6 @@ trait Documentable
 
     public function authorizations()
     {
-        return $this->morphMany(InsuranceAuthorization::class, 'entity');
+        return $this->morphMany(InsuranceAuthorization::class, 'authorizable');
     }
 }

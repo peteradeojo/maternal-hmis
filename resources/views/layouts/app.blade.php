@@ -29,8 +29,8 @@
 <body class="h-dvh grid place-items-center">
     <x-loader />
 
-    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false }" @closeModal.window="removeGlobalModal"
-    x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
+    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false, current_location: '{{ session('current_location_code') }}' }"
+        x-effect="console.log(location_context)" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
         {{-- Navigations --}}
         {{-- Mobile nav --}}
         <div class="sticky top-0 w-full z-[50] sm:hidden">
@@ -82,18 +82,6 @@
         <aside
             class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800 overflow-auto"
             x-cloak :class="{ 'w-[16%]': aside, 'w-[5%]': !aside }" x-transition>
-            {{-- <div class="sticky top-0">
-                    <div class="bg-white p-2 flex" :class="aside ? 'justify-end' : 'justify-center'">
-                        <button x-show="!aside" x-on:click="aside = true;localStorage.setItem('aside', aside)"
-                            class="btn btn-sm rounded-full" title="Open">
-                            <span class="text-xl"><i class="fa fa-book-open"></i></span>
-                        </button>
-                        <button x-show="aside" x-on:click="aside = false;localStorage.setItem('aside', aside)"
-                            class="btn btn-sm rounded-full" title="Close">
-                            <span class="text-xl"><i class="fa fa-xmark"></i></span>
-                        </button>
-                    </div>
-                </div> --}}
             <div class="bg-white p-2 text-center">
                 <img src="https://ui-avatars.com/api/?name={{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}"
                     alt="" class="rounded-full w-12 m-auto">
@@ -107,6 +95,18 @@
             class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms] printable print:ml-0"
             x-cloak x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">
             <div class="flex-center p-2 justify-end gap-x-4 print:hidden">
+
+                {{-- Location Switcher  --}}
+                <form method="POST" action="/location/switch">
+                    @csrf
+                    <select name="location_code" class="pr-8 py-0" x-model="current_location">
+                        <option value="IMMIGRATION">Immigration</option>
+                        <option value="ADEBAYO">Adebayo</option>
+                    </select>
+                    <button>Switch</button>
+                </form>
+                {{-- End Location Switcher --}}
+
                 <a href="{{ route('dropbox') }}">
                     <i class="fab fa-dropbox text-2xl"></i>
                 </a>
