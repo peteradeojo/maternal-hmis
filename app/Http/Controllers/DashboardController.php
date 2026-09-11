@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Models\Visit;
+use App\Services\LocationContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,8 +15,9 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         $visits = [];
+        $location = app(LocationContext::class)->id();
         if ($user->hasRole('record')) {
-            $visits = Visit::where("status", "=", Status::active->value)->latest()->limit(50)->get();
+            $visits = Visit::where("status", "=", Status::active->value)->whereIn('location_id', [$location])->orWhereNull('location_id')->latest()->limit(50)->get();
         }
 
         return view('dashboard', compact('user', 'visits'));

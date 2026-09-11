@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Department;
 use App\Enums\Status;
 use App\Http\Controllers\LabController;
+use App\Interfaces\LocationAware;
 use App\Interfaces\OperationalEvent;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
@@ -13,11 +14,13 @@ use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property AncVisit|GeneralVisit $visit
  */
-class Visit extends Model implements OperationalEvent
+class Visit extends Model implements OperationalEvent, LocationAware
 {
     use HasFactory, HasVisitData, Documentable, Auditable, SoftDeletes;
 
@@ -33,6 +36,7 @@ class Visit extends Model implements OperationalEvent
         'awaiting_radiology',
         'awaiting_tests',
         'awaiting_pharmacy',
+        'location_id',
     ];
 
     protected $with = ['visit'];
@@ -45,6 +49,12 @@ class Visit extends Model implements OperationalEvent
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    #[Override]
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'location_id');
     }
 
     public function visit()

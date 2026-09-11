@@ -6,6 +6,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\IT\CrmController;
 use App\Http\Controllers\Records\PatientsController;
 use App\Http\Controllers\VisitsController;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,19 @@ Route::get('logout', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth', 'active_users'])->group(function () {
+    Route::post('/location/switch', function (Request $request) {
+        $request->validate([
+            'location_code' => 'required|exists:locations,code',
+        ]);
+
+        $location = Location::where('code', $request->location_code)->first();
+        session([
+            'current_location_id' => $location?->id,
+            'current_location_code' => $location?->code,
+        ]);
+        return redirect()->back();
+    });
+
     Route::get('/', function () {
         return redirect()->route('dashboard');
     });

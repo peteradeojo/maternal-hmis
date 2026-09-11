@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\LocationContext;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Blade;
@@ -14,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(LocationContext::class, function (Application $app) {
+            return new LocationContext();
+        });
     }
 
     /**

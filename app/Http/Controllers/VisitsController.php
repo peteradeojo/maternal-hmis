@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Jobs\GenerateVisitReport;
 use App\Models\Visit;
 use App\Services\Comms;
+use App\Services\LocationContext;
 use Illuminate\Http\Request;
 
 use function Spatie\LaravelPdf\Support\pdf;
@@ -14,12 +15,16 @@ class VisitsController extends Controller
 {
     public function index(Request $request)
     {
+        $location = app(LocationContext::class)->id();
         $query = Visit::with(["patient.category"])
             ->whereNotIn("status", [
                 Status::cancelled->value,
                 Status::completed->value,
                 Status::ejected->value,
-            ])->limit(100)->latest();
+            ])
+            ->where('location_id', $location)
+            ->orWhereNull('location_id')
+            ->limit(100)->latest();
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {

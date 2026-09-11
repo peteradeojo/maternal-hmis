@@ -11,6 +11,7 @@ use App\Models\GeneralVisit;
 use App\Models\PatientAppointment;
 use App\Models\User;
 use App\Models\Visit;
+use App\Services\LocationContext;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
@@ -115,6 +116,7 @@ class PatientCheckIn extends Component
             'awaiting_doctor' => 1,
             'status' => Status::active->value,
             'parent_id' => $this->appointment?->visit_id,
+            'location_id' => app(LocationContext::class)->id(),
         ]);
 
         $visit->save();
