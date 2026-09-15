@@ -22,8 +22,10 @@ class VisitsController extends Controller
                 Status::completed->value,
                 Status::ejected->value,
             ])
-            ->where('location_id', $location)
-            ->orWhereNull('location_id')
+            ->where(function ($query) use ($location) {
+                $query->where('location_id', $location)
+                    ->orWhereNull('location_id');
+            })
             ->limit(100)->latest();
 
         return $this->dataTable($request, $query, [
