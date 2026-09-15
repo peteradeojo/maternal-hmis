@@ -9,6 +9,7 @@ use App\Http\Requests\VitalsRequest;
 use App\Models\AntenatalProfile;
 use App\Models\Visit;
 use App\Models\Vitals;
+use App\Services\LocationContext;
 use Illuminate\Http\Request;
 
 class PatientsController extends Controller
@@ -22,9 +23,12 @@ class PatientsController extends Controller
     public function getPendingVitals(Request $request)
     {
         $this->authorize('viewAny', Visit::class);
-        return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category'])->active()->where(function ($query) {
-            $query->doesntHave('vitals')->orWhere('awaiting_vitals', true);
-        }), [
+        $location = app(LocationContext::class)->id();
+        return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category'])->active()
+            ->where('location_id', $location)
+            ->where(function ($query) {
+                $query->doesntHave('vitals')->orWhere('awaiting_vitals', true);
+            }), [
             function ($query, $search) {
                 $query->whereHas('patient', function ($query) use ($search) {
                     $query->where('name', 'ilike', "$search%")->orWhere('card_number', "like", "$search%");

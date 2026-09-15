@@ -29,8 +29,7 @@
 <body class="h-dvh grid place-items-center">
     <x-loader />
 
-    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false, current_location: '{{ session('current_location_code') }}' }"
-        x-effect="console.log(location_context)" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
+    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false, current_location: '{{ session('current_location_code') }}' }" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
         {{-- Navigations --}}
         {{-- Mobile nav --}}
         <div class="sticky top-0 w-full z-[50] sm:hidden">
