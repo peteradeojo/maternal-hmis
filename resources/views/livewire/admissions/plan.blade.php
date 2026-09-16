@@ -50,8 +50,8 @@
             </div>
         </div>
 
-        <p>Admission Note / More</p>
-        <x-input-textarea wire:model="admissionNote" class="form-control" row="3" name="admissionNote" />
+        {{-- <p>Admission Note / More</p> --}}
+        {{-- <x-input-textarea wire:model="admissionNote" class="form-control" row="3" name="admissionNote" /> --}}
 
         <button class="btn btn-secondary w-1/3" wire:click="savePlan">Submit</button>
         <div class="pb-4"></div>
