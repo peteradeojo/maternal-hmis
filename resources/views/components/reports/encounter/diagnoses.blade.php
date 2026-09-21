@@ -14,10 +14,5 @@
                 </tr>
             @endforeach
         </tbody>
-        <tfoot>
-            <tr>
-                <td>{{ $diagnosis }}</td>
-            </tr>
-        </tfoot>
     </table>
 </div>
