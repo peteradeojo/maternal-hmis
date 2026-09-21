@@ -31,6 +31,8 @@ export default function Organizations({ orgs }) {
                         <th>Name</th>
                         <th>Type</th>
                         <th>Portal</th>
+                        <th>E-mail</th>
+                        <th>Phone</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +41,8 @@ export default function Organizations({ orgs }) {
                             <td><Link className='link' href={`/nhis/organizations/${org.id}`}>{org.name}</Link></td>
                             <td>{org.is_public ? 'Public' : 'Private'}</td>
                             <td>{org.portal_url ? <a href={org.portal_url} className='link' target="_blank">{org.portal_url}</a> : "No link"}</td>
+                            <td>{org.contact_details?.email}</td>
+                            <td>{org.contact_details?.phone}</td>
                         </tr>
                     </>)}
                 </tbody>
