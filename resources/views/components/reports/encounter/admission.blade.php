@@ -74,7 +74,7 @@
             </div>
         @endif
 
-        <x-reports.encounter.tests :visit="$visit->admission->plan" />
+        <x-reports.encounter.tests :visit="$visit->admission" />
         <x-reports.encounter.scans :visit="$visit->admission" />
         <x-reports.encounter.prescriptions :visit="$visit->admission->plan" />
         <x-reports.encounter.notes-list :notes="$visit->admission->notes" title="All Notes" />
