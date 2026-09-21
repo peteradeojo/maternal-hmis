@@ -74,10 +74,10 @@ class CrmController extends Controller
 
             $image =
                 app()->isProduction() && !empty($request->file("image"))
-                    ? cloudinary()
-                        ->uploadFile($request->file("image")->getRealPath())
-                        ->getSecurePath()
-                    : $request->file("image")?->store("post_uploads");
+                ? cloudinary()
+                ->uploadFile($request->file("image")->getRealPath())
+                ->getSecurePath()
+                : $request->file("image")?->store("post_uploads");
 
             $postText = $request->input("post");
             $post = new Post([
@@ -163,7 +163,7 @@ class CrmController extends Controller
         $request->validate([
             "to" => "required|in:user,dept",
             "file" =>
-                "required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,txt,odt|max:" .
+            "required|file|mimes:png,jpg,pdf,docx,xlsx,xls,doc,txt,odt|max:" .
                 20 * 1024,
             "phone" => "required_if:to,user|exists:users,phone",
             "department" => "required_if:to,dept",
@@ -214,17 +214,20 @@ class CrmController extends Controller
         return Storage::download($entry->file_url, $entry->file_name);
     }
 
-    public function getJobs(Request $request) {
-        $jobs = DB::table('job_openings')->select(['title', 'slug', 'description'])->get();
+    public function getJobs(Request $request)
+    {
+        $jobs = DB::table('job_openings')->select(['title', 'slug', 'summary', 'description'])->where('is_active', true)->get();
         return response()->json($jobs);
     }
 
-    public function showJobOpening(Request $request, $opening) {
+    public function showJobOpening(Request $request, $opening)
+    {
         $job = DB::table('job_openings')->where('slug', $opening)->firstOrFail();
         return response()->json($job);
     }
 
-    public function createJobOpening(Request $request) {
+    public function createJobOpening(Request $request)
+    {
         $data = $request->validate([
             'slug' => 'required|string',
             'title' => 'required|string',
@@ -236,7 +239,8 @@ class CrmController extends Controller
         ]);
 
         try {
-            $job = DB::table('job_openings')->insert([...$data,
+            $job = DB::table('job_openings')->insert([
+                ...$data,
                 "requirements" => json_encode(explode("\n", $data["requirements"])),
                 "responsibilities" => json_encode(explode("\n", $data["responsibilities"])),
             ]);
@@ -246,7 +250,8 @@ class CrmController extends Controller
         }
     }
 
-    public function toggleJobOpening(Request $request, $opening) {
+    public function toggleJobOpening(Request $request, $opening)
+    {
         try {
             $i = DB::table('job_openings')->where('id', $opening)->update([
                 'is_active' => DB::raw("NOT is_active"),
@@ -258,7 +263,8 @@ class CrmController extends Controller
         }
     }
 
-    public function getJobsAdmin(Request $request) {
+    public function getJobsAdmin(Request $request)
+    {
         $jobs = DB::table('job_openings')->get();
         return inertia('HR/Jobs', [
             'jobs' => $jobs

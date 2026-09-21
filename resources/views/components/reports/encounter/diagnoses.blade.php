@@ -3,15 +3,21 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Diagnosis</th>
+                <th colspan="2">Diagnosis</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($visit->diagnoses as $diagnosis)
                 <tr>
                     <td>{{ $diagnosis->diagnoses }}</td>
+                    <td>{{ $diagnosis->consultant?->name }}</td>
                 </tr>
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <td>{{ $diagnosis }}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>
