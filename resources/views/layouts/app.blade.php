@@ -26,10 +26,27 @@
     @stack('styles')
 </head>
 
-<body class="h-dvh grid place-items-center">
+<body class="h-dvh grid place-items-center" x-init="chat_open = localStorage.getItem('chat_open', '0') == 1;" x-data="{
+    chat_open: false,
+    setChat(value) {
+        localStorage.setItem('chat_open', value == true ? 1 : 0);
+        this.chat_open = value;
+    },
+    chat_selected: false,
+    selectChat(value) {
+        this.chat_selected = value;
+        setupChat();
+        if (value != false) {
+            localStorage.setItem('opened_chat', JSON.stringify(value));
+        } else {
+            localStorage.setItem('opened_chat', false);
+        }
+    },
+}">
     <x-loader />
 
-    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false, current_location: '{{ session('current_location_code') }}' }" @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
+    <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false, current_location: '{{ session('current_location_code') }}' }"
+        @closeModal.window="removeGlobalModal" x-init="aside = (localStorage.getItem('aside') || 'true') === 'true'">
         {{-- Navigations --}}
         {{-- Mobile nav --}}
         <div class="sticky top-0 w-full z-[50] sm:hidden">
@@ -139,8 +156,31 @@
         </div>
     </div>
 
-
     <div id="notifications" class="fixed top-4 right-4 flex flex-col gap-2 z-[1000]"></div>
+
+    <button x-cloak x-show="!chat_open" class="fixed btn bg-primary bottom-4 right-8"
+        @click="setChat(true)">Chat</button>
+
+    <div x-cloak id="chat-box" x-show="chat_open"
+        class="fixed h-3/4 bottom-4 right-8 rounded border w-[400px] z-[1000] flex flex-col">
+        <div class="p-4 bg-white border-b shrink-0">
+            Chat Messages
+            <button class="btn" @click="setChat(false)">&times;</button>
+        </div>
+
+        <div x-show="chat_selected != false" class="p-4 bg-white flex-1 min-h-0 flex flex-col">
+            <div class="border-b">
+                <button class="btn text-xl" @click="chat_selected = false">&lt;</button>
+                <span x-text="chat_selected?.name"></span>
+                <input type="hidden" id="chat-receiver" />
+            </div>
+            <ul class="flex-1 overflow-y-auto" id="chat-msgs"></ul>
+            <input type="text" class="form-control" placeholder="Enter your text" id="chat-text-input" />
+        </div>
+
+        <ul id="list-of-users" x-show="chat_selected == false" class="bg-white flex-1 min-h-0 flex flex-col">
+        </ul>
+    </div>
 
     <script src="{{ asset('/datatables/datatables.min.js') }}"></script>
 
@@ -194,25 +234,104 @@
 
     <script>
         $(document).ready(() => {
-            Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
-                displayNotification(e);
-            });
+                    const alpineRoot = document.querySelector('body[x-data]');
 
-            Echo.private('user.{{ auth()->user()->id }}').listen('.UserEvent', (e) => {
-                displayNotification(e);
-            });
+                    const myId = {{ auth()->user()->id }};
+                    Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
+                        displayNotification(e);
+                    });
 
-            // Check for notification permission
-            if (Notification.permission !== 'granted') {
-                Notification.requestPermission().then(function(result) {
-                    if (result === 'granted') {
-                        const n = new Notification('Notifications enabled', {
-                            body: 'You will receive notifications when they arrive.',
+                    Echo.private(`user.${myId}`).listen('.UserEvent', (e) => {
+                        displayNotification(e);
+                    });
+
+                    // Check for notification permission
+                    if (Notification.permission !== 'granted') {
+                        Notification.requestPermission().then(function(result) {
+                            if (result === 'granted') {
+                                const n = new Notification('Notifications enabled', {
+                                    body: 'You will receive notifications when they arrive.',
+                                });
+                            }
                         });
                     }
-                });
-            }
-        });
+
+                    const newMsg = (msg, color) => {
+                                const el = $(`<li class='flex flex-col gap-y-1 p-2 ${color}'>
+                                    <span>${msg.message}</span>
+                                    <span class='text-xs'>${msg.time}</span>
+                                </li>`);
+
+                                $("#chat-msgs").append(el);
+                    }
+
+                    Echo.private(`chat.${myId}`).listenForWhisper('chat', (e) => {
+                            if (Alpine.$data(alpineRoot).chat_selected?.id == e.from) {
+                                newMsg(e, 'bg-blue-400 border-2 rounded');
+                            } else {
+                                displayNotification({
+                                    message: `You've received a text: ${e.message}`,
+                                    bg: ['bg-red-600', 'text-white'],
+                                    options: {mode: 'both'},
+                                });
+                            }
+                    });
+
+                        const sendChatMsg = () => {
+                            const value = $("#chat-text-input").val();
+                            const to = $("#chat-receiver").val();
+                            if (!value || !to) {
+                                return;
+                            }
+                            var msg = {
+                                message: value,
+                                from: myId,
+                                time: new Date(),
+                            };
+
+                            const a = Echo.private(`chat.${to}`).whisper('chat', msg);
+
+                                newMsg(msg, 'bg-gray-400 border-2 rounded');
+                            $("#chat-text-input").val('');
+                        };
+
+                        $("#chat-text-input").on('keyup', (e) => {
+                            if (e.key == 'Enter') {
+                                e.preventDefault();
+                                sendChatMsg();
+                            }
+                        });
+
+                        axios.get('/api/active-users').then(({
+                            data
+                        }) => {
+                            data.forEach((user) => {
+                                const el = $(`<li data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
+                        <span>${user.name}</span>
+                        <span class='text-xs'>${user.department.name}</span>
+                        </li>`);
+
+                                el.on('click', function() {
+                                    const alpineRoot = document.querySelector(
+                                        'body[x-data]'); // adjust selector if body isn't the root
+                                    Alpine.$data(alpineRoot).selectChat({
+                                        id: user.id,
+                                        name: user.name,
+                                        department: user.department.name,
+                                    });
+                                    $("#chat-receiver").val(user
+                                        .id);
+                                });
+
+                                $("#list-of-users").append(el);
+                            });
+                        });
+                    });
+
+                const setupChat = () => {
+                    // Echo.join(`chat.${id}`);
+                    $("#chat-msgs").html("");
+                }
     </script>
     @stack('scripts')
 </body>

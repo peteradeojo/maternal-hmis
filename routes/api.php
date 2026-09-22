@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\IT\CrmController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,15 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
 
     Route::post('/job-openings', [CrmController::class, 'createJobOpening']);
     Route::patch('/job-openings/{opening}', [CrmController::class, 'toggleJobOpening']);
+
+    Route::get('/active-users', function (Request $request) {
+        $users = User::active()
+            ->with(['department'])
+            ->where('id', '!=', $request->user()->id)
+            ->select(['id', 'firstname', 'lastname', 'phone', 'department_id'])
+            ->get();
+        return response()->json($users);
+    });
 });
 // include_once __DIR__ . '/api/records.php';
 

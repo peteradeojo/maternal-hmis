@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\Status;
 use App\Traits\Auditable;
+use App\Traits\CastsStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, Auditable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, Auditable, CastsStatus;
 
     /**
      * The attributes that are mass assignable.
