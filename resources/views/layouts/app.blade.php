@@ -162,7 +162,7 @@
         @click="setChat(true)">Chat</button>
 
     <div x-cloak id="chat-box" x-show="chat_open"
-        class="fixed h-3/4 bottom-4 right-8 rounded border w-[400px] z-[1000] flex flex-col">
+        class="fixed h-screen md:h-3/4 md:bottom-4 md:right-8 rounded border w-screen md:w-[400px] z-[1000] flex flex-col">
         <div class="p-4 bg-white border-b shrink-0">
             Chat Messages
             <button class="btn" @click="setChat(false)">&times;</button>
@@ -237,6 +237,8 @@
                     const alpineRoot = document.querySelector('body[x-data]');
 
                     const myId = {{ auth()->user()->id }};
+                    const myName = "{{ auth()->user()->name }}";
+
                     Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
                         displayNotification(e);
                     });
@@ -270,7 +272,7 @@
                                 newMsg(e, 'bg-blue-400 border-2 rounded');
                             } else {
                                 displayNotification({
-                                    message: `You've received a text: ${e.message}`,
+                                    message: `You've received a text from ${e.fromName}: ${e.message}`,
                                     bg: ['bg-red-600', 'text-white'],
                                     options: {mode: 'both'},
                                 });
@@ -286,7 +288,8 @@
                             var msg = {
                                 message: value,
                                 from: myId,
-                                time: new Date(),
+                                fromName: myName,
+                                time: new Date().toLocaleString(),
                             };
 
                             const a = Echo.private(`chat.${to}`).whisper('chat', msg);
