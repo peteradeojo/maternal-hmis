@@ -162,7 +162,7 @@
         @click="setChat(true)">Chat</button>
 
     <div x-cloak id="chat-box" x-show="chat_open"
-        class="fixed h-screen md:h-3/4 md:bottom-4 md:right-8 rounded border w-screen md:w-[400px] z-[1000] flex flex-col">
+        class="fixed h-dvh md:h-3/4 md:bottom-4 md:right-8 rounded border w-screen md:w-[400px] z-[1000] flex flex-col">
         <div class="p-4 bg-white border-b shrink-0">
             Chat Messages
             <button class="btn" @click="setChat(false)">&times;</button>
