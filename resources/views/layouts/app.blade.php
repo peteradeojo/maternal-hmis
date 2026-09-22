@@ -178,7 +178,7 @@
             <input type="text" class="form-control" placeholder="Enter your text" id="chat-text-input" />
         </div>
 
-        <ul id="list-of-users" x-show="chat_selected == false" class="bg-white flex-1 min-h-0 flex flex-col">
+        <ul id="list-of-users" x-show="chat_selected == false" class="bg-white flex-1 min-h-0 flex flex-col overflow-y-auto">
         </ul>
     </div>
 
