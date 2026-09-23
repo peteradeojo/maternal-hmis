@@ -8,6 +8,7 @@ use App\Models\Bill;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Visit;
+use App\Services\LocationContext;
 use Livewire\Component;
 
 class PatientStats extends Component
@@ -18,6 +19,7 @@ class PatientStats extends Component
     public $patientsToday = 0;
     public $currentAdmissions = 0;
     public $visits = [];
+    public $todayVisits = 0;
 
     public $stats = [];
 
@@ -31,6 +33,8 @@ class PatientStats extends Component
     {
         $this->patients = Patient::count();
         $this->patientsToday = Patient::whereDate('created_at', today())->count();
+        $location = app(LocationContext::class)->id();
+        $this->todayVisits = Visit::where('location_id', $location)->whereDate('created_at', today())->count();
 
         $this->currentAdmissions = Admission::active()->count();
 

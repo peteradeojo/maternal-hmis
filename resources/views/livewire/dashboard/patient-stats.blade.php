@@ -14,17 +14,27 @@
             </x-slot:footer>
         </x-card>
 
-        <x-card border="green-500" color="green-500">
+        <x-card border="border-yellow-500" color="text-yellow-500">
+            <x-slot:title>
+                <p class="font-semibold text-4xl">{{ $todayVisits }}</p>
+            </x-slot:title>
+
+            <x-slot:footer>
+                <p>Patients Seen Today</p>
+            </x-slot:footer>
+        </x-card>
+
+        <x-card border="border-green-500" color="text-green-500">
             <x-slot:title>
                 <p class="font-semibold text-4xl">{{ $patientsToday }}</p>
             </x-slot:title>
 
             <x-slot:footer>
-                <p>Patients Today</p>
+                <p>Patients Registered Today</p>
             </x-slot:footer>
         </x-card>
 
-        <x-card color="purple-700">
+        <x-card color="text-purple-700">
             <x-slot:title>
                 <p class="font-semibold text-4xl">{{ $currentAdmissions }}</p>
             </x-slot:title>
@@ -47,7 +57,7 @@
         </x-card>
 
         @can('view bills')
-            <x-card border="green-500" color="green-500">
+            <x-card border="border-green-500" color="text-green-500">
                 <x-slot:title>
                     <span class="font-medium text-4xl">{{ $stats['pendingBills'] }}</span>
                 </x-slot:title>
