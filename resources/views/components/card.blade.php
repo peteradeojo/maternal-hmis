@@ -2,12 +2,12 @@
 Slots: title, icon, footer
 --}}
 
-@props(['border' => 'blue-500', 'color' => 'blue-500'])
+@props(['border' => 'border-blue-500', 'color' => 'text-blue-500'])
 
-<div class="bg-white rounded-lg shadow p-6 border-l-4 border-{{ $border }}">
+<div class="bg-white rounded-lg shadow p-6 border-l-4 {{ $border }}">
     <div class="flex items-center">
         @isset($title)
-            <span class="text-{{ $color }}">
+            <span class="{{ $color }}">
                 {{ $title }}
             </span>
         @endisset
