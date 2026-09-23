@@ -9,6 +9,7 @@ use App\Models\Patient;
 use App\Models\User;
 use App\Models\Visit;
 use App\Services\LocationContext;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class PatientStats extends Component
@@ -31,14 +32,32 @@ class PatientStats extends Component
 
     private function getData()
     {
-        $this->patients = Patient::count();
-        $this->patientsToday = Patient::whereDate('created_at', today())->count();
         $location = app(LocationContext::class)->id();
-        $this->todayVisits = Visit::where('location_id', $location)->whereDate('created_at', today())->count();
+        $data = Cache::get("dashboard-stats:{$location}");
 
-        $this->currentAdmissions = Admission::active()->count();
+        if (!$data) {
+            $this->patients = Patient::count();
+            $this->patientsToday = Patient::whereDate('created_at', today())->count();
+            $this->todayVisits = Visit::where('location_id', $location)->whereDate('created_at', today())->count();
 
-        $this->stats['pendingBills'] = Bill::where('status', Status::pending->value)->count();
+            $this->currentAdmissions = Admission::active()->count();
+
+            $this->stats['pendingBills'] = Bill::where('status', Status::pending->value)->count();
+
+            Cache::set("dashboard-stats:{$location}", [
+                'patients' => $this->patients,
+                'patientsToday' => $this->patientsToday,
+                'todayVisits' => $this->todayVisits,
+                'currentAdmissions' => $this->currentAdmissions,
+                'stats' => $this->stats,
+            ], now()->addMinutes(5));
+        } else {
+            $this->patientsToday = $data['patientsToday'];
+            $this->patients = $data['patients'];
+            $this->currentAdmissions = $data['currentAdmissions'];
+            $this->todayVisits = $data['todayVisits'];
+            $this->stats = $data['stats'];
+        }
 
         $this->visits = Visit::where("status", "=", Status::active->value)->latest()->limit(50)->get();
     }
