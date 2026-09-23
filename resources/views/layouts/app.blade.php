@@ -115,11 +115,11 @@
                 {{-- Location Switcher  --}}
                 <form method="POST" action="/location/switch">
                     @csrf
-                    <select name="location_code" class="pr-8 py-0" x-model="current_location">
+                    <select name="location_code" id="location-switcher-select" class="pr-8 py-0" x-model="current_location">
                         <option value="IMMIGRATION">Immigration</option>
                         <option value="ADEBAYO">Adebayo</option>
                     </select>
-                    <button>Switch</button>
+                    {{-- <button>Switch</button> --}}
                 </form>
                 {{-- End Location Switcher --}}
 
@@ -216,6 +216,11 @@
             document.querySelector("#page-loader").remove();
             document.querySelector("#app-content").classList.remove("hidden", "place-items-center");
             document.querySelector("#app-content").classList.add("md:flex");
+
+            document.querySelector("#location-switcher-select")?.addEventListener('change', (e) => {
+                const form = e.target.parentElement;
+                form.submit();
+            });
         });
     </script>
 
