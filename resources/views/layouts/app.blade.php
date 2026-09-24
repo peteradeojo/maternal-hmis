@@ -174,12 +174,19 @@
                 <span x-text="chat_selected?.name"></span>
                 <input type="hidden" id="chat-receiver" />
             </div>
+
             <ul class="flex-1 overflow-y-auto" id="chat-msgs"></ul>
             <input type="text" class="form-control" placeholder="Enter your text" id="chat-text-input" />
         </div>
 
-        <ul id="list-of-users" x-show="chat_selected == false" class="bg-white flex-1 min-h-0 flex flex-col overflow-y-auto">
-        </ul>
+        <div x-show="chat_selected == false" class="p-1 bg-white flex-1 min-h-0 flex flex-col overflow-y-auto">
+            <input type="search" class="form-control" x-on:keyup="const value=$event.target.value.toLowerCase();$event.target.nextElementSibling.querySelectorAll('li').forEach((el) => {
+                 el.querySelector('span').innerText.toLowerCase().includes(value) == false ? el.classList.add('hidden') : el.classList.remove('hidden');
+            })" id="filter-users" placeholder="Search user" />
+
+            <ul id="list-of-users" class="">
+            </ul>
+        </div>
     </div>
 
     <script src="{{ asset('/datatables/datatables.min.js') }}"></script>
