@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ChatSent;
 use App\Http\Controllers\IT\CrmController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -46,6 +47,22 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
             ->select(['id', 'firstname', 'lastname', 'phone', 'department_id'])
             ->get();
         return response()->json($users);
+    });
+
+    Route::get('/chats/{fromId}', function (Request $request, $fromId) {});
+
+    Route::post('/chat/send', function (Request $request) {
+        $data = $request->validate([
+            'message' => 'required|string',
+            'to' => 'required|integer',
+        ]);
+
+        $data['time'] = now()->format('Y-m-d h:i A');
+        $data['from'] = auth()->user()->id;
+        $data['fromName'] = auth()->user()->name;
+
+        event(new ChatSent($data));
+        return response()->json(['ok' => true]);
     });
 });
 // include_once __DIR__ . '/api/records.php';
