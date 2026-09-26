@@ -28,6 +28,7 @@
 
 <body class="h-dvh grid place-items-center" x-init="chat_open = localStorage.getItem('chat_open', '0') == 1;" x-data="{
     chat_open: false,
+    myId: {{ auth()->user()->id }},
     setChat(value) {
         localStorage.setItem('chat_open', value == true ? 1 : 0);
         this.chat_open = value;
@@ -41,6 +42,19 @@
         } else {
             localStorage.setItem('opened_chat', false);
         }
+    },
+    online_users: [],
+
+    addOnlineUser(user) {
+        if (!this.online_users.find(u => u.id === user.id)) {
+            this.online_users.push(user);
+        }
+    },
+    removeOnlineUser(user) {
+        this.online_users = this.online_users.filter(u => u.id !== user.id);
+    },
+    isOnline(id) {
+        return this.online_users.some(u => u.id === id);
     },
 }">
     <x-loader />
@@ -185,6 +199,12 @@
             })" id="filter-users" placeholder="Search user" />
 
             <ul id="list-of-users" class="">
+                <template x-for="user in online_users">
+                    <li @click="selectChat(user)" data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
+                        <span x-text="user.name"></span>
+                        <span class="text-xs" x-text="user.department"></span>
+                    </li>
+                </template>
             </ul>
         </div>
     </div>
@@ -279,34 +299,64 @@
                                 $("#chat-msgs").append(el);
                     }
 
-                    Echo.private(`chat.${myId}`).listenForWhisper('chat', (e) => {
-                            if (Alpine.$data(alpineRoot).chat_selected?.id == e.from) {
-                                newMsg(e, 'bg-blue-400 border-2 rounded');
-                            } else {
-                                displayNotification({
-                                    message: `You've received a text from ${e.fromName}: ${e.message}`,
-                                    bg: ['bg-red-600', 'text-white'],
-                                    options: {mode: 'both'},
-                                });
+                    const receiveChatMsg = (e) => {
+                    console.log(e);
+                        if (Alpine.$data(alpineRoot).chat_selected?.id == e.from) {
+                            newMsg(e, 'bg-blue-400 border-2 rounded');
+                        } else {
+                            displayNotification({
+                                message: `You've received a text from ${e.fromName}: ${e.message}`,
+                                bg: ['bg-red-600', 'text-white'],
+                                options: {mode: 'both'},
+                            });
+                        }
+                    };
+
+                    Echo.join('appchat')
+                        .here((users) => {
+                            Alpine.$data(alpineRoot).online_users = users;
+                        })
+                        .joining((user) => {
+                            Alpine.$data(alpineRoot).addOnlineUser(user);
+                        })
+                        .leaving((user) => {
+                            Alpine.$data(alpineRoot).removeOnlineUser(user);
+                        })
+                        .error((error) => {})
+                        .listen('ChatSent', function (e) {
+                            if (e.data.to == myId) {
+                                receiveChatMsg(e.data);
+                                return;
                             }
-                    });
+
+                            // if (e.data.to != myId || e.data.from == myId) return;
+                            // receiveChatMsg(e);
+                        })
+                        .listenForWhisper('chat', function (e) {
+                            if (e.data.to != myId || e.data.from == myId) return;
+                            receiveChatMsg(e);
+                        });
+                        ;
 
                         const sendChatMsg = () => {
                             const value = $("#chat-text-input").val();
-                            const to = $("#chat-receiver").val();
+                            const activeChat = JSON.parse(localStorage.getItem("opened_chat"))
+                            const to = activeChat?.id;
+
                             if (!value || !to) {
                                 return;
                             }
                             var msg = {
                                 message: value,
                                 from: myId,
+                                to,
                                 fromName: myName,
                                 time: new Date().toLocaleString(),
                             };
 
-                            const a = Echo.private(`chat.${to}`).whisper('chat', msg);
-
-                                newMsg(msg, 'bg-gray-400 border-2 rounded');
+                            // const a = Echo.join(`appchat`).whisper('chat', msg);
+                            axios.post('/api/chat/send', msg);
+                            newMsg(msg, 'bg-gray-400 border-2 rounded');
                             $("#chat-text-input").val('');
                         };
 
@@ -317,30 +367,30 @@
                             }
                         });
 
-                        axios.get('/api/active-users').then(({
-                            data
-                        }) => {
-                            data.forEach((user) => {
-                                const el = $(`<li data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
-                        <span>${user.name}</span>
-                        <span class='text-xs'>${user.department.name}</span>
-                        </li>`);
-
-                                el.on('click', function() {
-                                    const alpineRoot = document.querySelector(
-                                        'body[x-data]'); // adjust selector if body isn't the root
-                                    Alpine.$data(alpineRoot).selectChat({
-                                        id: user.id,
-                                        name: user.name,
-                                        department: user.department.name,
-                                    });
-                                    $("#chat-receiver").val(user
-                                        .id);
-                                });
-
-                                $("#list-of-users").append(el);
-                            });
-                        });
+                        // axios.get('/api/active-users').then(({
+                        //     data
+                        // }) => {
+                        //     data.forEach((user) => {
+                        //         const el = $(`<li data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
+                        //     <span>${user.name}</span>
+                        //     <span class='text-xs'>${user.department.name}</span>
+                        //     </li>`);
+                        //
+                        //         el.on('click', function() {
+                        //             const alpineRoot = document.querySelector(
+                        //                 'body[x-data]'); // adjust selector if body isn't the root
+                        //             Alpine.$data(alpineRoot).selectChat({
+                        //                 id: user.id,
+                        //                 name: user.name,
+                        //                 department: user.department.name,
+                        //             });
+                        //             $("#chat-receiver").val(user
+                        //                 .id);
+                        //         });
+                        //
+                        //         $("#list-of-users").append(el);
+                        //     });
+                        // });
                     });
 
                 const setupChat = () => {
