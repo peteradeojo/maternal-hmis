@@ -4,6 +4,7 @@ use App\Events\ChatSent;
 use App\Http\Controllers\IT\CrmController;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,7 +50,15 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
         return response()->json($users);
     });
 
-    Route::get('/chats/{fromId}', function (Request $request, $fromId) {});
+    Route::get('/chats/{fromId}', function (Request $request, $fromId) {
+        $cxn = DB::connection('chat');
+        $user = $request->user();
+        $data = $cxn->table('chat_messages')
+            ->whereRaw("(senderId, receiverId) = (?, ?)", [$user->id, $fromId])
+            ->OrWhereRaw("(senderId, receiverId) = (?, ?)", [$fromId, $user->id])
+            ->limit(50)->get();
+        return response()->json($data);
+    });
 
     Route::post('/chat/send', function (Request $request) {
         $data = $request->validate([
@@ -57,11 +66,22 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
             'to' => 'required|integer',
         ]);
 
+        $user = $request->user();
         $data['time'] = now()->format('Y-m-d h:i A');
-        $data['from'] = auth()->user()->id;
+        $data['from'] = $user->id;
         $data['fromName'] = auth()->user()->name;
 
-        event(new ChatSent($data));
+        if ($user->id != $data['to']) event(new ChatSent($data));
+
+        DB::connection('chat')->table('chat_messages')->insert([
+            'msgTime' => $data['time'],
+            'senderId' => $data['from'],
+            'sender' => $user->name,
+            'receiverId' => $data['to'],
+            'receiver' => User::find($data['to'])?->name,
+            'message' => $data['message'],
+        ]);
+
         return response()->json(['ok' => true]);
     });
 });
