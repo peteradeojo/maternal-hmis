@@ -38,25 +38,29 @@ class Vitals extends Component
 
         if (count($data) < 1) return;
 
-        ModelsVitals::create([
-            'patient_id' => $this->evt->patient_id,
-            'recordable_type' => $this->evt::class,
-            'recordable_id' => $this->evt->id,
-            'recording_user_id' => auth()->user()->id,
-            ...$data,
-            'extra' => array_filter($this->extra),
-        ]);
+        try {
+            ModelsVitals::create([
+                'patient_id' => $this->evt->patient_id,
+                'recordable_type' => $this->evt::class,
+                'recordable_id' => $this->evt->id,
+                'recording_user_id' => auth()->user()->id,
+                ...$data,
+                'extra' => array_filter($this->extra),
+            ]);
 
-        $this->dispatch('saved');
-        $this->dispatch('closeModal');
+            $this->dispatch('saved');
+            $this->dispatch('closeModal');
 
-        if (property_exists($this->evt, 'awaiting_vitals')) {
-            $this->evt->awaiting_vitals = false;
-            $this->evt->save();
+            if (property_exists($this->evt, 'awaiting_vitals')) {
+                $this->evt->awaiting_vitals = false;
+                $this->evt->save();
+            }
+
+            $this->vitals->reset();
+            $this->vitals->resetErrorBag('recorded_date');
+        } catch (\Throwable $th) {
+            notifyUserError("An error occurred", request()->user()->id);
         }
-
-        $this->vitals->reset();
-        $this->vitals->resetErrorBag('recorded_date');
     }
 
     public function deleteVitals($id)
@@ -72,7 +76,7 @@ class Vitals extends Component
     public function handleVitalsSaved()
     {
         // if ($this->showResults) {
-            // $this->evt->svitals->refresh();
+        // $this->evt->svitals->refresh();
         // }
     }
 }

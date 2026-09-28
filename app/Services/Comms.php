@@ -17,7 +17,7 @@ class Comms
     static function notifyUserError(string $message, User|int $user, $options = [])
     {
         $options['mode'] ??= AppNotifications::$IN_APP;
-        sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $user, $options);
+        static::sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $user, $options);
     }
 
     static function sendUserMessage($message, User|int $userId, $options = [])

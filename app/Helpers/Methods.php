@@ -208,11 +208,6 @@ function notifyUserError(string $message, User|int $user, $options = [])
     return Comms::notifyUserError($message, $user, $options);
 }
 
-function sendUserMessage($message, User|int $userId, $options = [])
-{
-    return Comms::sendUserMessage($message, $userId, $options);
-}
-
 function notifyDepartment($departmentId, $message, $options = [])
 {
     Comms::notifyDepartment($departmentId, $message, $options);
