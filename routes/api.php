@@ -56,7 +56,8 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
         $data = $cxn->table('chat_messages')
             ->whereRaw("(senderId, receiverId) = (?, ?)", [$user->id, $fromId])
             ->OrWhereRaw("(senderId, receiverId) = (?, ?)", [$fromId, $user->id])
-            ->limit(50)->get();
+            ->select(['message', 'created_at as time', 'senderId as from', 'sender as fromName', 'receiverId as to',])
+            ->limit(50)->orderBy('created_at', 'asc')->get();
         return response()->json($data);
     });
 
@@ -69,20 +70,22 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
         $user = $request->user();
         $data['time'] = now()->format('Y-m-d h:i A');
         $data['from'] = $user->id;
-        $data['fromName'] = auth()->user()->name;
+        $data['fromName'] = $user->name;
 
         if ($user->id != $data['to']) event(new ChatSent($data));
 
         DB::connection('chat')->table('chat_messages')->insert([
-            'msgTime' => $data['time'],
+            // 'msgTime' => $data['time'],
             'senderId' => $data['from'],
             'sender' => $user->name,
             'receiverId' => $data['to'],
             'receiver' => User::find($data['to'])?->name,
             'message' => $data['message'],
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => true, 'message' => $data]);
     });
 });
 // include_once __DIR__ . '/api/records.php';

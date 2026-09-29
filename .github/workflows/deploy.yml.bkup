@@ -1,0 +1,81 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # - name: Login to GHCR
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ secrets.GHCR_USERNAME }}
+      #     password: ${{ secrets.ACCESS_TOKEN }}
+
+      # - name: Build & Push EMR Image
+      #   run: |
+      #     docker build -t ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-app:latest .
+      #     docker push ghcr.io/${{secrets.GHCR_USERNAME}}/emr-portal-app:latest
+
+      # - name: Build & Push Nginx Image
+      #   run: |
+      #     docker build \
+      #       -f infra/Dockerfile.nginx \
+      #       -t ghcr.io/${{secrets.GHCR_USERNAME}}/emr-nginx:latest .
+      #     docker push ghcr.io/${{secrets.GHCR_USERNAME}}/emr-nginx:latest
+
+      - name: Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          # authkey: ${{ secrets.TS_AUTH_KEY }}
+          oauth-client-id: ${{secrets.TS_CLIENT_ID}}
+          oauth-secret: ${{secrets.TS_CLIENT_SECRET}}
+          hostname: github-actions-ci
+          tags: tag:productions
+
+      - name: Ping Server
+        run: ping -c 3 100.114.76.111
+
+      - name: SSH Into Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 100.114.76.111
+          key: ${{secrets.HOST_PRIVATE_SSH_KEY}}
+          fingerprint: ""
+          username: mcadmin
+          debug: true
+          script: |
+            set -e
+            # 1. Load NVM into this session
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            cd /var/www/hmis
+            git checkout main
+            git pull
+
+            composer install
+            composer dump-autoload -o
+
+            if php artisan migrate:status | grep -q "Pending"; then
+                echo "Found pending migrations. Running migrate..."
+                php artisan migrate --force -n --isolated
+            else
+                echo "No pending migrations to run."
+            fi
+
+            npm ci
+
+            npm run build
+            php artisan db:seed --class=RoleAndPermissionSeeder --force
+            ./cloudflare_purge.sh
+            sudo -u www-data php artisan octane:reload || {
+              sudo supervisorctl restart octane
+            }
+            sudo supervisorctl restart queue

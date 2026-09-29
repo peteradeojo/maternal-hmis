@@ -52,10 +52,6 @@ jobs:
           debug: true
           script: |
             set -e
-            # Login to GHCR on the remote server
-            # echo "${{ secrets.ACCESS_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-            # Navigate to project directory and build
-            # 1. Load NVM into this session
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -63,21 +59,61 @@ jobs:
             git checkout main
             git pull
 
-            composer install
-            composer dump-autoload -o
+            SHA_FILE=.last_deployed_sha          # add to .gitignore
+            NEW_SHA=$(git rev-parse HEAD)
+            OLD_SHA=$(cat "$SHA_FILE" 2>/dev/null || true)
 
-            if php artisan migrate:status | grep -q "Pending"; then
-                echo "Found pending migrations. Running migrate..."
-                php artisan migrate --force -n --isolated
+            # If there's no record (first run) or the old commit no longer exists (force push), treat everything as changed
+            if [ -n "$OLD_SHA" ] && git cat-file -e "$OLD_SHA^{commit}" 2>/dev/null; then
+                CHANGED_FILES=$(git diff --name-only "$OLD_SHA" "$NEW_SHA")
             else
-                echo "No pending migrations to run."
+                OLD_SHA=""
+                CHANGED_FILES=""
             fi
 
-            npm ci
+            # true if no baseline, or any changed file matches the regex
+            changed() { [ -z "$OLD_SHA" ] || echo "$CHANGED_FILES" | grep -qE "$1"; }
 
-            npm run build
-            php artisan db:seed --class=RoleAndPermissionSeeder --force
-            ./cloudflare_purge.sh
+            # --- PHP dependencies ---
+            if changed '^composer\.(json|lock)$' || [ ! -d vendor ]; then
+                composer install --no-interaction --prefer-dist --optimize-autoloader
+            else
+                echo "Composer files unchanged, skipping install."
+            fi
+
+            # --- Migrations (migrate is already a no-op when nothing is pending) ---
+            php artisan migrate --force -n --isolated
+
+            # --- Node dependencies ---
+            if changed '^package(-lock)?\.json$' || [ ! -d node_modules ]; then
+                npm ci
+            else
+                echo "Node deps unchanged, skipping npm ci."
+            fi
+
+            # --- Asset build ---
+            ASSETS_BUILT=0
+            if changed '^(resources/|package(-lock)?\.json$|vite\.config\.|tailwind\.config\.|postcss\.config\.)' || [ ! -d public/build ]; then
+                npm run build
+                ASSETS_BUILT=1
+            else
+                echo "No frontend changes, skipping build."
+            fi
+
+            # --- Seeder (only when seeders changed) ---
+            if changed '^database/seeders/'; then
+                php artisan db:seed --class=RoleAndPermissionSeeder --force
+            fi
+
+            # --- Cache purge only if assets changed ---
+            if [ "$ASSETS_BUILT" = 1 ]; then
+                ./cloudflare_purge.sh
+            fi
+
             sudo -u www-data php artisan octane:reload || {
-              sudo supervisorctl restart octane
+                sudo supervisorctl restart octane
             }
+
+            # Only reached if every step above succeeded (set -e)
+            echo "$NEW_SHA" > "$SHA_FILE"
+            sudo supervisorctl restart "queue:*" schedule websocket

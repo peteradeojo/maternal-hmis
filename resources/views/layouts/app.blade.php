@@ -274,6 +274,7 @@
                                 </li>`);
 
                                 $("#chat-msgs").append(el);
+                                $("#chat-msgs").scrollTop($('#chat-msgs')[0].scrollHeight);
                     }
         $(document).ready(() => {
                     const alpineRoot = document.querySelector('body[x-data]');
@@ -312,7 +313,7 @@
 
                     Echo.join('appchat')
                         .here((users) => {
-                            Alpine.$data(alpineRoot).online_users = users;
+                            Alpine.$data(alpineRoot).online_users = users.filter((user) => user.id != myId);
                         })
                         .joining((user) => {
                             Alpine.$data(alpineRoot).addOnlineUser(user);
@@ -349,9 +350,11 @@
                                 time: new Date().toLocaleString(),
                             };
 
-                            axios.post('/api/chat/send', msg);
-                            newMsg(msg, 'bg-gray-400 border-2 rounded');
-                            $("#chat-text-input").val('');
+                            axios.post('/api/chat/send', msg).then(({data}) => {
+                                const {message, ok} = data;
+                                newMsg(message, 'bg-gray-400 border-2 rounded');
+                                $("#chat-text-input").val('');
+                            });
                         };
 
                         $("#chat-text-input").on('keyup', (e) => {
@@ -369,10 +372,12 @@
                     if (data || data.length > 0) {
                         $("#chat-msgs").html("");
                         data.forEach((message) => {
-                            if (message.senderId == myId) {
-                                newMsg({...message, to: message.receiverId, from: message.senderId, fromName: message.sender, time: message.msgTime, }, 'bg-gray-400 border-2 rounded');
+                            if (message.from == myId) {
+                                // newMsg({...message, to: message.receiverId, from: message.senderId, fromName: message.sender, time: message.created_at, }, 'bg-gray-400 border-2 rounded');
+                                newMsg(message, 'bg-gray-400 border-2 rounded');
                             } else {
-                                newMsg({...message, to: message.senderId, from: message.sender, fromName: message.receiver, time: message.msgTime, }, 'bg-blue-400 border-2 rounded');
+                                // newMsg({...message, to: message.senderId, from: message.sender, fromName: message.receiver, time: message.created_at, }, 'bg-blue-400 border-2 rounded');
+                                newMsg(message, 'bg-blue-400 border-2 rounded');
                             }
                         });
                     }else {
