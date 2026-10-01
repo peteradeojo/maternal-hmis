@@ -36,7 +36,7 @@
     chat_selected: false,
     selectChat(value) {
         this.chat_selected = value;
-        setupChat();
+        setupChat(value?.id);
         if (value != false) {
             localStorage.setItem('opened_chat', JSON.stringify(value));
         } else {
@@ -265,11 +265,19 @@
     </script>
 
     <script>
+        const myId = {{ auth()->user()->id }};
+        const myName = "{{ auth()->user()->name }}";
+        const newMsg = (msg, color) => {
+                                const el = $(`<li class='flex flex-col gap-y-1 p-2 ${color}'>
+                                    <span>${msg.message}</span>
+                                    <span class='text-xs'>${msg.time}</span>
+                                </li>`);
+
+                                $("#chat-msgs").append(el);
+                                $("#chat-msgs").scrollTop($('#chat-msgs')[0].scrollHeight);
+                    }
         $(document).ready(() => {
                     const alpineRoot = document.querySelector('body[x-data]');
-
-                    const myId = {{ auth()->user()->id }};
-                    const myName = "{{ auth()->user()->name }}";
 
                     Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
                         displayNotification(e);
@@ -290,18 +298,8 @@
                         });
                     }
 
-                    const newMsg = (msg, color) => {
-                                const el = $(`<li class='flex flex-col gap-y-1 p-2 ${color}'>
-                                    <span>${msg.message}</span>
-                                    <span class='text-xs'>${msg.time}</span>
-                                </li>`);
-
-                                $("#chat-msgs").append(el);
-                    }
-
                     const receiveChatMsg = (e) => {
-                    console.log(e);
-                        if (Alpine.$data(alpineRoot).chat_selected?.id == e.from) {
+                        if (Alpine.$data(document.querySelector('body[x-data]')).chat_selected?.id == e.from) {
                             newMsg(e, 'bg-blue-400 border-2 rounded');
                         } else {
                             displayNotification({
@@ -314,7 +312,7 @@
 
                     Echo.join('appchat')
                         .here((users) => {
-                            Alpine.$data(alpineRoot).online_users = users;
+                            Alpine.$data(alpineRoot).online_users = users.filter((user) => user.id != myId);
                         })
                         .joining((user) => {
                             Alpine.$data(alpineRoot).addOnlineUser(user);
@@ -328,9 +326,6 @@
                                 receiveChatMsg(e.data);
                                 return;
                             }
-
-                            // if (e.data.to != myId || e.data.from == myId) return;
-                            // receiveChatMsg(e);
                         })
                         .listenForWhisper('chat', function (e) {
                             if (e.data.to != myId || e.data.from == myId) return;
@@ -354,10 +349,11 @@
                                 time: new Date().toLocaleString(),
                             };
 
-                            // const a = Echo.join(`appchat`).whisper('chat', msg);
-                            axios.post('/api/chat/send', msg);
-                            newMsg(msg, 'bg-gray-400 border-2 rounded');
-                            $("#chat-text-input").val('');
+                            axios.post('/api/chat/send', msg).then(({data}) => {
+                                const {message, ok} = data;
+                                newMsg(message, 'bg-gray-400 border-2 rounded');
+                                $("#chat-text-input").val('');
+                            });
                         };
 
                         $("#chat-text-input").on('keyup', (e) => {
@@ -366,36 +362,26 @@
                                 sendChatMsg();
                             }
                         });
-
-                        // axios.get('/api/active-users').then(({
-                        //     data
-                        // }) => {
-                        //     data.forEach((user) => {
-                        //         const el = $(`<li data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
-                        //     <span>${user.name}</span>
-                        //     <span class='text-xs'>${user.department.name}</span>
-                        //     </li>`);
-                        //
-                        //         el.on('click', function() {
-                        //             const alpineRoot = document.querySelector(
-                        //                 'body[x-data]'); // adjust selector if body isn't the root
-                        //             Alpine.$data(alpineRoot).selectChat({
-                        //                 id: user.id,
-                        //                 name: user.name,
-                        //                 department: user.department.name,
-                        //             });
-                        //             $("#chat-receiver").val(user
-                        //                 .id);
-                        //         });
-                        //
-                        //         $("#list-of-users").append(el);
-                        //     });
-                        // });
                     });
 
-                const setupChat = () => {
-                    // Echo.join(`chat.${id}`);
-                    $("#chat-msgs").html("");
+                const setupChat = async (id) => {
+                    const {data} = await axios.get(`/api/chats/${id}`);
+                    $("#chat-msgs").html("<span>Loading...</span>");
+
+                    if (data || data.length > 0) {
+                        $("#chat-msgs").html("");
+                        data.forEach((message) => {
+                            if (message.from == myId) {
+                                // newMsg({...message, to: message.receiverId, from: message.senderId, fromName: message.sender, time: message.created_at, }, 'bg-gray-400 border-2 rounded');
+                                newMsg(message, 'bg-gray-400 border-2 rounded');
+                            } else {
+                                // newMsg({...message, to: message.senderId, from: message.sender, fromName: message.receiver, time: message.created_at, }, 'bg-blue-400 border-2 rounded');
+                                newMsg(message, 'bg-blue-400 border-2 rounded');
+                            }
+                        });
+                    }else {
+                        $("#chat-msgs").html("<span>No messages</span>");
+                    }
                 }
     </script>
     @stack('scripts')
