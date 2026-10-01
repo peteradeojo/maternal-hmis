@@ -4,6 +4,7 @@ use App\Enums\Department;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\Pharmacy\AdmissionsController;
 use App\Http\Controllers\PharmacyController;
+use App\Http\Controllers\Reports\PharmacyReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('phm')->name('phm.')->middleware(['role:pharmacy', 'datalog'])->group(function () {
@@ -44,5 +45,9 @@ Route::prefix('phm')->name('phm.')->middleware(['role:pharmacy', 'datalog'])->gr
     Route::prefix('admissions')->group(function () {
         Route::get('/', [PharmacyController::class, 'admissions'])->name('admissions');
         Route::get('/{admission}', [PharmacyController::class, 'showAdmissionTreatment'])->name('show-admission');
+    });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [PharmacyReportController::class, 'index'])->name('index');
     });
 });

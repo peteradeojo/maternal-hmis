@@ -24,7 +24,38 @@
     <x-inertia::head />
 </head>
 
-<body class="h-dvh grid place-items-center">
+{{-- <body class="h-dvh grid place-items-center"> --}}
+<body class="h-dvh grid place-items-center" x-init="chat_open = localStorage.getItem('chat_open', '0') == 1;" x-data="{
+    chat_open: false,
+    myId: {{ auth()->user()->id }},
+    setChat(value) {
+        localStorage.setItem('chat_open', value == true ? 1 : 0);
+        this.chat_open = value;
+    },
+    chat_selected: false,
+    selectChat(value) {
+        this.chat_selected = value;
+        setupChat(value?.id);
+        if (value != false) {
+            localStorage.setItem('opened_chat', JSON.stringify(value));
+        } else {
+            localStorage.setItem('opened_chat', false);
+        }
+    },
+    online_users: [],
+
+    addOnlineUser(user) {
+        if (!this.online_users.find(u => u.id === user.id)) {
+            this.online_users.push(user);
+        }
+    },
+    removeOnlineUser(user) {
+        this.online_users = this.online_users.filter(u => u.id !== user.id);
+    },
+    isOnline(id) {
+        return this.online_users.some(u => u.id === id);
+    },
+}">
     <x-loader />
 
     <div id="app-content" class="h-dvh hidden place-items-center" x-data="{ aside: false }" @closeModal.window="removeGlobalModal"
@@ -142,6 +173,42 @@
 
     <div id="notifications" class="fixed top-4 right-4 flex flex-col gap-2 z-[1000]"></div>
 
+    <button x-cloak x-show="!chat_open" class="fixed btn bg-primary bottom-4 right-8"
+        @click="setChat(true)">Chat</button>
+
+    <div x-cloak id="chat-box" x-show="chat_open"
+        class="fixed h-dvh md:h-3/4 md:bottom-4 md:right-8 rounded border w-screen md:w-[400px] z-[1000] flex flex-col">
+        <div class="p-4 bg-white border-b shrink-0">
+            Chat Messages
+            <button class="btn" @click="setChat(false)">&times;</button>
+        </div>
+
+        <div x-show="chat_selected != false" class="p-4 bg-white flex-1 min-h-0 flex flex-col">
+            <div class="border-b">
+                <button class="btn text-xl" @click="chat_selected = false">&lt;</button>
+                <span x-text="chat_selected?.name"></span>
+                <input type="hidden" id="chat-receiver" />
+            </div>
+
+            <ul class="flex-1 overflow-y-auto" id="chat-msgs"></ul>
+            <input type="text" class="form-control" placeholder="Enter your text" id="chat-text-input" />
+        </div>
+
+        <div x-show="chat_selected == false" class="p-1 bg-white flex-1 min-h-0 flex flex-col overflow-y-auto">
+            <input type="search" class="form-control" x-on:keyup="const value=$event.target.value.toLowerCase();$event.target.nextElementSibling.querySelectorAll('li').forEach((el) => {
+                 el.querySelector('span').innerText.toLowerCase().includes(value) == false ? el.classList.add('hidden') : el.classList.remove('hidden');
+            })" id="filter-users" placeholder="Search user" />
+
+            <ul id="list-of-users" class="">
+                <template x-for="user in online_users">
+                    <li @click="selectChat(user)" data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
+                        <span x-text="user.name"></span>
+                        <span class="text-xs" x-text="user.department"></span>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
     <script src="{{ asset('/datatables/datatables.min.js') }}"></script>
 
     @if (str_ends_with(request()->host(), '.lan'))

@@ -77,6 +77,7 @@ function getRouteMap()
                 'Prescriptions' => [route('phm.prescriptions'), 'fa-prescription', null],
                 'Inventory' => [route('phm.inventory.index'), 'fa-warehouse', null],
                 'Wards' => [route('phm.admissions'), 'fa-bed', null],
+                'Reports' => [route('phm.reports.index'), 'fa-book', null],
             ],
         ],
         [

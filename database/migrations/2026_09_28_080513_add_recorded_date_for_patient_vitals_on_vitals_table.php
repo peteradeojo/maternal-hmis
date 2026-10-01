@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::table('vitals', function (Blueprint $table) {
-            $table->unique(['recorded_date', 'recordable_type', 'recordable_id']);
-        });
+        try {
+            Schema::table('vitals', function (Blueprint $table) {
+                $table->unique(['recorded_date', 'recordable_type', 'recordable_id']);
+            });
+        } catch (\Throwable $th) {
+            report($th);
+        }
     }
 
     /**
@@ -23,8 +27,12 @@ return new class extends Migration
     public function down(): void
     {
         //
-        Schema::table('vitals', function (Blueprint $table) {
-            $table->dropUnique(['recorded_date', 'recordable_type', 'recordable_id']);
-        });
+        try {
+            Schema::table('vitals', function (Blueprint $table) {
+                $table->dropUnique(['recorded_date', 'recordable_type', 'recordable_id']);
+            });
+        } catch (\Throwable $th) {
+            report($th);
+        }
     }
 };
