@@ -3,18 +3,15 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use App\Traits\CastsStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Prescription extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, CastsStatus;
 
     protected $fillable = ['event_type', 'event_id', 'patient_id', 'status'];
-
-    protected $casts = [
-        'status' => Status::class,
-    ];
 
     protected $with = ['lines'];
 

@@ -17,16 +17,14 @@ class PharmacyReportController extends Controller
         $dispenseQuery = StockTransaction::with(['item'])->where('tx_type', StockTransaction::ISSUE)->groupBy('item_id');
 
         $drugsDispensedToday = $dispenseQuery->clone()
-            ->where('created_at', '>=', $today)
+            // ->where('created_at', '>=', $today)
             ->selectRaw("count(item_id) as count, item_id")
             ->orderBy('count', 'desc')
             ->limit(20)
             ->get();
 
         $drugsDispensedTodayCount = DB::query()->selectRaw("item_id")->fromSub(
-            $dispenseQuery->clone()
-                ->where('created_at', '>=', $today)
-                ->select(['item_id']),
+            $dispenseQuery->clone()->select(['item_id']),
             'derived'
         )->count();
 
@@ -34,12 +32,11 @@ class PharmacyReportController extends Controller
 
         $topDrugsDispensed = $dispenseQuery->clone()
             ->selectRaw('SUM(quantity) as quantity, item_id')
-            ->where('created_at', '>=', $today)
             ->orderBy('quantity', 'DESC')
             ->limit(20)
             ->get();
 
-        $prescriptionsQuery = Prescription::query()->where('created_at', '>=', $today);
+        $prescriptionsQuery = Prescription::query(); //->where('created_at', '>=', $today);
 
         $totalPrescriptionsToday = $prescriptionsQuery->clone()->count();
         $totalPendingPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::pending)->count();

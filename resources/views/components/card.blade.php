@@ -27,9 +27,6 @@ Slots: title, icon, footer
             <span class="text-{{ $color }} hover:text-{{ $color }} font-medium">
                 {{ $footer }}
             </span>
-            {{-- <a href="{{ route('iam.roles') }}"
-            class="text-{{ $color }} hover:text-{{ $color }} text-sm font-medium">Manage
-            Roles &rarr;</a> --}}
         </div>
     @endisset
 </div>
