@@ -4,7 +4,7 @@
     <form wire:submit.prevent="savePlan" method="post">
         <div class="form-group">
             <label>Describe your treatment plan</label>
-            <textarea wire:model="plan" name="plan" class="form-control" rows="10" required></textarea>
+            <textarea data-autosaveid="treatment-plan-{{$origin::class}}-{{$origin->id}}" wire:model="plan" name="plan" class="form-control" rows="10" required></textarea>
         </div>
         <div class="form-group">
             <button class="btn bg-primary">Submit <i class="fa fa-save"></i></button>

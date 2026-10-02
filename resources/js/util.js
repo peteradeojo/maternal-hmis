@@ -1,7 +1,7 @@
 import './app';
 import { $ } from 'jquery';
 
-window.initTab = function (el) {
+window.initTab = function(el) {
     if (!el) return;
     const tabNav = el.querySelector("nav");
     const tabSelect = el.querySelector("select");
@@ -82,26 +82,26 @@ window.MODAL_TITLE = ".modal-title";
 window.MODAL_CONTENT = ".modal-body";
 window.MODAL_BODY = window.MODAL_CONTENT;
 
-window.useGlobalModal = function (callback) {
+window.useGlobalModal = function(callback) {
     $("#global-overlay").removeClass("hidden");
     $("#global-modal").removeClass("translate-x-full");
 
     callback($("#global-modal"));
 }
 
-window.removeGlobalModal = function () {
+window.removeGlobalModal = function() {
     $("#global-modal").addClass("translate-x-full");
     setTimeout(() => $("#global-overlay").addClass("hidden"), 300);
 }
 
-$('#closeGlobalModal, #global-overlay').on('click', function () {
+$('#closeGlobalModal, #global-overlay').on('click', function() {
     removeGlobalModal();
 });
 
 /**
  * @param {{message: string; bg: string; [key: string]: any}} data
  */
-window.displayNotification = function (data) {
+window.displayNotification = function(data) {
     const { options, message, bg, meta } = data;
 
     if (Notification.permission === 'granted' && ['both', 'desktop'].includes(options.mode)) {
@@ -112,7 +112,7 @@ window.displayNotification = function (data) {
             data: meta,
         });
 
-        n.addEventListener('click', function (e) {
+        n.addEventListener('click', function(e) {
             const { url } = this.data || {};
             if (url) {
                 const link = document.createElement('a');
@@ -150,7 +150,7 @@ window.displayNotification = function (data) {
     }, Math.max(options.timeout || 5300));
 }
 
-window.notifyError = function (message) {
+window.notifyError = function(message) {
     return displayNotification({
         message,
         bg: ['bg-red-500', 'text-white'],
@@ -160,7 +160,7 @@ window.notifyError = function (message) {
     })
 }
 
-window.notifySuccess = function (message) {
+window.notifySuccess = function(message) {
     return displayNotification({
         message,
         bg: ['bg-blue-400', 'text-white'],
@@ -170,7 +170,7 @@ window.notifySuccess = function (message) {
     })
 }
 
-window.notifyAction = function (message) {
+window.notifyAction = function(message) {
     return displayNotification({
         message,
         bg: ['bg-green-500', 'text-white'],
@@ -189,27 +189,11 @@ window.parseDateFromSource = (date, second = false, hm = true) => new Date(date)
     timeZone: 'Africa/Lagos',
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    document
-        .querySelectorAll(".foldable .foldable-header")
-        .forEach((button) => {
-            button.addEventListener("click", (e) => {
-                const elem = e.target.closest(".foldable");
-                elem.querySelector(".foldable-body").classList.toggle(
-                    "unfolded"
-                );
-            });
-        });
-
-    $("#nav-burger").on('click', (e) => {
-        $("#mobile-nav-list").toggleClass("hidden");
-    });
-});
 
 const PRIMARY_COLOR = '#3fbbc0';
 window.PRIMARY_COLOR = PRIMARY_COLOR;
 
-window.addChartData = function (chart, label, newData) {
+window.addChartData = function(chart, label, newData) {
     chart.data.labels.push(...label);
     chart.data.datasets.forEach((dataset) => {
         dataset.data.push(...newData);
@@ -217,13 +201,13 @@ window.addChartData = function (chart, label, newData) {
     chart.update();
 }
 
-window.setChartData = function (chart, labels, data) {
+window.setChartData = function(chart, labels, data) {
     chart.data.labels = labels;
     chart.data.datasets = data;
     chart.update('none');
 }
 
-window.removeChartData = function (chart) {
+window.removeChartData = function(chart) {
     chart.data.labels.pop();
     chart.data.datasets.forEach((dataset) => {
         dataset.data.pop();
@@ -231,7 +215,7 @@ window.removeChartData = function (chart) {
     chart.update();
 }
 
-window.initSignatureCanvas = function () {
+window.initSignatureCanvas = function() {
     const canvases = document.querySelectorAll(".signature");
 
     console.log(canvases);
@@ -292,3 +276,86 @@ window.initSignatureCanvas = function () {
         });
     });
 }
+
+window.prepAutoSave = (location, data) => {
+    // console.log(location, data);
+    sessionStorage.setItem(location, data);
+}
+
+window.resetAutoSaveInputs = (el) => {
+    const inputs = $(el).find("[data-autosaveid]");
+    inputs.each((_, el) => {
+        // console.log(el);
+        let id = $(el).data("autosaveid");
+        id = "autosave-generated:" + id;
+        // console.log(id);
+        sessionStorage.removeItem(id);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document
+        .querySelectorAll(".foldable .foldable-header")
+        .forEach((button) => {
+            button.addEventListener("click", (e) => {
+                const elem = e.target.closest(".foldable");
+                elem.querySelector(".foldable-body").classList.toggle(
+                    "unfolded"
+                );
+            });
+        });
+
+    $("#nav-burger").on('click', (e) => {
+        $("#mobile-nav-list").toggleClass("hidden");
+    });
+
+    $("[data-autosaveId]").each(function(i, el) {
+        let id = $(el).data('autosaveid').replaceAll("\\", "-");
+        id = "autosave-generated:" + id;
+        const value = sessionStorage.getItem(id);
+
+        if (value) {
+            const modelAttr = el.getAttribute('wire:model')
+                || el.getAttribute('wire:model.live')
+                || el.getAttribute('wire:model.blur')
+                || el.getAttribute('wire:model.lazy');
+
+            if (modelAttr) {
+                // Livewire-bound: set the actual component property.
+                // Livewire updates the DOM for you — don't also call .val()/.text() here,
+                // or you'll fight your own re-render.
+                const component = el.closest('[wire\\:id]');
+                if (component) {
+                    Livewire.find(component.getAttribute('wire:id')).set(modelAttr, value);
+                }
+            } else {
+                switch (el.tagName) {
+                    case 'TEXTAREA':
+                        $(el).text(value);
+                        break;
+                    default:
+                        $(el).val(value);
+                }
+                $(el).addClass("autosaved-input");
+                $(el).parent().append(`<p class="text-red-600 autosaved">Restored from autosave</p>`);
+
+                // Tell Livewire (and anything else listening) that the value changed
+                // el.dispatchEvent(new Event('input', { bubbles: true }));
+                // if (!el.hasAttribute('wire:model.live')) {
+                //     el.dispatchEvent(new Event('change', { bubbles: true })); // covers defer/blur-mode wire:model too
+                // }
+            }
+        }
+
+        $(el).on('change', function(evt) {
+            const v = evt.target.value;
+            $(el).parent().find(".autosaved").remove();
+            $(el).removeClass("autosaved-input");
+            if (v.length <= 0) {
+                sessionStorage.removeItem(id);
+            } else {
+                sessionStorage.setItem(id, v);
+            }
+        });
+    });
+});

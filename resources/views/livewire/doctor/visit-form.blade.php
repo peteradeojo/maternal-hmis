@@ -12,7 +12,7 @@
             @csrf
             <div class="form-group">
                 <label class="required">Indication for Admission</label>
-                <input type="text" name="indication" class="form-control" list="patient-diagnoses" required />
+                <input type="text" data-autosaveid="admission-{{$visit->id}}.indication"  name="indication" class="form-control" list="patient-diagnoses" required />
             </div>
             <div class="form-group">
                 <label>Notes/Further Instructions</label>
@@ -197,6 +197,7 @@
                 data
             } = res;
             notifySuccess("Examination saved for visit #{{ $visit->id }}");
+            resetAutoSaveInputs(e);
         });
 
         asyncForm("#start-admission-form", "{{ route('doctor.admit', $visit) }}", (e, res) => {
@@ -210,6 +211,7 @@
             }
 
             notifySuccess(`Admission process started for ${data.patient.name}`);
+            resetAutoSaveInputs(e);
             $wire.dispatch('close-admit');
         });
 

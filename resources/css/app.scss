@@ -197,6 +197,10 @@
             @apply p-1;
         }
     }
+
+    .autosaved-input {
+        @apply outline outline-2 outline-red-600 outline-offset-1;
+    }
 }
 
 ::root {

@@ -35,7 +35,7 @@
                         @csrf
                         <div class="form-group">
                             <label>Note</label>
-                            <textarea name="note" class="w-full resize-y border border-gray-400 rounded-none form-textarea" rows="5"
+                            <textarea name="note" data-autosaveid="visit-{{$visit->id}}.note" class="w-full resize-y border border-gray-400 rounded-none form-textarea" rows="5"
                                 required></textarea>
                         </div>
                         <div class="form-group">
@@ -119,6 +119,7 @@
                     }).then((res) => {
                         e.currentTarget.reset();
                         notifySuccess("Note saved!");
+                        resetAutoSaveInputs(e.target);
                     }).catch((err) => {
                         notifyError(err.message);
                     });
@@ -131,6 +132,7 @@
                         body: new FormData(e.currentTarget),
                     }).then((res) => {
                         e.currentTarget.reset();
+                        // resetAutoSaveInputs(e.target);
                         notifySuccess("Diagnosis saved!");
                     }).catch((err) => {
                         console.error(err);

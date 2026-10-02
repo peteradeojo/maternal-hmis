@@ -3,7 +3,7 @@ export default {
     content: [
         "./public/**/*.{css,scss}",
         "./resources/**/*.blade.php",
-        "./resources/**/*.{css,scss}",
+        "./resources/**/*.{css,scss,js,jsx}",
     ],
     theme: {
         extend: {
