@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Interfaces\Visitation;
 use App\Traits\Documentable as TraitsDocumentable;
@@ -11,9 +10,9 @@ use App\Traits\Visit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GeneralVisit extends Model implements Visitation, OperationalEvent
+class GeneralVisit extends Model implements OperationalEvent, Visitation
 {
-    use HasFactory, Visit, TraitsDocumentable, HasVisitData;
+    use HasFactory, HasVisitData, TraitsDocumentable, Visit;
 
     protected $fillable = [
         'patient_id',
@@ -25,6 +24,6 @@ class GeneralVisit extends Model implements Visitation, OperationalEvent
 
     public function getType(): string
     {
-        return "General";
+        return 'General';
     }
 }

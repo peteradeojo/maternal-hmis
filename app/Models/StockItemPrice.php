@@ -6,12 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class StockItemPrice extends Model
 {
-    const RETAIL = "RETAIL";
-    const WHOLESALE = "WHOLESALE";
-    const NHIS = "NHIS";
-    const PRIVATE = "PRIVATE";
-    const INTERNAL = "INTERNAL";
-    const WARD = "WARD";
+    const RETAIL = 'RETAIL';
+
+    const WHOLESALE = 'WHOLESALE';
+
+    const NHIS = 'NHIS';
+
+    const PRIVATE = 'PRIVATE';
+
+    const INTERNAL = 'INTERNAL';
+
+    const WARD = 'WARD';
 
     protected $fillable = [
         'item_id',
@@ -28,7 +33,8 @@ class StockItemPrice extends Model
         $query->where('price_type', $type);
     }
 
-    public function scopeActive($query) {
+    public function scopeActive($query)
+    {
         $query->where('active', true);
     }
 }

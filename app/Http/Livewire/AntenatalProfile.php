@@ -11,8 +11,11 @@ class AntenatalProfile extends Component
     public $profile;
 
     public $editingLmp = false;
+
     public $lmpEdit;
+
     public $editEdd;
+
     public $editingEdd = false;
 
     public ObsData $obsData;
@@ -49,7 +52,7 @@ class AntenatalProfile extends Component
         $this->editEdd = $this->profile->edd;
     }
 
-    public  function editLmp()
+    public function editLmp()
     {
         $this->editingLmp = true;
         $this->editingEdd = false;
@@ -68,7 +71,7 @@ class AntenatalProfile extends Component
 
     public function toggleEditObsData()
     {
-        $this->obsEdit = !$this->obsEdit;
+        $this->obsEdit = ! $this->obsEdit;
     }
 
     public function updateObsData()

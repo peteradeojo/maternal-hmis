@@ -12,41 +12,48 @@ use Override;
 
 class AdmissionPlan extends Model implements OperationalEvent
 {
-    use HasFactory, HasVisitData, Documentable;
+    use Documentable, HasFactory, HasVisitData;
 
-    protected $fillable  = [
+    protected $fillable = [
         'admission_id',
-        'user_id', 'indication', 'note'
+        'user_id', 'indication', 'note',
     ];
 
-    public function admission() {
+    public function admission()
+    {
         return $this->belongsTo(Admission::class, 'admission_id');
     }
 
-    final public function treatments() {
-        return $this->morphMany(DocumentationPrescription::class, 'event');//->where('status', Status::active->value);
+    final public function treatments()
+    {
+        return $this->morphMany(DocumentationPrescription::class, 'event'); // ->where('status', Status::active->value);
     }
 
     #[Override]
-    public function tests() {
+    public function tests()
+    {
         return $this->morphMany(DocumentationTest::class, 'testable')->latest();
     }
 
-    public function scans() {
+    public function scans()
+    {
         return $this->morphMany(PatientImaging::class, 'documentable');
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function notes() {
+    public function notes()
+    {
         return $this->morphMany(ConsultationNote::class, 'visit');
     }
 
-    public function patient(): Attribute {
+    public function patient(): Attribute
+    {
         return Attribute::make(
-            get: fn($_, $attributes) => Admission::find($attributes['admission_id'])?->patient,
+            get: fn ($_, $attributes) => Admission::find($attributes['admission_id'])?->patient,
         );
     }
 }

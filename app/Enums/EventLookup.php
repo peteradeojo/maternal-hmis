@@ -22,6 +22,7 @@ enum EventLookup: string
         if ($case === null) {
             throw new \InvalidArgumentException("No enum case found for name: {$name}");
         }
+
         return $case;
     }
 
@@ -32,6 +33,7 @@ enum EventLookup: string
                 return $case;
             }
         }
+
         return null;
     }
 }

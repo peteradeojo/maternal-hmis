@@ -28,10 +28,12 @@ class Antenatal extends Controller
         }
 
         $ancCategory = PatientCategory::where('name', 'Antenatal')->first();
+
         return view('records.new-anc-form', compact('patient', 'ancCategory'));
     }
 
-    public function closeProfile(Request $request, AntenatalProfile $profile) {
+    public function closeProfile(Request $request, AntenatalProfile $profile)
+    {
         if ($request->isMethod('GET')) {
             return view('records.components.close-anc', compact('profile'));
         }
@@ -50,6 +52,7 @@ class Antenatal extends Controller
         $data['closed_on'] = Carbon::createFromFormat("Y-m-d\TH:i", $data['closed_on']);
 
         $profile->update($data);
+
         return redirect()->route('records.patient', $profile->patient);
     }
 }

@@ -5,11 +5,11 @@ namespace App\Models;
 use App\Enums\NoteCodes;
 use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
+use App\Traits\Auditable;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Traits\Auditable;
 use App\Traits\NeedsRecorderInfo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,12 +17,12 @@ use Override;
 
 class Admission extends Model implements OperationalEvent
 {
-    use HasFactory,
+    use Auditable,
         Documentable,
+        HasFactory,
         HasVisitData,
-        SoftDeletes,
-        Auditable,
-        NeedsRecorderInfo;
+        NeedsRecorderInfo,
+        SoftDeletes;
 
     protected $guarded = [];
 
@@ -51,12 +51,12 @@ class Admission extends Model implements OperationalEvent
 
     public function inWard(): Attribute
     {
-        return Attribute::make(get: fn() => isset($this->ward_id));
+        return Attribute::make(get: fn () => isset($this->ward_id));
     }
 
     public function hasPendingTests(): Attribute
     {
-        return Attribute::make(get: fn() => $this->tests()->pending()->count() > 0);
+        return Attribute::make(get: fn () => $this->tests()->pending()->count() > 0);
     }
 
     public function admittable()

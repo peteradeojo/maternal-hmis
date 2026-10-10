@@ -6,7 +6,6 @@ use App\Enums\Permissions;
 use App\Enums\Roles;
 use App\Models\Admission;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AdmissionPolicy
 {

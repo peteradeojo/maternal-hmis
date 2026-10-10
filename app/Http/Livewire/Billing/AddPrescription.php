@@ -8,6 +8,7 @@ use Livewire\Component;
 class AddPrescription extends Component
 {
     public $selection;
+
     public $count = 0;
 
     public function render()
@@ -17,13 +18,13 @@ class AddPrescription extends Component
 
     public function addDrug($data)
     {
-        $this->selection = [...$data, 'dosage' => null, 'frequency' => 'stat', 'duration' => null,];
+        $this->selection = [...$data, 'dosage' => null, 'frequency' => 'stat', 'duration' => null];
     }
 
     public function saveRequest()
     {
         $details = [
-            'product' => (object) $this->selection, //['product'],
+            'product' => (object) $this->selection, // ['product'],
             'data' => (object) [
                 'name' => $this->selection['name'],
                 'dosage' => $this->selection['dosage'],
@@ -32,13 +33,13 @@ class AddPrescription extends Component
             ],
         ];
 
-        $this->dispatch("selected", ...$details);
+        $this->dispatch('selected', ...$details);
         $this->cancel();
     }
 
     public function cancel()
     {
-        $this->reset("selection");
+        $this->reset('selection');
     }
 
     public function getCount()

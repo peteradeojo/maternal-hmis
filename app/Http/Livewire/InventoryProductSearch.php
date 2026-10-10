@@ -9,7 +9,9 @@ use Livewire\Component;
 class InventoryProductSearch extends Component
 {
     public $category;
+
     public $queryString;
+
     public $results;
 
     public function search()
@@ -45,7 +47,7 @@ class InventoryProductSearch extends Component
 
     public function selected($id)
     {
-        if (!empty($id)) {
+        if (! empty($id)) {
             $product = StockItem::find($id)?->load(['costs', 'prices']);
         } else {
             $product = new StockItem([
@@ -53,7 +55,7 @@ class InventoryProductSearch extends Component
             ]);
         }
 
-        $line = new PurchaseOrderLine();
+        $line = new PurchaseOrderLine;
         $line->unit = $product->base_unit;
         $line->unit_cost = $product->costs->first()?->cost;
         $line->item()->associate($product);

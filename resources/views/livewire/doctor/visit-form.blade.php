@@ -12,7 +12,8 @@
             @csrf
             <div class="form-group">
                 <label class="required">Indication for Admission</label>
-                <input type="text" data-autosaveid="admission-{{$visit->id}}.indication"  name="indication" class="form-control" list="patient-diagnoses" required />
+                <input type="text" data-autosaveid="admission-{{ $visit->id }}.indication" name="indication"
+                    class="form-control" list="patient-diagnoses" required />
             </div>
             <div class="form-group">
                 <label>Notes/Further Instructions</label>

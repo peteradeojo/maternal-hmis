@@ -5,21 +5,19 @@ namespace App\Http\Livewire\Records;
 use App\Enums\AppNotifications;
 use App\Enums\Department;
 use App\Enums\Status;
-use App\Events\NotificationSent;
 use App\Models\AncVisit;
 use App\Models\GeneralVisit;
 use App\Models\PatientAppointment;
 use App\Models\User;
 use App\Models\Visit;
 use App\Services\LocationContext;
-use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class PatientCheckIn extends Component
 {
     public $patient;
+
     public $consultants;
 
     #[Validate('required|integer')]
@@ -34,7 +32,7 @@ class PatientCheckIn extends Component
 
     public function mount($appointmentId = null)
     {
-        if ($this->patient->category->name == "Antenatal") {
+        if ($this->patient->category->name == 'Antenatal') {
             $this->visit_type = 2;
         } else {
             $this->visit_type = 1;
@@ -60,12 +58,13 @@ class PatientCheckIn extends Component
 
         if ($this->patient->visits->count() > 0 && $this->patient->visits[0]?->status == Status::active->value) {
             notifyUserError("Last visit for {$this->patient->card_number} is still active.", auth()->user(), ['mode' => AppNotifications::$IN_APP]);
+
             return;
         }
 
         $subVisit = match ((string) $this->visit_type) {
-            "1" => GeneralVisit::class,
-            "2" => AncVisit::class,
+            '1' => GeneralVisit::class,
+            '2' => AncVisit::class,
         };
 
         // $visit = $this->patient->visits->first();
@@ -100,7 +99,8 @@ class PatientCheckIn extends Component
 
         if (is_a($subVisit, AncVisit::class)) {
             if ($this->patient->anc_profile?->status != Status::active->value) {
-                notifyUserError("Patient does not have an active antenatal profile. Please create one.", auth()->user(), ['mode' => AppNotifications::$IN_APP]);
+                notifyUserError('Patient does not have an active antenatal profile. Please create one.', auth()->user(), ['mode' => AppNotifications::$IN_APP]);
+
                 return;
             }
             $subVisit->antenatal_profile_id = $this->patient->anc_profile?->id;
@@ -123,7 +123,7 @@ class PatientCheckIn extends Component
 
         notifyUserSuccess("Consultation started for {$this->patient->card_number}", auth()->user(), [
             'mode' => AppNotifications::$IN_APP,
-            'close_modal' => true
+            'close_modal' => true,
         ]);
 
         notifyDepartment(Department::NUR->value, [

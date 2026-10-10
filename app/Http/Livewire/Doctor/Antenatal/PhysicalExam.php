@@ -11,7 +11,8 @@ class PhysicalExam extends Component
 
     public PhysicalExamForm $physical;
 
-    public function mount($profile) {
+    public function mount($profile)
+    {
         $this->profile = $profile;
         $this->physical->fill($this->profile->examination ?? []);
     }

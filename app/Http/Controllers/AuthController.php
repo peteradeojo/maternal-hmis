@@ -14,15 +14,15 @@ class AuthController extends Controller
     {
         $request->validate([
             'phone' => 'required|string',
-            'password' => 'required|string'
+            'password' => 'required|string',
         ]);
 
         Session::flush();
 
         try {
             $user = User::where('phone', $request->phone)->first();
-            if (!$user || $user->status != Status::active) {
-                return back(419)->with('error', "Invalid login. Please check with admin.");
+            if (! $user || $user->status != Status::active) {
+                return back(419)->with('error', 'Invalid login. Please check with admin.');
             }
 
             if (auth()->attempt($request->only('phone', 'password'))) {
@@ -31,18 +31,19 @@ class AuthController extends Controller
                 }
 
                 $request->session()->regenerate(destroy: true);
+
                 return redirect()->intended(route('dashboard'));
             }
         } catch (Exception $e) {
             return abort(500);
         }
 
-        return redirect()->back()->with('error', "Invalid login");
+        return redirect()->back()->with('error', 'Invalid login');
     }
 
-    function whoami(Request $request)
+    public function whoami(Request $request)
     {
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             return view('whoami');
         }
 

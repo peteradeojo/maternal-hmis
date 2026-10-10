@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class SyncPatientProfiles extends Command
@@ -39,8 +38,8 @@ class SyncPatientProfiles extends Command
 
         try {
             $data->chunkById(
-                column: "p.id",
-                alias: "id",
+                column: 'p.id',
+                alias: 'id',
                 count: 100,
                 callback: function (
                     $patients,
@@ -53,7 +52,7 @@ class SyncPatientProfiles extends Command
                         $data = [
                             'id' => $patient->id,
                             'name' => trim("{$patient->last_name} {$patient->first_name} $patient->middle_name"),
-                            'category_id' => $newCategories[$patient->category_name] ?? $newCategories["Adult"],
+                            'category_id' => $newCategories[$patient->category_name] ?? $newCategories['Adult'],
                             'gender' => $patient->gender,
                             'religion' => $patient->religion,
                             'tribe' => $patient->tribe,
@@ -65,17 +64,18 @@ class SyncPatientProfiles extends Command
                             'email' => $patient->email,
                             'created_at' => $patient->created_at,
                         ];
+
                         return $data;
                     });
 
-                    $patients = ($patients->map(fn ($patient) => [...$patient, 'id' => null])); //->toArray()));
+                    $patients = ($patients->map(fn ($patient) => [...$patient, 'id' => null])); // ->toArray()));
 
                     $newDb->table('patients')->insert($patients->toArray());
                     DB::commit();
                 }
             );
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             dump($th->getMessage());
             $newDb->rollBack();
         }

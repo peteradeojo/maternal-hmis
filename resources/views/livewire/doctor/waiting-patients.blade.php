@@ -28,7 +28,7 @@
                 serverSide: true,
                 ajax: "{{ route('api.doctor.consultations') }}",
                 columns: [{
-                        data: 'patient.name',
+                        data: 'patient.p_name',
                         name: 'patient.name'
                     },
                     {

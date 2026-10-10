@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
-enum Queues: string {
+enum Queues: string
+{
     case LOG = 'logs';
 }

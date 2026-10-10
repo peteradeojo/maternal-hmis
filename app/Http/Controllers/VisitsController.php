@@ -16,8 +16,8 @@ class VisitsController extends Controller
     public function index(Request $request)
     {
         $location = app(LocationContext::class)->id();
-        $query = Visit::with(["patient.category"])
-            ->whereNotIn("status", [
+        $query = Visit::with(['patient.category'])
+            ->whereNotIn('status', [
                 Status::cancelled->value,
                 Status::completed->value,
                 Status::ejected->value,
@@ -30,8 +30,8 @@ class VisitsController extends Controller
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
-                $query->whereHas("patient", function ($q) use ($search) {
-                    $q->where("name", "ilike", "%{$search}%");
+                $query->whereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'ilike', "%{$search}%");
                 });
             },
         ]);
@@ -41,14 +41,14 @@ class VisitsController extends Controller
     {
         $this->authorize('print', $visit);
         if ($request->expectsJson()) {
-            Comms::notifyUserSuccess("The report is being generated.", $request->user());
+            Comms::notifyUserSuccess('The report is being generated.', $request->user());
             dispatch(new GenerateVisitReport($visit));
 
             return response()->json([
                 'ok' => true,
             ]);
         }
-        $visit->load(['patient',]);
+        $visit->load(['patient']);
 
         // $disclaimer = "<p style='color: #333;font-size: 0.7em;'>This document is the property of Maternal-Child Specialists' Clinics. The information contained within is confidential and meant only for authorized persons. This report is not to be shared, distributed or reproduced in any form or format, physical or digital.</p>";
         $disclaimer = "<p style='color: #333;font-size: 0.7em;'>This document and it's contents are intended only for a restricted group of recipients and are confidential. You may not reveal or rely on the contents in any manner. If you have received it in error, you may not retain, reproduce, or distribute the document. Please notify the sender of the error and delete the document immediately</p>";

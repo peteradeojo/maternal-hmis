@@ -12,6 +12,7 @@ use Livewire\Component;
 class Plan extends Component
 {
     public $visit;
+
     public $plans = [];
 
     /**
@@ -25,7 +26,9 @@ class Plan extends Component
     public $investigations;
 
     public $operationNote;
+
     public $admissionNote;
+
     public $surgery = '';
 
     #[Validate('required|string')]
@@ -54,11 +57,11 @@ class Plan extends Component
         }
     }
 
-
     public function addPrescription($data)
     {
         if (empty($this->admission)) {
             $this->plans[] = $data;
+
             return;
         }
 
@@ -70,7 +73,7 @@ class Plan extends Component
             $product = (object) ($data['product']);
         }
 
-        logger()->info("Adding product: " . var_export($product, true));
+        logger()->info('Adding product: '.var_export($product, true));
 
         $this->admission->plan->addPrescription($this->admission->patient, $product, (object) $data, $this->admission->plan);
 
@@ -83,6 +86,7 @@ class Plan extends Component
         if (empty($this->admission)) {
             unset($this->plans[$id]);
             $this->plans = array_values($this->plans);
+
             return;
         }
 
@@ -100,7 +104,7 @@ class Plan extends Component
             'indication' => $this->indication,
         ]);
 
-        Comms::notifyUserSuccess("Admission updated successfully", auth()->user()->id);
+        Comms::notifyUserSuccess('Admission updated successfully', auth()->user()->id);
     }
 
     // public function addTest($data)
@@ -134,9 +138,10 @@ class Plan extends Component
     {
         return;
         if (empty($this->admission)) {
-            if ($this->investigations->doesntContain("id", "=", $data['id'])) {
+            if ($this->investigations->doesntContain('id', '=', $data['id'])) {
                 $this->investigations->add($data);
             }
+
             return;
         }
 
@@ -161,11 +166,11 @@ class Plan extends Component
     public function removeTest($id)
     {
         DocumentationTest::where('id', $id)->update(['status' => Status::cancelled->value]);
-        $this->tests = $this->tests->filter(fn($i) => $i['id'] != $id);
+        $this->tests = $this->tests->filter(fn ($i) => $i['id'] != $id);
     }
 
     public function removeInvestigation($id)
     {
-        $this->investigations = $this->investigations->filter(fn($i) => $i['id'] != $id);
+        $this->investigations = $this->investigations->filter(fn ($i) => $i['id'] != $id);
     }
 }

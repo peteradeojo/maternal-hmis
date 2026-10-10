@@ -24,6 +24,7 @@ class AppointmentsController extends Controller
         if ($request->has('mini')) {
             return view('appointments.show-mini', compact('appointment'));
         }
+
         return view('appointments.show', compact('appointment'));
     }
 
@@ -54,10 +55,11 @@ class AppointmentsController extends Controller
         } catch (UniqueConstraintViolationException $un) {
 
             return response()->json([
-                'message' => "Patient still has an active appointment booking",
+                'message' => 'Patient still has an active appointment booking',
             ], Response::HTTP_EXPECTATION_FAILED);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json([
                 'message' => $th->getMessage(),
             ], 500);

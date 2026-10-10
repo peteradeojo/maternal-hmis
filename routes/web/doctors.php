@@ -1,9 +1,7 @@
 <?php
 
-use App\Enums\Department;
 use App\Http\Controllers\AdmissionsController;
 use App\Http\Controllers\Doctor\PatientsController;
-use App\Http\Middleware\RestrictDepartment;
 use Illuminate\Support\Facades\Route;
 
 Route::name('doctor.')->middleware(['datalog', 'auth'])->group(function () {

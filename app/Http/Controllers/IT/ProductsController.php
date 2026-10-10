@@ -15,6 +15,7 @@ class ProductsController extends Controller
     {
         $cats = ProductCategory::all();
         $departments = Department::all();
+
         return view('it.products', ['categories' => $cats, 'departments' => $departments]);
     }
 
@@ -25,7 +26,7 @@ class ProductsController extends Controller
                 $query->where('name', 'ilike', "$search%")->orWhereHas('category', function ($q) use ($search) {
                     $q->where('name', 'ilike', "%$search%");
                 });
-            }
+            },
         ]);
     }
 
@@ -34,12 +35,12 @@ class ProductsController extends Controller
         $request->validate([
             'department_id' => 'nullable|exists:departments,id',
             'category' => 'required|string',
-            'products' => 'file|mimes:xlsx,csv'
+            'products' => 'file|mimes:xlsx,csv',
         ]);
 
         $category = strtoupper($request->category);
         $c = ProductCategory::where('name', $category)->where('department_id', $request->department_id)->first();
-        if (!$c) {
+        if (! $c) {
             ProductCategory::create([
                 'name' => $category,
                 'department_id' => $request->department_id,
@@ -62,7 +63,7 @@ class ProductsController extends Controller
 
         Product::create([
             'name' => $request->name,
-            'amount'  => $request->amount,
+            'amount' => $request->amount,
             'product_category_id' => $c->id,
         ]);
 
@@ -77,16 +78,18 @@ class ProductsController extends Controller
                 'description' => 'required|string',
                 'product_category_id' => 'required|exists:product_categories,id',
                 'amount' => 'required|numeric',
-                'is_visible' => 'nullable'
+                'is_visible' => 'nullable',
             ]);
 
             $data['is_visible'] = @$data['is_visible'] == 'on' ? 1 : 0;
 
             $product->update($data);
+
             return redirect()->route('it.products');
         }
 
         $categories = ProductCategory::all();
+
         return view('it.products.show', compact('product', 'categories'));
     }
 }

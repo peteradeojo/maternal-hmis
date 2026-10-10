@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Department;
 use App\Http\Controllers\RadiologyController;
 use Illuminate\Support\Facades\Route;
 

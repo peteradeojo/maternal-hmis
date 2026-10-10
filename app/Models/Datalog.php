@@ -10,10 +10,11 @@ class Datalog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'action', 'user_id', 'data'
+        'action', 'user_id', 'data',
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BillPayment extends Model
 {
-    use SoftDeletes, Auditable;
+    use Auditable, SoftDeletes;
 
     protected $touches = ['bill'];
 
@@ -24,13 +24,14 @@ class BillPayment extends Model
         'user_id',
     ];
 
-    public function bill() {
+    public function bill()
+    {
         return $this->belongsTo(Bill::class, 'bill_id');
     }
 
     protected static function booted()
     {
-        static::saved(function (Self $payment) {
+        static::saved(function (self $payment) {
             if ($payment->bill->balance <= 0 && $payment->bill->status != Status::cancelled->value) {
                 $payment->bill->update([
                     'status' => Status::completed->value,

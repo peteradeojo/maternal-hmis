@@ -6,16 +6,17 @@ use App\Enums\Gender;
 use App\Enums\MaritalStatus;
 use App\Enums\Religion;
 use App\Enums\Status;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Override;
 
 class Patient extends Model
 {
-    use HasFactory, SoftDeletes, Auditable;
+    use Auditable, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'card_number',
@@ -37,20 +38,23 @@ class Patient extends Model
         'spouse_phone',
         'spouse_occupation',
         'spouse_educational_status',
-        'category_id'
+        'category_id',
     ];
+
+    protected $with = ['insure'];
 
     protected $casts = [
         'dob' => 'date',
     ];
 
-    protected $appends = ['gender_value'];
+    protected $appends = ['gender_value', 'p_name'];
 
     protected static function booted()
     {
         static::creating(function ($patient) {
-            if ($patient->card_number === null)
+            if ($patient->card_number === null) {
                 $patient->card_number = static::generateCardNumber($patient->category);
+            }
         });
     }
 
@@ -59,17 +63,25 @@ class Patient extends Model
         return $this->antenatalProfiles->count() > 0 ? $this->antenatalProfiles[0] : null;
     }
 
+    public function pName(): Attribute
+    {
+        // return $this->name . ' ' . ($this->insure ? "<i class='fa fa-shield-halved'></i>" : null);
+        return Attribute::make(
+            get: fn () => $this->name.' '.($this->insure ? "<i class='fa fa-shield-halved'></i>" : null),
+        );
+    }
+
     protected function maritalstatus(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => MaritalStatus::tryFrom($value)?->name ?? "Unknown",
+            get: fn ($value) => MaritalStatus::tryFrom($value)?->name ?? 'Unknown',
         );
     }
 
     protected function religion(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => $value != 0 ? Religion::tryFrom($value)?->name ?? "Unknown" : "Unknown",
+            get: fn ($value) => $value != 0 ? Religion::tryFrom($value)?->name ?? 'Unknown' : 'Unknown',
         );
     }
 
@@ -77,16 +89,16 @@ class Patient extends Model
     {
         return Attribute::make(
             get: function ($value) {
-                return Gender::tryFrom($value)?->name ?? "Unknown";
+                return Gender::tryFrom($value)?->name ?? 'Unknown';
             },
-            set: fn($value) => $value,
+            set: fn ($value) => $value,
         );
     }
 
     protected function age(): Attribute
     {
         return Attribute::make(
-            get: fn($value, $attributes) => !empty($attributes['dob']) ? (int) Carbon::parse($attributes['dob'])->diffInYears(Carbon::now()) : null,
+            get: fn ($value, $attributes) => ! empty($attributes['dob']) ? (int) Carbon::parse($attributes['dob'])->diffInYears(Carbon::now()) : null,
         );
     }
 
@@ -94,7 +106,8 @@ class Patient extends Model
     {
         $prefix = Patient::where('category_id', $category)->count();
         $prefix = str_pad($prefix, 3, '0', STR_PAD_LEFT);
-        return $prefix . date('my');
+
+        return $prefix.date('my');
     }
 
     public function category()
@@ -116,10 +129,12 @@ class Patient extends Model
     {
         return $this->hasMany(DocumentationTest::class, 'patient_id')->latest();
     }
+
     public function prescriptions()
     {
         return $this->hasMany(DocumentationPrescription::class)->latest();
     }
+
     public function documentations()
     {
         return $this->hasMany(Documentation::class)->limit(10)->latest();
@@ -128,7 +143,12 @@ class Patient extends Model
     public function insurance()
     {
         // TODO: Will need to re-scope this when NHIS functionality for verifying insurance information is implemented
-        return $this->hasMany(InsuranceProfiles::class, 'patient_id'); //->pending(); //->active();
+        return $this->hasMany(InsuranceProfiles::class, 'patient_id')->latest();
+    }
+
+    public function insure()
+    {
+        return $this->hasOne(InsuranceProfiles::class, 'patient_id', 'id')->latest()->whereIn('status', [Status::active, Status::pending]);
     }
 
     public function visits()
@@ -179,5 +199,11 @@ class Patient extends Model
     public function getAge()
     {
         return $this->dob?->diff(skip: []);
+    }
+
+    #[Override]
+    public function __toString()
+    {
+        return "$this->name ".$this->active_insurance ? "[$this->active_insurance->name]" : '';
     }
 }

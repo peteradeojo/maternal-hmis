@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class StockCount extends Model
 {
     protected $fillable = [
-        'performed_by', 'location_id', 'count_date', 'status', 'applied_at'
+        'performed_by', 'location_id', 'count_date', 'status', 'applied_at',
     ];
 
     protected $casts = [
@@ -16,11 +16,13 @@ class StockCount extends Model
         'count_date' => 'datetime',
     ];
 
-    public function counter() {
+    public function counter()
+    {
         return $this->belongsTo(User::class, 'performed_by');
     }
 
-    public function records() {
+    public function records()
+    {
         return $this->hasMany(StockCountLine::class, 'stock_count_id');
     }
 }

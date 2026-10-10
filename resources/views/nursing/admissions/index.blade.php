@@ -21,7 +21,7 @@
                 <tbody>
                     @foreach ($admissions as $a)
                         <tr>
-                            <td><a href="{{ route('nurses.admissions.show', $a) }}">{{ $a->patient?->name }}</a></td>
+                            <td><a href="{{ route('nurses.admissions.show', $a) }}">{!! $a->patient?->p_name !!}</a></td>
                             <td>{{ $a->ward?->name }}</td>
                             <td>{{ Status::tryFrom($a->status)?->name }}</td>
                             <td>{{ $a->created_at->format('Y-m-d h:i A') }}</td>

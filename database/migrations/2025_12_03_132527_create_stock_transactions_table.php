@@ -32,7 +32,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement("ALTER TABLE stock_transactions ALTER COLUMN tx_type TYPE stock_tx_type USING tx_type::stock_tx_type;");
+        DB::statement('ALTER TABLE stock_transactions ALTER COLUMN tx_type TYPE stock_tx_type USING tx_type::stock_tx_type;');
     }
 
     /**

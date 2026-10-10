@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement("ALTER TABLE stock_item_costs ALTER COLUMN source TYPE item_cost_source USING source::item_cost_source;");
+        DB::statement('ALTER TABLE stock_item_costs ALTER COLUMN source TYPE item_cost_source USING source::item_cost_source;');
     }
 
     /**
@@ -31,6 +31,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('stock_item_costs');
-        DB::statement("DROP TYPE item_cost_source");
+        DB::statement('DROP TYPE item_cost_source');
     }
 };

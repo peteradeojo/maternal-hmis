@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -26,7 +25,6 @@ return new class extends Migration
             $table->dateTime('appointment_date')->nullable();
             $table->string('note')->nullable();
             $table->timestamps();
-
 
         });
     }

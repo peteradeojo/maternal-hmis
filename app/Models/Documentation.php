@@ -3,15 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
-use App\Models\PatientImaging;
 use App\Interfaces\Documentable;
 use App\Traits\Documentable as TraitsDocumentable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Documentation extends Model # implements Documentable
+class Documentation extends Model // implements Documentable
 {
     use HasFactory, TraitsDocumentable;
 

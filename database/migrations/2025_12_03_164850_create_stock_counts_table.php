@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('performed_by')->constrained('users', 'id');
             $table->foreignId('location_id')->constrained('locations', 'id');
-            $table->timestampTz('count_date')->default("now()");
+            $table->timestampTz('count_date')->default('now()');
             $table->timestamps();
         });
     }

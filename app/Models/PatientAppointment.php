@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\Model;
 #[UsePolicy(PatientAppointmentPolicy::class)]
 class PatientAppointment extends Model
 {
-    use NeedsRecorderInfo, CastsStatus;
+    use CastsStatus, NeedsRecorderInfo;
 
     const DOCTOR_SOURCE = 'doctor_scheduled';
+
     const RECORD_SOURCE = 'record_scheduled';
 
     protected $fillable = [
@@ -42,17 +43,20 @@ class PatientAppointment extends Model
         return $this->morphMany(ConsultationNote::class, 'visit');
     }
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-    public function source_visit() {
+    public function source_visit()
+    {
         return $this->belongsTo(Visit::class, 'visit_id');
     }
 
-    public function source(): Attribute {
+    public function source(): Attribute
+    {
         return Attribute::make(get: function ($value) {
-            return match($value) {
+            return match ($value) {
                 self::DOCTOR_SOURCE => 'Consultant',
                 self::RECORD_SOURCE => 'Records',
                 default => $value,
@@ -60,7 +64,8 @@ class PatientAppointment extends Model
         });
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'booked_by', 'id');
     }
 }

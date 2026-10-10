@@ -18,12 +18,12 @@ class PharmacyReportController extends Controller
 
         $drugsDispensedToday = $dispenseQuery->clone()
             ->where('created_at', '>=', $today)
-            ->selectRaw("count(item_id) as count, item_id")
+            ->selectRaw('count(item_id) as count, item_id')
             ->orderBy('count', 'desc')
             ->limit(20)
             ->get();
 
-        $drugsDispensedTodayCount = DB::query()->selectRaw("item_id")->fromSub(
+        $drugsDispensedTodayCount = DB::query()->selectRaw('item_id')->fromSub(
             $dispenseQuery->clone()
                 ->where('created_at', '>=', $today)
                 ->select(['item_id']),

@@ -19,16 +19,18 @@ class ResolveLocation
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return $next($request);
         }
 
         $locationId = session('current_location_id');
-        if (!$locationId) {
+        if (! $locationId) {
             $locationId = Location::where('type', 'branch')->first()?->id;
         }
 
-        if (!$locationId) return $next($request);
+        if (! $locationId) {
+            return $next($request);
+        }
 
         $location = Location::find($locationId);
         app(LocationContext::class)->set($location);

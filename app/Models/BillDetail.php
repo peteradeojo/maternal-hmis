@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BillDetail extends Model
 {
@@ -39,7 +38,7 @@ class BillDetail extends Model
     public function amount(): Attribute
     {
         return Attribute::make(
-            get: fn($v, $attributes) => $attributes['total_price'],
+            get: fn ($v, $attributes) => $attributes['total_price'],
         );
     }
 
@@ -59,26 +58,28 @@ class BillDetail extends Model
                 $meta = json_decode($attrs['meta']);
                 switch ($attrs['tag']) {
                     case 'drug':
-                        if ($attrs['status'] == Status::cancelled->value) return "Blocked";
+                        if ($attrs['status'] == Status::cancelled->value) {
+                            return 'Blocked';
+                        }
 
                         return ucfirst(Status::from($attrs['status'])->name);
                     case 'test':
                         if (isset($meta->data)) {
                             if ($meta->data->status == Status::cancelled->value) {
-                                return "Rejected";
+                                return 'Rejected';
                             }
                             if ($meta->data->status == Status::pending->value) {
-                                return "Pending";
+                                return 'Pending';
                             }
                             if ($meta->data->status == Status::closed->value) {
-                                return "Delivered";
+                                return 'Delivered';
                             }
                             if ($meta->data->status == Status::active->value) {
-                                return "Samples collected";
+                                return 'Samples collected';
                             }
                         }
 
-                        return "Added to bill";
+                        return 'Added to bill';
                     default:
                         return Status::tryFrom($attrs['status'])?->name;
                 }
@@ -88,7 +89,9 @@ class BillDetail extends Model
 
     public function pushMetaData()
     {
-        if (!isset($this->meta['data']) || !isset($this->tag)) return;
+        if (! isset($this->meta['data']) || ! isset($this->tag)) {
+            return;
+        }
 
         $tag = $this->tag;
         $meta = $this->meta;
@@ -109,7 +112,8 @@ class BillDetail extends Model
         });
     }
 
-    public function chargeable() {
+    public function chargeable()
+    {
         return $this->morphTo();
     }
 }

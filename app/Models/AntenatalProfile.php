@@ -6,18 +6,17 @@ use App\Enums\AncCategory;
 use App\Enums\Status;
 use App\Http\Controllers\LabController;
 use App\Interfaces\OperationalEvent;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\Auditable;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 class AntenatalProfile extends Model implements OperationalEvent
 {
-    use HasFactory, Auditable, Documentable, HasVisitData;
+    use Auditable, Documentable, HasFactory, HasVisitData;
 
     protected $fillable = [
         'patient_id',
@@ -70,7 +69,7 @@ class AntenatalProfile extends Model implements OperationalEvent
 
     public function cardType(): Attribute
     {
-        return Attribute::make(get: fn($value) => AncCategory::tryFrom($value)->name);
+        return Attribute::make(get: fn ($value) => AncCategory::tryFrom($value)->name);
     }
 
     public function getVitals()
@@ -132,6 +131,7 @@ class AntenatalProfile extends Model implements OperationalEvent
         }
 
         $results = is_array($test->results) ? $test->results : (array) $test->results;
+
         return $results[0]['result'] ?? '';
     }
 
@@ -144,13 +144,13 @@ class AntenatalProfile extends Model implements OperationalEvent
             $days = abs($days % 7);
 
             if ($short) {
-                return "{$weeks}w" . ($days > 0 ? " +$days" : '');
+                return "{$weeks}w".($days > 0 ? " +$days" : '');
             }
 
             return "$weeks week(s) $days day(s)";
         }
 
-        return "No LMP";
+        return 'No LMP';
     }
 
     public function consultant()

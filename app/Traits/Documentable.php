@@ -3,17 +3,17 @@
 namespace App\Traits;
 
 use App\Enums\Status;
-use App\Models\Prescription;
-use App\Models\PatientImaging;
-use App\Models\DocumentationTest;
-use App\Models\DocumentedDiagnosis;
-use App\Models\PatientExaminations;
 use App\Models\DocumentationComplaints;
 use App\Models\DocumentationPrescription;
+use App\Models\DocumentationTest;
+use App\Models\DocumentedDiagnosis;
 use App\Models\InsuranceAuthorization;
+use App\Models\PatientExaminations;
+use App\Models\PatientImaging;
+use App\Models\Prescription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait Documentable
 {
@@ -39,10 +39,10 @@ trait Documentable
 
     public function allPrescriptionsAvailable(): Attribute
     {
-        return Attribute::make(get: fn() => $this->treatments->every(fn($t) => $t->status == Status::quoted->value));
+        return Attribute::make(get: fn () => $this->treatments->every(fn ($t) => $t->status == Status::quoted->value));
     }
 
-    public  function examination(): MorphOne
+    public function examination(): MorphOne
     {
         return $this->morphOne(PatientExaminations::class, 'visit');
     }
@@ -73,13 +73,14 @@ trait Documentable
             return $this->morphMany(DocumentationPrescription::class, 'event');
         } catch (\Throwable $th) {
             report($th);
+
             return null;
         }
     }
 
     public function scopeActive($query)
     {
-        throw new \Exception("Not implemented");
+        throw new \Exception('Not implemented');
     }
 
     public function authorizations()

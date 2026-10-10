@@ -2,13 +2,13 @@
 
 namespace App\Http\Livewire\Doctor;
 
-use App\Models\Product;
-use Livewire\Component;
 use App\Enums\Department;
 use App\Enums\Status;
+use App\Interfaces\OperationalEvent;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
-use App\Interfaces\OperationalEvent;
+use Livewire\Component;
 
 class AddTest extends Component
 {
@@ -18,6 +18,7 @@ class AddTest extends Component
     }
 
     public $event;
+
     public $categoryId;
 
     public function mount(OperationalEvent $event)
@@ -50,12 +51,12 @@ class AddTest extends Component
             ]);
 
             DB::commit();
-            notifyUserSuccess("Scan request added.", $user);
+            notifyUserSuccess('Scan request added.', $user);
         } catch (\Throwable $th) {
             DB::rollBack();
             report($th);
             dump($th);
-            notifyUserError("Unable to add this scan.", $user);
+            notifyUserError('Unable to add this scan.', $user);
         }
 
         $this->dispatch('$refresh');

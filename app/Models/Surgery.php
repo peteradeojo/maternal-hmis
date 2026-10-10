@@ -10,6 +10,6 @@ class Surgery extends Model
     use HasFactory;
 
     protected $fillable = [
-        'procedure', 'admission_plan_id', 'patient_id', 'status'
+        'procedure', 'admission_plan_id', 'patient_id', 'status',
     ];
 }

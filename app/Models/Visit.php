@@ -7,22 +7,22 @@ use App\Enums\Status;
 use App\Http\Controllers\LabController;
 use App\Interfaces\LocationAware;
 use App\Interfaces\OperationalEvent;
+use App\Traits\Auditable;
 use App\Traits\Documentable;
 use App\Traits\HasVisitData;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
 /**
  * @property AncVisit|GeneralVisit $visit
  */
-class Visit extends Model implements OperationalEvent, LocationAware
+class Visit extends Model implements LocationAware, OperationalEvent
 {
-    use HasFactory, HasVisitData, Documentable, Auditable, SoftDeletes;
+    use Auditable, Documentable, HasFactory, HasVisitData, SoftDeletes;
 
     protected $fillable = [
         'visit_type',
@@ -39,7 +39,7 @@ class Visit extends Model implements OperationalEvent, LocationAware
         'location_id',
     ];
 
-    protected $with = ['visit'];
+    protected $with = ['visit', 'insurance'];
 
     protected $appends = ['can_check_out', 'type'];
 
@@ -76,13 +76,13 @@ class Visit extends Model implements OperationalEvent, LocationAware
     public function type(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->visit->type,
+            get: fn () => $this->visit->type,
         );
     }
 
     public function canCheckOut(): Attribute
     {
-        return Attribute::make(fn() => !$this->awaiting_pharmacy && !$this->awaiting_doctor);
+        return Attribute::make(fn () => ! $this->awaiting_pharmacy && ! $this->awaiting_doctor);
     }
 
     // Scopes
@@ -143,7 +143,7 @@ class Visit extends Model implements OperationalEvent, LocationAware
         }
 
         if ($user->hasRole('pharmacy')) {
-            return $query; //TODO: ->where('awaiting_pharmacy', true);
+            return $query; // TODO: ->where('awaiting_pharmacy', true);
         }
 
         if ($user->hasAnyRole(['billing', 'record'])) {
@@ -161,6 +161,7 @@ class Visit extends Model implements OperationalEvent, LocationAware
                 'awaiting_doctor' => false,
                 'awaiting_vitals' => false,
             ]);
+
             return;
         }
 
@@ -177,6 +178,7 @@ class Visit extends Model implements OperationalEvent, LocationAware
     public function getWaitingForDoctorAttribute()
     {
         $b = ($this->visit->tests()->where('results', '!=', null)->pending()->exists() or $this->visit->radios()->status(Status::pending)->exists()) and $this->status != Status::closed->value;
+
         return $b;
     }
 
@@ -205,8 +207,9 @@ class Visit extends Model implements OperationalEvent, LocationAware
                 }
 
                 foreach ($tests as $test) {
-                    if ($visit->tests()->where('name', $test->name)->exists())
+                    if ($visit->tests()->where('name', $test->name)->exists()) {
                         continue;
+                    }
 
                     $visit->tests()->create([
                         'name' => $test->name,
@@ -220,4 +223,15 @@ class Visit extends Model implements OperationalEvent, LocationAware
             }
         });
     }
+
+    public function insurance()
+    {
+        return $this->hasOne(InsuranceProfiles::class, 'patient_id', 'patient_id')->active()->latest();
+    }
+
+    // #[Override]
+    // public function authorizations()
+    // {
+    //     return $this->morphMany(InsuranceAuthorization::class);
+    // }
 }

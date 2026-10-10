@@ -84,7 +84,7 @@
                                 patient,
                                 id
                             }) =>
-                            `<a class="link" href="{{ route('dis.get-prescriptions', ':id') }}">${patient.name}</a>`
+                            `<a class="link" href="{{ route('dis.get-prescriptions', ':id') }}">${patient.p_name}</a>`
                             .replace(':id', id), //'patient.name',
                         name: 'patient.name'
                     },
@@ -113,11 +113,15 @@
             $("table#reverse-lookup").DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{route('phm-api.reverse-lookup')}}"
+                    url: "{{ route('phm-api.reverse-lookup') }}"
                 },
-                columns: [
-                    {
-                        data: ({id, patient}) =>  `<a href="{{route('dis.get-prescriptions', ':id')}}" class="link">${patient.name}</a>`.replace(':id', id),
+                columns: [{
+                        data: ({
+                                id,
+                                patient
+                            }) =>
+                            `<a href="{{ route('dis.get-prescriptions', ':id') }}" class="link">${patient.name}</a>`
+                            .replace(':id', id),
                     },
                     {
                         data: 'patient.card_number',

@@ -16,11 +16,10 @@ Route::name('records.')->prefix('/records')->middleware(['role:record|admin', 'd
     Route::match(['get', 'post'], '/check-out/{visit}', [PatientsController::class, 'checkOut'])->name('force-check-out');
     Route::match(['get', 'post'], '/patients/{patient}/anc-profile', [PatientsController::class, 'createAncProfile'])->name('patient.anc-profile');
 
-
-    Route::get("/fetch-history", [HistoryController::class, 'getHistory'])->name('get-history');
+    Route::get('/fetch-history', [HistoryController::class, 'getHistory'])->name('get-history');
     Route::prefix('/visit-history')->group(function () {
-        Route::get("/", [HistoryController::class, 'index'])->name('history');
-        Route::get("/{visit}", [HistoryController::class, 'show'])->name('show-history');
+        Route::get('/', [HistoryController::class, 'index'])->name('history');
+        Route::get('/{visit}', [HistoryController::class, 'show'])->name('show-history');
     });
 
     // Admissions

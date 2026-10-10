@@ -4,8 +4,6 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldRescue;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -28,7 +26,7 @@ class NotificationSent implements ShouldBroadcast, ShouldRescue
     public function broadcastOn(): Channel
     {
         dump($this->departmentId);
-        return new Channel('department.' . $this->departmentId);
+
+        return new Channel('department.'.$this->departmentId);
     }
 }
-

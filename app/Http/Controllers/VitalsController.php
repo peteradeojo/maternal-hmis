@@ -18,7 +18,7 @@ class VitalsController extends Controller
         $request->validate([
             'temperature' => 'nullable|numeric',
             'blood_pressure' => ['nullable', function ($attr, $value, $fail) {
-                if (!preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                if (! preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
                     $fail('Invalid blood pressure format');
                 }
             }],

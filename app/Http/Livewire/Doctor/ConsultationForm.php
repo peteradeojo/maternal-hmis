@@ -9,9 +9,13 @@ use Livewire\Component;
 class ConsultationForm extends Component
 {
     public Visit $visit;
+
     public array $complaints;
+
     public array $tests;
+
     public array $prescriptions;
+
     public array $diagnoses;
 
     public function render()
@@ -19,7 +23,7 @@ class ConsultationForm extends Component
         if ($this->visit->visit instanceof AncVisit) {
             return view('doctors.anc-visit-form', [
                 'ancVisit' => $this->visit->visit,
-                'visit_id' => $this->visit->id
+                'visit_id' => $this->visit->id,
             ]);
         }
 

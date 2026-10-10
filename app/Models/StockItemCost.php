@@ -14,6 +14,6 @@ class StockItemCost extends Model
     ];
 
     protected $fillable = [
-        'item_id', 'cost', 'source', 'lot_id'
+        'item_id', 'cost', 'source', 'lot_id',
     ];
 }

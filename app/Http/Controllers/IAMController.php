@@ -49,13 +49,13 @@ class IAMController extends Controller
 
         return $this->dataTable($request, $query, [
             function ($query, $search) {
-                $searchFrames = explode(":", $search);
-                if (count($searchFrames) > 1 and !empty($searchFrames[1])) {
+                $searchFrames = explode(':', $search);
+                if (count($searchFrames) > 1 and ! empty($searchFrames[1])) {
                     $query->where('auditable_type', 'ilike', "%$searchFrames[0]")->where('auditable_id', $searchFrames[1]);
                 } else {
-                    $query->where('auditable_type', 'ilike', "%$search"); //->where('auditable_id', $searchFrames[1]);
+                    $query->where('auditable_type', 'ilike', "%$search"); // ->where('auditable_id', $searchFrames[1]);
                 }
-            }
+            },
         ]);
     }
 
@@ -69,6 +69,7 @@ class IAMController extends Controller
     public function users(Request $request)
     {
         $users = User::all();
+
         return view('iam.users', compact('users'));
     }
 
@@ -77,6 +78,7 @@ class IAMController extends Controller
         $permissions = Permission::all();
         $roles = Role::all();
         $departments = Department::all();
+
         return view('iam.user', compact('user', 'roles', 'permissions', 'departments'));
     }
 
@@ -84,7 +86,7 @@ class IAMController extends Controller
     {
         $rUser = $request->user();
 
-        if (!$rUser->hasRole('admin')) {
+        if (! $rUser->hasRole('admin')) {
             return abort(403);
         }
 
@@ -94,6 +96,7 @@ class IAMController extends Controller
         ]);
 
         $user->syncRoles([$request->input('roles')]);
+
         return response()->json([], HttpStatusCode::OK);
     }
 }

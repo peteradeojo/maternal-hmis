@@ -11,10 +11,11 @@ class SignatureImage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'storage', 'location', 'tag'
+        'storage', 'location', 'tag',
     ];
 
-    public function event() {
+    public function event()
+    {
         return $this->morphTo();
     }
 }

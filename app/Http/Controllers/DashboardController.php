@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $visits = [];
         $location = app(LocationContext::class)->id();
         if ($user->hasRole('record')) {
-            $visits = Visit::where("status", "=", Status::active->value)->whereIn('location_id', [$location])->orWhereNull('location_id')->latest()->limit(50)->get();
+            $visits = Visit::where('status', '=', Status::active->value)->whereIn('location_id', [$location])->orWhereNull('location_id')->latest()->limit(50)->get();
         }
 
         return view('dashboard', compact('user', 'visits'));

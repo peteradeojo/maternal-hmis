@@ -2,12 +2,12 @@
 
 namespace App\Http\Livewire\Doctor;
 
-use App\Models\Visit;
-use App\Models\Product;
-use Livewire\Component;
 use App\Dto\PrescriptionDto;
 use App\Livewire\Forms\Doctor\PrescriptionRequest;
+use App\Models\Product;
+use App\Models\Visit;
 use App\Services\TreatmentService;
+use Livewire\Component;
 
 class AddPrescription extends Component
 {
@@ -15,9 +15,11 @@ class AddPrescription extends Component
      * @var Visit
      */
     public $event;
+
     public $search;
 
     public $dispatchEvent;
+
     public $display;
 
     public PrescriptionRequest $requestForm;
@@ -29,6 +31,7 @@ class AddPrescription extends Component
     public $results = null;
 
     public $title;
+
     public $count;
 
     public $canDelete = true;
@@ -69,9 +72,10 @@ class AddPrescription extends Component
         $dto->setFrequency($this->requestForm->frequency);
 
         if ($this->dispatchEvent) {
-            $this->dispatch("prescription_selected", product: $dto);
+            $this->dispatch('prescription_selected', product: $dto);
             $this->requestForm->reset();
             $this->selections = null;
+
             return;
         }
 
@@ -128,7 +132,7 @@ class AddPrescription extends Component
         if (isset($this->selections->id)) {
             $this->count = TreatmentService::getCount((array) $this->selections, (object) $this->requestForm->all());
         } else {
-            $this->count = "No inventory";
+            $this->count = 'No inventory';
         }
     }
 }

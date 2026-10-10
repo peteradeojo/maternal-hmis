@@ -68,9 +68,9 @@
             @livewire('nhi.pending-authorizations')
         @endrole
 
-        @role('radiology')
-            @livewire('rad.waiting-patients')
-        @endrole
+        {{-- @role('radiology') --}}
+        {{--     @livewire('rad.waiting-patients') --}}
+        {{-- @endrole --}}
 
         @role('pharmacy')
             <div class="card p-4 bg-white my-3">

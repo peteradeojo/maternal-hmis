@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('item_id')->constrained('stock_items');
-            $table->foreignId('location_id')->constrained('locations'); 
+            $table->foreignId('location_id')->constrained('locations');
             $table->foreignId('lot_id')->nullable()->constrained('stock_lots');
 
             $table->decimal('qty_on_hand', 14, 4)->default(0);

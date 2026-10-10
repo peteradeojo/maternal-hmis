@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OperationNote extends Model implements PatientRecord
 {
-    use SoftDeletes, NeedsRecorderInfo;
+    use NeedsRecorderInfo, SoftDeletes;
 
     protected $fillable = [
         'unit',
@@ -33,15 +33,18 @@ class OperationNote extends Model implements PatientRecord
 
     protected $with = ['recorder'];
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class);
     }
 
-    public function admission() {
+    public function admission()
+    {
         return $this->belongsTo(Admission::class, 'admission_id');
     }
 
-    public function user() {
-        return $this->belongsTo(User::class,'user_id');
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

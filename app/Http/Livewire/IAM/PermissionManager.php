@@ -3,12 +3,12 @@
 namespace App\Http\Livewire\IAM;
 
 use Livewire\Component;
-
 use Spatie\Permission\Models\Permission;
 
 class PermissionManager extends Component
 {
     public $permissions;
+
     public $name;
 
     protected $rules = [

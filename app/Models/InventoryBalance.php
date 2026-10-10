@@ -17,15 +17,18 @@ class InventoryBalance extends Model
         'qty_on_hand' => 'integer',
     ];
 
-    public function item() {
+    public function item()
+    {
         return $this->belongsTo(StockItem::class, 'item_id');
     }
 
-    public function prices() {
+    public function prices()
+    {
         return $this->hasMany(StockItemPrice::class, 'item_id', 'item_id')->active()->latest();
     }
 
-    public function location() {
+    public function location()
+    {
         return $this->belongsTo(Location::class, 'location_id');
     }
 }

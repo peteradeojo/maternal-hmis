@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Http\Requests\PurchaseOrderRequest;
-use App\Models\Location;
-use App\Models\StockLot;
-use App\Models\StockItem;
-use Illuminate\Http\Request;
-use App\Models\StockItemCost;
-use App\Models\StockItemPrice;
 use App\Models\InventoryBalance;
+use App\Models\Location;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderLine;
 use App\Models\StockCount;
+use App\Models\StockItem;
+use App\Models\StockItemCost;
+use App\Models\StockItemPrice;
+use App\Models\StockLot;
 use App\Models\StockTransaction;
 use App\Models\Supplier;
-use App\Services\TreatmentService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -36,12 +35,13 @@ class InventoryController extends Controller
         ];
 
         $locations = Location::all();
+
         return view('inventory.index', compact('categories', 'price_types', 'locations'));
     }
 
     public function getInventory(Request $request)
     {
-        $query = InventoryBalance::with(['prices', 'location', 'item'])->groupBy(['item_id', 'location_id'])->selectRaw("item_id, location_id");
+        $query = InventoryBalance::with(['prices', 'location', 'item'])->groupBy(['item_id', 'location_id'])->selectRaw('item_id, location_id');
 
         return $this->dataTable($request, $query, [
             function ($query, $searchString) {
@@ -50,7 +50,7 @@ class InventoryController extends Controller
                         ->orWhere('description', 'ilike', "%$searchString%")
                         ->orWhere('sku', 'ilike', "%$searchString%");
                 });
-            }
+            },
         ]);
     }
 
@@ -60,14 +60,14 @@ class InventoryController extends Controller
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:64',
             'description' => 'required|string|max:255',
-            'category' => 'required|string|in:' . implode(',', StockItem::CATEGORIES),
+            'category' => 'required|string|in:'.implode(',', StockItem::CATEGORIES),
             'base_unit' => 'required|string|max:32',
             'lot_number' => 'nullable|string|max:255',
             'manufacture_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:manufacture_date',
             'quantity_received' => 'required|integer|min:1',
             'prices' => 'required|array|min:1',
-            'prices.*.price_type' => 'required|string|in:' . implode(',', [
+            'prices.*.price_type' => 'required|string|in:'.implode(',', [
                 StockItemPrice::RETAIL,
                 StockItemPrice::NHIS,
                 StockItemPrice::WARD,
@@ -107,7 +107,7 @@ class InventoryController extends Controller
                 'lot_id' => $lot?->id,
                 'quantity' => $request->input('quantity_received'),
                 'unit' => $request->input('base_unit'),
-                ...$request->only(['unit_cost',]),
+                ...$request->only(['unit_cost']),
                 'from_location_id' => 0,
                 'to_location_id' => 1,
                 'reason' => 'New stock',
@@ -141,7 +141,8 @@ class InventoryController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             report($e);
-            return response()->json(['message' => 'Failed to create stock item. ' . $e->getMessage()], 500);
+
+            return response()->json(['message' => 'Failed to create stock item. '.$e->getMessage()], 500);
         }
     }
 
@@ -159,6 +160,7 @@ class InventoryController extends Controller
 
         if ($request->isMethod('POST') == false) {
             $item->load(['balances', 'prices', 'costs']);
+
             return view('inventory.item-view', compact('item', 'categories', 'units', 'price_types'));
         }
 
@@ -167,7 +169,7 @@ class InventoryController extends Controller
             'item.name' => 'required|string',
             'item.description' => 'required|string',
             'item.is_pharmaceutical' => 'boolean',
-            'item.category' => 'required|in:' . join(',', $categories),
+            'item.category' => 'required|in:'.implode(',', $categories),
             'item.si_unit' => 'string|nullable',
             'item.weight' => 'numeric|nullable',
             'item.sku' => 'required|string',
@@ -176,7 +178,7 @@ class InventoryController extends Controller
             'cost' => 'required|min:0|numeric',
             'prices' => 'required|array',
             'prices.*.id' => 'nullable|integer',
-            'prices.*.price_type' => 'required|in:' . join(",", $price_types),
+            'prices.*.price_type' => 'required|in:'.implode(',', $price_types),
             'prices.*.price' => 'required|numeric|min:0',
             'prices.*.active' => 'nullable|boolean',
         ]);
@@ -258,7 +260,8 @@ class InventoryController extends Controller
 
             DB::commit();
 
-            notifyUserSuccess("Item update successful", $request->user()->id);
+            notifyUserSuccess('Item update successful', $request->user()->id);
+
             return response()->json([
                 'item' => $item,
             ]);
@@ -267,6 +270,7 @@ class InventoryController extends Controller
 
             report($e);
             notifyUserError($e->getMessage(), $request->user()->id);
+
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
@@ -276,6 +280,7 @@ class InventoryController extends Controller
     public function purchaseOrders(Request $request)
     {
         $data = PurchaseOrder::latest()->get();
+
         return view('inventory.po.index', compact('data'));
     }
 
@@ -304,13 +309,15 @@ class InventoryController extends Controller
     public function createPurchaseOrder(Request $request)
     {
         $suppliers = Supplier::all();
+
         return view('inventory.po.create', compact('suppliers'));
     }
 
     public function suppliers(Request $request)
     {
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             $suppliers = Supplier::all();
+
             return view('inventory.suppliers.index', compact('suppliers'));
         }
 
@@ -333,6 +340,7 @@ class InventoryController extends Controller
     {
         $order->load(['lines.item']);
         $suppliers = Supplier::all();
+
         return view('inventory.po.show', compact('order', 'suppliers'));
     }
 
@@ -371,7 +379,7 @@ class InventoryController extends Controller
     {
         if ($order->status !== Status::pending) {
             return response()->json([
-                'message' => "This order can no longer be modified."
+                'message' => 'This order can no longer be modified.',
             ], Response::HTTP_CONFLICT);
         }
 
@@ -409,6 +417,7 @@ class InventoryController extends Controller
             $order->save();
 
             DB::commit();
+
             return response()->json([
                 'message' => 'Order updated successfully',
             ]);
@@ -425,8 +434,9 @@ class InventoryController extends Controller
     public function bulkImport(Request $request)
     {
         $client = Redis::client();
-        if (!$request->isMethod('POST')) {
-            $keys = $client->hgetall("stock-imports");
+        if (! $request->isMethod('POST')) {
+            $keys = $client->hgetall('stock-imports');
+
             return view('inventory.bulk-import', compact('keys'));
         }
 
@@ -440,8 +450,8 @@ class InventoryController extends Controller
 
         $key = date('YmdHis');
 
-        $client->hset("stock-imports", $key, $path);
-        Artisan::queue("app:bulk-stock-import", ['hkey' => $key]);
+        $client->hset('stock-imports', $key, $path);
+        Artisan::queue('app:bulk-stock-import', ['hkey' => $key]);
 
         return redirect()->back();
     }
@@ -449,6 +459,7 @@ class InventoryController extends Controller
     public function stockTake(Request $request)
     {
         $counts = StockCount::latest()->get();
+
         return view('inventory.stock-counts', compact('counts'));
     }
 
@@ -457,7 +468,7 @@ class InventoryController extends Controller
         $prevStockTakes = StockCount::where('status', Status::pending->value)->exists();
         if ($prevStockTakes) {
             return redirect()->back()->withErrors([
-                'error' => "Complete pending stock takes.",
+                'error' => 'Complete pending stock takes.',
             ]);
         }
 
@@ -476,7 +487,8 @@ class InventoryController extends Controller
         return view('inventory.stock-take', compact('take'));
     }
 
-    public function stockHistory(Request $request) {
+    public function stockHistory(Request $request)
+    {
         return view('inventory.stock-history');
     }
 }

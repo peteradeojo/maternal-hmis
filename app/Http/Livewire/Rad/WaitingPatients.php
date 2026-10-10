@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Rad;
 
-use App\Models\Patient;
 use App\Models\Visit;
 use Livewire\Component;
 

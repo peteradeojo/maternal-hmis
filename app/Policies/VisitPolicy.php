@@ -6,7 +6,6 @@ use App\Enums\Permissions;
 use App\Enums\Roles;
 use App\Models\User;
 use App\Models\Visit;
-use Illuminate\Auth\Access\Response;
 
 class VisitPolicy
 {

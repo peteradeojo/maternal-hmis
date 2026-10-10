@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Department;
 use App\Http\Controllers\LabController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,6 +7,7 @@ Route::prefix('/lab')->name('lab.')->middleware(['role:lab', 'datalog'])->group(
     Route::get('/history', [LabController::class, 'history'])->name('history');
     Route::get('/anc', function () {
         $user = auth()->user();
+
         return view('lab.ancs', compact('user'));
     })->name('antenatals');
     // Route::match(['get', 'post'], 'test/{visit}', [LabController::class, 'test'])->name('take-test');

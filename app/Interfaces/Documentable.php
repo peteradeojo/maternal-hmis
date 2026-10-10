@@ -2,9 +2,7 @@
 
 namespace App\Interfaces;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
-
-interface Documentable extends Testable, Prescribable, Imageable
+interface Documentable extends Imageable, Prescribable, Testable
 {
     public function complaints();
 }

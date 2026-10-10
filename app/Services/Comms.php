@@ -8,19 +8,19 @@ use Illuminate\Support\Facades\Broadcast;
 
 class Comms
 {
-    static function notifyUserSuccess(string $message, User|int $user, $options = [])
+    public static function notifyUserSuccess(string $message, User|int $user, $options = [])
     {
         $options['mode'] ??= AppNotifications::$IN_APP;
         static::sendUserMessage(['message' => $message, 'bg' => ['bg-blue-400', 'text-white']], $user, $options);
     }
 
-    static function notifyUserError(string $message, User|int $user, $options = [])
+    public static function notifyUserError(string $message, User|int $user, $options = [])
     {
         $options['mode'] ??= AppNotifications::$IN_APP;
         self::sendUserMessage(['message' => $message, 'bg' => ['bg-red-500', 'text-white']], $user, $options);
     }
 
-    static function sendUserMessage($message, User|int $userId, $options = [])
+    public static function sendUserMessage($message, User|int $userId, $options = [])
     {
         $default = [
             'mode' => AppNotifications::$BOTH,
@@ -29,17 +29,17 @@ class Comms
 
         $message = array_merge($message, ['options' => $default]);
         try {
-            Broadcast::private("user." . (is_a($userId, User::class) ? $userId->id : $userId))
-                ->as("UserEvent")
+            Broadcast::private('user.'.(is_a($userId, User::class) ? $userId->id : $userId))
+                ->as('UserEvent')
                 ->with($message)
                 ->send();
         } catch (\Exception $e) {
             // report($e);
-            logger()->emergency("Error when trying to send notification: " . $e->getMessage());
+            logger()->emergency('Error when trying to send notification: '.$e->getMessage());
         }
     }
 
-    static function notifyDepartment($departmentId, $message, $options = [])
+    public static function notifyDepartment($departmentId, $message, $options = [])
     {
         $options['timeout'] ??= 5000;
 

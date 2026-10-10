@@ -4,22 +4,19 @@ namespace App\Traits;
 
 use App\Enums\Department;
 use App\Enums\Status;
-use App\Models\Patient;
-use App\Models\Product;
-use App\Interfaces\OperationalEvent;
 use App\Models\ConsultationNote;
+use App\Models\Patient;
 use App\Models\PatientHistory;
 use App\Models\TreatmentPlan;
 use App\Models\Visit;
 use App\Models\Vitals;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use stdClass;
 
 trait HasVisitData
 {
     public function notes()
     {
-        return $this->morphMany(ConsultationNote::class, 'visit')->orderBy('created_at'); //->latest();
+        return $this->morphMany(ConsultationNote::class, 'visit')->orderBy('created_at'); // ->latest();
     }
 
     public function patient()
@@ -93,26 +90,32 @@ trait HasVisitData
 
     public function getTestResults($name, $key = null)
     {
-        $tests = $this->tests->filter(fn($n) => strtolower($n->name) == strtolower($name));
+        $tests = $this->tests->filter(fn ($n) => strtolower($n->name) == strtolower($name));
 
-        if ($tests->isEmpty()) return "Not requested.";
+        if ($tests->isEmpty()) {
+            return 'Not requested.';
+        }
         $test = $tests->where('results', '!=', null)->first();
 
-        if (!$test) {
-            return "No result";
+        if (! $test) {
+            return 'No result';
         }
 
-        if (!empty($key)) {
+        if (! empty($key)) {
             foreach ($test->results ?? [] as $o) {
-                if (strtolower(@$o->description) == strtolower($key)) return @$o->result;
+                if (strtolower(@$o->description) == strtolower($key)) {
+                    return @$o->result;
+                }
             }
-            return "No result.";
+
+            return 'No result.';
         }
 
         return $test->results;
     }
 
-    public function treatment_plans() {
+    public function treatment_plans()
+    {
         return $this->morphMany(TreatmentPlan::class, 'origin')->latest();
     }
 }

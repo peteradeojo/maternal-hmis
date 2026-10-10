@@ -2,19 +2,24 @@
 
 namespace App\Traits;
 
-trait ComponentState {
+trait ComponentState
+{
     public $initHash;
+
     public $currentHash;
 
-    public function getHash() {
+    public function getHash()
+    {
         return md5(json_encode($this->getHashData()));
     }
 
-    public function updateHash() {
+    public function updateHash()
+    {
         $this->currentHash = $this->getHash();
     }
 
-    public function resetHash() {
+    public function resetHash()
+    {
         $this->initHash = $this->currentHash = $this->getHash();
         $this->dispatch('$refresh');
     }

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Enums\Department;
 use App\Models\ProductCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ProductCategorySeeder extends Seeder
@@ -30,7 +29,7 @@ class ProductCategorySeeder extends Seeder
             [
                 'name' => 'RADIOLOGY',
                 'department_id' => Department::RAD->value,
-            ]
+            ],
         ];
 
         foreach ($data as $row) {

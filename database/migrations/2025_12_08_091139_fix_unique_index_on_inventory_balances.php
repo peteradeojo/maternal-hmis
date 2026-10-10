@@ -16,9 +16,9 @@ return new class extends Migration
             $table->dropUnique(['item_id', 'location_id', 'lot_id']);
         });
 
-        DB::statement("CREATE UNIQUE INDEX inventory_balances_unique
+        DB::statement('CREATE UNIQUE INDEX inventory_balances_unique
 ON inventory_balances (item_id, location_id, lot_id)
-NULLS NOT DISTINCT;");
+NULLS NOT DISTINCT;');
     }
 
     /**
@@ -26,7 +26,7 @@ NULLS NOT DISTINCT;");
      */
     public function down(): void
     {
-        DB::statement("DROP INDEX IF EXISTS inventory_balances_unique;");
+        DB::statement('DROP INDEX IF EXISTS inventory_balances_unique;');
         Schema::table('inventory_balances', function (Blueprint $table) {
             $table->unique(['item_id', 'location_id', 'lot_id']);
         });

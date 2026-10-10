@@ -5,7 +5,6 @@ namespace App\Http\Livewire\Lab;
 use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Models\Product;
-use App\Models\Visit;
 use Livewire\Component;
 
 class ManageTests extends Component

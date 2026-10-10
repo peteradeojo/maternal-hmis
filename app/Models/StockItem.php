@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Database\Factories\StockItemFactory;
-use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,7 +46,7 @@ class StockItem extends Model
     public function balance(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->balances->sum('qty_on_hand'),
+            get: fn () => $this->balances->sum('qty_on_hand'),
         );
     }
 

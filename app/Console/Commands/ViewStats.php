@@ -43,9 +43,10 @@ class ViewStats extends Command
         }
     }
 
-    public function usage() {
+    public function usage()
+    {
         $this->info("Usage: php artisan app:view-stats {option}\n\n");
-        $this->info("Available stats:");
+        $this->info('Available stats:');
         $this->info(implode("\n", array_keys($this->stats)));
         exit(0);
     }
@@ -58,26 +59,32 @@ class ViewStats extends Command
             $cmd = $this->stats[$method];
 
             if (empty($cmd)) {
-                if (!method_exists($this, $method)) $this->fail("Method not exists.");
+                if (! method_exists($this, $method)) {
+                    $this->fail('Method not exists.');
+                }
+
                 return $this->{$method}($this->argument('options'), $parameters);
             }
 
             $output = [];
             $output = shell_exec($cmd);
             $this->info($output);
+
             return;
         }
 
-        $this->error("Error: requested stats do not exist.");
+        $this->error('Error: requested stats do not exist.');
         exit(1);
     }
 
-    protected function storage($options) {
-        function parseDiskStorage($line) {
-            return [$name, $type, $size, $used, $available, $use_percent, $mount] = array_values(array_filter(explode(" ", $line)));
+    protected function storage($options)
+    {
+        function parseDiskStorage($line)
+        {
+            return [$name, $type, $size, $used, $available, $use_percent, $mount] = array_values(array_filter(explode(' ', $line)));
         }
 
-        $output = shell_exec("df -hT -t ext4 -t vfat -t tmpfs");
+        $output = shell_exec('df -hT -t ext4 -t vfat -t tmpfs');
         $output = array_filter(explode("\n", $output));
         array_shift($output);
 
@@ -96,10 +103,11 @@ class ViewStats extends Command
                 ];
             }
             $this->info(json_encode($data));
+
             return;
         }
 
-        foreach($output as $line) {
+        foreach ($output as $line) {
             [$name, $type, $size, $used, $available, $use_percent, $mount] = parseDiskStorage($line);
             echo "Disk: $name ($type)\nUsed: $used/$size ($use_percent)\nAvailable: $available/$size\nMounted on: $mount\n\n";
         }

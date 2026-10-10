@@ -24,6 +24,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Card Number</th>
+                        <th>Insurance Organization</th>
                         <th>Category</th>
                         <th>Gender</th>
                         <th>Phone Number</th>
@@ -44,13 +45,18 @@
                 ordering: false,
                 columns: [{
                         data: (row) =>
-                            `<a href='{{ route('records.patient', ':row') }}' class='link'>${row.name}</a>`
+                            `<a href='{{ route('records.patient', ':row') }}' class='link'>${row.p_name}</a>`
                             .replace(':row', row.id),
                         name: 'id'
                     },
                     {
                         data: 'card_number',
                         name: 'card_number',
+                    },
+                    {
+                        data: ({
+                            insure
+                        }) => insure ? `${insure.hmo_name} / ${insure.hmo_id_no}` : 'n/a',
                     },
                     {
                         data: 'category.name',

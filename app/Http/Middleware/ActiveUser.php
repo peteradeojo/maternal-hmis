@@ -17,9 +17,13 @@ class ActiveUser
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (!$user) return abort(403);
+        if (! $user) {
+            return abort(403);
+        }
 
-        if ($user->status != Status::active) return abort(403, "This user is not allowed to access the application. Contact IT.");
+        if ($user->status != Status::active) {
+            return abort(403, 'This user is not allowed to access the application. Contact IT.');
+        }
 
         return $next($request);
     }

@@ -12,6 +12,7 @@ use Livewire\Component;
 class AddScan extends Component
 {
     public $event;
+
     public $categoryId;
 
     public function mount(OperationalEvent $event)
@@ -45,11 +46,11 @@ class AddScan extends Component
             ]);
 
             DB::commit();
-            notifyUserSuccess("Scan request added.", $user);
+            notifyUserSuccess('Scan request added.', $user);
         } catch (\Throwable $th) {
             report($th);
             DB::rollBack();
-            notifyUserError("Unable to add this scan. " . $th->getMessage(), $user);
+            notifyUserError('Unable to add this scan. '.$th->getMessage(), $user);
         }
 
         $this->dispatch('$refresh');

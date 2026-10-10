@@ -29,14 +29,14 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
 
     Route::prefix('rad')->group(base_path('routes/api/rad.php'));
 
-    include_once __DIR__ . '/api/laboratory.php';
-    include_once __DIR__ . '/api/nursing.php';
+    include_once __DIR__.'/api/laboratory.php';
+    include_once __DIR__.'/api/nursing.php';
     // include_once __DIR__ . '/api/rad.php';
-    include_once __DIR__ . '/api/doctor.php';
-    include_once __DIR__ . '/api/nhi.php';
-    include_once __DIR__ . '/api/dispensary.php';
-    include_once __DIR__ . '/api/billing.php';
-    include_once __DIR__ . '/api/pharmacy.php';
+    include_once __DIR__.'/api/doctor.php';
+    include_once __DIR__.'/api/nhi.php';
+    include_once __DIR__.'/api/dispensary.php';
+    include_once __DIR__.'/api/billing.php';
+    include_once __DIR__.'/api/pharmacy.php';
 
     Route::post('/job-openings', [CrmController::class, 'createJobOpening']);
     Route::patch('/job-openings/{opening}', [CrmController::class, 'toggleJobOpening']);
@@ -47,6 +47,7 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
             ->where('id', '!=', $request->user()->id)
             ->select(['id', 'firstname', 'lastname', 'phone', 'department_id'])
             ->get();
+
         return response()->json($users);
     });
 
@@ -54,10 +55,11 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
         $cxn = DB::connection('chat');
         $user = $request->user();
         $data = $cxn->table('chat_messages')
-            ->whereRaw("(senderId, receiverId) = (?, ?)", [$user->id, $fromId])
-            ->OrWhereRaw("(senderId, receiverId) = (?, ?)", [$fromId, $user->id])
-            ->select(['message', 'created_at as time', 'senderId as from', 'sender as fromName', 'receiverId as to',])
+            ->whereRaw('(senderId, receiverId) = (?, ?)', [$user->id, $fromId])
+            ->OrWhereRaw('(senderId, receiverId) = (?, ?)', [$fromId, $user->id])
+            ->select(['message', 'created_at as time', 'senderId as from', 'sender as fromName', 'receiverId as to'])
             ->limit(50)->orderBy('created_at', 'asc')->get();
+
         return response()->json($data);
     });
 
@@ -72,7 +74,9 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
         $data['from'] = $user->id;
         $data['fromName'] = $user->name;
 
-        if ($user->id != $data['to']) event(new ChatSent($data));
+        if ($user->id != $data['to']) {
+            event(new ChatSent($data));
+        }
 
         DB::connection('chat')->table('chat_messages')->insert([
             // 'msgTime' => $data['time'],

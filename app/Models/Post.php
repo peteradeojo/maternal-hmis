@@ -12,10 +12,11 @@ class Post extends Model
     protected $connection = 'libsql';
 
     protected $fillable = [
-        'title', 'description', 'post', 'user', 'image', 'status', 'slug'
+        'title', 'description', 'post', 'user', 'image', 'status', 'slug',
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 }

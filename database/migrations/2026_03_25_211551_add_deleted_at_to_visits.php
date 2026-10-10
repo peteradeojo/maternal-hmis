@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('visits', function (Blueprint $table) {
-	$table->dateTimeTz('deleted_at')->nullable();
+            $table->dateTimeTz('deleted_at')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('visits', function (Blueprint $table) {
-	$table->dropColumn(['deleted_at']);
+            $table->dropColumn(['deleted_at']);
         });
     }
 };

@@ -9,7 +9,7 @@ class Requisition extends Model
 {
     protected $fillable = [
         'requested_by', 'from_location_id', 'to_location_id',
-        'status'
+        'status',
     ];
 
     protected $casts = [

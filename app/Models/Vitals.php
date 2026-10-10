@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vitals extends Model
 {
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     protected $fillable = [
         'recordable_type',
@@ -44,6 +44,6 @@ class Vitals extends Model
     {
         return Visit::with(['patient.category', 'visit'])
         // ->whereNotIn('status', [Status::closed->value, Status::ejected->value, Status::completed->value, Status::blocked->value])
-        ->doesntHave('vitals')->latest();
+            ->doesntHave('vitals')->latest();
     }
 }

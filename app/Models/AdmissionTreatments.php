@@ -11,7 +11,7 @@ class AdmissionTreatments extends Model
 {
     use HasFactory, HasTimestamps, SoftDeletes;
 
-    protected $table = "admission_treatment_administrations";
+    protected $table = 'admission_treatment_administrations';
 
     protected $guarded = [];
 
@@ -19,15 +19,18 @@ class AdmissionTreatments extends Model
 
     protected $with = ['minister', 'treatments'];
 
-    public function admission() {
+    public function admission()
+    {
         return $this->belongsTo(Admission::class);
     }
 
-    public function minister() {
+    public function minister()
+    {
         return $this->belongsTo(User::class, 'minister_id');
     }
 
-    public function treatments() {
+    public function treatments()
+    {
         return $this->belongsTo(PrescriptionLine::class, 'treatment_id');
     }
 }

@@ -25,6 +25,6 @@ class GenerateVisitReport implements ShouldQueue
         $html = pdf()->view('visit-report', [
             'visit' => $this->visit,
         ])
-        ->save("{$this->visit->patient->name}.pdf");
+            ->save("{$this->visit->patient->name}.pdf");
     }
 }

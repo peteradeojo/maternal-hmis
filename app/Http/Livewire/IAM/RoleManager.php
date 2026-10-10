@@ -3,17 +3,21 @@
 namespace App\Http\Livewire\IAM;
 
 use Livewire\Component;
-
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleManager extends Component
 {
     public $roles;
+
     public $permissions;
+
     public $name;
+
     public $roleId;
+
     public $selectedPermissions = [];
+
     public $isEditing = false;
 
     protected $rules = [
@@ -63,7 +67,7 @@ class RoleManager extends Component
     public function updateRole()
     {
         $this->validate([
-            'name' => 'required|string|unique:roles,name,' . $this->roleId,
+            'name' => 'required|string|unique:roles,name,'.$this->roleId,
         ]);
 
         $role = Role::findOrFail($this->roleId);

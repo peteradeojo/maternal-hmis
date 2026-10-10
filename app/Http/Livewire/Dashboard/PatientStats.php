@@ -17,9 +17,13 @@ class PatientStats extends Component
     public User $user;
 
     public $patients = 0;
+
     public $patientsToday = 0;
+
     public $currentAdmissions = 0;
+
     public $visits = [];
+
     public $todayVisits = 0;
 
     public $stats = [];
@@ -35,7 +39,7 @@ class PatientStats extends Component
         $location = app(LocationContext::class)->id();
         $data = Cache::get("dashboard-stats:{$location}");
 
-        if (!$data) {
+        if (! $data) {
             $this->patients = Patient::count();
             $this->patientsToday = Patient::whereDate('created_at', today())->count();
             $this->todayVisits = Visit::where('location_id', $location)->whereDate('created_at', today())->count();
@@ -59,7 +63,7 @@ class PatientStats extends Component
             $this->stats = $data['stats'];
         }
 
-        $this->visits = Visit::where("status", "=", Status::active->value)->latest()->limit(50)->get();
+        $this->visits = Visit::where('status', '=', Status::active->value)->latest()->limit(50)->get();
     }
 
     public function hydrate()

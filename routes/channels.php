@@ -27,7 +27,7 @@ Broadcast::channel('logs', function (User $user) {
     return $user->department_id === Department::IT->value;
 });
 
-Broadcast::channel('user.{userId}', fn($user, int $id) => (int) $user->id == $id);
+Broadcast::channel('user.{userId}', fn ($user, int $id) => (int) $user->id == $id);
 
 Broadcast::channel('chat.{userId}', function ($user, int $userId) {
     return $user->id === $userId || true;

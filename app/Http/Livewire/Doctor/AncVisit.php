@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Doctor;
 
 use App\Livewire\Forms\Doctor\AncFollowup;
-use App\Models\Product;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 
@@ -14,6 +13,7 @@ class AncVisit extends Component
     public $visit;
 
     public $return_visit;
+
     public $cancellable = true;
 
     public function mount($visit)

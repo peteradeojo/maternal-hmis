@@ -17,7 +17,8 @@ class DocumentationComplaints extends Model
         'documentation_id',
     ];
 
-    public function documentable() {
+    public function documentable()
+    {
         return $this->morphTo();
     }
 }

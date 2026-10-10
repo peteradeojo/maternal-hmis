@@ -28,7 +28,7 @@
                 ajax: "{{ route('billing.get-billable-patients') }}",
                 columns: [{
                         data: (row) =>
-                            `<a href='{{ route('billing.patient-bills', ':id') }}' class='link'>${row.patient.name}</a>`
+                            `<a href='{{ route('billing.patient-bills', ':id') }}' class='link'>${row.patient.name} ${row.insurance ? `[${row.insurance.hmo_name} / ${row.insurance.hmo_id_no}]` : ''}</a>`
                             .replace(':id', row.patient_id)
                     },
                     {

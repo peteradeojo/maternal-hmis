@@ -4,11 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Enums\Department;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,7 +18,7 @@ class DatabaseSeeder extends Seeder
         (new CategorySeeder)->run();
         (new DepartmentSeeder)->run();
         (new WardSeeder)->run();
-        if (!App::environment('production')) {
+        if (! App::environment('production')) {
             (new UserSeeder)->run();
         }
     }

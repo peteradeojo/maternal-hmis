@@ -27,7 +27,7 @@ class DispenseLine extends Model
     public function quantity(): Attribute
     {
         return Attribute::make(
-            get: fn($v, $attrs) => $attrs['qty_dispensed'],
+            get: fn ($v, $attrs) => $attrs['qty_dispensed'],
         );
     }
 
@@ -35,7 +35,7 @@ class DispenseLine extends Model
 
     protected static function booted()
     {
-        static::updating(function (Self $line) {
+        static::updating(function (self $line) {
             $line->qty_dispensed = (float) $line->qty_dispensed;
             // if ($line->isDirty('qty_dispensed')) {
             // }

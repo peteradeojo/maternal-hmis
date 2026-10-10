@@ -31,7 +31,7 @@
                 ordering: false,
                 ajax: "{{ route('api.lab.tests') }}",
                 columns: [{
-                        data: 'patient.name'
+                        data: 'patient.p_name'
                     },
                     {
                         data: 'patient.card_number'

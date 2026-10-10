@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Department;
 use Illuminate\Foundation\Http\FormRequest;
 
 class VitalsRequest extends FormRequest
@@ -27,10 +26,10 @@ class VitalsRequest extends FormRequest
             'blood_pressure' => [
                 'nullable',
                 function ($attr, $value, $fail) {
-                    if (!preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                    if (! preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
                         $fail('Invalid blood pressure format');
                     }
-                }
+                },
             ],
             'pulse' => 'nullable|numeric',
             'respiratory_rate' => 'nullable|numeric',

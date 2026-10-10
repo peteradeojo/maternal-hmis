@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use App\Enums\Queues;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -25,11 +24,11 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            if (!app()->environment('production')) {
+            if (! app()->environment('production')) {
                 return;
             }
 
-            $message = $e->getMessage() . "@" . $e->getFile() . ":" . $e->getLine();
+            $message = $e->getMessage().'@'.$e->getFile().':'.$e->getLine();
             $context = $this->context() + [
                 'stack' => $e->getTraceAsString(),
             ];

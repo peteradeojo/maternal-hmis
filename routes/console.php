@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,31 +26,31 @@ Artisan::command('send:error {message}', function () {
 });
 
 Artisan::command('rebuild-inventory', function () {
-    DB::statement("SELECT rebuild_inventory_balances()");
+    DB::statement('SELECT rebuild_inventory_balances()');
 });
 
-Artisan::command("parse-nhis-portals", function () {
-    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+Artisan::command('parse-nhis-portals', function () {
+    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
     $reader->setReadDataOnly(true);
-    $sheet = $reader->load("storage/app/nhis-portals.xlsx");
+    $sheet = $reader->load('storage/app/nhis-portals.xlsx');
 
     $wSheet = $sheet->getActiveSheet();
     $highestRow = $wSheet->getHighestDataRow();
 
     $data = [];
-    for ($row = 2; $row <= $highestRow; ++$row) {
+    for ($row = 2; $row <= $highestRow; $row++) {
         $data[] = [
-            'name' => $wSheet->getCell('C' . $row)->getValue(),
-            'class' => $wSheet->getCell('B' . $row)->getValue(),
-            'website' => $wSheet->getCell('D' . $row)->getValue(),
-            'phone' => $wSheet->getCell('E' . $row)->getValue(),
-            'email' => $wSheet->getCell('F' . $row)->getValue(),
+            'name' => $wSheet->getCell('C'.$row)->getValue(),
+            'class' => $wSheet->getCell('B'.$row)->getValue(),
+            'website' => $wSheet->getCell('D'.$row)->getValue(),
+            'phone' => $wSheet->getCell('E'.$row)->getValue(),
+            'email' => $wSheet->getCell('F'.$row)->getValue(),
         ];
     }
 
     // echo json_encode($data);
 
-    $fh = fopen("storage/app/public/nhis-portals.json", "w");
+    $fh = fopen('storage/app/public/nhis-portals.json', 'w');
     fwrite($fh, json_encode($data));
     fclose($fh);
 });

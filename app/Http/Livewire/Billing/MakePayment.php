@@ -5,23 +5,26 @@ namespace App\Http\Livewire\Billing;
 use App\Enums\Department;
 use App\Enums\Status;
 use App\Models\BillDetail;
-use Livewire\Component;
 use App\Models\BillPayment;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
 class MakePayment extends Component
 {
     public $bill;
+
     public $amount;
+
     public $method = 'cash';
 
     public $items = [];
 
     public $initHash = null;
+
     public $currentHash = null;
 
     public $editing;
@@ -64,7 +67,7 @@ class MakePayment extends Component
 
     public function methodAdjusted()
     {
-        if ($this->method == "waived") {
+        if ($this->method == 'waived') {
             $this->amount = $this->bill->balance;
         }
     }
@@ -114,6 +117,7 @@ class MakePayment extends Component
         $this->items = $this->bill->entries->map(function ($b) {
             $b->pushMetaData();
             $b->refresh();
+
             return [
                 'description' => $b->name,
                 'amount' => $b->amount,
@@ -123,7 +127,7 @@ class MakePayment extends Component
                 'id' => $b->id,
                 'meta' => $b->meta,
                 'status' => $b->view_billable_status,
-                'status_id' => $b->status
+                'status_id' => $b->status,
             ];
         })->toArray();
     }
@@ -135,7 +139,7 @@ class MakePayment extends Component
 
     public function hydrate()
     {
-        if (!$this->editing) {
+        if (! $this->editing) {
             $this->getItems();
         }
     }
@@ -147,7 +151,8 @@ class MakePayment extends Component
 
         try {
             $bd->chargeable?->update(['status' => Status::blocked]);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $this->hydrate();
         $this->dispatch('$refresh');

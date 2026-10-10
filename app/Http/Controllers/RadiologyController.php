@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\AppNotifications;
 use App\Enums\Department as EnumsDepartment;
 use App\Enums\Status;
-use App\Jobs\UploadPatientScans;
 use App\Models\PatientImaging;
 use App\Models\Visit;
 use Illuminate\Http\Request;
@@ -15,6 +14,7 @@ class RadiologyController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', PatientImaging::class);
+
         return view('rad.scans', ['patientId' => $request->query('patient_id')]);
     }
 
@@ -88,6 +88,7 @@ class RadiologyController extends Controller
     public function scanResult(Request $request, PatientImaging $scan)
     {
         $this->authorize('view', $scan);
+
         return response()->json([
             'path' => $scan->secure_path,
             'name' => $scan->name,
@@ -98,6 +99,7 @@ class RadiologyController extends Controller
     public function history()
     {
         $this->authorize('viewAny', PatientImaging::class);
+
         // $history = PatientImaging::where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest()->get();
         return view('rad.history');
     }
@@ -105,6 +107,7 @@ class RadiologyController extends Controller
     public function getScansHistory(Request $request)
     {
         $this->authorize('viewAny', PatientImaging::class);
+
         return $this->dataTable($request, PatientImaging::accessibleBy($request->user())->with(['patient', 'requester'])->where('path', '!=', 'null')->orWhere('comment', '!=', null)->latest(), []);
     }
 
@@ -113,7 +116,7 @@ class RadiologyController extends Controller
         $this->authorize('view', $scan);
         $results = $scan->results;
 
-        if (!$results) {
+        if (! $results) {
             return response()->json()->status(404);
         }
 

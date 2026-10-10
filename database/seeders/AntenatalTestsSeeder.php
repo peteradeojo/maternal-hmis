@@ -6,7 +6,6 @@ use App\Enums\Department;
 use App\Http\Controllers\LabController;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class AntenatalTestsSeeder extends Seeder

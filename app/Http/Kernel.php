@@ -5,7 +5,6 @@ namespace App\Http;
 use App\Http\Middleware\Datalog;
 use App\Http\Middleware\ResolveLocation;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use Turso\Driver\Laravel\LibSQLDriverServiceProvider;
 
 class Kernel extends HttpKernel
 {
@@ -45,7 +44,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             ResolveLocation::class,
         ],

@@ -3,12 +3,12 @@
 namespace App\Http\Livewire;
 
 use Illuminate\Support\Carbon;
-use Livewire\Attributes\Reactive;
 use Livewire\Component;
 
 class LmpForm extends Component
 {
     public $edd;
+
     public $lmp;
 
     public function mount($profile)
@@ -28,7 +28,8 @@ class LmpForm extends Component
         $this->calculateEDD();
     }
 
-    public function setEDD($value) {
+    public function setEDD($value)
+    {
         $this->edd = $value;
         $this->calculateLmp();
     }
@@ -38,7 +39,8 @@ class LmpForm extends Component
         $this->edd = Carbon::parse($this->lmp)?->addMonths(9)->addDays(7)->format('Y-m-d');
     }
 
-    public function calculateLmp() {
+    public function calculateLmp()
+    {
         $this->lmp = Carbon::parse($this->lmp)?->subMonths(9)->subDays(7)->format('Y-m-d');
     }
 

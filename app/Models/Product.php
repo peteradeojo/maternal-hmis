@@ -11,16 +11,16 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable  = ['product_category_id', 'name', 'description',  'amount', 'is_visible'];
+    protected $fillable = ['product_category_id', 'name', 'description',  'amount', 'is_visible'];
 
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
     }
 
-    static public function created($callback)
+    public static function created($callback)
     {
-        static::booted(function (Self $model) {
+        static::booted(function (self $model) {
             if ($model->amount == 0) {
                 foreach ([Department::IT->value, Department::PHA->value, Department::DIS->value] as $deptId) {
                     notifyDepartment($deptId, [

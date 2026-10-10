@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared("
+        DB::unprepared('
         CREATE OR REPLACE FUNCTION apply_stock_transaction(
             p_item_id BIGINT,
             p_location_id BIGINT,
@@ -41,9 +39,9 @@ return new class extends Migration
             RETURN v_new_qty;
         END;
         $$;
-        ");
+        ');
 
-        DB::unprepared("
+        DB::unprepared('
         CREATE OR REPLACE FUNCTION trg_after_stock_transaction()
         RETURNS TRIGGER
         LANGUAGE plpgsql
@@ -72,15 +70,14 @@ return new class extends Migration
             RETURN NEW;
         END;
         $$;
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
         CREATE TRIGGER after_stock_transaction
         AFTER INSERT ON stock_transactions
         FOR EACH ROW
         EXECUTE FUNCTION trg_after_stock_transaction();
-        ");
-
+        ');
 
         DB::unprepared('
         -- =========================
@@ -117,9 +114,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("DROP TRIGGER IF EXISTS after_stock_transaction ON stock_transactions;");
-        DB::statement("DROP FUNCTION IF EXISTS trg_after_stock_transaction();");
-        DB::statement("DROP FUNCTION IF EXISTS apply_stock_transaction (BIGINT, BIGINT, BIGINT, NUMERIC);");
-        DB::statement("DROP FUNCTION IF EXISTS rebuild_inventory_balances();");
+        DB::statement('DROP TRIGGER IF EXISTS after_stock_transaction ON stock_transactions;');
+        DB::statement('DROP FUNCTION IF EXISTS trg_after_stock_transaction();');
+        DB::statement('DROP FUNCTION IF EXISTS apply_stock_transaction (BIGINT, BIGINT, BIGINT, NUMERIC);');
+        DB::statement('DROP FUNCTION IF EXISTS rebuild_inventory_balances();');
     }
 };

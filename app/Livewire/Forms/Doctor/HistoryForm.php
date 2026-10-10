@@ -8,8 +8,8 @@ use Livewire\Form;
 class HistoryForm extends Form
 {
     #[Validate('required|string')]
-    public string $presentation = "";
+    public string $presentation = '';
 
     #[Validate('string')]
-    public string $duration = "";
+    public string $duration = '';
 }

@@ -20,7 +20,7 @@
                 <tbody>
                     @foreach ($admissions as $a)
                         <tr>
-                            <td><a href="{{ route('doctor.show-admission', $a) }}" class="link">{{ $a->patient->name }}</a>
+                            <td><a href="{{ route('doctor.show-admission', $a) }}" class="link">{!! $a->patient->p_name !!}</a>
                             </td>
                             <td>{{ $a->patient->card_number }}</td>
                             <td>

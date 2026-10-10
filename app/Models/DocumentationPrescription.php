@@ -35,13 +35,13 @@ class DocumentationPrescription extends Model
 
     public function __toString()
     {
-        return "{$this->name} {$this->route} {$this->dosage} {$this->frequency} - for {$this->duration} " . (is_numeric($this->duration) ? 'days' : '');
+        return "{$this->name} {$this->route} {$this->dosage} {$this->frequency} - for {$this->duration} ".(is_numeric($this->duration) ? 'days' : '');
     }
 
     public function eventName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, $attributes) => EventLookup::tryFrom($attributes['event_type'])?->name ?? 'unknown_event', //"{$attributes['event_type']} #{$attributes['event_id']}"
+            get: fn ($value, $attributes) => EventLookup::tryFrom($attributes['event_type'])?->name ?? 'unknown_event', // "{$attributes['event_type']} #{$attributes['event_id']}"
         );
     }
 }

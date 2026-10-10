@@ -33,20 +33,20 @@ class Controller extends BaseController
             $query->where('created_at', '<=', $date);
         });
 
-
         $results = $results->where(function ($query) use ($search, $searchableColumns) {
             foreach ($searchableColumns as $column) {
                 $column($query, $search);
             }
         });
 
-        $countQuery = DB::table($builder, 't1')->selectRaw("COUNT(*) total");
-        $filteredCount = DB::table($results, 't1')->selectRaw("COUNT(*) as total");
+        $countQuery = DB::table($builder, 't1')->selectRaw('COUNT(*) total');
+        $filteredCount = DB::table($results, 't1')->selectRaw('COUNT(*) as total');
 
         $data = $results->skip($start)->limit($length)->get()->toArray();
 
-        if ($orderFunction)
+        if ($orderFunction) {
             $data = $orderFunction($data, $order);
+        }
 
         $data = [
             'data' => $data,
@@ -66,7 +66,7 @@ class Controller extends BaseController
                     return $q->where('name', 'ilike', "$search%")->orWhere('phone', 'ilike', "$search%")->orWhere('card_number', 'ilike', "$search%");
                 });
             },
-            ...$searchableColumns
+            ...$searchableColumns,
         ], $orderFunction);
     }
 }

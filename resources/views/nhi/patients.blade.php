@@ -10,6 +10,7 @@
                     <tr>
                         <th>Patient</th>
                         <th>Card Number</th>
+                        <th>HMO</th>
                         <th>Phone Number</th>
                         <th>Registration</th>
                     </tr>
@@ -32,10 +33,14 @@
                                 id,
                                 name
                             }) =>
-                            `<a data-id='${id}' class='link' href='{{route('records.patient', ':id')}}'>${name}</a>`.replace(':id', id)
+                            `<a data-id='${id}' class='link' href='{{ route('records.patient', ':id') }}'>${name}</a>`
+                            .replace(':id', id)
                     },
                     {
                         data: 'card_number'
+                    },
+                    {
+                        data: 'insure.hmo_name'
                     },
                     {
                         data: 'phone'

@@ -2,5 +2,4 @@
 
 namespace App\Interfaces;
 
-interface PatientRecord {
-}
+interface PatientRecord {}

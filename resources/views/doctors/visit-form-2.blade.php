@@ -35,8 +35,8 @@
                         @csrf
                         <div class="form-group">
                             <label>Note</label>
-                            <textarea name="note" data-autosaveid="visit-{{$visit->id}}.note" class="w-full resize-y border border-gray-400 rounded-none form-textarea" rows="5"
-                                required></textarea>
+                            <textarea name="note" data-autosaveid="visit-{{ $visit->id }}.note"
+                                class="w-full resize-y border border-gray-400 rounded-none form-textarea" rows="5" required></textarea>
                         </div>
                         <div class="form-group">
                             <button class="btn bg-blue-500 text-white">Submit</button>

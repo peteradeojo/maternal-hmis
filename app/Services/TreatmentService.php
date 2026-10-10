@@ -3,17 +3,17 @@
 namespace App\Services;
 
 use App\Enums\AppNotifications;
-use App\Enums\Status;
-use App\Models\Visit;
-use App\Models\Documentation;
-use Illuminate\Support\Facades\DB;
-use App\Models\PatientExaminations;
 use App\Enums\Department;
+use App\Enums\Status;
 use App\Interfaces\Documentable;
 use App\Models\Admission;
 use App\Models\AncVisit;
+use App\Models\Documentation;
+use App\Models\PatientExaminations;
 use App\Models\StockItemPrice;
 use App\Models\User;
+use App\Models\Visit;
+use Illuminate\Support\Facades\DB;
 
 class TreatmentService
 {
@@ -26,7 +26,7 @@ class TreatmentService
                 $doc->diagnoses()->create([
                     'diagnoses' => $d,
                     'patient_id' => $doc->patient_id,
-                    'user_id' => $doctor_id
+                    'user_id' => $doctor_id,
                 ]);
             }
         }
@@ -93,7 +93,7 @@ class TreatmentService
         try {
             $doc ??= Documentation::create([
                 ...$data,
-                'symptoms' => "", //count($complaints) > 0 ? implode(',', $complaints) : null,
+                'symptoms' => '', // count($complaints) > 0 ? implode(',', $complaints) : null,
                 'visit_id' => $visit->id,
                 'user_id' => $treater?->id,
                 'patient_id' => $visit->patient_id,
@@ -182,7 +182,7 @@ class TreatmentService
         $visit->awaiting_pharmacy = true;
         $visit->save();
 
-        $drugs = $data['drugs'] ?? "";
+        $drugs = $data['drugs'] ?? '';
         $drugs = explode(',', $drugs);
 
         if (count($data['treatments'] ?? []) > 0) {
@@ -216,9 +216,11 @@ class TreatmentService
 
     public static function getCount($item, $data, $options = ['exact' => false])
     {
-        if (empty($item)) return;
+        if (empty($item)) {
+            return;
+        }
         try {
-            if (!$item['weight']) {
+            if (! $item['weight']) {
                 return is_numeric($data->dosage) ? $data->dosage : 0;
             }
 
@@ -226,7 +228,7 @@ class TreatmentService
             $dosage = $data->dosage;
             $days = $data->duration ?? 1;
 
-            if (!is_numeric($dosage)) {
+            if (! is_numeric($dosage)) {
                 $dosage = self::translateDosage($item['si_unit'], $data->dosage);
                 $delta = round($dosage / $item['weight'], 5);
             } else {
@@ -236,11 +238,14 @@ class TreatmentService
             $freq = self::analyzeFreqeuency($freq);
             $count = $delta * (max(intval($days), 1)) * max(intval($freq), 1);
 
-            if ($options['exact']) return $count;
+            if ($options['exact']) {
+                return $count;
+            }
 
             return ceil($count);
         } catch (\Throwable $th) {
             report($th);
+
             return 0;
         }
     }
@@ -293,14 +298,16 @@ class TreatmentService
         };
     }
 
-    public static function getPrice($id, $profile = 'RETAIL') {
-        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+    public static function getPrice($id, $profile = 'RETAIL')
+    {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); // ->first();
 
         return $prices->first()?->price ?? 0;
     }
 
-    public static function getPriceData($id, $profile = 'RETAIL') {
-        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); //->first();
+    public static function getPriceData($id, $profile = 'RETAIL')
+    {
+        $prices = StockItemPrice::where('item_id', $id)->active()->where('price_type', $profile)->latest(); // ->first();
 
         return $prices->first() ?? null;
     }

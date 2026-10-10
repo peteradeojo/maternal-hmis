@@ -29,7 +29,7 @@ class LoadPharmacyProducts extends Command
      */
     public function handle()
     {
-        $category = $this->argument("category");
+        $category = $this->argument('category');
         $phm = ProductCategory::where('name', $category)->firstOrFail();
 
         $rows = SimpleExcelReader::create($this->argument('path'), $this->argument('type'))->getRows();
@@ -46,10 +46,10 @@ class LoadPharmacyProducts extends Command
                 'amount' => floatval(($row['Sell Price'])),
                 'is_visible' => 1,
             ]);
-            $this->info("loaded at " . $product->id);
+            $this->info('loaded at '.$product->id);
         });
 
-        if ($this->option('delete')  === true) {
+        if ($this->option('delete') === true) {
             Storage::delete($this->argument('path'));
         }
     }

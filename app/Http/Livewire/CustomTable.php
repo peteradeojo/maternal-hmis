@@ -2,15 +2,17 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
+use Livewire\Component;
 
 class CustomTable extends Component
 {
     public $fields;
+
     public $displayFields;
+
     public $headers;
+
     public $table;
 
     public $searchTerm;
@@ -18,6 +20,7 @@ class CustomTable extends Component
     protected $query;
 
     public $model;
+
     public $where;
 
     public $data;
@@ -50,17 +53,17 @@ class CustomTable extends Component
             }
 
             if (str_contains($field, '.')) {
-                $with = explode(".", $field);
+                $with = explode('.', $field);
 
-                $relation = join('.', array_slice($with, 0, count($with) - 1));
+                $relation = implode('.', array_slice($with, 0, count($with) - 1));
             }
 
-            if (!empty($relation) && !in_array($relation,  $joins, true)) {
+            if (! empty($relation) && ! in_array($relation, $joins, true)) {
                 $joins[] = $relation;
             }
         }
 
-        if (!empty($this->where)) {
+        if (! empty($this->where)) {
             foreach ($this->where as $w) {
                 if (is_callable($w)) {
                     $query->where($w);
@@ -76,6 +79,7 @@ class CustomTable extends Component
     {
         if ($query) {
             $this->data = $query->get();
+
             return;
         }
         $this->data = $this->query->get();
@@ -109,7 +113,7 @@ class CustomTable extends Component
                 $query->where($c, 'like', "%{$this->searchTerm}%");
             });
         } else {
-            $query->where($field, "like", "%{$this->searchTerm}%");
+            $query->where($field, 'like', "%{$this->searchTerm}%");
         }
     }
 }

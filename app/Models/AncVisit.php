@@ -3,19 +3,18 @@
 namespace App\Models;
 
 use App\Enums\Department;
-use App\Models\Visit;
-use App\Interfaces\Visitation;
 use App\Interfaces\Documentable;
 use App\Interfaces\OperationalEvent;
+use App\Interfaces\Visitation;
 use App\Traits\Documentable as TraitsDocumentable;
 use App\Traits\HasVisitData;
 use App\Traits\Visit as VisitTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class AncVisit extends Model implements Documentable, Visitation, OperationalEvent
+class AncVisit extends Model implements Documentable, OperationalEvent, Visitation
 {
-    use HasFactory, VisitTrait, TraitsDocumentable, HasVisitData;
+    use HasFactory, HasVisitData, TraitsDocumentable, VisitTrait;
 
     public const testsList = [
         'HIV',
@@ -27,7 +26,7 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
         'Genotype',
         'Protein',
         'Glucose',
-        'Pap Smear'
+        'Pap Smear',
     ];
 
     protected $fillable = [
@@ -63,7 +62,7 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
 
     public function getType(): string
     {
-        return "Antenatal";
+        return 'Antenatal';
     }
 
     public function doctor()
@@ -78,10 +77,10 @@ class AncVisit extends Model implements Documentable, Visitation, OperationalEve
 
     protected static function booted()
     {
-        static::saving(function (Self $visit) {
+        static::saving(function (self $visit) {
             if ($visit->isDirty('ipt') && $visit->ipt == true) {
                 notifyDepartment(Department::NUR->value, "Immunization [IPT] for {{$visit->patient->name}}");
-            } 
+            }
 
             if ($visit->isDirty('tt') && $visit->tt == true) {
                 notifyDepartment(Department::NUR->value, "Immunization [TT] for {{$visit->patient->name}}");

@@ -16,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, Auditable, CastsStatus;
+    use Auditable, CastsStatus, HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -64,7 +64,7 @@ class User extends Authenticatable
 
     public function name(): Attribute
     {
-        return Attribute::make(fn() => $this->firstname . ' ' . $this->lastname);
+        return Attribute::make(fn () => $this->firstname.' '.$this->lastname);
     }
 
     public function __toString()

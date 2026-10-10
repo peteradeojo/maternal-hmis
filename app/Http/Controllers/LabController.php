@@ -14,12 +14,12 @@ use App\Models\Patient;
 use App\Models\Visit;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class LabController extends Controller
 {
     public static $ancBookingTests = ['URINALYSIS', 'PCV', 'GENOTYPE', 'HIV STATUS', 'BLOOD GROUP', 'VDRL', 'RHESUS', 'Hepatitis'];
-    public static $ancFollowupTests = ['URINALYSIS', 'PCV',];
+
+    public static $ancFollowupTests = ['URINALYSIS', 'PCV'];
 
     private function processTests(Request $request, $data, GeneralVisit|AncVisit $visit)
     {
@@ -57,6 +57,7 @@ class LabController extends Controller
         $tests = DocumentationTest::accessibleBy($request->user())->where('patient_id', $patient->id)
             ->where('status', '!=', Status::cancelled->value)
             ->latest()->get();
+
         return view('lab.take-tests', compact('tests', 'patient'));
     }
 
@@ -79,13 +80,12 @@ class LabController extends Controller
                 // $q->where('results', '!=', null);
             })->with(['patient', 'testable.visit'])->latest();
 
-
         return $this->dataTable($request, $Q, [
             function (&$query, $search) {
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'ilike', "{$search}%");
                 });
-            }
+            },
         ]);
     }
 
@@ -104,6 +104,7 @@ class LabController extends Controller
         $this->authorize('view', $profile);
         if ($request->method() !== 'POST') {
             $tests = AncVisit::testsList;
+
             return view('lab.anc-booking', compact('profile', 'tests'));
         }
 
@@ -114,8 +115,9 @@ class LabController extends Controller
         ]);
 
         $profile->tests = array_merge($profile->tests ?? [], $request->tests);
-        if ($request->completed)
+        if ($request->completed) {
             $profile->awaiting_lab = false;
+        }
         $profile->save();
 
         return redirect()->route('lab.antenatals')->with('success', 'Tests booked successfully');
@@ -125,6 +127,7 @@ class LabController extends Controller
     {
         $this->authorize('view', $patient);
         $tests = DocumentationTest::accessibleBy($request->user())->with(['patient'])->where('patient_id', $patient->id)->latest()->get();
+
         return view('lab.testReport', compact('tests', 'patient'));
     }
 
@@ -132,7 +135,7 @@ class LabController extends Controller
     {
         $this->authorize('create', DocumentationTest::class);
         $request->validate([
-            'test' => 'required|string'
+            'test' => 'required|string',
         ]);
 
         $visit->visit->tests()->create([
@@ -156,6 +159,7 @@ class LabController extends Controller
     public function admissions()
     {
         $this->authorize('viewAny', Admission::class);
+
         return view('lab.admissions');
     }
 
@@ -163,9 +167,10 @@ class LabController extends Controller
     {
         $this->authorize('viewAny', Admission::class);
         $adm = Admission::accessibleBy($request->user())->with(['ward'])->latest();
+
         return $this->dataTable($request, $adm, [
             function ($query, $search) {
-                $query->whereHas('patient', fn($q) => $q->where('name', 'ilike', "%$search%"));
+                $query->whereHas('patient', fn ($q) => $q->where('name', 'ilike', "%$search%"));
             },
         ]);
     }
@@ -195,6 +200,7 @@ class LabController extends Controller
     public function viewTests(Request $request, Visit $visit)
     {
         $this->authorize('view', $visit);
+
         return view('lab.tests', compact('visit'));
     }
 
@@ -219,7 +225,7 @@ class LabController extends Controller
                         ->orWhere('card_number', 'ilike', "$search%")
                         ->orWhere('phone', 'ilike', "$search%");
                 });
-            }
+            },
         ]);
     }
 

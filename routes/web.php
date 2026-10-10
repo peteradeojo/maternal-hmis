@@ -32,6 +32,7 @@ Route::get('/login', function () {
 Route::get('logout', function (Request $request) {
     auth()->logout();
     $request->session()->invalidate();
+
     return redirect()->route('login');
 })->name('logout');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'active_users'])->group(function () {
             'current_location_id' => $location?->id,
             'current_location_code' => $location?->code,
         ]);
+
         return redirect()->back();
     });
 
@@ -57,25 +59,25 @@ Route::middleware(['auth', 'active_users'])->group(function () {
     Route::match(['GET', 'POST'], '/whoami', [AuthController::class, 'whoami'])->name('whoami');
 
     Route::get('/radiology/{path}', function (Request $request, $path) {
-        return response()->file(storage_path('app/radiology/' . $path));
+        return response()->file(storage_path('app/radiology/'.$path));
     });
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [DashboardController::class, 'profile'])->name('user-profile');
     Route::post('/profile', [DashboardController::class, 'changePassword']);
 
-    include __DIR__ . '/web/doctors.php';
-    include __DIR__ . '/web/nurses.php';
-    include __DIR__ . '/web/records.php';
-    include __DIR__ . '/web/it.php';
-    include __DIR__ . '/web/laboratory.php';
-    include __DIR__ . '/web/rad.php';
-    include __DIR__ . '/web/phm.php';
-    include __DIR__ . '/web/dis.php';
-    include __DIR__ . '/web/nhi.php';
-    include __DIR__ . '/web/billing.php';
-    include __DIR__ . '/web/iam.php';
-    include __DIR__ . '/web/finance.php';
+    include __DIR__.'/web/doctors.php';
+    include __DIR__.'/web/nurses.php';
+    include __DIR__.'/web/records.php';
+    include __DIR__.'/web/it.php';
+    include __DIR__.'/web/laboratory.php';
+    include __DIR__.'/web/rad.php';
+    include __DIR__.'/web/phm.php';
+    include __DIR__.'/web/dis.php';
+    include __DIR__.'/web/nhi.php';
+    include __DIR__.'/web/billing.php';
+    include __DIR__.'/web/iam.php';
+    include __DIR__.'/web/finance.php';
 
     Route::get('/patient-history/{patient}', [PatientsController::class, 'medicalHistory'])->name('patient.medical-history');
     Route::match(['GET', 'POST'], '/dropbox', [CrmController::class, 'dropbox'])->name('dropbox');
@@ -86,10 +88,10 @@ Route::middleware(['auth', 'active_users'])->group(function () {
 
     Route::inertia('/resources', 'Resources')->name('resources');
     Route::inertia('/resources/NHIS-Portals', 'Resources/NHIS')->name('resource.nhis');
-    Route::post("/resources/NHIS-Portals", function (Request $request) {
+    Route::post('/resources/NHIS-Portals', function (Request $request) {
         $file = $request->file('portals');
         // dump($file);
-        $file->storeAs("nhis-portals.xlsx");
+        $file->storeAs('nhis-portals.xlsx');
 
         dispatch(function () {
             Artisan::call('parse-nhis-portals');

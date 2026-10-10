@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\IT;
 
-use App\Enums\Department as EnumsDepartment;
-use App\Enums\Permissions;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
@@ -37,6 +35,7 @@ class StaffController extends Controller
 
         $users = User::all();
         $departments = Department::all();
+
         return view('it.staff', compact('users', 'departments'));
     }
 
@@ -48,7 +47,7 @@ class StaffController extends Controller
                 'password' => 'nullable|string',
             ]);
 
-            if ($request->has('password') && !empty($request->password)) {
+            if ($request->has('password') && ! empty($request->password)) {
                 $user->password = Hash::make($request->password);
             }
             $user->department_id = $request->input('department_id');
@@ -61,12 +60,14 @@ class StaffController extends Controller
         }
 
         $departments = Department::all();
+
         return view('it.staff-view', compact('user', 'departments'));
     }
 
     public function department(Request $request, Department $dep)
     {
         $dep->load('members');
+
         return view('it.show-department', compact('dep'));
     }
 
@@ -75,7 +76,7 @@ class StaffController extends Controller
         $this->authorize('change_status', $user);
 
         $request->validate([
-            'account_status' => 'required|in:enable,disable'
+            'account_status' => 'required|in:enable,disable',
         ]);
 
         $status = match ($request->account_status) {

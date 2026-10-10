@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\Enums\EventLookup;
 use App\Enums\Status;
 use App\Models\Admission;
-use App\Models\AdmissionPlan;
 use App\Models\Bill;
 use App\Models\Documentation;
 use App\Models\Prescription;
 use App\Models\Visit;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PharmacyController extends Controller
 {
@@ -31,7 +28,7 @@ class PharmacyController extends Controller
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'ilike', "%$search%")->orWhere('phone', 'ilike', "$search%");
                 });
-            }
+            },
         ]);
     }
 
@@ -41,6 +38,7 @@ class PharmacyController extends Controller
         // For now, we'll check if the user can view the patient.
         $this->authorize('view', $doc->patient);
         $doc->load(['treatments', 'patient']);
+
         return view('phm.show-prescription', compact('doc'));
     }
 
@@ -55,6 +53,7 @@ class PharmacyController extends Controller
         $type = $request->input('type');
 
         $doc = EventLookup::fromName($type)->value::findOrFail($id)->load('treatments');
+
         return view('dis.show-prescription', compact('doc', 'type', 'id'));
     }
 
@@ -62,18 +61,21 @@ class PharmacyController extends Controller
     {
         $this->authorize('update', $doc->patient); // Assuming update patient permission for now
         $doc->treatments()->update(['status' => Status::completed->value]);
+
         return redirect()->route('phm.prescriptions');
     }
 
     public function getBill(Request $request, Bill $bill)
     {
         $bill->load(['entries']);
+
         return view('dis.bill', compact('bill'));
     }
 
     public function viewPrescription(Request $request, Prescription $prescription)
     {
         $this->authorize('view', $prescription);
+
         return view('phm.show-prescription', compact('prescription'));
     }
 
@@ -81,6 +83,7 @@ class PharmacyController extends Controller
     {
         $this->authorize('viewAny', Admission::class);
         $admissions = Admission::accessibleBy($request->user())->valid()->latest()->get();
+
         return view('phm.admissions.index', compact('admissions'));
     }
 
@@ -105,7 +108,7 @@ class PharmacyController extends Controller
                 });
             },
             function ($query) {
-                return $query->whereRaw("1 = 0");
+                return $query->whereRaw('1 = 0');
             }
         )->latest();
 

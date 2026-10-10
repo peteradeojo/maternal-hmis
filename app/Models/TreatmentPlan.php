@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
-use App\Traits\Auditable;
 use App\Traits\CastsStatus;
 use App\Traits\NeedsRecorderInfo;
 use Illuminate\Database\Eloquent\Model;
 
 class TreatmentPlan extends Model
 {
-    use NeedsRecorderInfo, CastsStatus;
+    use CastsStatus, NeedsRecorderInfo;
 
     protected $fillable = [
         'patient_id',
@@ -21,15 +20,18 @@ class TreatmentPlan extends Model
         'origin_id',
     ];
 
-    public function patient() {
+    public function patient()
+    {
         return $this->belongsTo(Patient::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function origin() {
+    public function origin()
+    {
         return $this->morphTo();
     }
 
@@ -38,7 +40,8 @@ class TreatmentPlan extends Model
         return $this->plan;
     }
 
-    public function scopeStatus($query, Status $status) {
+    public function scopeStatus($query, Status $status)
+    {
         return $query->where('status', $status);
     }
 }

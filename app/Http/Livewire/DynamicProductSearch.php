@@ -9,17 +9,19 @@ use Livewire\Component;
 class DynamicProductSearch extends Component
 {
     public $departmentId;
+
     public $category;
 
     public $queryString;
+
     public $results;
 
     public $display = false;
 
     public function mount($departmentId = null, $category = null)
     {
-        $this->departmentId =  $departmentId;
-        $this->category = ProductCategory::where('name', 'category')->orWhere('department_id',  $departmentId)->first();
+        $this->departmentId = $departmentId;
+        $this->category = ProductCategory::where('name', 'category')->orWhere('department_id', $departmentId)->first();
     }
 
     public function resetResults()
@@ -29,11 +31,13 @@ class DynamicProductSearch extends Component
 
     public function searchProducts()
     {
-        if (strlen($this->queryString) == 0) return;
+        if (strlen($this->queryString) == 0) {
+            return;
+        }
 
         $str = trim($this->queryString);
         $query = Product::query()->where('is_visible', 1)->limit(100)->where(function ($q) use ($str) {
-            $q->where('name', 'ilike', '%' . $str  . '%')->orWhere('description', 'ilike', "%$str%");
+            $q->where('name', 'ilike', '%'.$str.'%')->orWhere('description', 'ilike', "%$str%");
         });
 
         if ($this->departmentId) {
@@ -49,7 +53,8 @@ class DynamicProductSearch extends Component
     public function select(?Product $product)
     {
         if (empty($product) && count($this->results) >= 1) {
-            notifyUserError("Please select from the available results", request()->user());
+            notifyUserError('Please select from the available results', request()->user());
+
             return;
         }
 
@@ -57,15 +62,18 @@ class DynamicProductSearch extends Component
 
         $id = @$product['id'];
         if ($id == null) {
-            if (empty($this->queryString)) return;
+            if (empty($this->queryString)) {
+                return;
+            }
             $product = new Product([
                 'name' => $this->queryString,
                 'description' => '',
                 'product_category_id' => $this->category?->id,
-                'amount'  => 0,
+                'amount' => 0,
             ]);
 
             $this->dispatch('selected_temp', product: $product, name: $product->name, id: null);
+
             return;
         }
 

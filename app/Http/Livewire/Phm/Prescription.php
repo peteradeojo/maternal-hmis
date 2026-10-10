@@ -21,11 +21,15 @@ class Prescription extends Component
     public ModelsPrescription $doc;
 
     public $prescriptions = [];
+
     public $totalAmt = 0;
+
     public $prices = [];
+
     public $bill = null;
 
     public $is_admission = false;
+
     public $dispensing = [];
 
     public function mount(ModelsPrescription $doc)
@@ -33,7 +37,7 @@ class Prescription extends Component
         $this->doc = $doc;
         $this->doc->load(['lines.item']);
 
-        $this->prices = $this->doc->lines->map(fn($line) => $line->prices);
+        $this->prices = $this->doc->lines->map(fn ($line) => $line->prices);
 
         $this->loadLines();
 
@@ -55,7 +59,7 @@ class Prescription extends Component
     {
         $this->totalAmt = array_reduce(
             $this->prescriptions,
-            fn($a, $b) => $a + ((intval($b['quantity']) + intval($b['dispensed'])) * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
+            fn ($a, $b) => $a + ((intval($b['quantity']) + intval($b['dispensed'])) * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
                 $b['item_id'],
                 $b['profile'],
             ))),
@@ -68,6 +72,7 @@ class Prescription extends Component
         $this->prescriptions = $this->doc->lines->map(function ($line) use (&$refresh) {
             $dispensed = $line->dispenses->sum('qty_dispensed');
             $quantity = $refresh === true ? 0 : ($line->qty_dispensed ?? TreatmentService::getCount($line->item, $line));
+
             return [
                 'id' => $line->id,
                 'item_id' => $line->item_id,
@@ -106,7 +111,7 @@ class Prescription extends Component
             ]);
         } catch (\Throwable $th) {
             report($th);
-            notifyUserError("Unable to add prescription", auth()->user());
+            notifyUserError('Unable to add prescription', auth()->user());
         }
 
         $this->loadLines();
@@ -122,7 +127,9 @@ class Prescription extends Component
 
     public function setLineStatus($i, $checked)
     {
-        if ($this->prescriptions[$i]['status'] == Status::completed) return;
+        if ($this->prescriptions[$i]['status'] == Status::completed) {
+            return;
+        }
 
         if ($checked) {
             $this->prescriptions[$i]['status'] = Status::active;
@@ -147,7 +154,9 @@ class Prescription extends Component
         try {
             $bill = $event?->bills->where('status', Status::pending->value)->first();
             foreach ($this->prescriptions as $i => $line) {
-                if ($line['status'] == Status::completed) continue;
+                if ($line['status'] == Status::completed) {
+                    continue;
+                }
 
                 $price = TreatmentService::getPrice(@$line['item_id'], $line['profile']);
 
@@ -157,7 +166,7 @@ class Prescription extends Component
                     'qty_dispensed' => empty($line['quantity']) ? 0 : $line['quantity'],
                 ]);
 
-                if (!empty($bill)) {
+                if (! empty($bill)) {
                     BillDetail::updateOrCreate([
                         'chargeable_type' => PrescriptionLine::class,
                         'chargeable_id' => $line['id'],
@@ -165,7 +174,7 @@ class Prescription extends Component
                     ], [
                         'user_id' => auth()->user()->id,
                         'description' => "{$line['name']} {$line['dosage']} {$line['frequency']} for {$line['duration']} days(s)",
-                        'quantity' => floatval($line['quantity'] ??  TreatmentService::getCount($line, (object) $line)) + $line['dispensed'],
+                        'quantity' => floatval($line['quantity'] ?? TreatmentService::getCount($line, (object) $line)) + $line['dispensed'],
                         'unit_price' => $price,
                         'total_price' => (float) $price * ((float) $line['quantity'] + (float) $line['dispensed']),
                         'status' => $line['status']->value,
@@ -195,8 +204,12 @@ class Prescription extends Component
         $this->reset('dispensing');
 
         foreach ($this->prescriptions as $line) {
-            if ($line['status'] != Status::active) continue;
-            if (empty($line['item_id']) || $line['quantity'] == 0) continue;
+            if ($line['status'] != Status::active) {
+                continue;
+            }
+            if (empty($line['item_id']) || $line['quantity'] == 0) {
+                continue;
+            }
 
             $pLine = PrescriptionLine::find($line['id']);
             $this->dispensing[] = $pLine?->getDispensingReport();
@@ -228,7 +241,7 @@ class Prescription extends Component
                     'unit_cost' => $d['price'],
                     'from_location_id' => Location::STORE,
                     'to_location_id' => Location::OUTBOUND,
-                    'reason' => "Dispensed to patient",
+                    'reason' => 'Dispensed to patient',
                     'performed_by' => $userId,
                 ]);
 
@@ -242,19 +255,19 @@ class Prescription extends Component
             }
 
             DB::commit();
-            notifyUserSuccess("Prescriptions have been dispensed.", $userId);
+            notifyUserSuccess('Prescriptions have been dispensed.', $userId);
 
             $this->reset('dispensing');
             $this->loadLines(refresh: true);
             $this->compute();
 
-            $this->dispatch("close-dispense-confirm");
+            $this->dispatch('close-dispense-confirm');
         } catch (\Throwable $th) {
             DB::rollBack();
             report($th);
 
             notifyUserError($th->getMessage(), $userId);
-            $this->dispatch("close-dispense-confirm");
+            $this->dispatch('close-dispense-confirm');
         }
     }
 }

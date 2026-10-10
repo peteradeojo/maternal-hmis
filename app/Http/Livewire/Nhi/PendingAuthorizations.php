@@ -10,7 +10,8 @@ class PendingAuthorizations extends Component
 {
     public $data;
 
-    public function mount() {
+    public function mount()
+    {
         $this->data = Documentation::whereHas('patient', function ($query) {
             $query->has('insurance');
         })->where('status', Status::active->value)->get();

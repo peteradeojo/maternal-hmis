@@ -41,18 +41,18 @@ class MedicalRecords extends Component
 
         $returning = false;
 
-        if ($this->visit->imagings->count()  > 0) {
+        if ($this->visit->imagings->count() > 0) {
             $this->visit->awaiting_radiology = true;
             $notify[] = Department::RAD->value;
             $returning = true;
         }
 
-        if ($this->visit->tests->count()  > 0) {
+        if ($this->visit->tests->count() > 0) {
             $this->visit->awaiting_lab_results = true;
             $notify[] = Department::LAB->value;
             $returning = true;
         }
-        if ($this->visit->prescriptions->count()  > 0) {
+        if ($this->visit->prescriptions->count() > 0) {
             $this->visit->awaiting_pharmacy = true;
             $notify[] = Department::PHA->value;
         }
@@ -79,7 +79,8 @@ class MedicalRecords extends Component
         $this->redirect('/dashboard');
     }
 
-    public function removeTest($id) {
+    public function removeTest($id)
+    {
         $this->visit->tests()->where('id', $id)->delete();
         $this->dispatch('$refresh');
     }

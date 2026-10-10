@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\Nursing;
 
-use App\Enums\Status;
-use App\Models\Visit;
 use App\Models\Vitals;
 use Livewire\Component;
 

@@ -31,9 +31,9 @@ return new class extends Migration
         });
 
         DB::statement(
-            sprintf("CREATE UNIQUE INDEX idx_prescription_line_items ON prescription_lines (item_id, status) WHERE status IN (%d, %d)",
-            Status::pending->value,
-            Status::active->value),
+            sprintf('CREATE UNIQUE INDEX idx_prescription_line_items ON prescription_lines (item_id, status) WHERE status IN (%d, %d)',
+                Status::pending->value,
+                Status::active->value),
         );
     }
 
@@ -42,7 +42,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("DROP INDEX IF EXISTS idx_prescription_line_items;");
+        DB::statement('DROP INDEX IF EXISTS idx_prescription_line_items;');
         Schema::dropIfExists('prescription_lines');
     }
 };

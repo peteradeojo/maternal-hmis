@@ -8,6 +8,7 @@ use Livewire\Component;
 class AntenatalHistory extends Component
 {
     public User $user;
+
     public $history = [];
 
     public function mount(User $user)

@@ -1,10 +1,10 @@
 <?php
 
 use App\Enums\Status;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -15,7 +15,7 @@ return new class extends Migration
     {
         //
         Schema::table('patient_appointments', function (Blueprint $table) {
-            DB::unprepared("CREATE UNIQUE INDEX active_appointment_constraint ON patient_appointments (patient_id, status) WHERE status = " . Status::active->value);
+            DB::unprepared('CREATE UNIQUE INDEX active_appointment_constraint ON patient_appointments (patient_id, status) WHERE status = '.Status::active->value);
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     {
         //
         Schema::table('patient_appointments', function (Blueprint $table) {
-            DB::statement("DROP INDEX IF EXISTS active_appointment_constraint;");
+            DB::statement('DROP INDEX IF EXISTS active_appointment_constraint;');
         });
     }
 };

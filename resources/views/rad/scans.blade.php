@@ -28,7 +28,7 @@
                 responsive: true,
                 ajax: '{!! route('api.rad.scans.data', ['patient_id' => @$patientId]) !!}',
                 columns: [{
-                        data: 'patient.name'
+                        data: 'patient.p_name'
                     },
                     {
                         data: 'name',

@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\Lab;
 
-use App\Enums\Status;
-use App\Models\DocumentationTest;
 use App\Traits\ComponentState;
 use Livewire\Component;
 
@@ -14,13 +12,14 @@ class Test extends Component
     public $test;
 
     public $results = [];
+
     public $status;
 
     public function mount($test)
     {
         $this->test = $test;
         $this->status = $test->status;
-        $this->results = !empty($test->results) ? $test->results : $test->getSampleResults();
+        $this->results = ! empty($test->results) ? $test->results : $test->getSampleResults();
 
         $this->initHash = $this->currentHash = $this->getHash();
     }
@@ -32,7 +31,7 @@ class Test extends Component
 
     public function addResult()
     {
-        $this->results[] = (object)[
+        $this->results[] = (object) [
             'description' => '',
             'result' => '',
             'unit' => '',
@@ -53,7 +52,8 @@ class Test extends Component
         $this->dispatch('$refresh');
     }
 
-    public function save() {
+    public function save()
+    {
         $this->test->status = $this->status;
         $this->test->results = $this->results;
         $this->test->save();

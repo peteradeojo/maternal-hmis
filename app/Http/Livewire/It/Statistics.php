@@ -10,7 +10,8 @@ class Statistics extends Component
 {
     public $data = [];
 
-    public function mount() {
+    public function mount()
+    {
         $completedVisits = Visit::whereIn('status', [Status::active->value])->orWhere(function ($query) {
             $query->whereNot('awaiting_doctor');
         })->count();

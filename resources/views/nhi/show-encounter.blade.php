@@ -39,4 +39,6 @@
     <x-reports.encounter.scans :visit="$visit" />
     <x-reports.encounter.prescriptions :visit="$visit" />
     <x-reports.encounter.admission :visit="$visit" />
+
+    @livewire('nhi.encounter-authorizations', ['visit' => $visit])
 </div>

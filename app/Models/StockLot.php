@@ -19,7 +19,7 @@ class StockLot extends Model
         return $this->belongsTo(StockItem::class, 'item_id');
     }
 
-    public static function generateLotNumber($prefix = "???")
+    public static function generateLotNumber($prefix = '???')
     {
         return fake()->lexify("{$prefix}-????-????");
     }

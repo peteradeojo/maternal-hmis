@@ -18,7 +18,8 @@ class Ward extends Model
 
     protected $appends = ['available_beds'];
 
-    public function availableBeds(): Attribute {
+    public function availableBeds(): Attribute
+    {
         return Attribute::make(get: fn () => $this->beds - $this->filled_beds);
     }
 }

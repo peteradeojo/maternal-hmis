@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Nursing;
 
-use App\Enums\Department;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VitalsRequest;
@@ -17,6 +16,7 @@ class PatientsController extends Controller
     public function ancBookings(Request $request)
     {
         $this->authorize('viewAny', AntenatalProfile::class);
+
         return view('nursing.anc-bookings');
     }
 
@@ -24,17 +24,18 @@ class PatientsController extends Controller
     {
         $this->authorize('viewAny', Visit::class);
         $location = app(LocationContext::class)->id();
+
         return $this->dataTable($request, Visit::accessibleBy($request->user())->with(['patient.category'])->active()
             ->where('location_id', $location)
             ->where(function ($query) {
                 $query->doesntHave('vitals')->orWhere('awaiting_vitals', true);
             }), [
-            function ($query, $search) {
-                $query->whereHas('patient', function ($query) use ($search) {
-                    $query->where('name', 'ilike', "$search%")->orWhere('card_number', "like", "$search%");
-                });
-            },
-        ]);
+                function ($query, $search) {
+                    $query->whereHas('patient', function ($query) use ($search) {
+                        $query->where('name', 'ilike', "$search%")->orWhere('card_number', 'like', "$search%");
+                    });
+                },
+            ]);
     }
 
     public function getAncBookings(Request $request)
@@ -43,17 +44,19 @@ class PatientsController extends Controller
         $user = $request->user();
         $query = AntenatalProfile::with('patient');
 
-        if (!$request->has('admin')) {
+        if (! $request->has('admin')) {
             if ($user->hasRole('lab')) {
                 $query = $query->where('awaiting_lab', true)->orWhereHas('tests', function ($query) {
                     $query->where('status', Status::pending->value);
                 });
             }
 
-            if ($user->hasRole('nurse'))
+            if ($user->hasRole('nurse')) {
                 $query = $query->where('awaiting_vitals', true);
-            if ($user->hasRole('doctor'))
+            }
+            if ($user->hasRole('doctor')) {
                 $query = $query->where('awaiting_doctor', true);
+            }
         }
 
         return $this->dataTable($request, $query->latest(), [
@@ -61,13 +64,14 @@ class PatientsController extends Controller
                 $query->whereHas('patient', function ($query) use ($search) {
                     $query->where('name', 'ilike', "{$search}%");
                 });
-            }
+            },
         ]);
     }
 
     public function viewAncBooking(Request $request, AntenatalProfile $profile)
     {
         $this->authorize('view', $profile);
+
         return view('nursing.anc-booking', ['profile' => $profile]);
     }
 

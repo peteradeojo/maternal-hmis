@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum AncCategory: int {
+enum AncCategory: int
+{
     case Bronze = 1;
     case Silver = 2;
     case Gold = 3;
@@ -12,11 +13,11 @@ enum AncCategory: int {
     case Gold_Plus = 7;
     case Diamond_Plus = 8;
 
-
-    public static function getValues() {
+    public static function getValues()
+    {
         $values = [];
 
-        foreach(self::cases() as $case) {
+        foreach (self::cases() as $case) {
             $values[] = $case->value;
         }
 

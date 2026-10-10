@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Dis;
 
-use App\Enums\AppNotifications;
 use App\Enums\Status;
 use App\Models\BillDetail;
 use App\Models\DocumentationPrescription;
@@ -19,7 +18,9 @@ class Prescription extends Component
     // public $id;
 
     public $items = [];
+
     public $quoteDone = false;
+
     public $bill;
 
     public $totalAmount = 0;
@@ -49,7 +50,9 @@ class Prescription extends Component
                  * @var BillDetail
                  */
                 $entry = BillDetail::find($item->id);
-                if (!$entry) return;
+                if (! $entry) {
+                    return;
+                }
 
                 $entry->meta = array_merge($entry->meta, [...($item->meta), 'available' => $item->available]);
                 $entry->quoted_at = now();
@@ -82,13 +85,16 @@ class Prescription extends Component
                 $errors[] = $item->id;
                 notifyUserError($th->getMessage(), auth()->user(), ['mode' => 'in-app']);
 
-                logger()->emergency("Failed to save prescription quote: " . $th->getMessage());
+                logger()->emergency('Failed to save prescription quote: '.$th->getMessage());
+
                 return false;
             }
         });
 
         DB::commit();
-        if (count($errors) > 0) return;
+        if (count($errors) > 0) {
+            return;
+        }
 
         if ($this->quoteDone) {
             $this->bill->update(['status' => Status::quoted->value]);
@@ -96,7 +102,7 @@ class Prescription extends Component
             $this->bill->update(['status' => Status::pending->value]);
         }
 
-        notifyUserSuccess("Quote saved!", auth()->user(), ['mode' => 'in-app']);
+        notifyUserSuccess('Quote saved!', auth()->user(), ['mode' => 'in-app']);
         $this->dispatch('quote-saved');
         $this->dispatch('$refresh');
     }
@@ -109,7 +115,7 @@ class Prescription extends Component
 
     public function getItems()
     {
-        $this->items = $this->bill->entries->where('tag', 'drug')->map(fn($b) => (object) [
+        $this->items = $this->bill->entries->where('tag', 'drug')->map(fn ($b) => (object) [
             'meta' => $b->meta,
             'description' => $b->description,
             'amount' => $b->total_price,
@@ -121,14 +127,16 @@ class Prescription extends Component
         $this->totalAmount = $this->items->sum('amount');
     }
 
-    public function reload() {
+    public function reload()
+    {
         $this->getItems();
         $this->pendingUpdate = false;
         // $this->dispatch('$refresh');
     }
 
     #[On('echo:bill-update.{bill.id},.BillingUpdate')]
-    public function newUpdate() {
+    public function newUpdate()
+    {
         $this->pendingUpdate = true;
         $this->dispatch('$refresh');
     }

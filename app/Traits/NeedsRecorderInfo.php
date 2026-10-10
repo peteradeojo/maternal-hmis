@@ -11,15 +11,19 @@ trait NeedsRecorderInfo
 
     protected static function bootNeedsRecorderInfo()
     {
-        static::created(function (Self $model) {
+        static::created(function (self $model) {
             if (
                 (app()->bound('session') && Session::isStarted()) == false
-            ) return;
+            ) {
+                return;
+            }
 
-            if (!in_array(
+            if (! in_array(
                 auth()->user()->phone,
                 config('app.generic_doctor_profiles')
-            )) return;
+            )) {
+                return;
+            }
 
             AnonymousSessionActivity::create([
                 'model_type' => $model::class,

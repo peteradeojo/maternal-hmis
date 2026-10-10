@@ -15,10 +15,10 @@ class HistoryController extends Controller
 
     public function getHistory(Request $request)
     {
-        return $this->dataTable($request, Visit::with(['patient.category', 'visit'])->latest(),  [
+        return $this->dataTable($request, Visit::with(['patient.category', 'visit'])->latest(), [
             function ($query, $search) {
                 return $query->whereHas('patient', function ($q) use (&$search) {
-                    return $q->where('name', 'ilike', "$search%")->orWhere('card_number',  'ilike',  "$search%");
+                    return $q->where('name', 'ilike', "$search%")->orWhere('card_number', 'ilike', "$search%");
                 });
             },
         ]);
@@ -28,6 +28,7 @@ class HistoryController extends Controller
     {
         $visit->load(['visit', 'patient', 'visit.tests', 'visit.radios', 'visit.prescriptions']);
         $patient = $visit->patient;
+
         return view('records.show-history', ['visit' => $visit, 'patient' => $patient]);
     }
 }

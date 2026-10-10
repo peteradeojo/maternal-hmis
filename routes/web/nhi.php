@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InsuranceController;
+use Illuminate\Support\Facades\Route;
 
 Route::name('nhi.')->prefix('nhis')->middleware(['role:billing', 'datalog'])->group(function () {
     Route::get('/patients', [InsuranceController::class, 'index'])->name('index');

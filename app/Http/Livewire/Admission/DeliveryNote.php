@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Admission;
 
 use App\Enums\NoteCodes;
-use App\Http\Livewire\Doctor\Consultation;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
@@ -54,7 +53,7 @@ class DeliveryNote extends Component
 
             $this->dispatch('$refresh');
             notifyUserSuccess(
-                "Delivery note has been saved.",
+                'Delivery note has been saved.',
                 auth()->user()->id,
                 [
                     'timeout' => 10000,

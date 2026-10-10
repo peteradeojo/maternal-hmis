@@ -5,25 +5,27 @@ namespace App\Http\Livewire\Doctor;
 use App\Enums\Department;
 use App\Enums\Status;
 use App\Livewire\Forms\Doctor\ExaminationForm;
-use App\Models\Visit;
-use App\Models\Product;
-use Livewire\Component;
-use App\Models\PatientHistory;
 use App\Livewire\Forms\Doctor\HistoryForm;
+use App\Models\PatientHistory;
+use App\Models\Product;
 use App\Models\ProductCategory;
-use Livewire\Attributes\On;
+use App\Models\Visit;
+use Livewire\Component;
 
 class VisitForm extends Component
 {
     public $visit;
+
     public $profile;
 
     public $tests = [];
+
     public $diagnoses = [];
 
     public $histories;
 
     public HistoryForm $historyForm;
+
     public ExaminationForm $examForm;
 
     public function refreshProfile()
@@ -38,22 +40,24 @@ class VisitForm extends Component
             $this->profile = $visit->patient->antenatalProfiles[0];
         }
 
-        $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
+        $this->histories = PatientHistory::selectRaw('presentation, count(presentation) as freq')->groupBy('presentation')->orderBy('freq', 'desc')->get();
     }
 
     public function addTest($data)
     {
         ['id' => $id, 'name' => $name, 'product' => $product] = $data;
 
-        if (!$id) { // Attempt to create a new product as required
+        if (! $id) { // Attempt to create a new product as required
             if (Product::where('name', $name)->exists()) {
-                notifyUserError("Invalid action detected! This item is already in the database. Kindly select the option from the drop down.", auth()->user());
+                notifyUserError('Invalid action detected! This item is already in the database. Kindly select the option from the drop down.', auth()->user());
+
                 return;
             }
 
             $cat = ProductCategory::where('name', 'OTHER TESTS')->first();
-            if (!$cat) {
-                notifyUserError("Unable to add this product. Kindly reach out to IT: Reason [MISSING PRODUCT CATEGORY: OTHER TESTS]", auth()->user());
+            if (! $cat) {
+                notifyUserError('Unable to add this product. Kindly reach out to IT: Reason [MISSING PRODUCT CATEGORY: OTHER TESTS]', auth()->user());
+
                 return;
             }
 
@@ -107,7 +111,6 @@ class VisitForm extends Component
         try {
             $this->historyForm->validate();
 
-
             $this->visit->histories()->create([
                 'patient_id' => $this->visit->patient_id,
                 ...($this->historyForm->all()),
@@ -116,7 +119,7 @@ class VisitForm extends Component
             $this->historyForm->reset();
 
             $this->visit->refresh();
-            $this->histories = PatientHistory::selectRaw("presentation, count(presentation) as freq")->groupBy('presentation')->orderBy('freq', 'desc')->get();
+            $this->histories = PatientHistory::selectRaw('presentation, count(presentation) as freq')->groupBy('presentation')->orderBy('freq', 'desc')->get();
         } catch (\Error $e) {
             dump($e);
         }
@@ -140,6 +143,7 @@ class VisitForm extends Component
     }
 
     public $loadedVisit = null;
+
     public function loadVisitReport($id)
     {
         $this->loadedVisit = Visit::find($id)?->visit->load(['notes', 'tests', 'prescriptions', 'radios']);

@@ -11,11 +11,13 @@ class StockCountLine extends Model
         'counted_qty', 'system_qty',
     ];
 
-    public function stock_count() {
+    public function stock_count()
+    {
         return $this->belongsTo(StockCount::class, 'stock_count_id');
     }
 
-    public function item() {
+    public function item()
+    {
         return $this->belongsTo(StockItem::class, 'item_id');
     }
 }

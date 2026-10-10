@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\Department;
 use App\Http\Controllers\InventoryController;
-use App\Http\Controllers\Pharmacy\AdmissionsController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\Reports\PharmacyReportController;
 use Illuminate\Support\Facades\Route;

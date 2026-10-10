@@ -8,7 +8,6 @@ use App\Models\StockItemPrice;
 use App\Models\StockTransaction;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
@@ -33,10 +32,10 @@ class BulkStockImport extends Command
      */
     public function handle()
     {
-        $hkey = $this->argument("hkey");
-        $filename = Redis::client()->hget("stock-imports", $hkey);
+        $hkey = $this->argument('hkey');
+        $filename = Redis::client()->hget('stock-imports', $hkey);
 
-        if (!$filename) {
+        if (! $filename) {
             return;
         }
 
@@ -52,7 +51,7 @@ class BulkStockImport extends Command
                 $sku = $item->get('sku');
                 $weight = $item->get('weight', null);
                 empty($weight) && $weight = null;
-                empty($sku) && $sku = "INV_" . rand(100000, 999999);
+                empty($sku) && $sku = 'INV_'.rand(100000, 999999);
 
                 $stockItem = StockItem::create([
                     'sku' => $sku,
@@ -75,7 +74,7 @@ class BulkStockImport extends Command
                     'performed_by' => $user->id,
                     'unit_cost' => $item->get('unit_cost'),
                     'unit' => $stockItem->base_unit,
-                    'reason' => "New stock: import",
+                    'reason' => 'New stock: import',
                 ]);
 
                 $stockItem->costs()->create([
@@ -97,6 +96,6 @@ class BulkStockImport extends Command
         fclose($fh);
         unlink($filename);
 
-        Redis::client()->hdel("stock-imports", $hkey);
+        Redis::client()->hdel('stock-imports', $hkey);
     }
 }

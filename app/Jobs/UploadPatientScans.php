@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\PatientImaging;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,7 +28,7 @@ class UploadPatientScans implements ShouldQueue
     public function handle(): void
     {
         $this->scan->refresh();
-        $filepath = storage_path('app/' . $this->scan->path);
+        $filepath = storage_path('app/'.$this->scan->path);
         $this->scan->path = cloudinary()->uploadFile($filepath, [
             'folder' => 'maternalchild/radiology/',
         ])->getSecurePath();

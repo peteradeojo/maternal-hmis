@@ -35,7 +35,7 @@ class Datalog
 
     private function logAction(Request $request, string $action, array $extraData = []): void
     {
-        $data = new ModelsDatalog();
+        $data = new ModelsDatalog;
         $data->action = $action;
         $data->user_id = $request->user()->id ?? null;
         $data->data = json_encode(array_merge($request->all(), $extraData));

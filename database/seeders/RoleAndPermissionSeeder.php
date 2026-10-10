@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Department;
 use App\Enums\Permissions;
 use App\Enums\Roles;
 use Illuminate\Database\Seeder;
@@ -28,7 +27,7 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create roles and assign existing permissions
         $roles = [
-            Roles::Admin->value => array_map(fn($p) => $p->value, $permissions),
+            Roles::Admin->value => array_map(fn ($p) => $p->value, $permissions),
             Roles::Doctor->value => [
                 Permissions::VIEW_PATIENTS,
                 Permissions::VIEW_VISITS,

@@ -17,10 +17,13 @@ use Livewire\Component;
 class StockTake extends Component
 {
     public StockCount $take;
+
     public $counted = [];
 
     public $report = null;
+
     public $reportGenerating = null;
+
     private $redis;
 
     #[Validate('required|integer')]
@@ -57,7 +60,7 @@ class StockTake extends Component
     public function addItem($data)
     {
 
-        if (array_find($this->counted, fn($item) => $data['item_id'] == @$item['item_id'])) {
+        if (array_find($this->counted, fn ($item) => $data['item_id'] == @$item['item_id'])) {
             return;
         }
 
@@ -110,7 +113,7 @@ class StockTake extends Component
             }
 
             DB::commit();
-            notifyUserSuccess("Stock take saved!", auth()->user()->id, [
+            notifyUserSuccess('Stock take saved!', auth()->user()->id, [
                 'bg' => ['bg-green-400', 'text-white'],
             ]);
         } catch (\Throwable $th) {
@@ -123,7 +126,9 @@ class StockTake extends Component
 
     public function approve()
     {
-        if ($this->take->status == Status::closed) return;
+        if ($this->take->status == Status::closed) {
+            return;
+        }
 
         if ($this->take->status == Status::active) {
             $this->take->status = Status::completed;
@@ -142,11 +147,11 @@ class StockTake extends Component
         $this->save();
 
         if ($this->take->status == Status::closed) {
-            return notifyUserError("This stock adjustment has already been applied.", auth()->user()->id);
+            return notifyUserError('This stock adjustment has already been applied.', auth()->user()->id);
         }
 
         if ($this->take->status != Status::completed) {
-            return notifyUserError("This stock adjustment needs to be approved first.", auth()->user()->id);
+            return notifyUserError('This stock adjustment needs to be approved first.', auth()->user()->id);
         }
 
         $userId = auth()->user()->id;
@@ -155,7 +160,9 @@ class StockTake extends Component
 
         try {
             foreach ($this->take->records()->lockForUpdate()->get() as $line) {
-                if ($line->applied) continue;
+                if ($line->applied) {
+                    continue;
+                }
 
                 $delta = $line->counted_qty - $line->system_qty;
 
@@ -169,7 +176,7 @@ class StockTake extends Component
                             'to_location_id' => Location::STORE,
                             'unit' => $line->item->base_unit,
                             'unit_cost' => $line->item->costs->first()?->cost,
-                            'reason' => "Stock count: Gain",
+                            'reason' => 'Stock count: Gain',
                             'performed_by' => $userId,
                         ]);
                     } else {
@@ -181,7 +188,7 @@ class StockTake extends Component
                             'to_location_id' => Location::OUTBOUND,
                             'unit' => $line->item->base_unit,
                             'unit_cost' => $line->item->costs->first()?->cost,
-                            'reason' => "Stock count: Loss",
+                            'reason' => 'Stock count: Loss',
                             'performed_by' => $userId,
                         ]);
                     }
@@ -199,7 +206,7 @@ class StockTake extends Component
 
             DB::commit();
 
-            notifyUserSuccess("Stock take applied successfully", $userId);
+            notifyUserSuccess('Stock take applied successfully', $userId);
             $this->dispatch('$refresh');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -209,7 +216,8 @@ class StockTake extends Component
         }
     }
 
-    public function removeItem($index, $id) {
+    public function removeItem($index, $id)
+    {
         DB::beginTransaction();
 
         try {
@@ -223,7 +231,8 @@ class StockTake extends Component
         }
     }
 
-    public function checkReportStatus() {
+    public function checkReportStatus()
+    {
         if ($this->take->status !== Status::closed) {
             return;
         }
@@ -236,11 +245,13 @@ class StockTake extends Component
         }
     }
 
-    public function generateReport() {
+    public function generateReport()
+    {
         dispatch(new StockTakeReport($this->take->id));
     }
 
-    public function downloadReport() {
+    public function downloadReport()
+    {
         if ($this->report) {
             return Storage::download($this->report);
         }

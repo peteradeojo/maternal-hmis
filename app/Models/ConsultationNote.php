@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\NoteCodes;
 use App\Interfaces\PatientRecord;
 use App\Traits\NeedsRecorderInfo;
-use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +13,7 @@ class ConsultationNote extends Model implements PatientRecord
 {
     use HasFactory, NeedsRecorderInfo, SoftDeletes;
 
-    protected $fillable =  [
+    protected $fillable = [
         'patient_id',
         'visit_id',
         'consultant_id',
@@ -35,6 +34,6 @@ class ConsultationNote extends Model implements PatientRecord
 
     public function consultant()
     {
-        return  $this->belongsTo(User::class, 'consultant_id');
+        return $this->belongsTo(User::class, 'consultant_id');
     }
 }

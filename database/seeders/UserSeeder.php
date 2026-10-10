@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Enums\Department;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -35,49 +34,49 @@ class UserSeeder extends Seeder
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::REC->value,
                 'phone' => 'record',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::IT->value,
                 'phone' => 'ict',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::NHI->value,
                 'phone' => 'nhs',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::RAD->value,
                 'phone' => 'radio',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::DIS->value,
                 'phone' => 'dis',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::PHA->value,
                 'phone' => 'phm',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
             [
                 'firstname' => 'Boluwatife',
                 'lastname' => 'Ade-Ojo',
                 'department_id' => Department::LAB->value,
                 'phone' => 'lab',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ],
         ];
 

@@ -1,13 +1,10 @@
 <?php
 
-use App\Enums\Department;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\IT\StaffController;
 use App\Http\Controllers\AdmissionsController;
 use App\Http\Controllers\IT\CrmController;
 use App\Http\Controllers\IT\ProductsController;
-use App\Http\Middleware\VerifyCsrfToken;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Http\Controllers\IT\StaffController;
+use Illuminate\Support\Facades\Route;
 
 Route::name('it.')->group(function () {
     Route::middleware(['role:admin'])->group(function () {

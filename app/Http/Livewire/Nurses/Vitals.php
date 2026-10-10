@@ -2,10 +2,8 @@
 
 namespace App\Http\Livewire\Nurses;
 
-use App\Enums\Status;
 use App\Interfaces\OperationalEvent;
 use App\Livewire\Forms\VitalsForm;
-use App\Models\Visit;
 use App\Models\Vitals as ModelsVitals;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -13,7 +11,9 @@ use Livewire\Component;
 class Vitals extends Component
 {
     public $evt;
+
     public $form = true;
+
     public $showResults = true;
 
     public VitalsForm $vitals;
@@ -36,7 +36,9 @@ class Vitals extends Component
 
         $data = array_filter($data);
 
-        if (count($data) < 1) return;
+        if (count($data) < 1) {
+            return;
+        }
 
         try {
             ModelsVitals::create([
@@ -59,7 +61,7 @@ class Vitals extends Component
             $this->vitals->reset();
             $this->vitals->resetErrorBag('recorded_date');
         } catch (\Throwable $th) {
-            notifyUserError("An error occurred", request()->user()->id);
+            notifyUserError('An error occurred', request()->user()->id);
         }
     }
 

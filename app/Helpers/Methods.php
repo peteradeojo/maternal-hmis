@@ -4,11 +4,10 @@ use App\Enums\AncCategory;
 use App\Enums\Roles;
 use App\Models\User;
 use App\Services\Comms;
-use Illuminate\Support\Arr;
 
 const T1 = 0.3;
 
-if (!defined('DAMA_SIGNATURES_DIR')) {
+if (! defined('DAMA_SIGNATURES_DIR')) {
     define('DAMA_SIGNATURES_DIR', 'app/public/dama_signatures/');
 }
 
@@ -120,7 +119,7 @@ function getRouteMap()
             'routes' => [
                 'Payment Reports' => [route('finance'), 'fa-money'],
             ],
-        ]
+        ],
     ];
 
     return $routeMap;
@@ -132,7 +131,6 @@ function authorizedRoutes()
 
     $user = auth()->user();
     $routes = [];
-
 
     foreach ($routeMap as $map) {
         $roles = [];
@@ -146,9 +144,11 @@ function authorizedRoutes()
 
             unset($map['role']);
 
-            if ($match = array_filter($routes, fn($r) => $r['label'][0] == $map['label'][0])) {
+            if ($match = array_filter($routes, fn ($r) => $r['label'][0] == $map['label'][0])) {
                 $key = (array_keys($match))[0] ?? null;
-                if ($key === null) continue;
+                if ($key === null) {
+                    continue;
+                }
 
                 $map['routes'] = array_merge($map['routes'], $match[$key]['routes']);
                 $routes[$key] = $map;
@@ -163,15 +163,16 @@ function authorizedRoutes()
 
 function ancCardType(int $value)
 {
-    return (AncCategory::tryFrom($value))?->name ?? 'Unknown';
+    return AncCategory::tryFrom($value)?->name ?? 'Unknown';
 }
 
 function unslug($str, $process = null)
 {
     if ($process) {
-        return $process(str_replace(["_"], " ", $str));
+        return $process(str_replace(['_'], ' ', $str));
     }
-    return str_replace(["_"], " ", $str);
+
+    return str_replace(['_'], ' ', $str);
 }
 
 function unslug_separator($str, $separator = '', $process = null)
@@ -182,14 +183,15 @@ function unslug_separator($str, $separator = '', $process = null)
     }
 
     if ($process) {
-        return $process(str_replace(["_"], " ", $str));
+        return $process(str_replace(['_'], ' ', $str));
     }
-    return str_replace(["_"], " ", $str);
+
+    return str_replace(['_'], ' ', $str);
 }
 
 function resolve_render($value, $mode = null)
 {
-    if (!$mode) {
+    if (! $mode) {
         return $value;
     }
 
@@ -214,20 +216,20 @@ function notifyDepartment($departmentId, $message, $options = [])
     Comms::notifyDepartment($departmentId, $message, $options);
 }
 
-
 function clean_data_image($data)
 {
-    $signature = str_replace("data:image/png;base64,", "", $data);
+    $signature = str_replace('data:image/png;base64,', '', $data);
+
     return base64_decode($signature);
 }
 
 function save_signature_to_local($filename, $data)
 {
-    $file = DAMA_SIGNATURES_DIR . "/$filename";
+    $file = DAMA_SIGNATURES_DIR."/$filename";
     $f = file_put_contents(storage_path($file), clean_data_image($data));
 
     if ($f !== false) {
-        $savedFilename = basename(DAMA_SIGNATURES_DIR) . '/' . $filename;
+        $savedFilename = basename(DAMA_SIGNATURES_DIR).'/'.$filename;
 
         return $savedFilename;
     }

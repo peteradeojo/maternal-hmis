@@ -24,6 +24,7 @@ class PatientsController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Patient::class);
+
         return view('records.patients');
     }
 
@@ -37,6 +38,7 @@ class PatientsController extends Controller
         if ($request->method() !== 'POST') {
             $this->authorize('create', Patient::class);
             $mode = $request->query('mode');
+
             return match ($request->query('mode')) {
                 null => view('records.new-patient', [
                     'categories' => $categories->where('name', '!=', 'Antenatal'),
@@ -51,7 +53,7 @@ class PatientsController extends Controller
             'category_id' => 'required|integer|exists:patient_categories,id',
             'card_number' => ['nullable', 'string', function ($attr, $value, $fail) use (&$request) {
                 if (Patient::where('category_id', $request->category_id)->where('card_number', $request->card_number)->exists()) {
-                    $fail("A patient in this category already has the same card number.");
+                    $fail('A patient in this category already has the same card number.');
                 }
             }],
             'name' => 'required|string',
@@ -75,7 +77,7 @@ class PatientsController extends Controller
 
         if ($request->query('mode') === 'anc') {
             $rules = array_merge($rules, [
-                'card_type' => 'required|in:' . join(',', AncCategory::getValues()),
+                'card_type' => 'required|in:'.implode(',', AncCategory::getValues()),
                 'lmp' => 'nullable|date',
                 'edd' => 'nullable|date',
                 'spouse_name' => 'nullable|string',
@@ -137,14 +139,17 @@ class PatientsController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             report($e);
+
             return redirect()->back()->with('error', 'An error occurred while creating patient record. Please try again later.');
         }
+
         return redirect()->route('records.patients');
     }
 
     public function getPatients(Request $request)
     {
         $this->authorize('viewAny', Patient::class);
+
         return $this->dataTable($request, Patient::accessibleBy($request->user())->with('category')->latest(), [
             function ($query, $search) {
                 $query->where('name', 'ilike', "%$search%")->orWhere('card_number', 'ilike', "$search%")->orWhere('phone', 'ilike', "$search%");
@@ -165,8 +170,9 @@ class PatientsController extends Controller
     public function edit(Request $request, Patient $patient)
     {
         $this->authorize('update', $patient);
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             $categories = PatientCategory::all();
+
             return view('records.edit-patient', compact('patient', 'categories'));
         }
 
@@ -179,6 +185,7 @@ class PatientsController extends Controller
             return redirect()->route('records.patient', $patient->id);
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
@@ -186,6 +193,7 @@ class PatientsController extends Controller
     public function checkIn(Request $request, Patient $patient)
     {
         $appointmentId = $request->query('appointment');
+
         return view('records.check-in', compact('patient', 'appointmentId'));
     }
 
@@ -198,7 +206,7 @@ class PatientsController extends Controller
         // AncCategory::cases()
 
         $data = $request->validate([
-            'card_type' => 'required|in:' . join(',', AncCategory::getValues()),
+            'card_type' => 'required|in:'.implode(',', AncCategory::getValues()),
             'lmp' => 'nullable|date',
             'edd' => 'nullable|date',
             'spouse_name' => 'nullable|string',
@@ -231,11 +239,11 @@ class PatientsController extends Controller
             return response()->json([
                 'message' => 'No bill has been created for this patient. Please create a bill payment first.',
                 'ok' => false,
-                'status' => 'requires_action'
+                'status' => 'requires_action',
             ]);
         }
 
-        if ($visit->bills->where('status', '!=', Status::cancelled->value)->contains(fn($bill) => $bill->balance > 0)) {
+        if ($visit->bills->where('status', '!=', Status::cancelled->value)->contains(fn ($bill) => $bill->balance > 0)) {
             return response()->json([
                 'message' => 'Patient has unpaid bills. Please check their bills and try again.',
                 'action' => 'confirm_action',
@@ -246,6 +254,7 @@ class PatientsController extends Controller
         }
 
         $visit->update(['status' => Status::completed->value]);
+
         return response()->json([
             'message' => 'Patient checked out!',
             'status' => 'success',
@@ -268,7 +277,8 @@ class PatientsController extends Controller
             'bg' => ['bg-blue-400', 'text-white'],
         ], ['mode' => AppNotifications::$BOTH]);
 
-        notifyUserSuccess("Insurance profile added successfully", $request->user(), ['mode' => 'in-app']);
+        notifyUserSuccess('Insurance profile added successfully', $request->user(), ['mode' => 'in-app']);
+
         return response()->json($profile);
     }
 
@@ -276,12 +286,12 @@ class PatientsController extends Controller
     {
         $this->authorize('viewAny', Visit::class);
         $query = Visit::accessibleBy($request->user())->with([
-            'patient.insurance' => fn($q) => $q->whereIn('status', [Status::active, Status::pending])
+            'patient.insurance' => fn ($q) => $q->whereIn('status', [Status::active, Status::pending]),
         ])->latest();
 
         if ($request->has('insured')) {
             $query = $query->whereHas('patient', function ($q) {
-                $q->whereHas('insurance', fn($q2) => $q2->whereIn('status', [Status::active, Status::pending]));
+                $q->whereHas('insurance', fn ($q2) => $q2->whereIn('status', [Status::active, Status::pending]));
             });
         }
 
@@ -297,13 +307,14 @@ class PatientsController extends Controller
                 });
             },
         ], function (array $data, $orders) {
-            if (empty($orders))
+            if (empty($orders)) {
                 return $data;
+            }
             logger()->info(json_encode($orders));
 
-            $name = array_filter($orders, fn($o) => $o['name'] == 'insurance');
+            $name = array_filter($orders, fn ($o) => $o['name'] == 'insurance');
 
-            if (!empty($name)) {
+            if (! empty($name)) {
                 usort($data, function ($a, $b) {
                     if (isset($a['patient']['insurance'])) {
                         if (isset($b['patient']['insurance'])) {

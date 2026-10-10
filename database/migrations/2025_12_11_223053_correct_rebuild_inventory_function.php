@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,8 +10,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("DROP FUNCTION IF EXISTS rebuild_inventory_balances();");
-        DB::unprepared("
+        DB::statement('DROP FUNCTION IF EXISTS rebuild_inventory_balances();');
+        DB::unprepared('
         CREATE OR REPLACE FUNCTION rebuild_inventory_balances()
         RETURNS void
         LANGUAGE plpgsql
@@ -59,7 +57,7 @@ return new class extends Migration
             GROUP BY item_id, location_id, lot_id;
         END;
         $$;
-        ");
+        ');
     }
 
     /**

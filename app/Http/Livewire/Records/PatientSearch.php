@@ -11,7 +11,9 @@ class PatientSearch extends Component
     public $categories;
 
     public $category;
+
     public $searchName;
+
     public $searchNumber;
 
     public $searchResults;
@@ -34,25 +36,26 @@ class PatientSearch extends Component
         $query = Patient::with(['category']);
 
         if ($autoSearch) {
-            $query->latest(); //->limit(20)->get();
-            if (!empty($this->category)) {
+            $query->latest(); // ->limit(20)->get();
+            if (! empty($this->category)) {
                 $query->whereHas('category', function ($q) {
                     $q->where('name', $this->category);
                 });
             }
             $this->searchResults = $query->limit(20)->get();
+
             return;
         }
 
-        if (!empty($this->searchName)) {
+        if (! empty($this->searchName)) {
             $query->where('name', 'like', "%{$this->searchName}%");
         }
 
-        if (!empty($this->searchNumber)) {
+        if (! empty($this->searchNumber)) {
             $query->where('name', 'like', "{$this->searchNumber}%");
         }
 
-        if (!empty($this->category)) {
+        if (! empty($this->category)) {
             $query->whereHas('category', function ($q) {
                 $q->where('name', $this->category);
             });

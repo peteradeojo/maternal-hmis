@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Admissions;
 
-use App\Models\ConsultationNote;
 use Livewire\Component;
 
 class Review extends Component
@@ -16,7 +15,8 @@ class Review extends Component
         return view('livewire.admissions.review');
     }
 
-    public function save() {
+    public function save()
+    {
         $this->admission->reviews()->create([
             'note' => $this->note,
             'consultant_id' => auth()->user()->id,
@@ -27,7 +27,8 @@ class Review extends Component
         $this->reset('note');
     }
 
-    public function deleteNote($id) {
+    public function deleteNote($id)
+    {
         $this->admission->reviews()->where('id', $id)->delete();
         $this->dispatch('$refresh');
     }

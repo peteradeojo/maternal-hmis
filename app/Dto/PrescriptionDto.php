@@ -2,16 +2,20 @@
 
 namespace App\Dto;
 
-use App\Models\Product;
-
 class PrescriptionDto
 {
     public $name;
+
     public $productId;
+
     public $product;
+
     public $duration;
+
     public $dosage;
+
     public $route;
+
     public $frequency;
 
     public function __construct($data = null)
@@ -54,6 +58,6 @@ class PrescriptionDto
 
     public function __set($name, $value)
     {
-        throw new \Exception("attempting to directly set a value on a DTO");
+        throw new \Exception('attempting to directly set a value on a DTO');
     }
 }

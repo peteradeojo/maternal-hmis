@@ -20,6 +20,7 @@ class InsuranceController extends Controller
     public function getPatients(Request $request)
     {
         $query = Patient::has('insurance')->with(['category', 'insurance']);
+
         return $this->dataTable($request, $query);
     }
 
@@ -60,6 +61,7 @@ class InsuranceController extends Controller
     {
         if ($request->isMethod('GET')) {
             $orgs = InsuranceOrganization::all();
+
             return view('nhi.edit-insurance', ['profile' => $profile, 'orgs' => $orgs]);
         }
 
@@ -102,6 +104,7 @@ class InsuranceController extends Controller
         ]);
 
         InsuranceOrganization::create($data);
+
         return to_route('nhi.orgs.index');
     }
 
@@ -122,6 +125,7 @@ class InsuranceController extends Controller
         ]);
 
         $org->update($data);
+
         return to_route('nhi.orgs.index');
     }
 }

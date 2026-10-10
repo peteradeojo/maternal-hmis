@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bill extends Model
 {
-    use HasFactory, Auditable, SoftDeletes;
+    use Auditable, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'patient_id',
@@ -53,36 +53,35 @@ class Bill extends Model
         return $this->belongsTo(Patient::class, 'patient_id');
     }
 
-
     public function balance(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->entries->where('status', '!=', Status::blocked->value)->sum('amount') - $this->payments->where('status', Status::PAID->value)->sum('amount'),
+            get: fn () => $this->entries->where('status', '!=', Status::blocked->value)->sum('amount') - $this->payments->where('status', Status::PAID->value)->sum('amount'),
         );
     }
 
     public function paid(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->payments->where('status', Status::PAID->value)->sum('amount'),
+            get: fn () => $this->payments->where('status', Status::PAID->value)->sum('amount'),
         );
     }
 
     public function amount(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->entries->where('status', '!=', Status::blocked->value)->sum('amount'),
+            get: fn () => $this->entries->where('status', '!=', Status::blocked->value)->sum('amount'),
         );
     }
 
-    static function generateBillNumber($visit)
+    public static function generateBillNumber($visit)
     {
-        return date('ym-') . str_pad(
-            self::whereRaw("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", [date('m'), date('Y')])->count() + 1,
+        return date('ym-').str_pad(
+            self::whereRaw('EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?', [date('m'), date('Y')])->count() + 1,
             6,
-            "0",
+            '0',
             STR_PAD_LEFT
-        ) . "-{$visit->id}";
+        )."-{$visit->id}";
     }
 
     public function scopeAccessibleBy($query, User $user)

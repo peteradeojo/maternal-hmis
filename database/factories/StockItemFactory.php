@@ -17,6 +17,7 @@ class StockItemFactory extends Factory
     public function definition(): array
     {
         $name = fake()->sentence(3);
+
         return [
             'name' => $name,
             'sku' => fake()->unique()->lexify('phm-???-????'),

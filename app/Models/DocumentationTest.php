@@ -65,14 +65,16 @@ class DocumentationTest extends Model
 
     public function getSampleResults()
     {
-        $query = static::where('name', $this->name)->where('id', '<', $this->id)->where('results', '!=', NULL)->latest();
+        $query = static::where('name', $this->name)->where('id', '<', $this->id)->where('results', '!=', null)->latest();
 
         $test = $query->first();
-        if (!$test)
+        if (! $test) {
             return;
+        }
 
         $results = array_map(function ($r) {
             $r->result = null;
+
             return $r;
         }, (array) $test->results);
 
@@ -81,7 +83,7 @@ class DocumentationTest extends Model
 
     public function getResult($result)
     {
-        return object_get($this->results, $result, "not available");
+        return object_get($this->results, $result, 'not available');
     }
 
     public function scopeAccessibleBy($query, User $user)

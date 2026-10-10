@@ -13,10 +13,11 @@ class AnonymousSessionActivity extends Model
         'model_type',
         'model_id',
         'session_id',
-        'recorder'
+        'recorder',
     ];
 
-    public function model() {
+    public function model()
+    {
         return $this->morphTo();
     }
 }

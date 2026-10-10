@@ -27,6 +27,7 @@ class PatientsController extends Controller
     {
         $diagnoses = DocumentedDiagnosis::selectRaw('DISTINCT diagnoses as name')->get()->toArray();
         $data = compact('diagnoses');
+
         return $data;
     }
 
@@ -35,6 +36,7 @@ class PatientsController extends Controller
         if ($request->method() !== 'POST') {
             $data = $this->loadAutoCompleteData();
             $visit->patient->load(['visits', 'notes.consultant', 'antenatalProfiles']);
+
             return view('doctors.visit-form-2', [...$data, 'visit' => $visit]);
             // return view('doctors.consultation-form', [...$data, 'visit' => $visit]);
         }
@@ -56,10 +58,12 @@ class PatientsController extends Controller
             $documentation = $this->treatmentService->saveTreatment($visit, $data, $request->user());
 
             DB::commit();
+
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             DB::rollBack();
             report($th);
+
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
@@ -76,7 +80,7 @@ class PatientsController extends Controller
             'note' => 'nullable|string',
             'return_visit' => 'nullable|date',
             'ipt' => 'nullable',
-            'tt' => 'nullable'
+            'tt' => 'nullable',
         ]);
 
         try {
@@ -91,6 +95,7 @@ class PatientsController extends Controller
             return response()->json($visit->refresh());
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json([
                 'error' => $th->getMessage(),
             ], 500);
@@ -99,7 +104,9 @@ class PatientsController extends Controller
 
     public function followUp(Request $request, Documentation $documentation)
     {
-        if ($request->method() !== 'POST') return view('doctors.follow-up', compact('documentation'));
+        if ($request->method() !== 'POST') {
+            return view('doctors.follow-up', compact('documentation'));
+        }
 
         $data = $request->except('_token');
         if (count(array_filter($data)) < 1) {
@@ -116,6 +123,7 @@ class PatientsController extends Controller
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             report($th);
+
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
@@ -161,7 +169,7 @@ class PatientsController extends Controller
                 'duration',
                 'next_visit'
             ) + [
-                'doctor_id' => $user->id
+                'doctor_id' => $user->id,
             ]);
 
             if (count($request->tests ?? []) > 0 || count($request->treatments ?? []) > 0) {
@@ -206,10 +214,14 @@ class PatientsController extends Controller
             $profile->save();
 
             DB::commit();
-            if ($request->has('go_back')) return redirect()->back();
+            if ($request->has('go_back')) {
+                return redirect()->back();
+            }
+
             return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return back()->withInput()->withErrors(['error' => $th->getMessage()]);
         }
     }
@@ -222,7 +234,10 @@ class PatientsController extends Controller
                 'patient_id' => $doc->patient_id,
             ]);
         }
-        if (count($tests) > 0) return true;
+        if (count($tests) > 0) {
+            return true;
+        }
+
         return false;
     }
 
@@ -235,10 +250,13 @@ class PatientsController extends Controller
                 'frequency' => $request->frequency[$i],
                 'duration' => $request->duration[$i],
                 'patient_id' => $doc->patient_id,
-                'dispensed_by' => $id
+                'dispensed_by' => $id,
             ]);
         }
-        if (count($request->treatments ?? []) > 0) return true;
+        if (count($request->treatments ?? []) > 0) {
+            return true;
+        }
+
         return false;
     }
 
@@ -247,7 +265,7 @@ class PatientsController extends Controller
         return $this->dataTable($request, Patient::with(['category']), [
             function ($query, $search) {
                 $query->where('name', 'ilike', "$search%");
-            }
+            },
         ]);
     }
 
@@ -271,7 +289,7 @@ class PatientsController extends Controller
                 $query->whereHas('patient', function ($q) use ($search) {
                     $q->where('name', 'ilike', "%$search%")->orWhere('card_number', 'ilike', "$search%");
                 });
-            }
+            },
         ]);
     }
 
@@ -284,19 +302,21 @@ class PatientsController extends Controller
         if ($request->has('brief')) {
             return view('doctors.components.history-report', ['visit' => $visit]);
         }
+
         return view('doctors.visits.show', compact('visit'));
     }
 
     public function getAncLog(Request $request, AncVisit $visit)
     {
         $profile = $visit->profile;
+
         return view('doctors.antenatal.log', compact('visit', 'profile'));
     }
 
     public function note(Request $request, Visit $visit)
     {
         $request->validate([
-            'note' => 'required|string'
+            'note' => 'required|string',
         ]);
 
         $visit->notes()->create([
@@ -317,11 +337,11 @@ class PatientsController extends Controller
         $visit->diagnoses()->create([
             'user_id' => $request->user()->id,
             'patient_id' => $visit->patient_id,
-            'diagnoses' =>  $request->diagnosis,
+            'diagnoses' => $request->diagnosis,
         ]);
 
         return response()->json([
-            'ok' => true
+            'ok' => true,
         ]);
     }
 
@@ -352,12 +372,13 @@ class PatientsController extends Controller
             ]);
         }
 
-        return json_encode(compact('physical',  'other'));
+        return json_encode(compact('physical', 'other'));
     }
 
     public function viewAncProfile(Request $request, Patient $patient)
     {
         $profile = $patient->ancProfile;
+
         return view('doctors.antenatal.profile', compact('profile', 'patient'));
     }
 }

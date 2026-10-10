@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class StockTransaction extends Model
 {
-    const RECEIPT = "RECEIPT";
+    const RECEIPT = 'RECEIPT';
+
     const ISSUE = 'ISSUE';
+
     const TRANSFER = 'TRANSFER';
+
     const ADJUSTMENT = 'ADJUSTMENT';
+
     const RETURN = 'RETURN';
+
     const DISPOSAL = 'DISPOSAL';
 
     protected $fillable = [

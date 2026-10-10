@@ -11,13 +11,11 @@ use App\Models\AdmissionTreatments;
 use App\Models\ConsultationNote;
 use App\Models\Dama;
 use App\Models\OperationNote;
-use App\Models\ProcedureConsent;
 use App\Models\User;
 use App\Models\Visit;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 use function Illuminate\Filesystem\join_paths;
 
@@ -45,10 +43,10 @@ class AdmissionsController extends Controller
                 $request->validate([
                     'blood_pressure' => [
                         function ($field, $value, $fail) {
-                            if (!is_null($value) && !preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
-                                return $fail("Invalid format for blood pressure.");
+                            if (! is_null($value) && ! preg_match('/^\d{2,3}\/\d{2,3}$/', $value)) {
+                                return $fail('Invalid format for blood pressure.');
                             }
-                        }
+                        },
                     ],
                     'temperature' => 'numeric',
                     'pulse' => 'numeric',
@@ -61,23 +59,25 @@ class AdmissionsController extends Controller
 
                 try {
                     $admission->vitals()->create($data + ['recording_user_id' => $request->user()->id]);
+
                     return redirect()->back();
                 } catch (\Throwable $th) {
                     report($th);
-                    return back()->with('error', "An error occurred");
+
+                    return back()->with('error', 'An error occurred');
                 }
             }
 
             // Log drug administrations
             if ($action === 'treatment-log') {
                 $request->validate([
-                    'ministered' => 'required|array|min:1'
+                    'ministered' => 'required|array|min:1',
                 ]);
 
                 // dd($request->all());
                 $items = (array_keys($request->ministered));
 
-                return redirect()->to(route('nurses.admissions.treatment-preview', $admission) . "?treatments=" . join(',', $items)); //->with('ministered', array_keys($request->ministered));
+                return redirect()->to(route('nurses.admissions.treatment-preview', $admission).'?treatments='.implode(',', $items)); // ->with('ministered', array_keys($request->ministered));
             }
         }
 
@@ -98,7 +98,7 @@ class AdmissionsController extends Controller
         $this->authorize('update', $admission);
         $admission->plan->load(['tests', 'treatments']);
 
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             return view('doctors.admissions.edit', compact('admission'));
         }
     }
@@ -126,13 +126,14 @@ class AdmissionsController extends Controller
     {
         if ($request->method() !== 'POST') {
             $data = Ward::all();
+
             return view('it.wards', compact('data'));
         }
 
         $data = $request->validate([
             'name' => 'required|string|unique:wards,name',
             'beds' => 'required|integer',
-            'type' => 'required|in:private,public'
+            'type' => 'required|in:private,public',
         ]);
 
         Ward::create($data);
@@ -143,7 +144,7 @@ class AdmissionsController extends Controller
     public function assignWard(Request $request, Admission $admission)
     {
         $this->authorize('update', $admission);
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             // $wards = Ward::whereRaw('filled_beds < beds')->get();
             $wards = Ward::all();
             $admission->load(['admittable', 'patient']);
@@ -174,19 +175,19 @@ class AdmissionsController extends Controller
     public function previewTreatment(Request $request, Admission $admission)
     {
         $this->authorize('update', $admission);
-        if (!$request->isMethod('POST')) {
+        if (! $request->isMethod('POST')) {
             $allowedUsers = User::role([Roles::RegisteredNurse->value])->get();
             $ministered = explode(',', $request->query('treatments'));
             $treatments = $admission->plan->prescription?->lines()->whereIn('id', $ministered)->get();
 
             if ($treatments->count() < 1) {
-                return redirect()->back()->withErrors("Malformed request.");
+                return redirect()->back()->withErrors('Malformed request.');
             }
 
             return view('nursing.admissions.log-treatment', [
                 'treatments' => $treatments,
                 'admission' => $admission,
-                'allowedUsers' => $allowedUsers
+                'allowedUsers' => $allowedUsers,
             ]);
         }
 
@@ -197,8 +198,8 @@ class AdmissionsController extends Controller
             ]);
 
             $user = $request->authorized_by ? User::find($request->authorized_by) : $request->user();
-            if (!$user || !$user->hasRole([Roles::Doctor, Roles::RegisteredNurse])) {
-                return redirect()->back()->withErrors("Cannot authorize the treatment.");
+            if (! $user || ! $user->hasRole([Roles::Doctor, Roles::RegisteredNurse])) {
+                return redirect()->back()->withErrors('Cannot authorize the treatment.');
             }
 
             $records = array_map(function ($t) use (&$user, &$admission) {
@@ -209,9 +210,11 @@ class AdmissionsController extends Controller
                 foreach ($records as $r) {
                     AdmissionTreatments::create($r);
                 }
+
                 return redirect()->to(route('nurses.admissions.show', $admission));
             } catch (\Throwable $th) {
                 report($th);
+
                 return redirect()->back()->withErrors($th->getMessage());
             }
         }
@@ -227,7 +230,7 @@ class AdmissionsController extends Controller
 
         if ($visit->admission != null && ($visit->admission->status == Status::cancelled->value || $visit->admission->status == Status::closed->value) == false) {
             return response()->json([
-                'message' => "There is still an ongoing admission for this patient",
+                'message' => 'There is still an ongoing admission for this patient',
                 'ok' => false,
             ]);
         }
@@ -247,13 +250,13 @@ class AdmissionsController extends Controller
         ]);
 
         // ! Redirect all tests to show up for the admission
-        $visit->tests->each(fn($test) => $test->update([
+        $visit->tests->each(fn ($test) => $test->update([
             'testable_type' => $admission::class,
             'testable_id' => $admission->id,
         ]));
 
         // ! Redirect all prescriptions to show up for the admission plan
-        $visit->treatments->each(fn($t) => $t->update([
+        $visit->treatments->each(fn ($t) => $t->update([
             'event_type' => $plan::class,
             'event_id' => $plan->id,
         ]));
@@ -350,7 +353,7 @@ class AdmissionsController extends Controller
         ]);
 
         try {
-            //code...
+            // code...
             $note = OperationNote::create([
                 'admission_id' => $admission->id,
                 'patient_id' => $admission->patient->id,
@@ -361,6 +364,7 @@ class AdmissionsController extends Controller
             return response()->json(['op_note' => $note, 'message' => 'Success']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json([
                 'message' => $th->getMessage(),
             ], 500);
@@ -372,6 +376,7 @@ class AdmissionsController extends Controller
     public function getOpNote(Request $request, OperationNote $opnote)
     {
         $opnote->load(['user', 'patient']);
+
         return view('doctors.admissions.opnote', compact('opnote'));
     }
 
@@ -408,7 +413,6 @@ class AdmissionsController extends Controller
             }
         }
 
-
         $admission->discharged_on = $request->input('discharged_on');
         $admission->ward->filled_beds--;
         $admission->ward->save();
@@ -432,29 +436,29 @@ class AdmissionsController extends Controller
             'witness.*' => 'nullable|string',
         ]);
 
-        $signature = str_replace("data:image/png;base64,", "", $data['signature']);
+        $signature = str_replace('data:image/png;base64,', '', $data['signature']);
         $binary = base64_decode($signature);
 
-        $path = storage_path("app/consent-form-signatures");
-        if (!is_dir($path)) {
+        $path = storage_path('app/consent-form-signatures');
+        if (! is_dir($path)) {
             mkdir($path);
         }
 
         $path = join_paths(
             $path,
             $data['name']
-                . "-" . $admission->patient->card_number
-                . "_" . $admission->id . "-"
-                . date('Y-m-d-H-i') . ".png"
+                .'-'.$admission->patient->card_number
+                .'_'.$admission->id.'-'
+                .date('Y-m-d-H-i').'.png'
         );
-        if (!file_put_contents($path, $binary)) {
+        if (! file_put_contents($path, $binary)) {
             $error = error_get_last();
             if ($error) {
                 return response()->json($error, 500);
             }
 
             return response()->json([
-                'message' => 'An error occurred. Unable to save consent.'
+                'message' => 'An error occurred. Unable to save consent.',
             ], 500);
         }
 
@@ -470,14 +474,16 @@ class AdmissionsController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json($consent);
         } catch (\Throwable $th) {
             DB::rollBack();
             report($th);
 
             unlink($path);
+
             return response()->json([
-                'message' => "Error occured",
+                'message' => 'Error occured',
             ], 500);
         }
     }
@@ -487,7 +493,7 @@ class AdmissionsController extends Controller
         DB::beginTransaction();
 
         try {
-            if (!is_dir(storage_path(DAMA_SIGNATURES_DIR))) {
+            if (! is_dir(storage_path(DAMA_SIGNATURES_DIR))) {
                 mkdir(storage_path(DAMA_SIGNATURES_DIR));
             }
 
@@ -523,6 +529,7 @@ class AdmissionsController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             report($th);
+
             return $th->getMessage();
         }
     }

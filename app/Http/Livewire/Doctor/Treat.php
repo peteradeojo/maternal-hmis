@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Doctor;
 
 use App\Models\ConsultationNote;
 use App\Models\Product;
-use App\Services\Comms;
 use Illuminate\Support\Facades\Broadcast;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -12,8 +11,11 @@ use Livewire\Component;
 class Treat extends Component
 {
     public $visit;
+
     public $note;
+
     public $complaint;
+
     public $complaint_duration;
 
     #[Validate('required|string')]
@@ -27,12 +29,14 @@ class Treat extends Component
     public function addScan($id)
     {
         $pdt = Product::find($id);
-        if (!$pdt) return;
+        if (! $pdt) {
+            return;
+        }
 
         $this->visit->radios()->create([
             'patient_id' => $this->visit->patient_id,
             'describable_type' => $pdt::class,
-            'describable_id'  => $pdt->id,
+            'describable_id' => $pdt->id,
             'name' => $pdt->name,
             'requested_by' => auth()->user()->id,
         ]);
@@ -47,7 +51,7 @@ class Treat extends Component
             $this->visit->tests()->create([
                 'patient_id' => $this->visit->patient_id,
                 'describable_type' => $pdt::class,
-                'describable_id'  => $pdt->id,
+                'describable_id' => $pdt->id,
                 'name' => $pdt->name,
             ]);
         }
@@ -64,12 +68,14 @@ class Treat extends Component
     public function addPrescription($id)
     {
         $pdt = Product::find($id);
-        if (!$pdt) return;
+        if (! $pdt) {
+            return;
+        }
 
         $this->visit->treatments()->create([
             'patient_id' => $this->visit->patient_id,
             'prescriptionable_type' => $pdt::class,
-            'prescriptionable_id'  => $pdt->id,
+            'prescriptionable_id' => $pdt->id,
             'name' => $pdt->name,
             'requested_by' => auth()->user()->id,
         ]);
@@ -82,7 +88,7 @@ class Treat extends Component
             'note' => $this->note,
             'consultant_id' => auth()->user()->id,
         ]);
-        $this->note = "";
+        $this->note = '';
         $this->visit->refresh();
 
         $this->dispatch('close-anc-visit-notes-modal');
@@ -98,7 +104,7 @@ class Treat extends Component
     {
         $this->validate([
             'complaint' => 'required|string',
-            'complaint_duration' => 'nullable|string'
+            'complaint_duration' => 'nullable|string',
         ]);
 
         $this->visit->histories()->create([
@@ -128,7 +134,7 @@ class Treat extends Component
 
     public function addTreatment($data)
     {
-        if (!empty($data['id'])) {
+        if (! empty($data['id'])) {
             $product = Product::find($data['id']);
         } else {
             $product = (object) $data['product'];
@@ -137,12 +143,14 @@ class Treat extends Component
         $this->dispatch('$refresh');
     }
 
-    public function addedTreatment() {
+    public function addedTreatment()
+    {
         $this->dispatch('$refresh');
         // $this->dispatch('close-anc-treatments');
     }
 
-    public function addDiagnosis() {
+    public function addDiagnosis()
+    {
         $data = $this->validate();
 
         $this->visit->diagnoses()->create([
@@ -157,7 +165,8 @@ class Treat extends Component
         Broadcast::on("doc-update.{$this->visit->id}")->as('DocUpdate')->sendNow();
     }
 
-    public function removeDiagnosis($id) {
+    public function removeDiagnosis($id)
+    {
         $this->visit->diagnoses()->where('id', $id)->delete();
         $this->dispatch('$refresh');
         Broadcast::on("doc-update.{$this->visit->id}")->as('DocUpdate')->sendNow();

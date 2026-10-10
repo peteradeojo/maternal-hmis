@@ -53,12 +53,13 @@ class PrescriptionLine extends Model implements PatientRecord
 
     public function __toString()
     {
-        return ($this->item?->name ?? $this->description) . " {$this->dosage} {$this->frequency} - for {$this->duration} " . (is_numeric($this->duration) ? 'day(s)' : '');
+        return ($this->item?->name ?? $this->description)." {$this->dosage} {$this->frequency} - for {$this->duration} ".(is_numeric($this->duration) ? 'day(s)' : '');
     }
 
     public function getDispensingReport()
     {
         $qty = $this->qty_dispensed ?? TreatmentService::getCount($this->item->toArray(), $this->toArray());
+
         return [
             'id' => $this->id,
             'description' => (string) $this,
@@ -78,10 +79,10 @@ class PrescriptionLine extends Model implements PatientRecord
         return $this->dispenses->sum('qty_dispensed');
     }
 
-    static function booted()
+    public static function booted()
     {
-        static::updating(function (Self $i) {
-            if ($i->qty_dispensed == "") {
+        static::updating(function (self $i) {
+            if ($i->qty_dispensed == '') {
                 $i->qty_dispensed = 0;
             }
             $i->qty_dispensed = floatval($i->qty_dispensed);

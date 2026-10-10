@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\Department;
 use App\Http\Controllers\AdmissionsController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Nursing\PatientsController;
 use App\Http\Controllers\VitalsController;
 use Illuminate\Support\Facades\Route;
