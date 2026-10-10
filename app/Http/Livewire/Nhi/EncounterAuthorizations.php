@@ -4,12 +4,13 @@ namespace App\Http\Livewire\Nhi;
 
 use App\Interfaces\OperationalEvent;
 use App\Models\InsuranceAuthorization;
+use App\Models\Visit;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class EncounterAuthorizations extends Component
 {
-    public OperationalEvent $visit;
+    public Visit $visit;
 
     #[Validate('required|numeric')]
     public ?float $requested_amount = 0;
@@ -22,9 +23,9 @@ class EncounterAuthorizations extends Component
 
     public $editingAuthorization = null;
 
-    public function mount($visit)
+    public function mount(Visit $visit)
     {
-        $this->visit = $visit;
+        $this->visit = $visit->load('authorizations');
     }
 
     public function render()
@@ -60,6 +61,7 @@ class EncounterAuthorizations extends Component
             'requested_amount' => $this->requested_amount,
             'approved_amount' => $this->approved_amount,
         ]);
+        $this->visit->refresh()->load('authorizations'); //->authorizations->refresh();
 
         $this->reset();
     }
