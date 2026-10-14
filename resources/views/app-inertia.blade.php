@@ -209,6 +209,22 @@
             </ul>
         </div>
     </div>
+
+
+    <script>
+        (async () => {
+            if (location.hostname == 'portal.maternalchildhosp.com') {
+                try {
+                    const res = await fetch("https://portal.lan/api/health-check");
+                    if (res.ok) {
+                        window.location.href = "https://portal.lan";
+                    }
+                } catch (error) {
+                }
+            }
+        })();
+    </script>
+
     <script src="{{ asset('/datatables/datatables.min.js') }}"></script>
 
     @if (str_ends_with(request()->host(), '.lan'))
