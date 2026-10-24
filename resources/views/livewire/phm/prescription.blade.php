@@ -59,12 +59,14 @@
             @if ($doc->status == Status::active)
                 <tr>
                     <td colspan="4"></td>
-                    <td>
+                    <td class="flex gap-x-4 items-center">
                         <button class="btn bg-blue-400 text-white" wire:click.prevent="saveToBill">Save bill <i
                                 class="fa fa-save"></i></button>
-                        <button class="btn bg-red-500 text-white" wire:click="dispense">Dispense <i
+                        <button class="btn bg-green-500 text-white" wire:confirm="Are you sure? This action cannot be undone" wire:click="dispense">Dispense <i
                                 class="fa fa-send"></i></button>
-                    </td>
+
+                        <button wire:click="closePrescription" wire:confirm="Are you sure? This action cannot be undone"
+                            class="btn bg-red-500 text-white">Close Prescription<i </td>
                 </tr>
             @endif
         </tfoot>

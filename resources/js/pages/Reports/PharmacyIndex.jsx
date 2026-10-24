@@ -39,7 +39,15 @@ const PharmacyIndex = ({ data }) => {
                             label: 'Drug Dispense Trend',
                             data: dispenseTrend.map(d => d.qty),
                         }],
-                    }} />
+                    }}
+                    options={{
+                        scales: {
+                            x: { beginAtZero: true }, y: {
+                                ticks: { stepSize: 1 }
+                            }
+                        }
+                    }}
+                />
             </div>
         </div>
 

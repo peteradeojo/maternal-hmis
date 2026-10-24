@@ -70,6 +70,8 @@ class PharmacyReportController extends Controller
     public function index(Request $request)
     {
         $now = now(); //->subMonth();
+        if (app()->isProduction() == false) $now = $now->subMonth();
+
         $weekStart = $now->copy()->startOfWeek(); //->format('Y-m-d');
         $weekEnd = $weekStart->copy()->addDays(7)->format('Y-m-d');
         $weekStart = $weekStart->format('Y-m-d');
@@ -98,21 +100,36 @@ class PharmacyReportController extends Controller
             ORDER BY qty ASC LIMIT 5;
             ");
 
-            $dailyDispensings = DB::select("SELECT SUM(pl.qty_dispensed) as qty, to_char(pl.created_at, 'yyyy-mm-dd') dayt
-            FROM prescription_lines pl
-            LEFT JOIN stock_items si on si.id = pl.item_id
-            WHERE pl.qty_dispensed > 0
-            AND pl.created_at >= timestamp '{$weekStart}'
-            AND pl.created_at < timestamp '{$weekEnd}'
-            GROUP BY dayt
-            ORDER BY dayt ASC
-            ");
+            // $dailyDispensings = DB::select("SELECT SUM(pl.qty_dispensed) as qty, to_char(pl.created_at, 'yyyy-mm-dd') dayt
+            // FROM prescription_lines pl
+            // LEFT JOIN stock_items si on si.id = pl.item_id
+            // WHERE pl.qty_dispensed > 0
+            // AND pl.created_at >= timestamp '{$weekStart}'
+            // AND pl.created_at < timestamp '{$weekEnd}'
+            // GROUP BY dayt, prescription_id
+            // ORDER BY dayt ASC
+            // ");
+
+            $dailyDispensings = DB::select("SELECT
+    to_char(d.day, 'YYYY-MM-DD') AS dayt,
+    COUNT(p.id) AS qty
+FROM generate_series(
+        (SELECT MIN(created_at)::date FROM prescriptions WHERE status = 0 AND created_at >= '$weekStart'),
+        CURRENT_DATE,
+        interval '1 day'
+     ) AS d(day)
+LEFT JOIN prescriptions p
+       ON p.created_at >= d.day
+      AND p.created_at <  d.day + interval '1 day'
+      AND p.status = 0
+where d.day >= '$weekStart' AND d.day <= '$weekEnd'
+GROUP BY d.day
+ORDER BY d.day ASC;");
 
             $data = compact('topDrugs', 'bottom', 'dailyDispensings', 'weekEnd', 'weekStart');
-            Cache::set($cacheKey, $data, now()->addMinutes(10));
+            Cache::set($cacheKey, $data, 30);
         }
 
-        // dd($data);
         return inertia('Reports/PharmacyIndex', ['data' => $data]);
     }
 
