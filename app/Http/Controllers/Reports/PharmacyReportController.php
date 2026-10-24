@@ -69,7 +69,7 @@ class PharmacyReportController extends Controller
 
     public function index(Request $request)
     {
-        $now = now()->subMonth();
+        $now = now(); //->subMonth();
         $weekStart = $now->copy()->startOfWeek(); //->format('Y-m-d');
         $weekEnd = $weekStart->copy()->addDays(7)->format('Y-m-d');
         $weekStart = $weekStart->format('Y-m-d');

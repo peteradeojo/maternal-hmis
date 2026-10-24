@@ -43,7 +43,7 @@ const PharmacyIndex = ({ data }) => {
             </div>
         </div>
 
-        {JSON.stringify(data)}
+        {/* {JSON.stringify(data)} */}
     </>);
 };
 
