@@ -2,6 +2,7 @@
 
 use App\Events\ChatSent;
 use App\Http\Controllers\IT\CrmController;
+use App\Http\Controllers\Reports\PharmacyReportController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,14 +30,14 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
 
     Route::prefix('rad')->group(base_path('routes/api/rad.php'));
 
-    include_once __DIR__.'/api/laboratory.php';
-    include_once __DIR__.'/api/nursing.php';
+    include_once __DIR__ . '/api/laboratory.php';
+    include_once __DIR__ . '/api/nursing.php';
     // include_once __DIR__ . '/api/rad.php';
-    include_once __DIR__.'/api/doctor.php';
-    include_once __DIR__.'/api/nhi.php';
-    include_once __DIR__.'/api/dispensary.php';
-    include_once __DIR__.'/api/billing.php';
-    include_once __DIR__.'/api/pharmacy.php';
+    include_once __DIR__ . '/api/doctor.php';
+    include_once __DIR__ . '/api/nhi.php';
+    include_once __DIR__ . '/api/dispensary.php';
+    include_once __DIR__ . '/api/billing.php';
+    include_once __DIR__ . '/api/pharmacy.php';
 
     Route::post('/job-openings', [CrmController::class, 'createJobOpening']);
     Route::patch('/job-openings/{opening}', [CrmController::class, 'toggleJobOpening']);
@@ -90,6 +91,12 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
         ]);
 
         return response()->json(['ok' => true, 'message' => $data]);
+    });
+
+    Route::prefix('/reports')->name('reports.')->group(function () {
+        Route::prefix('/phm')->name('phm.')->group(function () {
+            Route::get('/', [PharmacyReportController::class, 'index']);
+        });
     });
 });
 // include_once __DIR__ . '/api/records.php';

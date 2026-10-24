@@ -7,57 +7,117 @@ use App\Http\Controllers\Controller;
 use App\Models\Prescription;
 use App\Models\StockTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PharmacyReportController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     $today = $request->input('date') ? Carbon::parse($request->input('date')) : today();
+    //     $dispenseQuery = StockTransaction::with(['item'])->where('tx_type', StockTransaction::ISSUE)->groupBy('item_id');
+    //
+    //     $drugsDispensedToday = $dispenseQuery->clone()
+    //         ->where('created_at', '>=', $today)
+    //         ->selectRaw('count(item_id) as count, item_id')
+    //         ->orderBy('count', 'desc')
+    //         ->limit(20)
+    //         ->get();
+    //
+    //     $drugsDispensedTodayCount = DB::query()->selectRaw('item_id')->fromSub(
+    //         $dispenseQuery->clone()
+    //             ->where('created_at', '>=', $today)
+    //             ->select(['item_id']),
+    //         'derived'
+    //     )->count();
+    //
+    //     $drugsDispensedLastPeriod = $dispenseQuery->clone()->count();
+    //
+    //     $topDrugsDispensed = $dispenseQuery->clone()
+    //         ->selectRaw('SUM(quantity) as quantity, item_id')
+    //         ->where('created_at', '>=', $today)
+    //         ->orderBy('quantity', 'DESC')
+    //         ->limit(20)
+    //         ->get();
+    //
+    //     $prescriptionsQuery = Prescription::query()->where('created_at', '>=', $today);
+    //
+    //     $totalPrescriptionsToday = $prescriptionsQuery->clone()->count();
+    //     $totalPendingPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::pending)->count();
+    //     $totalClosedPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::closed)->count();
+    //
+    //     $data = compact(
+    //         'drugsDispensedToday',
+    //         'drugsDispensedLastPeriod',
+    //         'topDrugsDispensed',
+    //         'drugsDispensedTodayCount',
+    //         'totalClosedPrescriptionsToday',
+    //         'totalPendingPrescriptionsToday',
+    //         'totalPrescriptionsToday',
+    //     );
+    //
+    //     if ($request->expectsJson()) {
+    //         return response()->json(['data' => $data]);
+    //     }
+    //
+    //     // dd($data);
+    //     return inertia('Reports/PharmacyIndex', [
+    //         'data' => $data,
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
-        $today = today();
-        $dispenseQuery = StockTransaction::with(['item'])->where('tx_type', StockTransaction::ISSUE)->groupBy('item_id');
+        $now = now()->subMonth();
+        $weekStart = $now->copy()->startOfWeek(); //->format('Y-m-d');
+        $weekEnd = $weekStart->copy()->addDays(7)->format('Y-m-d');
+        $weekStart = $weekStart->format('Y-m-d');
 
-        $drugsDispensedToday = $dispenseQuery->clone()
-            ->where('created_at', '>=', $today)
-            ->selectRaw('count(item_id) as count, item_id')
-            ->orderBy('count', 'desc')
-            ->limit(20)
-            ->get();
+        $cacheKey = "reports:phm:" . md5("{$weekStart}-{$weekEnd}");
 
-        $drugsDispensedTodayCount = DB::query()->selectRaw('item_id')->fromSub(
-            $dispenseQuery->clone()
-                ->where('created_at', '>=', $today)
-                ->select(['item_id']),
-            'derived'
-        )->count();
+        $data = Cache::get($cacheKey);
+        if (!$data) {
+            $topDrugs = DB::select("
+            SELECT pl.item_id, si.name, sum(qty_dispensed) qty FROM prescription_lines pl
+            LEFT JOIN stock_items si on si.id = pl.item_id
+            WHERE pl.qty_dispensed != 0
+            AND pl.created_at >= timestamp '{$weekStart}'
+            AND pl.created_at < timestamp '{$weekEnd}'
+            GROUP BY pl.item_id, si.name
+            ORDER BY qty DESC LIMIT 5;
+            ");
 
-        $drugsDispensedLastPeriod = $dispenseQuery->clone()->count();
+            $bottom = DB::select("
+            SELECT pl.item_id, si.name, sum(qty_dispensed) qty FROM prescription_lines pl
+            LEFT JOIN stock_items si on si.id = pl.item_id
+            WHERE pl.qty_dispensed != 0
+            AND pl.created_at >= timestamp '{$weekStart}'
+            AND pl.created_at < timestamp '{$weekEnd}'
+            GROUP BY pl.item_id, si.name
+            ORDER BY qty ASC LIMIT 5;
+            ");
 
-        $topDrugsDispensed = $dispenseQuery->clone()
-            ->selectRaw('SUM(quantity) as quantity, item_id')
-            ->where('created_at', '>=', $today)
-            ->orderBy('quantity', 'DESC')
-            ->limit(20)
-            ->get();
+            $dailyDispensings = DB::select("SELECT SUM(pl.qty_dispensed) as qty, to_char(pl.created_at, 'yyyy-mm-dd') dayt
+            FROM prescription_lines pl
+            LEFT JOIN stock_items si on si.id = pl.item_id
+            WHERE pl.qty_dispensed > 0
+            AND pl.created_at >= timestamp '{$weekStart}'
+            AND pl.created_at < timestamp '{$weekEnd}'
+            GROUP BY dayt
+            ORDER BY dayt ASC
+            ");
 
-        $prescriptionsQuery = Prescription::query()->where('created_at', '>=', $today);
-
-        $totalPrescriptionsToday = $prescriptionsQuery->clone()->count();
-        $totalPendingPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::pending)->count();
-        $totalClosedPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::closed)->count();
-
-        $data = compact(
-            'drugsDispensedToday',
-            'drugsDispensedLastPeriod',
-            'topDrugsDispensed',
-            'drugsDispensedTodayCount',
-            'totalClosedPrescriptionsToday',
-            'totalPendingPrescriptionsToday',
-            'totalPrescriptionsToday',
-        );
+            $data = compact('topDrugs', 'bottom', 'dailyDispensings', 'weekEnd', 'weekStart');
+            Cache::set($cacheKey, $data, now()->addMinutes(10));
+        }
 
         // dd($data);
-        return inertia('Reports/PharmacyIndex', [
-            'data' => $data,
-        ]);
+        return inertia('Reports/PharmacyIndex', ['data' => $data]);
+    }
+
+    protected function getDispenseQuery()
+    {
+        return StockTransaction::with(['item'])->where('tx_type', StockTransaction::ISSUE)->groupBy('item_id');
     }
 }

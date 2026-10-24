@@ -11,6 +11,7 @@
         "php": "^8.2",
         "cloudinary-labs/cloudinary-laravel": "^2.3",
         "dompdf/dompdf": "^3.1",
+        "fnsc/laravel-google-drive": "^1.3",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^3.2",
         "laravel/framework": "^12.0",
@@ -27,7 +28,8 @@
         "spatie/simple-excel": "^3.6",
         "swoole/ide-helper": "^6.0",
         "turso/libsql": "dev-master",
-        "tursodatabase/turso-driver-laravel": "dev-main#89c3e15"
+        "tursodatabase/turso-driver-laravel": "dev-main#89c3e15",
+        "yaza/laravel-google-drive-storage": "^5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
