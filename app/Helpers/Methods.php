@@ -18,6 +18,7 @@ function getRouteMap()
             'role' => 'doctor',
             'label' => ['Consulting', 'fa-stethoscope'],
             'routes' => [
+                'Waiting Patients' => [route('doctor.waiting-patients'), 'fa-person', null],
                 'History' => [route('doctor.history'), 'fa-clock', null],
                 'Wards' => [route('doctor.admissions'), 'fa-bed', null],
                 'Antenatal Appointments' => [route('doctor.anc-bookings'), 'fa-book', null],
@@ -27,6 +28,7 @@ function getRouteMap()
             'role' => ['nurse', Roles::RegisteredNurse->value],
             'label' => ['Nursing', 'fa-user-nurse'],
             'routes' => [
+                'Vitals' => [route('nurses.vitals'), 'fa-thermometer', null],
                 'Admissions' => [route('nurses.admissions.get'), 'fa-bed', null],
                 'Antenatal Bookings' => [route('nurses.anc-bookings'), 'fa-female', null],
             ],
@@ -144,7 +146,7 @@ function authorizedRoutes()
 
             unset($map['role']);
 
-            if ($match = array_filter($routes, fn ($r) => $r['label'][0] == $map['label'][0])) {
+            if ($match = array_filter($routes, fn($r) => $r['label'][0] == $map['label'][0])) {
                 $key = (array_keys($match))[0] ?? null;
                 if ($key === null) {
                     continue;
@@ -225,11 +227,11 @@ function clean_data_image($data)
 
 function save_signature_to_local($filename, $data)
 {
-    $file = DAMA_SIGNATURES_DIR."/$filename";
+    $file = DAMA_SIGNATURES_DIR . "/$filename";
     $f = file_put_contents(storage_path($file), clean_data_image($data));
 
     if ($f !== false) {
-        $savedFilename = basename(DAMA_SIGNATURES_DIR).'/'.$filename;
+        $savedFilename = basename(DAMA_SIGNATURES_DIR) . '/' . $filename;
 
         return $savedFilename;
     }

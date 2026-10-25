@@ -17,7 +17,7 @@
             <tbody>
                 @foreach ($waitlist as $visit)
                     <tr>
-                        <td>{{ $visit->patient->p_name }}</td>
+                        <td>{!! $visit->patient->p_name !!}</td>
                         <td>{{ $visit->patient->card_number }}</td>
                         <td>{{ $visit->patient->category->name }}</td>
                         <td>{{ $visit->created_at?->format('Y-m-d h:i A') }}</td>
@@ -34,7 +34,10 @@
     <script>
         $("#waitlist").DataTable({
             responsive: true,
-            ordering: false
+            ordering: false,
+            order: [
+                [3, 'desc']
+            ]
         });
     </script>
 @endscript

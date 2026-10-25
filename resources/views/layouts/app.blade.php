@@ -108,11 +108,13 @@
                 </ul>
             </div>
         </div>
+
+
         {{-- Large Nav --}}
         <aside
-            class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-gray-800 overflow-auto"
+            class="hidden sm:block z-50 fixed left-0 transition-[width] duration-[500ms] h-screen bg-primary overflow-auto"
             x-cloak :class="{ 'w-[16%]': aside, 'w-[5%]': !aside }" x-transition>
-            <div class="bg-white p-2 text-center">
+            <div class="p-2 text-center">
                 <img src="https://ui-avatars.com/api/?name={{ session(config('app.generic_doctor_id')) ?? auth()->user()->name }}"
                     alt="" class="rounded-full w-12 m-auto">
                 <p x-show="aside" class="font-bold">
@@ -121,6 +123,9 @@
             </div>
             @include('components.sidebar')
         </aside>
+{{-- End Large Nav --}}
+
+
         <main
             class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms] printable print:ml-0"
             x-cloak x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">

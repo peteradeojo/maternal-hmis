@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::name('doctor.')->middleware(['datalog', 'auth'])->group(function () {
     Route::middleware(['role:doctor'])->group(function () {
+        Route::get('/opd', [PatientsController::class, 'index'])->name('waiting-patients');
         Route::match(['get', 'post'], '/treat/{visit}', [PatientsController::class, 'treat'])->name('treat');
         Route::match(['get', 'post'], '/review/{documentation}', [PatientsController::class, 'followUp'])->name('follow-up');
 
