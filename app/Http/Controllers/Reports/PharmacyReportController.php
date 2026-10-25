@@ -13,60 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class PharmacyReportController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     $today = $request->input('date') ? Carbon::parse($request->input('date')) : today();
-    //     $dispenseQuery = StockTransaction::with(['item'])->where('tx_type', StockTransaction::ISSUE)->groupBy('item_id');
-    //
-    //     $drugsDispensedToday = $dispenseQuery->clone()
-    //         ->where('created_at', '>=', $today)
-    //         ->selectRaw('count(item_id) as count, item_id')
-    //         ->orderBy('count', 'desc')
-    //         ->limit(20)
-    //         ->get();
-    //
-    //     $drugsDispensedTodayCount = DB::query()->selectRaw('item_id')->fromSub(
-    //         $dispenseQuery->clone()
-    //             ->where('created_at', '>=', $today)
-    //             ->select(['item_id']),
-    //         'derived'
-    //     )->count();
-    //
-    //     $drugsDispensedLastPeriod = $dispenseQuery->clone()->count();
-    //
-    //     $topDrugsDispensed = $dispenseQuery->clone()
-    //         ->selectRaw('SUM(quantity) as quantity, item_id')
-    //         ->where('created_at', '>=', $today)
-    //         ->orderBy('quantity', 'DESC')
-    //         ->limit(20)
-    //         ->get();
-    //
-    //     $prescriptionsQuery = Prescription::query()->where('created_at', '>=', $today);
-    //
-    //     $totalPrescriptionsToday = $prescriptionsQuery->clone()->count();
-    //     $totalPendingPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::pending)->count();
-    //     $totalClosedPrescriptionsToday = $prescriptionsQuery->clone()->where('status', '=', Status::closed)->count();
-    //
-    //     $data = compact(
-    //         'drugsDispensedToday',
-    //         'drugsDispensedLastPeriod',
-    //         'topDrugsDispensed',
-    //         'drugsDispensedTodayCount',
-    //         'totalClosedPrescriptionsToday',
-    //         'totalPendingPrescriptionsToday',
-    //         'totalPrescriptionsToday',
-    //     );
-    //
-    //     if ($request->expectsJson()) {
-    //         return response()->json(['data' => $data]);
-    //     }
-    //
-    //     // dd($data);
-    //     return inertia('Reports/PharmacyIndex', [
-    //         'data' => $data,
-    //     ]);
-    // }
-
     public function index(Request $request)
     {
         $now = now(); //->subMonth();
@@ -87,46 +33,73 @@ class PharmacyReportController extends Controller
             AND pl.created_at >= timestamp '{$weekStart}'
             AND pl.created_at < timestamp '{$weekEnd}'
             GROUP BY pl.item_id, si.name
-            ORDER BY qty DESC LIMIT 5;
+            ORDER BY qty DESC LIMIT 10;
             ");
 
-            $bottom = DB::select("
-            SELECT pl.item_id, si.name, sum(qty_dispensed) qty FROM prescription_lines pl
-            LEFT JOIN stock_items si on si.id = pl.item_id
-            WHERE pl.qty_dispensed != 0
-            AND pl.created_at >= timestamp '{$weekStart}'
-            AND pl.created_at < timestamp '{$weekEnd}'
-            GROUP BY pl.item_id, si.name
-            ORDER BY qty ASC LIMIT 5;
-            ");
+            // $topStockLevels = DB::select("
+            // SELECT * FROM inventory_balances ib
+            // LEFT JOIN stock_items si ON ib.item_id = si.id
+            // LEFT JOIN (SELECT pl.item_id, sum(qty_dispensed) qty FROM prescription_lines pl
+            //     WHERE pl.qty_dispensed != 0
+            //     AND pl.created_at >= timestamp '{$weekStart}'
+            //     AND pl.created_at < timestamp '{$weekEnd}'
+            //     GROUP BY pl.item_id
+            //     ORDER BY qty ASC LIMIT 20
+            // ) as st ON st.item_id = ib.item_id
+            // ORDER BY qty_on_hand ASC limit 30;");
 
-            // $dailyDispensings = DB::select("SELECT SUM(pl.qty_dispensed) as qty, to_char(pl.created_at, 'yyyy-mm-dd') dayt
-            // FROM prescription_lines pl
-            // LEFT JOIN stock_items si on si.id = pl.item_id
-            // WHERE pl.qty_dispensed > 0
-            // AND pl.created_at >= timestamp '{$weekStart}'
-            // AND pl.created_at < timestamp '{$weekEnd}'
-            // GROUP BY dayt, prescription_id
-            // ORDER BY dayt ASC
-            // ");
+            $topStockLevels = DB::select("
+            SELECT
+    ib.*,
+    si.name,
+    top.qty AS qty_dispensed_week
+FROM (
+    SELECT
+        pl.item_id,
+        SUM(pl.qty_dispensed) AS qty
+    FROM prescription_lines pl
+    WHERE pl.qty_dispensed != 0
+      AND pl.created_at >= timestamp '{$weekStart}'
+      AND pl.created_at <  timestamp '{$weekEnd}'
+    GROUP BY pl.item_id
+    ORDER BY qty DESC
+    LIMIT 20
+) top
+JOIN inventory_balances ib ON ib.item_id = top.item_id
+JOIN stock_items si        ON si.id = top.item_id
+ORDER BY top.qty DESC;");
 
-            $dailyDispensings = DB::select("SELECT
-    to_char(d.day, 'YYYY-MM-DD') AS dayt,
-    COUNT(p.id) AS qty
-FROM generate_series(
-        (SELECT MIN(created_at)::date FROM prescriptions WHERE status = 0 AND created_at >= '$weekStart'),
-        CURRENT_DATE,
-        interval '1 day'
-     ) AS d(day)
-LEFT JOIN prescriptions p
-       ON p.created_at >= d.day
-      AND p.created_at <  d.day + interval '1 day'
-      AND p.status = 0
-where d.day >= '$weekStart' AND d.day <= '$weekEnd'
-GROUP BY d.day
-ORDER BY d.day ASC;");
 
-            $data = compact('topDrugs', 'bottom', 'dailyDispensings', 'weekEnd', 'weekStart');
+            $closedPrescriptions = DB::select("SELECT to_char(d.day, 'YYYY-MM-DD') AS dayt, COUNT(p.id) AS qty
+            FROM generate_series(
+                    (SELECT MIN(created_at)::date FROM prescriptions WHERE status = 0 AND created_at >= '$weekStart'),
+                    CURRENT_DATE,
+                    interval '1 day'
+                 ) AS d(day)
+            LEFT JOIN prescriptions p
+                   ON p.created_at >= d.day
+                  AND p.created_at <  d.day + interval '1 day'
+                  AND p.status = 0
+            where d.day >= '$weekStart' AND d.day <= '$weekEnd'
+            GROUP BY d.day
+            ORDER BY d.day ASC;");
+
+            $openPrescriptions = DB::select("SELECT to_char(d.day, 'YYYY-MM-DD') AS dayt, COUNT(p.id) AS qty
+            FROM generate_series(
+                    (SELECT MIN(created_at)::date FROM prescriptions WHERE status = 1 AND created_at >= '$weekStart'),
+                    CURRENT_DATE,
+                    interval '1 day'
+                 ) AS d(day)
+            LEFT JOIN prescriptions p
+                   ON p.created_at >= d.day
+                  AND p.created_at <  d.day + interval '1 day'
+                  AND p.status = 1
+            where d.day >= '$weekStart' AND d.day <= '$weekEnd'
+            GROUP BY d.day
+            ORDER BY d.day ASC;");
+
+            $data = compact('topDrugs', 'topStockLevels', 'closedPrescriptions', 'openPrescriptions', 'weekEnd', 'weekStart');
+            // dd($data);
             Cache::set($cacheKey, $data, 30);
         }
 
