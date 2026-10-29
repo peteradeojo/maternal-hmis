@@ -56,9 +56,7 @@ class RunDbBackup extends Command
             $this->info("Backup generated successfully! Saved to {$filename}");
 
             $name = Storage::disk('google')->put($remoteFileName, File::get($filename));
-            // Gdrive::put($remoteFileName, $filename);
 
-            dump($name);
             $this->info("Backup uploaded successfully! Saved to {$filename}");
 
 
