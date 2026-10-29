@@ -25,3 +25,5 @@ yarn-error.log
 *.env
 supervisord.pid
 .last_deployed_sha
+storage/app/backups
+storage-client-account.json
