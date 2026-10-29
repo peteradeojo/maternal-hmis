@@ -104,7 +104,6 @@ class CrmController extends Controller
             return redirect()->route('it.crm-index');
         } catch (\Throwable $th) {
             report($th);
-
             return redirect()->back()->withErrors($th->getMessage());
         }
     }
@@ -275,5 +274,24 @@ class CrmController extends Controller
         return inertia('HR/Jobs', [
             'jobs' => $jobs,
         ]);
+    }
+
+    public function deletePost(Request $request, Post $post)
+    {
+        if (
+            $request->user()->can(Permissions::DELETE_POSTS->value, $post) ==
+            false
+        ) {
+            return abort(403);
+        }
+
+        try {
+            $post->delete();
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            report($th);
+
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 }

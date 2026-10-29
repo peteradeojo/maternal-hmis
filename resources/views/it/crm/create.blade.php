@@ -6,8 +6,8 @@
 
 @section('content')
     <div class="container">
-        <div class="card p-2">
-            <form action="" method="post" enctype="multipart/form-data">
+        <div class="card p-2" x-data="{ isSubmitting: false }">
+            <form @submit.once="isSubmitting = true" action="" method="post" enctype="multipart/form-data" id="form">
                 @csrf
                 <div class="form-group">
                     <label>Cover Image</label>
@@ -18,8 +18,7 @@
                     <input type="text" name="title" class="form-control my-1" id="title" required placeholder="Title" />
                 </div>
                 <textarea name="post" id="summernote-field">{{old('post')}}</textarea>
-
-                <button class="btn btn-green my-1">Publish</button>
+                <button type="submit" x-bind:disabled="isSubmitting" class="btn btn-green my-1">Publish</button>
             </form>
         </div>
     </div>

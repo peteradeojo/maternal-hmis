@@ -35,6 +35,7 @@ Route::name('it.')->group(function () {
         Route::post('/publish', [CrmController::class, 'publish']);
         Route::get('/{post}', [CrmController::class, 'show'])->name('crm-show');
         Route::put('/{post}/status', [CrmController::class, 'updatePostStatus'])->name('crm-status');
+        Route::delete('/{post}', [CrmController::class, 'deletePost'])->name('crm-delete');
     });
 
     Route::prefix('/hr')->middleware(['role:admin'])->group(function () {

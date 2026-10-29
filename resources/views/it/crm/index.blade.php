@@ -15,6 +15,7 @@
                             <th>Date</th>
                             <th>Description</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,6 +29,13 @@
                                 <td></td>
                                 <td>
                                     <a href="{{ route('it.crm-show', $post->id) }}" class="link">View</a>
+                                </td>
+                                <td>
+                                    <form action="{{ route('it.crm-delete', $post->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="link" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
