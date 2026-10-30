@@ -41,7 +41,7 @@ class RunDbBackup extends Command
         }
 
         $process = Process::fromShellCommandline(sprintf(
-            'PGPASSWORD="%s" pg_dump -U %s -h %s -p %s -d %s -F c -b -v -f %s',
+            'pg_dump -U %s -h %s -p %s -d %s -F c -b -v -f %s',
             $config['password'],
             $config['username'],
             $config['host'],
@@ -49,6 +49,10 @@ class RunDbBackup extends Command
             $config['database'],
             $filename,
         ));
+
+        $process->setEnv([
+            'PGPASSWORD' => $config['password'],
+        ]);
 
         try {
             $this->info('Starting Postgresql backup');
