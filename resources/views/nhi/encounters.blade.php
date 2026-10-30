@@ -45,7 +45,7 @@
                                 id,
                                 patient
                             }) =>
-                            `<a href='#' class='link visit-link' data-id='${id}'>${patient.name}</a>`
+                            `<a href='#' class='link visit-link' data-id='${id}'>${patient.p_name}</a>`
                     },
                     {
                         data: 'patient.card_number'
@@ -60,8 +60,7 @@
                                 patient
                             }) =>
                             patient.insurance && patient.insurance?.length < 1 ? "No insurance" :
-                            patient.insurance[0]
-                            .hmo_name,
+                            `${patient.insure.hmo_name} / ${patient.insure.hmo_id_no}`,
                         name: 'insurance',
                         ordering: true
                     },
