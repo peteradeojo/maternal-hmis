@@ -25,4 +25,9 @@ class DocumentedDiagnosis extends Model
     {
         return $this->made_by();
     }
+
+    public function icd()
+    {
+        return $this->belongsTo(IcdDiagnosis::class, 'icd_id', 'id');
+    }
 }

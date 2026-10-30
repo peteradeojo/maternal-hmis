@@ -105,7 +105,7 @@
                     <p><b>Diagnoses</b></p>
                     @forelse ($visit->diagnoses as $dia)
                         <div class="py-1 px-1 bg-gray-100 grid gap-y-1">
-                            <p><b>Diagnosed: </b>{{ $dia->diagnoses }}</p>
+                            <p><b>Diagnosed: </b>{{ $dia->diagnoses ?? $dia->icd }}</p>
                             <div class="text-xs">
                                 <p class="text-red">Consultant: {{ $dia->made_by->name }}</p>
                                 <p>{{ $dia->created_at->format('Y-m-d h:i A') }}</p>

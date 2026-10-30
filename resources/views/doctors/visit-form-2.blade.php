@@ -7,23 +7,9 @@
 
     <x-overlay-modal id="diagnosis-modal">
         <p class="text-xl bold">Add a Diagnosis</p>
-        <div class="py-1"></div>
-        <form id="diagnosis-form">
-            @csrf
-            <div class="form-group">
-                <label>Diagnosis</label>
-                <input type="text" placeholder="Enter your diagnosis" name="diagnosis" class="form-control" required
-                    list="diagnosis-list" />
-                <datalist id="diagnosis-list">
-                    @foreach ($diagnoses as $d)
-                        <option>{{ $d['name'] }}</option>
-                    @endforeach
-                </datalist>
-            </div>
-            <div class="form-group">
-                <button class="btn bg-blue-500 text-white">Submit</button>
-            </div>
-        </form>
+        <div class="py-1">
+            <livewire:diagnosis-form :event="$visit" />
+        </div>
     </x-overlay-modal>
 
     <x-overlay-modal id="notes-modal" title="Add/Edit Notes">
@@ -125,7 +111,7 @@
                     });
                 });
 
-                $("#diagnosis-form").on('submit', (e) => {
+                {{-- $("#diagnosis-form").on('submit', (e) => {
                     e.preventDefault();
                     fetch("{{ route('api.doctor.diagnosis', ['visit' => $visit->id]) }}", {
                         method: 'POST',
@@ -137,7 +123,7 @@
                     }).catch((err) => {
                         console.error(err);
                     });
-                });
+                }); --}}
             });
 
             function loadVisitReport(id) {

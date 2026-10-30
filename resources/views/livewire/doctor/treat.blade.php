@@ -62,22 +62,13 @@
             </div>
 
             <div>
-                <form wire:submit.prevent="addDiagnosis">
-                    <div class="form-group">
-                        <label>Add Diagnosis</label>
-                        <input type="text" name="diagnosis" class="form-control" list="histories" required="required"
-                            wire:model="diagnoses" placeholder="Press enter to submit" />
-                    </div>
-                    {{-- <div class="form-group">
-                        <button class="btn bg-blue-600 text-white">Submit</button>
-                    </div> --}}
-                </form>
+                <livewire:diagnosis-form :event="$visit" />
             </div>
 
             <div>
                 @forelse ($visit->diagnoses as $note)
                     <div class="bg-gray-100 p-2">
-                        <p>{{ $note->diagnoses }}</p>
+                        <p>{{ $note->diagnoses ?? $note->icd }}</p>
                         <p class="text-xs">Consultant: {{ $note->consultant->name }}</p>
 
                         <div class="flex-center justify-between text-xs">

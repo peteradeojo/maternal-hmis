@@ -28,7 +28,7 @@
     <p>No records</p>
 @else
     @foreach ($visit->diagnoses as $diagnosis)
-        <p>{{ $diagnosis->name }}</p>
+        <p>{{ $diagnosis->name ?? $diagnosis->icd->short_description }}</p>
     @endforeach
 @endempty
 </div>

@@ -1,13 +1,6 @@
 <div>
     {{-- In work, do what you enjoy. --}}
     <x-overlay-modal id="admit" title="Admitting: {{ $visit->patient->name }}">
-
-        <datalist id="patient-diagnoses">
-            @foreach ($visit->diagnoses as $d)
-                <option value="{{ $d->diagnoses }}">{{ $d->diagnoses }}</option>
-            @endforeach
-        </datalist>
-
         <form action="{{ route('doctor.admit', $visit) }}" method="post" id="start-admission-form">
             @csrf
             <div class="form-group">

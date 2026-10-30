@@ -14,7 +14,7 @@
     </div>
 </div>
 
-@push('scripts')
+{{-- @push('scripts')
     <script>
         $(() => {
             const elem = document.getElementById("diagnosis-list")
@@ -48,4 +48,4 @@
             })
         })
     </script>
-@endpush
+@endpush --}}

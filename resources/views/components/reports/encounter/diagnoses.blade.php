@@ -9,7 +9,7 @@
         <tbody>
             @foreach ($visit->diagnoses as $diagnosis)
                 <tr>
-                    <td>{{ $diagnosis->diagnoses }}</td>
+                    <td>{{ $diagnosis->diagnoses ?? $diagnoses->icd }}</td>
                     <td>{{ $diagnosis->consultant?->name }}</td>
                 </tr>
             @endforeach
