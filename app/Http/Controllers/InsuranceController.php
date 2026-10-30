@@ -67,7 +67,7 @@ class InsuranceController extends Controller
 
         $data = $request->validate([
             'orgid' => 'required|integer',
-            'hmo_company' => 'required|string',
+            'hmo_company' => 'nullable|string',
             'hmo_id_no' => 'required|string',
             'status' => 'nullable|integer',
             'validity_from' => 'nullable|date',

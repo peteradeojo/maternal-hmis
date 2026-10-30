@@ -17,4 +17,9 @@ class InsuranceProfiles extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function organization()
+    {
+        return $this->belongsTo(InsuranceOrganization::class, 'orgid');
+    }
 }
