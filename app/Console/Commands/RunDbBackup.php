@@ -42,7 +42,6 @@ class RunDbBackup extends Command
 
         $process = Process::fromShellCommandline(sprintf(
             'pg_dump -U %s -h %s -p %s -d %s -F c -b -v -f %s',
-            $config['password'],
             $config['username'],
             $config['host'],
             $config['port'],
