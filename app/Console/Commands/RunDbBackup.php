@@ -58,10 +58,11 @@ class RunDbBackup extends Command
             $process->mustRun();
             $this->info("Backup generated successfully! Saved to {$filename}");
 
-            $name = Storage::disk('google')->put($remoteFileName, File::get($filename));
+            Storage::disk('google')->put($remoteFileName, File::get($filename));
 
             $this->info("Backup uploaded successfully! Saved to {$filename}");
 
+            Storage::delete($backupDir);
 
             return self::SUCCESS;
         } catch (ProcessFailedException $e) {
