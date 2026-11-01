@@ -4,17 +4,19 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class DynamicProductSearch extends Component
 {
-    public $departmentId;
+    public int $departmentId;
 
     public $category;
 
-    public $queryString;
+    public string $queryString = "";
 
-    public $results;
+    public ?Collection $results;
 
     public $display = false;
 
@@ -31,13 +33,17 @@ class DynamicProductSearch extends Component
 
     public function searchProducts()
     {
-        if (strlen($this->queryString) == 0) {
+        if (empty($this->queryString)) {
             return;
         }
 
         $str = trim($this->queryString);
+
+        /**
+         * @var Builder
+         */
         $query = Product::query()->where('is_visible', 1)->limit(100)->where(function ($q) use ($str) {
-            $q->where('name', 'ilike', '%'.$str.'%')->orWhere('description', 'ilike', "%$str%");
+            $q->where('name', 'ilike', '%' . $str . '%')->orWhere('description', 'ilike', "%$str%");
         });
 
         if ($this->departmentId) {
@@ -54,7 +60,6 @@ class DynamicProductSearch extends Component
     {
         if (empty($product) && count($this->results) >= 1) {
             notifyUserError('Please select from the available results', request()->user());
-
             return;
         }
 
