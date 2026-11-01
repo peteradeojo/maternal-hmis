@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class DynamicProductSearch extends Component
 {
-    public int $departmentId;
+    public int|null $departmentId;
 
     public $category;
 
