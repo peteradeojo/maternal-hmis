@@ -1,5 +1,6 @@
 @php
     $routes = authorizedRoutes();
+    $user = auth()->user();
 @endphp
 
 <!DOCTYPE html>
