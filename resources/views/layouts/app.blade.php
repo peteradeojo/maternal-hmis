@@ -123,18 +123,34 @@
             </div>
             @include('components.sidebar')
         </aside>
-{{-- End Large Nav --}}
+        {{-- End Large Nav --}}
 
 
         <main
             class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms] printable print:ml-0"
             x-cloak x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">
             <div class="flex-center p-2 justify-end gap-x-4 print:hidden">
+                @if ($user->hasRole('admin'))
+                    @php
+                        $uptime = cache()->get('system:uptime');
+                        if ($uptime) {
+                            $uptime_date = Carbon::parse($uptime);
+                        }
+                    @endphp
+
+                    @isset($uptime)
+                        <div class="flex gap-x-4">
+                            <i class='bg-red-600 p-1 rounded-full animate-pulse'></i>
+                            <span>{{ $uptime_date->diff() }}</span>
+                        </div>
+                    @endisset
+                @endif
 
                 {{-- Location Switcher  --}}
                 <form method="POST" action="/location/switch">
                     @csrf
-                    <select name="location_code" id="location-switcher-select" class="pr-8 py-0" x-model="current_location">
+                    <select name="location_code" id="location-switcher-select" class="pr-8 py-0"
+                        x-model="current_location">
                         <option value="IMMIGRATION">Immigration</option>
                         <option value="ADEBAYO">Adebayo</option>
                     </select>
@@ -199,13 +215,16 @@
         </div>
 
         <div x-show="chat_selected == false" class="p-1 bg-white flex-1 min-h-0 flex flex-col overflow-y-auto">
-            <input type="search" class="form-control" x-on:keyup="const value=$event.target.value.toLowerCase();$event.target.nextElementSibling.querySelectorAll('li').forEach((el) => {
+            <input type="search" class="form-control"
+                x-on:keyup="const value=$event.target.value.toLowerCase();$event.target.nextElementSibling.querySelectorAll('li').forEach((el) => {
                  el.querySelector('span').innerText.toLowerCase().includes(value) == false ? el.classList.add('hidden') : el.classList.remove('hidden');
-            })" id="filter-users" placeholder="Search user" />
+            })"
+                id="filter-users" placeholder="Search user" />
 
             <ul id="list-of-users" class="">
                 <template x-for="user in online_users">
-                    <li @click="selectChat(user)" data-id="${user.id}" data-name="${user.name}" data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
+                    <li @click="selectChat(user)" data-id="${user.id}" data-name="${user.name}"
+                        data-dept="${user.department.name}" class='p-2 flex flex-col hover:bg-gray-400'">
                         <span x-text="user.name"></span>
                         <span class="text-xs" x-text="user.department"></span>
                     </li>
@@ -223,8 +242,7 @@
                     if (res.ok) {
                         window.location.href = "https://portal.lan";
                     }
-                } catch (error) {
-                }
+                } catch (error) {}
             }
         })();
     </script>
@@ -288,121 +306,129 @@
         const myId = {{ auth()->user()->id }};
         const myName = "{{ auth()->user()->name }}";
         const newMsg = (msg, color) => {
-                                const el = $(`<li class='flex flex-col gap-y-1 p-2 ${color}'>
+            const el = $(`<li class='flex flex-col gap-y-1 p-2 ${color}'>
                                     <span>${msg.message}</span>
                                     <span class='text-xs'>${msg.time}</span>
                                 </li>`);
 
-                                $("#chat-msgs").append(el);
-                                $("#chat-msgs").scrollTop($('#chat-msgs')[0].scrollHeight);
-                    }
+            $("#chat-msgs").append(el);
+            $("#chat-msgs").scrollTop($('#chat-msgs')[0].scrollHeight);
+        }
         $(document).ready(() => {
-                    const alpineRoot = document.querySelector('body[x-data]');
+            const alpineRoot = document.querySelector('body[x-data]');
 
-                    Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
-                        displayNotification(e);
-                    });
+            Echo.channel('department.{{ auth()->user()->department_id }}').listen('.GroupUpdate', (e) => {
+                displayNotification(e);
+            });
 
-                    Echo.private(`user.${myId}`).listen('.UserEvent', (e) => {
-                        displayNotification(e);
-                    });
+            Echo.private(`user.${myId}`).listen('.UserEvent', (e) => {
+                displayNotification(e);
+            });
 
-                    // Check for notification permission
-                    if (Notification.permission !== 'granted') {
-                        Notification.requestPermission().then(function(result) {
-                            if (result === 'granted') {
-                                const n = new Notification('Notifications enabled', {
-                                    body: 'You will receive notifications when they arrive.',
-                                });
-                            }
+            // Check for notification permission
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission().then(function(result) {
+                    if (result === 'granted') {
+                        const n = new Notification('Notifications enabled', {
+                            body: 'You will receive notifications when they arrive.',
                         });
                     }
+                });
+            }
 
-                    const receiveChatMsg = (e) => {
-                        if (Alpine.$data(document.querySelector('body[x-data]')).chat_selected?.id == e.from) {
-                            newMsg(e, 'bg-blue-400 border-2 rounded');
-                        } else {
-                            displayNotification({
-                                message: `You've received a text from ${e.fromName}: ${e.message}`,
-                                bg: ['bg-red-600', 'text-white'],
-                                options: {mode: 'both'},
-                            });
-                        }
-                    };
-
-                    Echo.join('appchat')
-                        .here((users) => {
-                            Alpine.$data(alpineRoot).online_users = users.filter((user) => user.id != myId);
-                        })
-                        .joining((user) => {
-                            Alpine.$data(alpineRoot).addOnlineUser(user);
-                        })
-                        .leaving((user) => {
-                            Alpine.$data(alpineRoot).removeOnlineUser(user);
-                        })
-                        .error((error) => {})
-                        .listen('ChatSent', function (e) {
-                            if (e.data.to == myId) {
-                                receiveChatMsg(e.data);
-                                return;
-                            }
-                        })
-                        .listenForWhisper('chat', function (e) {
-                            if (e.data.to != myId || e.data.from == myId) return;
-                            receiveChatMsg(e);
-                        });
-                        ;
-
-                        const sendChatMsg = () => {
-                            const value = $("#chat-text-input").val();
-                            const activeChat = JSON.parse(localStorage.getItem("opened_chat"))
-                            const to = activeChat?.id;
-
-                            if (!value || !to) {
-                                return;
-                            }
-                            var msg = {
-                                message: value,
-                                from: myId,
-                                to,
-                                fromName: myName,
-                                time: new Date().toLocaleString(),
-                            };
-
-                            axios.post('/api/chat/send', msg).then(({data}) => {
-                                const {message, ok} = data;
-                                newMsg(message, 'bg-gray-400 border-2 rounded');
-                                $("#chat-text-input").val('');
-                            });
-                        };
-
-                        $("#chat-text-input").on('keyup', (e) => {
-                            if (e.key == 'Enter') {
-                                e.preventDefault();
-                                sendChatMsg();
-                            }
-                        });
+            const receiveChatMsg = (e) => {
+                if (Alpine.$data(document.querySelector('body[x-data]')).chat_selected?.id == e.from) {
+                    newMsg(e, 'bg-blue-400 border-2 rounded');
+                } else {
+                    displayNotification({
+                        message: `You've received a text from ${e.fromName}: ${e.message}`,
+                        bg: ['bg-red-600', 'text-white'],
+                        options: {
+                            mode: 'both'
+                        },
                     });
-
-                const setupChat = async (id) => {
-                    const {data} = await axios.get(`/api/chats/${id}`);
-                    $("#chat-msgs").html("<span>Loading...</span>");
-
-                    if (data || data.length > 0) {
-                        $("#chat-msgs").html("");
-                        data.forEach((message) => {
-                            if (message.from == myId) {
-                                // newMsg({...message, to: message.receiverId, from: message.senderId, fromName: message.sender, time: message.created_at, }, 'bg-gray-400 border-2 rounded');
-                                newMsg(message, 'bg-gray-400 border-2 rounded');
-                            } else {
-                                // newMsg({...message, to: message.senderId, from: message.sender, fromName: message.receiver, time: message.created_at, }, 'bg-blue-400 border-2 rounded');
-                                newMsg(message, 'bg-blue-400 border-2 rounded');
-                            }
-                        });
-                    }else {
-                        $("#chat-msgs").html("<span>No messages</span>");
-                    }
                 }
+            };
+
+            Echo.join('appchat')
+                .here((users) => {
+                    Alpine.$data(alpineRoot).online_users = users.filter((user) => user.id != myId);
+                })
+                .joining((user) => {
+                    Alpine.$data(alpineRoot).addOnlineUser(user);
+                })
+                .leaving((user) => {
+                    Alpine.$data(alpineRoot).removeOnlineUser(user);
+                })
+                .error((error) => {})
+                .listen('ChatSent', function(e) {
+                    if (e.data.to == myId) {
+                        receiveChatMsg(e.data);
+                        return;
+                    }
+                })
+                .listenForWhisper('chat', function(e) {
+                    if (e.data.to != myId || e.data.from == myId) return;
+                    receiveChatMsg(e);
+                });;
+
+            const sendChatMsg = () => {
+                const value = $("#chat-text-input").val();
+                const activeChat = JSON.parse(localStorage.getItem("opened_chat"))
+                const to = activeChat?.id;
+
+                if (!value || !to) {
+                    return;
+                }
+                var msg = {
+                    message: value,
+                    from: myId,
+                    to,
+                    fromName: myName,
+                    time: new Date().toLocaleString(),
+                };
+
+                axios.post('/api/chat/send', msg).then(({
+                    data
+                }) => {
+                    const {
+                        message,
+                        ok
+                    } = data;
+                    newMsg(message, 'bg-gray-400 border-2 rounded');
+                    $("#chat-text-input").val('');
+                });
+            };
+
+            $("#chat-text-input").on('keyup', (e) => {
+                if (e.key == 'Enter') {
+                    e.preventDefault();
+                    sendChatMsg();
+                }
+            });
+        });
+
+        const setupChat = async (id) => {
+            const {
+                data
+            } = await axios.get(`/api/chats/${id}`);
+            $("#chat-msgs").html("<span>Loading...</span>");
+
+            if (data || data.length > 0) {
+                $("#chat-msgs").html("");
+                data.forEach((message) => {
+                    if (message.from == myId) {
+                        // newMsg({...message, to: message.receiverId, from: message.senderId, fromName: message.sender, time: message.created_at, }, 'bg-gray-400 border-2 rounded');
+                        newMsg(message, 'bg-gray-400 border-2 rounded');
+                    } else {
+                        // newMsg({...message, to: message.senderId, from: message.sender, fromName: message.receiver, time: message.created_at, }, 'bg-blue-400 border-2 rounded');
+                        newMsg(message, 'bg-blue-400 border-2 rounded');
+                    }
+                });
+            } else {
+                $("#chat-msgs").html("<span>No messages</span>");
+            }
+        }
     </script>
     @stack('scripts')
 </body>

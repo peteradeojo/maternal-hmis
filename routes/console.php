@@ -2,7 +2,9 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Process\Process;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,11 +42,11 @@ Artisan::command('parse-nhis-portals', function () {
     $data = [];
     for ($row = 2; $row <= $highestRow; $row++) {
         $data[] = [
-            'name' => $wSheet->getCell('C'.$row)->getValue(),
-            'class' => $wSheet->getCell('B'.$row)->getValue(),
-            'website' => $wSheet->getCell('D'.$row)->getValue(),
-            'phone' => $wSheet->getCell('E'.$row)->getValue(),
-            'email' => $wSheet->getCell('F'.$row)->getValue(),
+            'name' => $wSheet->getCell('C' . $row)->getValue(),
+            'class' => $wSheet->getCell('B' . $row)->getValue(),
+            'website' => $wSheet->getCell('D' . $row)->getValue(),
+            'phone' => $wSheet->getCell('E' . $row)->getValue(),
+            'email' => $wSheet->getCell('F' . $row)->getValue(),
         ];
     }
 
@@ -53,4 +55,14 @@ Artisan::command('parse-nhis-portals', function () {
     $fh = fopen('storage/app/public/nhis-portals.json', 'w');
     fwrite($fh, json_encode($data));
     fclose($fh);
+});
+
+Artisan::command("store-uptime", function () {
+    try {
+        $process = Process::fromShellCommandline("uptime -s");
+        $process->mustRun(function ($p0, $string) {
+            Cache::set("system:uptime", $string, now()->addMinutes(5));
+        });
+    } catch (\Exception) {
+    }
 });
