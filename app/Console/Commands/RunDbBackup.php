@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Yaza\LaravelGoogleDriveStorage\Gdrive;
 
 class RunDbBackup extends Command
 {
@@ -33,15 +32,15 @@ class RunDbBackup extends Command
         $config = config('database.connections.pgsql');
 
         $backupDir = storage_path('app/backups');
-        $remoteFileName = date('Y-m-d_H-i-s') . '.sql';
-        $filename = $backupDir . '/' . $remoteFileName;
+        $remoteFileName = date('Y-m-d_H-i-s').'.sql';
+        $filename = $backupDir.'/'.$remoteFileName;
 
-        if (!is_dir($backupDir)) {
+        if (! is_dir($backupDir)) {
             mkdir($backupDir, 0755, true);
         }
 
         $process = Process::fromShellCommandline(sprintf(
-            'pg_dump -U %s -h %s -p %s -d %s -F c -b -v -f %s',
+            'pg_dump -U %s -h %s -p %s -d %s -F c -b -v --column-inserts -f %s',
             $config['username'],
             $config['host'],
             $config['port'],
@@ -66,7 +65,7 @@ class RunDbBackup extends Command
 
             return self::SUCCESS;
         } catch (ProcessFailedException $e) {
-            $this->error("Backup failed. " . $e->getMessage());
+            $this->error('Backup failed. '.$e->getMessage());
             logger()->error('PostgreSQL Backup Failed', ['exception' => $e->getMessage()]);
 
             return self::FAILURE;
