@@ -41,19 +41,22 @@
                         data: 'patient.name'
                     },
                     {
-                        data: (row, type, set) => new Date(row.patient.created_at).toLocaleDateString('en-CA', {
-                            // hour12: true,
-                            hour: 'numeric',
-                            minute: '2-digit',
-                            // second: '2-digit',
-                        })
+                        data: (row, type, set) => new Date(row.patient.created_at).toLocaleDateString(
+                            'en-CA', {
+                                // hour12: true,
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                // second: '2-digit',
+                            })
                     },
                     {
                         data: (row, type, set) =>
-                            `<a href='/anc-bookings/${row.id}'  class='btn bg-red-500 text-white px-2'>View</a>`
+                            `<a href='/nurses/anc-bookings/${row.id}'  class='btn bg-red-500 text-white px-2'>View</a>`
                     }
                 ],
-                order: [[2, 'desc']]
+                order: [
+                    [2, 'desc']
+                ]
             });
         });
     </script>

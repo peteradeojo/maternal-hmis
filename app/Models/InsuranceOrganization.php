@@ -13,6 +13,9 @@ class InsuranceOrganization extends Model
         'portal_url',
     ];
 
+    const privateIcon = "<i class='fa fa-user-shield'></i>";
+    const publicIcon = "<i class='fa fa-shield-halved'></i>";
+
     protected $casts = [
         'contact_details' => 'array',
     ];

@@ -65,23 +65,23 @@ class Patient extends Model
 
     public function pName(): Attribute
     {
-        // return $this->name . ' ' . ($this->insure ? "<i class='fa fa-shield-halved'></i>" : null);
+        $publicIdentifier = isset($this->insure->organization) ? ($this->insure?->organization?->is_public ? InsuranceOrganization::publicIcon : InsuranceOrganization::privateIcon) : "<i class='fa fa-shield'></i>";
         return Attribute::make(
-            get: fn () => $this->name.' '.($this->insure ? "<i class='fa fa-shield-halved'></i>" : null),
+            get: fn() => $this->name . ' ' . ($this->insure ? $publicIdentifier : null),
         );
     }
 
     protected function maritalstatus(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => MaritalStatus::tryFrom($value)?->name ?? 'Unknown',
+            get: fn($value) => MaritalStatus::tryFrom($value)?->name ?? 'Unknown',
         );
     }
 
     protected function religion(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value != 0 ? Religion::tryFrom($value)?->name ?? 'Unknown' : 'Unknown',
+            get: fn($value) => $value != 0 ? Religion::tryFrom($value)?->name ?? 'Unknown' : 'Unknown',
         );
     }
 
@@ -91,14 +91,14 @@ class Patient extends Model
             get: function ($value) {
                 return Gender::tryFrom($value)?->name ?? 'Unknown';
             },
-            set: fn ($value) => $value,
+            set: fn($value) => $value,
         );
     }
 
     protected function age(): Attribute
     {
         return Attribute::make(
-            get: fn ($value, $attributes) => ! empty($attributes['dob']) ? (int) Carbon::parse($attributes['dob'])->diffInYears(Carbon::now()) : null,
+            get: fn($value, $attributes) => ! empty($attributes['dob']) ? (int) Carbon::parse($attributes['dob'])->diffInYears(Carbon::now()) : null,
         );
     }
 
@@ -107,7 +107,7 @@ class Patient extends Model
         $prefix = Patient::where('category_id', $category)->count();
         $prefix = str_pad($prefix, 3, '0', STR_PAD_LEFT);
 
-        return $prefix.date('my');
+        return $prefix . date('my');
     }
 
     public function category()
@@ -204,6 +204,6 @@ class Patient extends Model
     #[Override]
     public function __toString()
     {
-        return "$this->name ".$this->active_insurance ? "[$this->active_insurance->name]" : '';
+        return "$this->name " . $this->active_insurance ? "[$this->active_insurance->name]" : '';
     }
 }
