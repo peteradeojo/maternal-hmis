@@ -131,6 +131,8 @@
             class="w-screen bg-blue-100 min-h-screen overflow-y-auto transition-[margin] duration-[500ms] printable print:ml-0"
             x-cloak x-bind:class="aside ? 'sm:ml-[16%]' : 'sm:ml-[5%]'">
             <div class="flex-center p-2 justify-end gap-x-4 print:hidden">
+                <span>{{ session('ip_address') ?? 'Lnon' }}</span>
+
                 @if ($user->hasRole('admin'))
                     @php
                         $uptime = cache()->get('system:uptime');
