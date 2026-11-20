@@ -21,21 +21,7 @@
     </main>
 
     <script>
-        (async () => {
-            if (location.hostname == 'portal.maternalchildhosp.com') {
-                try {
-                    const res = await fetch("https://portal.lan/api/health-check");
-                    if (res.ok) {
-                        window.location.href = "https://portal.lan";
-                    }
-                } catch (error) {
-                }
-            }
-        })();
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded' , () => {
+        document.addEventListener('DOMContentLoaded', () => {
             document.querySelector("body").classList.remove("grid", "place-items-center");
             document.querySelector("#page-loader").remove();
             document.querySelector("main").classList.remove("hidden");

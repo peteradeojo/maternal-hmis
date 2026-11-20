@@ -30,14 +30,14 @@ Route::middleware(['auth', 'auth:sanctum', 'active_users'])->group(function () {
 
     Route::prefix('rad')->group(base_path('routes/api/rad.php'));
 
-    include_once __DIR__ . '/api/laboratory.php';
-    include_once __DIR__ . '/api/nursing.php';
+    include_once __DIR__.'/api/laboratory.php';
+    include_once __DIR__.'/api/nursing.php';
     // include_once __DIR__ . '/api/rad.php';
-    include_once __DIR__ . '/api/doctor.php';
-    include_once __DIR__ . '/api/nhi.php';
-    include_once __DIR__ . '/api/dispensary.php';
-    include_once __DIR__ . '/api/billing.php';
-    include_once __DIR__ . '/api/pharmacy.php';
+    include_once __DIR__.'/api/doctor.php';
+    include_once __DIR__.'/api/nhi.php';
+    include_once __DIR__.'/api/dispensary.php';
+    include_once __DIR__.'/api/billing.php';
+    include_once __DIR__.'/api/pharmacy.php';
 
     Route::post('/job-openings', [CrmController::class, 'createJobOpening']);
     Route::patch('/job-openings/{opening}', [CrmController::class, 'toggleJobOpening']);
