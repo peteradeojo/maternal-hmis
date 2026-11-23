@@ -12,14 +12,6 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($admissions as $a)
-                    <tr>
-                        <td><a href="{{route('doctor.visit', $a->visit)}}" class="link">{{ $a->patient->name }}</a></td>
-                        <td>{{ $a->ward?->name }}</td>
-                        <td>{{ $a->created_at }}</td>
-                        <td>{{ $a->discharged_on ?? 'Not yet discharged' }}</td>
-                    </tr>
-                @endforeach
             </tbody>
         </table>
     </div>
@@ -27,9 +19,34 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $("#table").DataTable({
-                ordering: false,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('api.records.admissions') }}"
+                },
+                columns: [{
+                        data: 'patient.name',
+                        name: 'patient.name'
+                    },
+                    {
+                        data: 'ward.name'
+                    },
+                    {
+                        data: ({
+                            created_at
+                        }) => formatUTCDate(created_at),
+                    },
+                    {
+                        data: ({
+                            discharged_on
+                        }) => discharged_on ? formatUTCDate(discharged_on) : 'Not discharged'
+                    }
+                ],
+                // ordering: false,
+                // order: [
+                //     [2, 'asc']
+                // ]
             });
         });
     </script>
