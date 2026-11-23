@@ -22,6 +22,7 @@
         $(document).ready(function() {
             $("#table").DataTable({
                 serverSide: true,
+                processing: true,
                 ajax: {
                     url: "{{ route('api.records.admissions') }}"
                 },
