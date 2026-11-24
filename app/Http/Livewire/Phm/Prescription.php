@@ -37,7 +37,7 @@ class Prescription extends Component
         $this->doc = $doc;
         $this->doc->load(['lines.item']);
 
-        $this->prices = $this->doc->lines->map(fn($line) => $line->prices);
+        $this->prices = $this->doc->lines->map(fn ($line) => $line->prices);
 
         $this->loadLines();
 
@@ -59,7 +59,7 @@ class Prescription extends Component
     {
         $this->totalAmt = array_reduce(
             $this->prescriptions,
-            fn($a, $b) => $a + ((intval($b['quantity']) + intval($b['dispensed'])) * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
+            fn ($a, $b) => $a + ((intval($b['quantity']) + intval($b['dispensed'])) * ($b['status'] == Status::blocked ? 0 : TreatmentService::getPrice(
                 $b['item_id'],
                 $b['profile'],
             ))),
@@ -280,6 +280,16 @@ class Prescription extends Component
         $this->doc->update([
             'status' => Status::closed,
         ]);
-        notifyUserSuccess("Prescription closed", auth()->user()->id);
+        notifyUserSuccess('Prescription closed', auth()->user()->id);
+    }
+
+    public function reopenPrescription()
+    {
+        $this->authorize('reopen', $this->doc);
+        $this->doc->update([
+            'status' => Status::active,
+        ]);
+
+        notifyUserSuccess('Prescription re-opened', auth()->user()->id);
     }
 }

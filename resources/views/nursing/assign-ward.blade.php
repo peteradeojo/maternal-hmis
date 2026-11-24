@@ -22,8 +22,8 @@
             <div class="form-group">
                 <select name="ward" class="form-control">
                     @foreach ($wards as $ward)
-                        <option value="{{ $ward->id }}" @if ($ward->available_beds == 0) disabled @endif>
-                            {{ $ward->name }} ({{ $ward->beds - $ward->filled_beds }})
+                        <option value="{{ $ward->id }}" @if ($ward->available_beds < 1) disabled @endif>
+                            {{ $ward->name }} ({{ $ward->available_beds }})
                             ({{ $ward->type }})
                         </option>
                     @endforeach

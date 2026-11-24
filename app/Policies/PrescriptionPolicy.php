@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Status;
 use App\Models\Prescription;
 use App\Models\User;
 
@@ -45,5 +46,10 @@ class PrescriptionPolicy
     public function delete(User $user, Prescription $prescription): bool
     {
         return $user->hasRole('admin');
+    }
+
+    public function reopen(User $user, Prescription $prescription): bool
+    {
+        return $user->hasRole('admin') && $prescription->status == Status::closed;
     }
 }
