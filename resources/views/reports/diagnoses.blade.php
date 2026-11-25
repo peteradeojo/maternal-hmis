@@ -44,7 +44,7 @@
                     @foreach ($data as $entry)
                         <tr>
                             <td>{{ $entry->month }}</td>
-                            <td>{{ $entry->num ?? 0 }}</td>
+                            <td>{{ $entry->num }}</td>
                         </tr>
                     @endforeach
                 </tbody>
