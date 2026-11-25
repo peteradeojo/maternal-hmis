@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\IT\CrmController;
 use App\Http\Controllers\Records\PatientsController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\VisitsController;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -99,5 +100,10 @@ Route::middleware(['auth', 'active_users'])->group(function () {
 
         // return response()->json(['ok' => true]);
         return to_route('resource.nhis');
+    });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('diagnoses', [ReportsController::class, 'diagnosisReports'])->name('diagnoses');
+        Route::post('diagnoses', [ReportsController::class, 'diagnosisReports'])->name('diagnoses');
     });
 });

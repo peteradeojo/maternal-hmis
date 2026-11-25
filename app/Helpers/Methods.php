@@ -122,6 +122,13 @@ function getRouteMap()
                 'Payment Reports' => [route('finance'), 'fa-money'],
             ],
         ],
+        [
+            'role' => array_map(fn ($r) => $r, Roles::cases()),
+            'label' => ['Reports', ''],
+            'routes' => [
+                'Diagnosis Reports' => [route('reports.diagnoses')],
+            ],
+        ],
     ];
 
     return $routeMap;
@@ -146,7 +153,7 @@ function authorizedRoutes()
 
             unset($map['role']);
 
-            if ($match = array_filter($routes, fn($r) => $r['label'][0] == $map['label'][0])) {
+            if ($match = array_filter($routes, fn ($r) => $r['label'][0] == $map['label'][0])) {
                 $key = (array_keys($match))[0] ?? null;
                 if ($key === null) {
                     continue;
@@ -227,11 +234,11 @@ function clean_data_image($data)
 
 function save_signature_to_local($filename, $data)
 {
-    $file = DAMA_SIGNATURES_DIR . "/$filename";
+    $file = DAMA_SIGNATURES_DIR."/$filename";
     $f = file_put_contents(storage_path($file), clean_data_image($data));
 
     if ($f !== false) {
-        $savedFilename = basename(DAMA_SIGNATURES_DIR) . '/' . $filename;
+        $savedFilename = basename(DAMA_SIGNATURES_DIR).'/'.$filename;
 
         return $savedFilename;
     }
