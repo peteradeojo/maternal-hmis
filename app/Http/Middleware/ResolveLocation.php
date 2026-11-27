@@ -28,12 +28,15 @@ class ResolveLocation
             $locationId = Location::where('type', 'branch')->first()?->id;
         }
 
+        $ip = $request->ip();
+
         if (! $locationId) {
             return $next($request);
         }
 
         $location = Location::find($locationId);
         app(LocationContext::class)->set($location);
+        session(['ip_address' => $ip]);
 
         return $next($request);
     }

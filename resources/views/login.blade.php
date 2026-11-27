@@ -44,14 +44,3 @@
         </div>
     </div>
 @endsection
-
-@push('script')
-    {{-- @if (app()->isProduction())
-
-    @endif --}}
-    <script>
-        $(() => {
-            fetch(() => {});
-        });
-    </script>
-@endpush

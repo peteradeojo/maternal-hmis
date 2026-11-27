@@ -8,7 +8,6 @@ use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('records.')->prefix('/records')->middleware(['role:record|admin', 'datalog'])->group(function () {
-
     Route::match(['get', 'post'], '/patients', [PatientsController::class, 'index'])->name('patients');
     Route::match(['get', 'post'], '/patients/{patient}', [PatientsController::class, 'show'])->name('patient');
     Route::match(['get', 'post'], '/patients/{patient}/edit', [PatientsController::class, 'edit'])->name('patient.edit');
@@ -25,6 +24,7 @@ Route::name('records.')->prefix('/records')->middleware(['role:record|admin', 'd
     // Admissions
     Route::prefix('admissions')->name('admissions')->group(function () {
         Route::get('/', [AdmissionsController::class, 'index']);
+        Route::get('/{admission}', [AdmissionsController::class, 'show'])->name('.show');
     });
 
     // Antenatal

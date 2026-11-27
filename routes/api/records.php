@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppointmentsController;
+use App\Http\Controllers\Records\AdmissionsController;
 use App\Http\Controllers\Records\PatientsController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,3 +11,5 @@ Route::post('check-out-patient/{visit}', [PatientsController::class, 'checkOut']
 Route::post('/patients/insurance/{patient}', [PatientsController::class, 'addInsuranceProfile'])->name('insurance');
 
 Route::get('/appointments', [AppointmentsController::class, 'fetchAppointments'])->name('appointments');
+
+Route::get('/admissions', [AdmissionsController::class, 'getAdmissions'])->name('admissions');

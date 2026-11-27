@@ -21,7 +21,7 @@ class Controller extends BaseController
         $start = $request->query('start', 0);
         $search = $request->input('search', ['value' => null, 'regex' => false])['value'];
 
-        $order = $request->input('order');
+        $order = $request->input('order', []);
         $results = $builder->clone();
 
         // Time filters
@@ -44,8 +44,51 @@ class Controller extends BaseController
 
         $data = $results->skip($start)->limit($length)->get()->toArray();
 
-        if ($orderFunction) {
-            $data = $orderFunction($data, $order);
+        function findNestedValue($data, $values)
+        {
+            if (count($values) <= 1) {
+                return $data[$values[0]];
+            }
+
+            return findNestedValue($data[$values[0]], array_slice($values, 1));
+        }
+
+        if (count($order) > 0) {
+            foreach ($order as $o) {
+                if (is_null($o['name'])) {
+                    continue;
+                }
+
+                $nameComponents = explode('.', $o['name']);
+
+                if (count($nameComponents) == 1) {
+                    $name = $nameComponents[0];
+
+                    usort($data, function ($a, $b) use (&$name) {
+                        if ($a[$name] > $b[$name]) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    });
+                } else {
+                    usort($data, function ($a, $b) use ($nameComponents, &$o) {
+                        $aValue = findNestedValue($a, $nameComponents);
+                        $bValue = findNestedValue($b, $nameComponents);
+
+                        $k = 0;
+                        if ($aValue > $bValue) {
+                            $k = 2;
+                        } elseif ($aValue == $bValue) {
+                            return 0;
+                        } else {
+                            $k = -2;
+                        }
+
+                        return $o['dir'] == 'desc' ? -1 * $k : $k;
+                    });
+                }
+            }
         }
 
         $data = [

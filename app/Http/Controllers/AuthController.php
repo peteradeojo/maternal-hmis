@@ -22,7 +22,7 @@ class AuthController extends Controller
         try {
             $user = User::where('phone', $request->phone)->first();
             if (! $user || $user->status != Status::active) {
-                return back(419)->with('error', 'Invalid login. Please check with admin.');
+                return redirect()->back()->with('error', 'Invalid login');
             }
 
             if (auth()->attempt($request->only('phone', 'password'))) {
@@ -35,7 +35,9 @@ class AuthController extends Controller
                 return redirect()->intended(route('dashboard'));
             }
         } catch (Exception $e) {
-            return abort(500);
+            report($e);
+
+            return redirect->back(500)->with('error', 'An error occurred. Please try again');
         }
 
         return redirect()->back()->with('error', 'Invalid login');

@@ -62,12 +62,25 @@
                     <td class="flex gap-x-4 items-center">
                         <button class="btn bg-blue-400 text-white" wire:click.prevent="saveToBill">Save bill <i
                                 class="fa fa-save"></i></button>
-                        <button class="btn bg-green-500 text-white" wire:confirm="Are you sure? This action cannot be undone" wire:click="dispense">Dispense <i
+                        <button class="btn bg-green-500 text-white"
+                            wire:confirm="Are you sure? This action cannot be undone" wire:click="dispense">Dispense <i
                                 class="fa fa-send"></i></button>
-
                         <button wire:click="closePrescription" wire:confirm="Are you sure? This action cannot be undone"
-                            class="btn bg-red-500 text-white">Close Prescription<i </td>
+                            class="btn bg-red-500 text-white">Close Prescription <i class="fa fa-cancel"></i></button>
+
+                    </td>
                 </tr>
+            @else
+                @if (auth()->user()->hasRole('admin'))
+                    <tr>
+                        <td colspan=4></td>
+                        <td class="flex items-center">
+                            <button wire:click="reopenPrescription"
+                                wire:confirm="Are you sure? This action cannot be undone"
+                                class="btn bg-yellow-400">Re-open Prescription<i class="fa fa-check"></i></button>
+                        </td>
+                    </tr>
+                @endif
             @endif
         </tfoot>
     </table>

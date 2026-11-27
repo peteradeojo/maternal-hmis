@@ -1,7 +1,7 @@
-import './app';
-import { $ } from 'jquery';
+import "./app";
+import { $ } from "jquery";
 
-window.initTab = function(el) {
+window.initTab = function (el) {
     if (!el) return;
     const tabNav = el.querySelector("nav");
     const tabSelect = el.querySelector("select");
@@ -9,7 +9,7 @@ window.initTab = function(el) {
     const tabList = tabNav.querySelectorAll("a");
 
     const tabContentList = el.querySelectorAll(
-        el.getAttribute("data-tablist") + " > .tab"
+        el.getAttribute("data-tablist") + " > .tab",
     );
 
     tabContentList.forEach((e, i) => {
@@ -42,80 +42,90 @@ window.initTab = function(el) {
     tabList?.forEach((element, i) => {
         element.addEventListener("click", listener(i));
     });
-}
+};
 
-window.asyncForm = (form, route, callback = (e, data) => { }) => {
+window.asyncForm = (form, route, callback = (e, data) => {}) => {
     if (!form) return;
 
     $(form).on("submit", (e) => {
         e.preventDefault();
-        axios.post(route, new FormData(e.currentTarget), {
-            headers: {
-                Accept: "application/json",
-            }
-        }).then((res) => {
-            callback(e.currentTarget, res);
-        }).catch((err) => {
-            console.error(err);
-            notifyError(err.response.data.message || err.message);
-        });
+        axios
+            .post(route, new FormData(e.currentTarget), {
+                headers: {
+                    Accept: "application/json",
+                },
+            })
+            .then((res) => {
+                callback(e.currentTarget, res);
+            })
+            .catch((err) => {
+                console.error(err);
+                notifyError(err.response.data.message || err.message);
+            });
     });
-}
+};
 
 window.submitForm = async (el, route, notify = true) => {
     const formData = new FormData(el);
-    return axios.post(route, formData, {
-        headers: {
-            "Content-Type": 'multipart/form-data',
-            Accept: 'application/json',
-        },
-    }).then((res) => res)
-        .catch(err => {
+    return axios
+        .post(route, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Accept: "application/json",
+            },
+        })
+        .then((res) => res)
+        .catch((err) => {
             // console.error(err);
-            if (notify)
-                notifyError(err.message);
-            return { data: null, message: err.response?.data.message || err.message };
+            if (notify) notifyError(err.message);
+            return {
+                data: null,
+                message: err.response?.data.message || err.message,
+            };
         });
-}
+};
 
 window.MODAL_TITLE = ".modal-title";
 window.MODAL_CONTENT = ".modal-body";
 window.MODAL_BODY = window.MODAL_CONTENT;
 
-window.useGlobalModal = function(callback) {
+window.useGlobalModal = function (callback) {
     $("#global-overlay").removeClass("hidden");
     $("#global-modal").removeClass("translate-x-full");
 
     callback($("#global-modal"));
-}
+};
 
-window.removeGlobalModal = function() {
+window.removeGlobalModal = function () {
     $("#global-modal").addClass("translate-x-full");
     setTimeout(() => $("#global-overlay").addClass("hidden"), 300);
-}
+};
 
-$('#closeGlobalModal, #global-overlay').on('click', function() {
+$("#closeGlobalModal, #global-overlay").on("click", function () {
     removeGlobalModal();
 });
 
 /**
  * @param {{message: string; bg: string; [key: string]: any}} data
  */
-window.displayNotification = function(data) {
+window.displayNotification = function (data) {
     const { options, message, bg, meta } = data;
 
-    if (Notification.permission === 'granted' && ['both', 'desktop'].includes(options.mode)) {
-        const n = new Notification(data.title || 'New Notification', {
+    if (
+        Notification.permission === "granted" &&
+        ["both", "desktop"].includes(options.mode)
+    ) {
+        const n = new Notification(data.title || "New Notification", {
             body: message,
-            icon: '/favicon.ico',
+            icon: "/favicon.ico",
             requireInteraction: (options?.priority || 0) >= 3,
             data: meta,
         });
 
-        n.addEventListener('click', function(e) {
+        n.addEventListener("click", function (e) {
             const { url } = this.data || {};
             if (url) {
-                const link = document.createElement('a');
+                const link = document.createElement("a");
                 link.href = url;
                 link.target = "_blank";
                 link.rel = "noreferrer noopener";
@@ -127,13 +137,16 @@ window.displayNotification = function(data) {
         setTimeout(() => n.close(), 30000);
     }
 
-    if (!['both', 'in-app'].includes(options.mode)) {
+    if (!["both", "in-app"].includes(options.mode)) {
         return;
     }
 
     const el = document.createElement(`div`);
     el.textContent = message;
-    el.classList.add(...(bg || ['bg-green-400', 'text-white']), 'app-notification');
+    el.classList.add(
+        ...(bg || ["bg-green-400", "text-white"]),
+        "app-notification",
+    );
 
     document.querySelector("#notifications").appendChild(el);
 
@@ -141,81 +154,89 @@ window.displayNotification = function(data) {
         removeGlobalModal();
     }
 
-    setTimeout(() => {
-        el.classList.add("fade-out");
-    }, Math.max(options.timeout || 5000));
+    setTimeout(
+        () => {
+            el.classList.add("fade-out");
+        },
+        Math.max(options.timeout || 5000),
+    );
 
-    setTimeout(() => {
-        el.remove();
-    }, Math.max(options.timeout || 5300));
-}
+    setTimeout(
+        () => {
+            el.remove();
+        },
+        Math.max(options.timeout || 5300),
+    );
+};
 
-window.notifyError = function(message) {
+window.notifyError = function (message) {
     return displayNotification({
         message,
-        bg: ['bg-red-500', 'text-white'],
+        bg: ["bg-red-500", "text-white"],
         options: {
-            mode: 'in-app',
-        }
-    })
-}
+            mode: "in-app",
+        },
+    });
+};
 
-window.notifySuccess = function(message) {
+window.notifySuccess = function (message) {
     return displayNotification({
         message,
-        bg: ['bg-blue-400', 'text-white'],
+        bg: ["bg-blue-400", "text-white"],
         options: {
-            mode: 'in-app',
-        }
-    })
-}
+            mode: "in-app",
+        },
+    });
+};
 
-window.notifyAction = function(message) {
+window.notifyAction = function (message) {
     return displayNotification({
         message,
-        bg: ['bg-green-500', 'text-white'],
+        bg: ["bg-green-500", "text-white"],
         options: {
-            mode: 'in-app',
-        }
-    })
-}
+            mode: "in-app",
+        },
+    });
+};
 
-window.parseDateFromSource = (date, second = false, hm = true) => new Date(date).toLocaleDateString('en-CA', {
-    ...(hm && {
-        minute: '2-digit',
-        hour: '2-digit',
-    }),
-    ...(second && { second: '2-digit' }),
-    timeZone: 'Africa/Lagos',
-});
+window.parseDateFromSource = (date, second = false, hm = true) =>
+    new Date(date).toLocaleDateString("en-CA", {
+        ...(hm && {
+            minute: "2-digit",
+            hour: "2-digit",
+        }),
+        ...(second && { second: "2-digit" }),
+        timeZone: "Africa/Lagos",
+    });
 
+window.formatUTCDate = window.parseDateFromSource;
 
-const PRIMARY_COLOR = '#3fbbc0';
+const PRIMARY_COLOR = "#3fbbc0";
 window.PRIMARY_COLOR = PRIMARY_COLOR;
 
-window.addChartData = function(chart, label, newData) {
+window.addChartData = function (chart, label, newData) {
     chart.data.labels.push(...label);
     chart.data.datasets.forEach((dataset) => {
         dataset.data.push(...newData);
     });
     chart.update();
-}
+};
 
-window.setChartData = function(chart, labels, data) {
+window.setChartData = function (chart, labels, data) {
     chart.data.labels = labels;
     chart.data.datasets = data;
-    chart.update('none');
-}
+    chart.update("none");
+};
 
-window.removeChartData = function(chart) {
+window.removeChartData = function (chart) {
     chart.data.labels.pop();
     chart.data.datasets.forEach((dataset) => {
         dataset.data.pop();
     });
     chart.update();
-}
+};
 
-window.initSignatureCanvas = function() {
+window.initSignatureCanvas = function () {
     const canvases = document.querySelectorAll(".signature");
 
     console.log(canvases);
@@ -223,13 +244,13 @@ window.initSignatureCanvas = function() {
     canvases?.forEach((canvas) => {
         const parent = canvas.parentElement;
         const canvasInput = parent.querySelector("input.signature-value");
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         let drawing = false;
 
         // Line Style
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = "#000";
         ctx.lineWidth = 1.5;
-        ctx.lineCap = 'round';
+        ctx.lineCap = "round";
 
         function startDrawing(e) {
             drawing = true;
@@ -250,37 +271,42 @@ window.initSignatureCanvas = function() {
 
         function resetCanvas() {
             ctx.reset();
-            canvas.removeEventListener('mousedown', startDrawing);
-            canvas.removeEventListener('touchstart', startDrawing);
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('touchstart', startDrawing);
+            canvas.removeEventListener("mousedown", startDrawing);
+            canvas.removeEventListener("touchstart", startDrawing);
+            canvas.addEventListener("mousedown", startDrawing);
+            canvas.addEventListener("touchstart", startDrawing);
             canvasInput.value = "";
         }
 
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', endDraw);
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        window.addEventListener("mouseup", endDraw);
 
         // Pro tip: Event Listeners for touch interaction
-        canvas.addEventListener('touchstart', startDrawing);
-        canvas.addEventListener('touchend', endDraw);
-        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener("touchstart", startDrawing);
+        canvas.addEventListener("touchend", endDraw);
+        canvas.addEventListener("touchmove", draw);
 
-        parent.querySelector(".btn.clear-signature")?.addEventListener('click', resetCanvas);
+        parent
+            .querySelector(".btn.clear-signature")
+            ?.addEventListener("click", resetCanvas);
 
-        parent.querySelector(".btn.save-signature").addEventListener('click', (e) => {
-            drawing = false;
-            canvas.removeEventListener('mousedown', startDrawing);
-            canvas.removeEventListener('touchstart', startDrawing);
-            canvasInput.value = canvas.toDataURL(); canvas.classList.add('bg-gray-400');
-        });
+        parent
+            .querySelector(".btn.save-signature")
+            .addEventListener("click", (e) => {
+                drawing = false;
+                canvas.removeEventListener("mousedown", startDrawing);
+                canvas.removeEventListener("touchstart", startDrawing);
+                canvasInput.value = canvas.toDataURL();
+                canvas.classList.add("bg-gray-400");
+            });
     });
-}
+};
 
 window.prepAutoSave = (location, data) => {
     // console.log(location, data);
     sessionStorage.setItem(location, data);
-}
+};
 
 window.resetAutoSaveInputs = (el) => {
     const inputs = $(el).find("[data-autosaveid]");
@@ -291,7 +317,7 @@ window.resetAutoSaveInputs = (el) => {
         // console.log(id);
         sessionStorage.removeItem(id);
     });
-}
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     document
@@ -300,44 +326,52 @@ document.addEventListener("DOMContentLoaded", () => {
             button.addEventListener("click", (e) => {
                 const elem = e.target.closest(".foldable");
                 elem.querySelector(".foldable-body").classList.toggle(
-                    "unfolded"
+                    "unfolded",
                 );
             });
         });
 
-    $("#nav-burger").on('click', (e) => {
+    $("#nav-burger").on("click", (e) => {
         $("#mobile-nav-list").toggleClass("hidden");
     });
 
-    $("[data-autosaveId]").each(function(i, el) {
-        let id = $(el).data('autosaveid').replaceAll("\\", "-");
+    $("[data-autosaveId]").each(function (i, el) {
+        let id = $(el).data("autosaveid").replaceAll("\\", "-");
         id = "autosave-generated:" + id;
         const value = sessionStorage.getItem(id);
 
         if (value) {
-            const modelAttr = el.getAttribute('wire:model')
-                || el.getAttribute('wire:model.live')
-                || el.getAttribute('wire:model.blur')
-                || el.getAttribute('wire:model.lazy');
+            const modelAttr =
+                el.getAttribute("wire:model") ||
+                el.getAttribute("wire:model.live") ||
+                el.getAttribute("wire:model.blur") ||
+                el.getAttribute("wire:model.lazy");
 
             if (modelAttr) {
                 // Livewire-bound: set the actual component property.
                 // Livewire updates the DOM for you — don't also call .val()/.text() here,
                 // or you'll fight your own re-render.
-                const component = el.closest('[wire\\:id]');
+                const component = el.closest("[wire\\:id]");
                 if (component) {
-                    Livewire.find(component.getAttribute('wire:id')).set(modelAttr, value);
+                    Livewire.find(component.getAttribute("wire:id")).set(
+                        modelAttr,
+                        value,
+                    );
                 }
             } else {
                 switch (el.tagName) {
-                    case 'TEXTAREA':
+                    case "TEXTAREA":
                         $(el).text(value);
                         break;
                     default:
                         $(el).val(value);
                 }
                 $(el).addClass("autosaved-input");
-                $(el).parent().append(`<p class="text-red-600 autosaved">Restored from autosave</p>`);
+                $(el)
+                    .parent()
+                    .append(
+                        `<p class="text-red-600 autosaved">Restored from autosave</p>`,
+                    );
 
                 // Tell Livewire (and anything else listening) that the value changed
                 // el.dispatchEvent(new Event('input', { bubbles: true }));
@@ -347,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        $(el).on('change', function(evt) {
+        $(el).on("change", function (evt) {
             const v = evt.target.value;
             $(el).parent().find(".autosaved").remove();
             $(el).removeClass("autosaved-input");
