@@ -27,4 +27,13 @@ class AdmissionsController extends Controller
             },
         ]);
     }
+
+    public function show(Request $request, Admission $admission)
+    {
+        if ($request->has('sparse')) {
+            return view('admissions.show-sparse', compact('admission'));
+        }
+
+        return view('admissions.show', []);
+    }
 }

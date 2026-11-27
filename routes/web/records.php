@@ -24,6 +24,7 @@ Route::name('records.')->prefix('/records')->middleware(['role:record|admin', 'd
     // Admissions
     Route::prefix('admissions')->name('admissions')->group(function () {
         Route::get('/', [AdmissionsController::class, 'index']);
+        Route::get('/{admission}', [AdmissionsController::class, 'show'])->name('.show');
     });
 
     // Antenatal
